@@ -2,7 +2,11 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import Stripe from 'https://esm.sh/stripe@12.4.0?target=deno';
 
-const STRIPE_SECRET_KEY = Deno.env.get('STRIPE_SECRET_KEY');
+const STRIPE_SECRET_KEY = Deno.env.get('STRIPE_SECRET_KEY') || '';
+
+if (!STRIPE_SECRET_KEY) {
+  console.error('STRIPE_SECRET_KEY is not set. Please check your environment variables.');
+}
 
 const stripe = new Stripe(STRIPE_SECRET_KEY, {
   apiVersion: '2023-10-16',
@@ -22,6 +26,17 @@ serve(async (req) => {
   }
 
   try {
+    if (!STRIPE_SECRET_KEY) {
+      console.error('STRIPE_SECRET_KEY is not set');
+      return new Response(
+        JSON.stringify({ error: "Brakuje klucza API Stripe w konfiguracji" }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
     console.log("Processing payment request");
     
     const body = await req.text();

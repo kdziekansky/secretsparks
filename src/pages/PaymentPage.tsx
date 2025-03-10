@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Info, Gift, ShieldCheck, Loader2 } from 'lucide-react';
@@ -107,7 +108,9 @@ const PaymentPage: React.FC = () => {
       setIsLoading(true);
       
       const newOrderId = await createOrder();
-
+      
+      console.log("Calling create-payment function with order ID:", newOrderId);
+      
       const { data, error } = await supabase.functions.invoke('create-payment', {
         body: JSON.stringify({
           data: {
@@ -126,13 +129,16 @@ const PaymentPage: React.FC = () => {
       console.log("Function response:", data, error);
       
       if (error) {
+        console.error("Stripe function error:", error);
         throw new Error(error.message || "Problem z utworzeniem płatności");
       }
       
       if (!data || !data.url) {
+        console.error("Missing URL in response:", data);
         throw new Error("Brak URL do strony płatności");
       }
       
+      // Przekieruj do strony płatności Stripe
       window.location.href = data.url;
     } catch (error) {
       console.error('Payment error:', error);
