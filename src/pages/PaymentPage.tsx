@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Info, Gift, ShieldCheck } from 'lucide-react';
+
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Info, Gift, ShieldCheck, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 // Stała przechowująca cenę - można łatwo zmienić w jednym miejscu
 const REPORT_PRICE = 29;
 const CURRENCY = 'zł';
 
 const PaymentPage: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const orderId = searchParams.get('orderId');
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     userName: '',
     userEmail: '',
@@ -16,6 +24,43 @@ const PaymentPage: React.FC = () => {
     partnerEmail: '',
     giftWrap: false
   });
+
+  // Pobierz dane zamówienia, jeśli istnieje orderId
+  useEffect(() => {
+    const fetchOrderDetails = async () => {
+      if (!orderId) return;
+
+      try {
+        setIsLoading(true);
+        const { data, error } = await supabase
+          .from('orders')
+          .select('*')
+          .eq('id', orderId)
+          .single();
+
+        if (error) throw error;
+
+        setFormData({
+          userName: data.user_name,
+          userEmail: data.user_email,
+          partnerName: data.partner_name,
+          partnerEmail: data.partner_email,
+          giftWrap: data.gift_wrap
+        });
+      } catch (error) {
+        console.error('Error fetching order:', error);
+        toast({
+          variant: "destructive", 
+          title: "Błąd",
+          description: "Nie udało się pobrać danych zamówienia.",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOrderDetails();
+  }, [orderId, toast]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -26,29 +71,86 @@ const PaymentPage: React.FC = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const createOrder = async () => {
+    try {
+      // Jeśli mamy orderId, to zamówienie już istnieje
+      if (orderId) {
+        return orderId;
+      }
+
+      // Utwórz nowe zamówienie
+      const { data, error } = await supabase
+        .from('orders')
+        .insert([
+          {
+            user_name: formData.userName,
+            user_email: formData.userEmail,
+            partner_name: formData.partnerName,
+            partner_email: formData.partnerEmail,
+            gift_wrap: formData.giftWrap,
+            price: REPORT_PRICE
+          }
+        ])
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data.id;
+    } catch (error) {
+      console.error('Error creating order:', error);
+      throw error;
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Przygotowanie danych do przekazania do Stripe
-    const paymentData = {
-      price: REPORT_PRICE,
-      currency: CURRENCY,
-      product: 'Secret Sparks Report',
-      customer: {
-        name: formData.userName,
-        email: formData.userEmail
-      },
-      partner: {
-        name: formData.partnerName,
-        email: formData.partnerEmail
-      },
-      giftWrap: formData.giftWrap
-    };
+    if (isLoading) return;
     
-    console.log('Payment data for Stripe:', paymentData);
-    
-    // Tutaj byłoby przekierowanie do Stripe
-    alert(`Przejście do płatności - kwota: ${REPORT_PRICE} ${CURRENCY}`);
+    try {
+      setIsLoading(true);
+      
+      // Utwórz lub pobierz istniejące zamówienie
+      const newOrderId = await createOrder();
+      
+      // Wywołaj edge function do utworzenia sesji płatności
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-payment`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          data: {
+            price: REPORT_PRICE,
+            currency: 'pln',
+            user_name: formData.userName,
+            user_email: formData.userEmail,
+            partner_name: formData.partnerName,
+            partner_email: formData.partnerEmail,
+            gift_wrap: formData.giftWrap,
+            order_id: newOrderId
+          }
+        }),
+      });
+      
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Problem z utworzeniem płatności');
+      }
+      
+      const { url } = await res.json();
+      
+      // Przekieruj do strony płatności Stripe
+      window.location.href = url;
+    } catch (error) {
+      console.error('Payment error:', error);
+      toast({
+        variant: "destructive",
+        title: "Błąd płatności",
+        description: error.message || "Nie udało się przetworzyć płatności. Spróbuj ponownie.",
+      });
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -75,6 +177,7 @@ const PaymentPage: React.FC = () => {
                 value={formData.userName}
                 onChange={handleInputChange}
                 required
+                disabled={isLoading}
                 className="w-full h-12 px-4 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary"
               />
               
@@ -85,6 +188,7 @@ const PaymentPage: React.FC = () => {
                 value={formData.userEmail}
                 onChange={handleInputChange}
                 required
+                disabled={isLoading}
                 className="w-full h-12 px-4 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary"
               />
               
@@ -94,6 +198,7 @@ const PaymentPage: React.FC = () => {
                 value={formData.partnerName}
                 onChange={handleInputChange}
                 required
+                disabled={isLoading}
                 className="w-full h-12 px-4 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary"
               />
               
@@ -104,6 +209,7 @@ const PaymentPage: React.FC = () => {
                 value={formData.partnerEmail}
                 onChange={handleInputChange}
                 required
+                disabled={isLoading}
                 className="w-full h-12 px-4 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary"
               />
 
@@ -112,6 +218,7 @@ const PaymentPage: React.FC = () => {
                   type="checkbox"
                   checked={formData.giftWrap}
                   onChange={() => handleCheckboxChange('giftWrap', !formData.giftWrap)}
+                  disabled={isLoading}
                   className="w-4 h-4 accent-purple-800"
                 />
                 <Gift className="text-yellow-600 w-5 h-5" />
@@ -128,8 +235,16 @@ const PaymentPage: React.FC = () => {
                   type="submit"
                   className="w-full max-w-xs px-10 py-3 rounded-full font-medium"
                   style={{ backgroundColor: '#800000' }}
+                  disabled={isLoading}
                 >
-                  Zapłać {REPORT_PRICE} {CURRENCY}
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Przetwarzanie...
+                    </>
+                  ) : (
+                    <>Zapłać {REPORT_PRICE} {CURRENCY}</>
+                  )}
                 </Button>
                 
                 <Link to="/survey" className="w-full flex justify-center">
@@ -137,6 +252,7 @@ const PaymentPage: React.FC = () => {
                     type="button" 
                     variant="outline"
                     className="max-w-xs py-2 px-6 rounded-full font-medium"
+                    disabled={isLoading}
                   >
                     Wróć do ankiety
                   </Button>

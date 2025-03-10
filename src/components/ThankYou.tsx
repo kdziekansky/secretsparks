@@ -1,8 +1,12 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { CheckCircle, Info, Gift, ArrowRight, ShieldCheck } from 'lucide-react';
+import { CheckCircle, Info, Gift, ArrowRight, ShieldCheck, Loader2 } from 'lucide-react';
 import { useSurvey } from '@/contexts/SurveyContext';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 // Stała przechowująca cenę - można łatwo zmienić w jednym miejscu
 const REPORT_PRICE = 29;
@@ -11,6 +15,9 @@ const CURRENCY = 'zł';
 const ThankYou: React.FC = () => {
   const { resetSurvey } = useSurvey();
   const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     userName: '',
     userEmail: '',
@@ -29,35 +36,48 @@ const ThankYou: React.FC = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Przygotowanie danych do przekazania do Stripe
-    const paymentData = {
-      price: REPORT_PRICE,
-      currency: CURRENCY,
-      product: 'Secret Sparks Report',
-      customer: {
-        name: formData.userName,
-        email: formData.userEmail
-      },
-      partner: {
-        name: formData.partnerName,
-        email: formData.partnerEmail
-      },
-      sendNow: formData.sendNow,
-      giftWrap: formData.giftWrap
-    };
+    if (isSubmitting) return;
     
-    console.log('Payment data for Stripe:', paymentData);
-    
-    // Tutaj byłoby przekierowanie do Stripe
-    alert(`Przejście do płatności - kwota: ${REPORT_PRICE} ${CURRENCY}`);
+    try {
+      setIsSubmitting(true);
+      
+      // Utworzenie zamówienia w bazie danych
+      const { data, error } = await supabase
+        .from('orders')
+        .insert([
+          {
+            user_name: formData.userName,
+            user_email: formData.userEmail,
+            partner_name: formData.partnerName,
+            partner_email: formData.partnerEmail,
+            gift_wrap: formData.giftWrap,
+            price: REPORT_PRICE
+          }
+        ])
+        .select()
+        .single();
+
+      if (error) throw error;
+      
+      // Przekieruj do strony płatności z ID zamówienia
+      navigate(`/payment?orderId=${data.id}`);
+    } catch (error) {
+      console.error('Error creating order:', error);
+      toast({
+        variant: "destructive",
+        title: "Błąd",
+        description: "Nie udało się utworzyć zamówienia. Spróbuj ponownie.",
+      });
+      setIsSubmitting(false);
+    }
   };
   
   // Funkcja do powrotu do ankiety z usunięciem flagi thank-you
   const handleReturnToSurvey = () => {
-    window.location.href = '/survey';
+    resetSurvey();
   };
   
   // Jeśli jeszcze nie pokazujemy formularza płatności, pokaż ekran podziękowania
@@ -77,7 +97,7 @@ const ThankYou: React.FC = () => {
         </p>
         
         <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <Button onClick={resetSurvey} variant="outline">
+          <Button onClick={handleReturnToSurvey} variant="outline">
             Wypełnij ponownie
           </Button>
           
@@ -121,6 +141,7 @@ const ThankYou: React.FC = () => {
               value={formData.userName}
               onChange={handleInputChange}
               required
+              disabled={isSubmitting}
               className="w-full p-3 border rounded"
             />
             
@@ -131,6 +152,7 @@ const ThankYou: React.FC = () => {
               value={formData.userEmail}
               onChange={handleInputChange}
               required
+              disabled={isSubmitting}
               className="w-full p-3 border rounded"
             />
             
@@ -140,6 +162,7 @@ const ThankYou: React.FC = () => {
               value={formData.partnerName}
               onChange={handleInputChange}
               required
+              disabled={isSubmitting}
               className="w-full p-3 border rounded"
             />
             
@@ -150,6 +173,7 @@ const ThankYou: React.FC = () => {
               value={formData.partnerEmail}
               onChange={handleInputChange}
               required
+              disabled={isSubmitting}
               className="w-full p-3 border rounded"
             />
 
@@ -162,6 +186,7 @@ const ThankYou: React.FC = () => {
                     type="radio" 
                     checked={formData.sendNow} 
                     onChange={() => handleRadioChange('sendNow', true)}
+                    disabled={isSubmitting}
                     className="w-4 h-4 accent-purple-800"
                   />
                   <span>teraz</span>
@@ -172,6 +197,7 @@ const ThankYou: React.FC = () => {
                     type="radio" 
                     checked={!formData.sendNow} 
                     onChange={() => handleRadioChange('sendNow', false)}
+                    disabled={isSubmitting}
                     className="w-4 h-4 accent-purple-800"
                   />
                   <span>chcę wybrać</span>
@@ -184,6 +210,7 @@ const ThankYou: React.FC = () => {
                 type="checkbox"
                 checked={formData.giftWrap}
                 onChange={() => handleRadioChange('giftWrap', !formData.giftWrap)}
+                disabled={isSubmitting}
                 className="w-4 h-4 accent-purple-800"
               />
               <Gift className="text-yellow-600 w-5 h-5" />
@@ -195,20 +222,29 @@ const ThankYou: React.FC = () => {
               Grając, akceptujesz przyjazny <a href="#" className="underline">Regulamin</a> i <a href="#" className="underline">Politykę Prywatności</a>, która gwarantuje bezpieczeństwo Waszych danych. Usuniemy je po 7 dniach.
             </div>
 
-            <div className="flex flex-col sm:flex-row mt-6">
+            <div className="flex flex-col sm:flex-row gap-3 mt-6">
               <Button
                 type="submit"
                 className="w-full sm:w-auto px-10 py-3 rounded-full"
                 style={{ backgroundColor: '#800000' }}
+                disabled={isSubmitting}
               >
-                Zapłać {REPORT_PRICE} {CURRENCY}
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Przetwarzanie...
+                  </>
+                ) : (
+                  <>Zapłać {REPORT_PRICE} {CURRENCY}</>
+                )}
               </Button>
               
               <Button
                 type="button" 
                 variant="outline"
                 onClick={() => setShowPaymentForm(false)}
-                className="w-full sm:w-auto mt-2 sm:mt-0 sm:ml-2"
+                className="w-full sm:w-auto mt-2 sm:mt-0"
+                disabled={isSubmitting}
               >
                 Wróć
               </Button>

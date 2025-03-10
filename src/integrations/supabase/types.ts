@@ -9,7 +9,151 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      admin_users: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          password: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          password: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          password?: string
+        }
+        Relationships: []
+      }
+      orders: {
+        Row: {
+          created_at: string
+          gift_wrap: boolean
+          id: string
+          partner_email: string
+          partner_name: string
+          partner_survey_token: string | null
+          payment_id: string | null
+          price: number
+          status: string
+          updated_at: string
+          user_email: string
+          user_name: string
+        }
+        Insert: {
+          created_at?: string
+          gift_wrap?: boolean
+          id?: string
+          partner_email: string
+          partner_name: string
+          partner_survey_token?: string | null
+          payment_id?: string | null
+          price?: number
+          status?: string
+          updated_at?: string
+          user_email: string
+          user_name: string
+        }
+        Update: {
+          created_at?: string
+          gift_wrap?: boolean
+          id?: string
+          partner_email?: string
+          partner_name?: string
+          partner_survey_token?: string | null
+          payment_id?: string | null
+          price?: number
+          status?: string
+          updated_at?: string
+          user_email?: string
+          user_name?: string
+        }
+        Relationships: []
+      }
+      reports: {
+        Row: {
+          content: Json
+          created_at: string
+          id: string
+          order_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          content: Json
+          created_at?: string
+          id?: string
+          order_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          id?: string
+          order_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      survey_responses: {
+        Row: {
+          answer: number
+          created_at: string
+          game_level: string
+          id: string
+          order_id: string | null
+          partner_gender: string
+          question_id: string
+          user_gender: string
+          user_type: string
+        }
+        Insert: {
+          answer: number
+          created_at?: string
+          game_level: string
+          id?: string
+          order_id?: string | null
+          partner_gender: string
+          question_id: string
+          user_gender: string
+          user_type: string
+        }
+        Update: {
+          answer?: number
+          created_at?: string
+          game_level?: string
+          id?: string
+          order_id?: string | null
+          partner_gender?: string
+          question_id?: string
+          user_gender?: string
+          user_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "survey_responses_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
