@@ -55,6 +55,11 @@ const ThankYou: React.FC = () => {
     alert(`Przejście do płatności - kwota: ${REPORT_PRICE} ${CURRENCY}`);
   };
   
+  // Funkcja do powrotu do ankiety z usunięciem flagi thank-you
+  const handleReturnToSurvey = () => {
+    window.location.href = '/survey';
+  };
+  
   // Jeśli jeszcze nie pokazujemy formularza płatności, pokaż ekran podziękowania
   if (!showPaymentForm) {
     return (

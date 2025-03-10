@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import RatingScale from './RatingScale';
 import { useSurvey } from '@/contexts/SurveyContext';
-import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, Image as ImageIcon } from 'lucide-react';
 
 const QuestionCard: React.FC = () => {
   const {
@@ -16,8 +16,16 @@ const QuestionCard: React.FC = () => {
   
   const [isAnimating, setIsAnimating] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   
-  // UWAGA: Bezpośrednio sprawdzamy undefined, nie null
+  // Reset image state when question changes
+  useEffect(() => {
+    setImageLoaded(false);
+    setImageError(false);
+  }, [currentQuestion?.id]);
+  
+  // Bezpośrednio sprawdzamy undefined, nie null
   const hasAnswer = currentQuestion && 
                     answers[currentQuestion.id] !== undefined;
   
@@ -38,8 +46,8 @@ const QuestionCard: React.FC = () => {
     setIsAnimating(true);
     setTimeout(() => {
       if (isLastQuestion) {
-        localStorage.setItem('survey-completed', 'true');
-        window.location.href = '/survey#thank-you';
+        // Bezpośrednio przekieruj do strony płatności
+        window.location.href = '/payment';
       } else {
         nextQuestion();
         setShowFullDescription(false);
@@ -57,6 +65,17 @@ const QuestionCard: React.FC = () => {
     }, 300);
   };
   
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+    setImageError(false);
+  };
+  
+  const handleImageError = () => {
+    console.error(`Failed to load image for question ${currentQuestion?.id}:`, currentQuestion?.illustration);
+    setImageError(true);
+    setImageLoaded(false);
+  };
+  
   if (!currentQuestion) return null;
   
   const truncateDescription = (text: string, length = 150) => {
@@ -64,16 +83,60 @@ const QuestionCard: React.FC = () => {
     return text.substring(0, length) + '...';
   };
   
+  // Get question number from ID (for placeholder)
+  const questionNumber = currentQuestion.id.replace(/\D/g, '');
+  
   return (
     <div className={`glass-panel w-full max-w-4xl transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100 animate-slide-up'}`}>
       <div className="flex flex-col md:flex-row">
-       {/* Left side - Illustration */}
-<div className="md:w-2/5 p-6 flex items-center justify-center bg-secondary/30 rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none">
-  <div className="w-full max-w-xs bg-secondary/50 rounded-lg flex items-center justify-center text-muted-foreground" 
-       style={{ aspectRatio: '3/5' }}>
-    <span>Ilustracja {currentQuestion.id.replace(/\D/g, '')}</span>
-  </div>
-</div>
+        {/* Left side - Illustration */}
+        <div className="md:w-2/5 p-6 flex items-center justify-center bg-secondary/30 rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none">
+          {currentQuestion.illustration && !imageError ? (
+            <div className="w-full max-w-xs rounded-lg overflow-hidden" style={{ aspectRatio: '3/5' }}>
+              {/* Placeholder while image loads */}
+              {!imageLoaded && (
+                <div className="w-full h-full bg-secondary/50 flex flex-col items-center justify-center text-muted-foreground">
+                  <ImageIcon className="h-12 w-12 mb-2 opacity-50" />
+                  <span>Ładowanie...</span>
+                </div>
+              )}
+              
+              {/* Try to display SVG using object tag if it's an SVG */}
+              {currentQuestion.illustration.toLowerCase().endsWith('.svg') ? (
+                <object 
+                  data={currentQuestion.illustration} 
+                  type="image/svg+xml"
+                  className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                  onLoad={handleImageLoad}
+                  onError={handleImageError}
+                  aria-label={currentQuestion.text}
+                >
+                  <div className="w-full h-full bg-secondary/50 flex flex-col items-center justify-center text-muted-foreground">
+                    <ImageIcon className="h-12 w-12 mb-2 opacity-50" />
+                    <span>Ilustracja {questionNumber || currentQuestion.id}</span>
+                  </div>
+                </object>
+              ) : (
+                /* Normal image for non-SVG */
+                <img 
+                  src={currentQuestion.illustration} 
+                  alt={currentQuestion.text} 
+                  className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                  onLoad={handleImageLoad}
+                  onError={handleImageError}
+                />
+              )}
+            </div>
+          ) : (
+            <div 
+              className="w-full max-w-xs bg-secondary/50 rounded-lg flex flex-col items-center justify-center text-muted-foreground" 
+              style={{ aspectRatio: '3/5' }}
+            >
+              <ImageIcon className="h-12 w-12 mb-2 opacity-50" />
+              <span>Ilustracja {questionNumber || currentQuestion.id}</span>
+            </div>
+          )}
+        </div>
         
         {/* Right side - Question and rating */}
         <div className="md:w-3/5 p-6 md:p-8 flex flex-col">
@@ -152,7 +215,7 @@ const QuestionCard: React.FC = () => {
                   opacity: hasAnswer ? 1 : 0.5
                 }}
               >
-                <span style={{fontSize: '14px'}}>{isLastQuestion ? 'Zakończ' : 'Zapisz odpowiedź'}</span>
+                <span style={{fontSize: '14px'}}>{isLastQuestion ? 'Przejdź do płatności' : 'Zapisz odpowiedź'}</span>
                 <ArrowRight style={{width: '16px', height: '16px'}} />
               </button>
             </div>
@@ -163,4 +226,4 @@ const QuestionCard: React.FC = () => {
   );
 };
 
-export default QuestionCard;  
+export default QuestionCard;
