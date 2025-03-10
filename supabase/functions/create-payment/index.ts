@@ -2,8 +2,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import Stripe from 'https://esm.sh/stripe@12.4.0?target=deno';
 
-// Use dummy Stripe key if real key is not available yet
-const STRIPE_SECRET_KEY = Deno.env.get('STRIPE_SECRET_KEY') || 'sk_test_dummy_key_for_development';
+const STRIPE_SECRET_KEY = Deno.env.get('STRIPE_SECRET_KEY');
 
 const stripe = new Stripe(STRIPE_SECRET_KEY, {
   apiVersion: '2023-10-16',
@@ -17,7 +16,6 @@ const corsHeaders = {
 serve(async (req) => {
   console.log("Create payment function called");
   
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     console.log("Handling OPTIONS request");
     return new Response(null, { headers: corsHeaders });
@@ -25,21 +23,6 @@ serve(async (req) => {
 
   try {
     console.log("Processing payment request");
-    
-    // If we don't have a real Stripe key, return a test response
-    if (STRIPE_SECRET_KEY === 'sk_test_dummy_key_for_development') {
-      console.log("Using dummy Stripe key - returning test response");
-      return new Response(
-        JSON.stringify({
-          url: 'https://example.com/test-payment',
-          sessionId: 'test_session_id',
-        }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
-    }
     
     const body = await req.text();
     console.log("Request body:", body);
@@ -72,7 +55,6 @@ serve(async (req) => {
 
     console.log("Creating Stripe session with params:", { price, currency, order_id });
 
-    // Utwórz sesję płatności Stripe
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card', 'blik', 'p24'],
       line_items: [
@@ -83,7 +65,7 @@ serve(async (req) => {
               name: 'Secret Sparks Report',
               description: `Raport dla ${user_name} i ${partner_name}`,
             },
-            unit_amount: Math.round(price * 100), // Stripe używa wartości w groszach
+            unit_amount: Math.round(price * 100),
           },
           quantity: 1,
         },
