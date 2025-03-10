@@ -108,17 +108,7 @@ const PaymentPage: React.FC = () => {
       
       const newOrderId = await createOrder();
 
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://bqbgrjpxufblrgcoxpfk.supabase.co";
-      const functionUrl = `${supabaseUrl}/functions/v1/create-payment`;
-      
-      console.log("Calling edge function at:", functionUrl);
-      
-      const res = await fetch(functionUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
+      const { data, error } = await supabase.functions.invoke('create-payment', {
         body: JSON.stringify({
           data: {
             price: REPORT_PRICE,
@@ -133,37 +123,17 @@ const PaymentPage: React.FC = () => {
         }),
       });
       
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error("Error response:", errorText);
-        let errorMessage = "Problem z utworzeniem płatności";
-        
-        try {
-          const errorData = JSON.parse(errorText);
-          errorMessage = errorData.error || errorMessage;
-        } catch (parseError) {
-          console.error("Failed to parse error response:", parseError);
-        }
-        
-        throw new Error(errorMessage);
+      console.log("Function response:", data, error);
+      
+      if (error) {
+        throw new Error(error.message || "Problem z utworzeniem płatności");
       }
       
-      const responseText = await res.text();
-      console.log("Raw response:", responseText);
-      
-      let paymentData;
-      try {
-        paymentData = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error("Failed to parse JSON response:", parseError);
-        throw new Error("Nieprawidłowa odpowiedź z serwera płatności");
-      }
-      
-      if (!paymentData || !paymentData.url) {
+      if (!data || !data.url) {
         throw new Error("Brak URL do strony płatności");
       }
       
-      window.location.href = paymentData.url;
+      window.location.href = data.url;
     } catch (error) {
       console.error('Payment error:', error);
       toast.error("Błąd płatności", {
