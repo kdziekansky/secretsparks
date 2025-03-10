@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Info, Gift, ShieldCheck, Loader2 } from 'lucide-react';
@@ -6,15 +5,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
-// Stała przechowująca cenę - można łatwo zmienić w jednym miejscu
 const REPORT_PRICE = 29;
 const CURRENCY = 'zł';
 
 const PaymentPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get('orderId');
-  const { toast } = useToast();
+  const { toast: toastHook } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -25,7 +24,6 @@ const PaymentPage: React.FC = () => {
     giftWrap: false
   });
 
-  // Pobierz dane zamówienia, jeśli istnieje orderId
   useEffect(() => {
     const fetchOrderDetails = async () => {
       if (!orderId) return;
@@ -49,7 +47,7 @@ const PaymentPage: React.FC = () => {
         });
       } catch (error) {
         console.error('Error fetching order:', error);
-        toast({
+        toastHook({
           variant: "destructive", 
           title: "Błąd",
           description: "Nie udało się pobrać danych zamówienia.",
@@ -60,7 +58,7 @@ const PaymentPage: React.FC = () => {
     };
 
     fetchOrderDetails();
-  }, [orderId, toast]);
+  }, [orderId, toastHook]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -73,12 +71,10 @@ const PaymentPage: React.FC = () => {
 
   const createOrder = async () => {
     try {
-      // Jeśli mamy orderId, to zamówienie już istnieje
       if (orderId) {
         return orderId;
       }
 
-      // Utwórz nowe zamówienie
       const { data, error } = await supabase
         .from('orders')
         .insert([
@@ -110,14 +106,18 @@ const PaymentPage: React.FC = () => {
     try {
       setIsLoading(true);
       
-      // Utwórz lub pobierz istniejące zamówienie
       const newOrderId = await createOrder();
+
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://bqbgrjpxufblrgcoxpfk.supabase.co";
+      const functionUrl = `${supabaseUrl}/functions/v1/create-payment`;
       
-      // Wywołaj edge function do utworzenia sesji płatności
-      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-payment`, {
+      console.log("Calling edge function at:", functionUrl);
+      
+      const res = await fetch(functionUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({
           data: {
@@ -134,19 +134,39 @@ const PaymentPage: React.FC = () => {
       });
       
       if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || 'Problem z utworzeniem płatności');
+        const errorText = await res.text();
+        console.error("Error response:", errorText);
+        let errorMessage = "Problem z utworzeniem płatności";
+        
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.error || errorMessage;
+        } catch (parseError) {
+          console.error("Failed to parse error response:", parseError);
+        }
+        
+        throw new Error(errorMessage);
       }
       
-      const { url } = await res.json();
+      const responseText = await res.text();
+      console.log("Raw response:", responseText);
       
-      // Przekieruj do strony płatności Stripe
-      window.location.href = url;
+      let paymentData;
+      try {
+        paymentData = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error("Failed to parse JSON response:", parseError);
+        throw new Error("Nieprawidłowa odpowiedź z serwera płatności");
+      }
+      
+      if (!paymentData || !paymentData.url) {
+        throw new Error("Brak URL do strony płatności");
+      }
+      
+      window.location.href = paymentData.url;
     } catch (error) {
       console.error('Payment error:', error);
-      toast({
-        variant: "destructive",
-        title: "Błąd płatności",
+      toast.error("Błąd płatności", {
         description: error.message || "Nie udało się przetworzyć płatności. Spróbuj ponownie.",
       });
       setIsLoading(false);
@@ -157,7 +177,6 @@ const PaymentPage: React.FC = () => {
     <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6">
       <div className="glass-panel w-full max-w-5xl animate-fade-in">
         <div className="flex flex-col lg:flex-row">
-          {/* Lewa kolumna - formularz */}
           <div className="lg:w-1/2 p-8">
             <h1 className="text-2xl font-bold mb-2">Dokończ zamówienie 👋</h1>
             
@@ -265,7 +284,6 @@ const PaymentPage: React.FC = () => {
             </form>
           </div>
 
-          {/* Prawa kolumna - podgląd wiadomości */}
           <div className="lg:w-1/2 bg-gray-50 p-8 rounded-r-2xl">
             <div className="text-center text-sm text-gray-500 mb-6 font-medium">
               TA WIADOMOŚĆ ZOSTANIE WYSŁANA
