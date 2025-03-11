@@ -9,13 +9,14 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [dataFetched, setDataFetched] = useState(false);
+  const [orderFetched, setOrderFetched] = useState(false);
 
-  // Fetch order question sequence for partners
+  // Fetch order data and question sequence for partners
   useEffect(() => {
+    // Skip if we've already fetched successfully or if we don't have a token
+    if (!partnerToken || dataFetched || orderFetched) return;
+    
     const fetchOrderData = async () => {
-      // Don't fetch if we've already fetched successfully or if we don't have a token
-      if (!partnerToken || dataFetched) return;
-      
       setIsLoading(true);
       setError(null);
       
@@ -35,39 +36,40 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
         
         console.log('Found order with ID:', orderData.id);
         setPartnerOrderId(orderData.id);
+        setOrderFetched(true);
         
-        // WAŻNA ZMIANA: Sprawdź, czy zamówienie ma zapisaną sekwencję pytań z zamówienia oryginału
-        if (orderData.user_question_sequence && Array.isArray(orderData.user_question_sequence) && orderData.user_question_sequence.length > 0) {
+        // Use the pre-saved question sequence if available
+        if (orderData.user_question_sequence && 
+            Array.isArray(orderData.user_question_sequence) && 
+            orderData.user_question_sequence.length > 0) {
           console.log('Using pre-saved question sequence from order:', orderData.user_question_sequence);
           setSelectedQuestionIds(orderData.user_question_sequence);
+          setDataFetched(true);
           toast.success('Ankieta załadowana pomyślnie');
         } else {
-          // Jeśli nie ma zapisanej sekwencji w zamówieniu, spróbuj pobrać z odpowiedzi użytkownika
-          console.log('No pre-saved question sequence, fetching from user responses');
+          console.log('No pre-saved question sequence in order, fetching from user responses');
           await fetchOrderQuestionSequence(orderData.id);
         }
-        
-        // Mark data as fetched to prevent further fetches
-        setDataFetched(true);
       } catch (err: any) {
         console.error('Error in fetchOrderData:', err);
         setError(err.message || 'Wystąpił błąd podczas ładowania ankiety');
+        // Mark as fetched to prevent infinite retries
+        setOrderFetched(true);
       } finally {
         setIsLoading(false);
       }
     };
 
-    // Separate function to fetch question sequence
+    // Separate function to fetch question sequence from responses
     const fetchOrderQuestionSequence = async (orderId: string) => {
       try {
         console.log('Fetching question sequence for order:', orderId);
         
-        // IMPROVED: Fetch user responses to get the exact sequence of questions
         const { data, error } = await supabase
           .from('survey_responses')
           .select('question_id, created_at')
           .eq('order_id', orderId)
-          .eq('user_type', 'user')  // Get original user's responses
+          .eq('user_type', 'user')
           .order('created_at', { ascending: true });
         
         if (error) {
@@ -88,7 +90,7 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
             
           console.log('Fetched question sequence from user responses:', questionIds);
           
-          // Zapisz sekwencję pytań z powrotem do zamówienia, aby przyspieszyć przyszłe ładowanie
+          // Save sequence back to order for future use if it's not already there
           try {
             await supabase
               .from('orders')
@@ -100,21 +102,22 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
           }
           
           setSelectedQuestionIds(questionIds);
+          setDataFetched(true);
           toast.success('Ankieta załadowana pomyślnie');
         } else {
           console.log('No existing question sequence found for this order');
           setSelectedQuestionIds([]);
+          setDataFetched(true); // Mark as fetched even if empty to prevent refetching
           setError('Nie znaleziono odpowiedzi zamawiającego, ankieta partnera może nie być identyczna');
         }
       } catch (err) {
         console.error('Failed to fetch question sequence:', err);
+        setDataFetched(true); // Mark as fetched even on error to prevent refetching
       }
     };
 
-    if (partnerToken) {
-      fetchOrderData();
-    }
-  }, [partnerToken, dataFetched]);
+    fetchOrderData();
+  }, [partnerToken, dataFetched, orderFetched]);
 
   return {
     partnerOrderId,

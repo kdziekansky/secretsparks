@@ -34,6 +34,7 @@ export type Database = {
         Row: {
           archived: boolean
           created_at: string
+          emails_sent: boolean | null
           game_level: string | null
           gift_wrap: boolean
           id: string
@@ -48,10 +49,12 @@ export type Database = {
           user_email: string
           user_gender: string | null
           user_name: string
+          user_question_sequence: string[] | null
         }
         Insert: {
           archived?: boolean
           created_at?: string
+          emails_sent?: boolean | null
           game_level?: string | null
           gift_wrap?: boolean
           id?: string
@@ -66,10 +69,12 @@ export type Database = {
           user_email: string
           user_gender?: string | null
           user_name: string
+          user_question_sequence?: string[] | null
         }
         Update: {
           archived?: boolean
           created_at?: string
+          emails_sent?: boolean | null
           game_level?: string | null
           gift_wrap?: boolean
           id?: string
@@ -84,6 +89,7 @@ export type Database = {
           user_email?: string
           user_gender?: string | null
           user_name?: string
+          user_question_sequence?: string[] | null
         }
         Relationships: []
       }

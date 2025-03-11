@@ -65,20 +65,18 @@ export const useQuestionSelection = (
   isPartnerSurvey: boolean = false
 ) => {
   return useMemo(() => {
-    if (!config.isConfigComplete) return [];
-    
-    // For partner survey with existing questions
+    // For partner survey with existing question IDs, ensure we use the user's sequence
     if (isPartnerSurvey && selectedQuestionIds.length > 0) {
       console.log('Using predefined question sequence for partner:', selectedQuestionIds);
       
-      // IMPROVED: Get questions in the exact same order as the user answered them
+      // Get questions in the exact same order as the user answered them
       const orderedQuestions = selectedQuestionIds
         .map(id => questions.find(q => q.id === id))
         .filter((q): q is Question => q !== undefined);
         
       console.log(`Found ${orderedQuestions.length} matching questions from ${selectedQuestionIds.length} ids`);
       
-      // Jeśli znaleziono mniej pytań niż potrzeba, wyświetl ostrzeżenie
+      // If we found fewer questions than expected, log a warning
       if (orderedQuestions.length < selectedQuestionIds.length) {
         console.warn(`Some question IDs were not found in the question database: ${
           selectedQuestionIds.filter(id => !questions.some(q => q.id === id)).join(', ')
@@ -87,6 +85,9 @@ export const useQuestionSelection = (
       
       return orderedQuestions;
     }
+    
+    // Don't generate questions if config is not complete
+    if (!config.isConfigComplete) return [];
     
     // For regular user survey, generate random questions
     return getRandomizedQuestions(questions, config, 15);
