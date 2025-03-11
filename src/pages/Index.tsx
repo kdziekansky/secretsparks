@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, ArrowRight, Check, Menu, X, Sparkles, Heart, ExternalLink, Clock, Zap, Shield } from 'lucide-react';
@@ -195,8 +194,8 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Scientific Section - Bento Grid - Consistent spacing */}
-      <section className="section-padding pt-16 md:pt-24">
+      {/* Scientific Section - Bento Grid - Reduced spacing */}
+      <section className="section-padding pt-8 md:pt-12">
         <div className="section-container">
           <h2 className="section-title">
             Naukowy punkt widzenia
@@ -271,8 +270,8 @@ const Index = () => {
         </div>
       </section>
 
-      {/* How It Works - Bento Timeline - Consistent spacing */}
-      <section className="section-padding pt-16 md:pt-24">
+      {/* How It Works - Bento Timeline - Reduced spacing */}
+      <section className="section-padding pt-8 md:pt-12">
         <div className="section-container">
           <h2 className="section-title">
             Krok po kroku
@@ -333,8 +332,8 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Security Section - Bento Grid - Consistent spacing */}
-      <section className="section-padding pt-16 md:pt-24">
+      {/* Security Section - Bento Grid - Reduced spacing */}
+      <section className="section-padding pt-8 md:pt-12">
         <div className="section-container">
           <div className="bento-grid grid-cols-1 md:grid-cols-3">
             {/* Main security card */}
@@ -392,8 +391,8 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Final CTA Section - Consistent width with other sections */}
-      <section className="section-padding pt-16 md:pt-24 pb-24 md:pb-32 text-center">
+      {/* Final CTA Section - Reduced spacing */}
+      <section className="section-padding pt-8 md:pt-12 pb-24 md:pb-32 text-center">
         <div className="section-container">
           <div className="mx-auto p-12 rounded-3xl glass-panel animate-fade-in">
             <div className="hero-badge">
