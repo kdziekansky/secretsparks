@@ -94,10 +94,16 @@ const AdminOrders: React.FC = () => {
   const {
     data: surveyResponses,
     isLoading: responsesLoading,
+    refetch: refetchResponses
   } = useQuery({
     queryKey: ['survey-responses', selectedOrder?.id],
     queryFn: async () => {
-      if (!selectedOrder?.id) return null;
+      if (!selectedOrder?.id) {
+        console.log('No selected order ID for fetching responses');
+        return null;
+      }
+      
+      console.log(`Fetching survey responses for order ID: ${selectedOrder.id}`);
       
       const { data, error } = await supabase
         .from('survey_responses')
@@ -106,9 +112,11 @@ const AdminOrders: React.FC = () => {
 
       if (error) {
         console.error('Error fetching survey responses:', error);
+        toast.error(`Błąd pobierania odpowiedzi: ${error.message}`);
         throw error;
       }
       
+      console.log(`Found ${data?.length || 0} survey responses:`, data);
       return data as SurveyResponse[];
     },
     enabled: isAuthenticated && !!selectedOrder?.id,
@@ -143,6 +151,14 @@ const AdminOrders: React.FC = () => {
     setSelectedOrder(order);
     setActiveTab("responses");
     setIsDetailsOpen(true);
+    
+    // Force refetch responses when directly viewing responses tab
+    setTimeout(() => {
+      if (refetchResponses) {
+        console.log('Force refetching responses for order:', order.id);
+        refetchResponses();
+      }
+    }, 100);
   };
 
   const filteredOrders = orders?.filter(order => {
@@ -320,7 +336,13 @@ const AdminOrders: React.FC = () => {
               </DialogDescription>
             </DialogHeader>
 
-            <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
+            <Tabs defaultValue={activeTab} onValueChange={(value) => {
+            setActiveTab(value);
+            if (value === "responses" && refetchResponses) {
+              console.log('Tab changed to responses, refetching');
+              refetchResponses();
+            }
+          }} className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="details">Szczegóły</TabsTrigger>
                 <TabsTrigger value="responses">Odpowiedzi</TabsTrigger>

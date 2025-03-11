@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { FileDown, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -40,10 +40,18 @@ interface ReportGeneratorProps {
 
 const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses, order }) => {
   const [isGenerating, setIsGenerating] = useState(false);
+  const [hasResponses, setHasResponses] = useState(false);
 
   // Add additional logging to debug responses
   console.log("ReportGenerator received responses:", responses);
   console.log("ReportGenerator received order:", order);
+
+  // Effect to check for responses on mount and when responses change
+  useEffect(() => {
+    const hasValidResponses = !!(responses && responses.length > 0);
+    console.log("Setting hasResponses to:", hasValidResponses);
+    setHasResponses(hasValidResponses);
+  }, [responses]);
 
   const generatePDF = () => {
     if (!order) {
@@ -135,7 +143,6 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses, order }) =
     }
   };
 
-  const hasResponses = responses && responses.length > 0;
   const buttonDisabled = isGenerating || !order || !hasResponses;
   
   console.log("Button disabled status:", buttonDisabled, { hasResponses, isGenerating, hasOrder: !!order });
@@ -163,7 +170,9 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses, order }) =
       
       {!hasResponses && (
         <p className="text-sm text-muted-foreground mt-2">
-          Brak odpowiedzi ankietowych dla tego zamówienia.
+          {responses === null 
+            ? "Ładowanie odpowiedzi ankietowych..." 
+            : "Brak odpowiedzi ankietowych dla tego zamówienia."}
         </p>
       )}
     </div>
