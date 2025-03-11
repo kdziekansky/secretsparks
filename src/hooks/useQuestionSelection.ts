@@ -65,9 +65,9 @@ export const useQuestionSelection = (
   isPartnerSurvey: boolean = false
 ) => {
   return useMemo(() => {
-    // For partner survey with existing question IDs, ensure we use the user's sequence
+    // For partner survey with existing question IDs, ensure we use EXACTLY the user's sequence
     if (isPartnerSurvey && selectedQuestionIds.length > 0) {
-      console.log('Using predefined question sequence for partner:', selectedQuestionIds);
+      console.log('Partner survey: Using pre-defined question sequence:', selectedQuestionIds);
       
       // Create a map of all questions by ID for quick lookup
       const questionMap = new Map(questions.map(q => [q.id, q]));
@@ -85,6 +85,8 @@ export const useQuestionSelection = (
         .filter((q): q is Question => q !== null);
       
       console.log(`Successfully mapped ${mappedQuestions.length} partner questions out of ${selectedQuestionIds.length} IDs`);
+      
+      // Important: Return the mapped questions as is, without any further filtering or processing
       return mappedQuestions;
     }
     

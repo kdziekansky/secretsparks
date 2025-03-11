@@ -38,7 +38,7 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
         setPartnerOrderId(orderData.id);
         setOrderFetched(true);
         
-        // First try to use the sequence saved in the order itself
+        // PRIORITY 1: Use the sequence saved in the order itself
         if (orderData.user_question_sequence && 
             Array.isArray(orderData.user_question_sequence) && 
             orderData.user_question_sequence.length > 0) {
@@ -47,12 +47,13 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
           setSelectedQuestionIds(orderData.user_question_sequence);
           setDataFetched(true);
           toast.success('Ankieta załadowana pomyślnie');
+          setIsLoading(false);
           return;
         }
         
         console.log('No pre-saved question sequence in order, fetching from user responses');
           
-        // If no sequence is stored in the order, get it from the user's responses
+        // PRIORITY 2: If no sequence is stored in the order, get it from the user's responses
         const { data: userResponses, error: responsesError } = await supabase
           .from('survey_responses')
           .select('question_id, created_at')
@@ -72,7 +73,7 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
         
         // Extract question IDs in order they were answered
         const questionIds = userResponses.map(response => response.question_id);
-        console.log(`Found ${questionIds.length} questions from user responses`);
+        console.log(`Found ${questionIds.length} questions from user responses:`, questionIds);
         
         // Save the question sequence to the order for future reference
         const { error: updateError } = await supabase

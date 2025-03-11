@@ -51,8 +51,8 @@ Deno.serve(async (req) => {
       )
     }
 
-    // STEP 1: First, ALWAYS fetch the user's question sequence
-    console.log('Fetching user question sequence for partner survey')
+    // STEP 1: FIRST - Get actual user responses and create the question sequence
+    console.log('STEP 1: Fetching user responses to build question sequence')
     const { data: userResponses, error: responsesError } = await supabase
       .from('survey_responses')
       .select('question_id, created_at')
@@ -71,11 +71,11 @@ Deno.serve(async (req) => {
     }
 
     // Extract question IDs in order they were answered
-    console.log(`Found ${userResponses.length} user responses`)
     const questionIds = userResponses.map(response => response.question_id)
+    console.log(`Found ${questionIds.length} questions from user responses:`, questionIds)
     
-    // STEP 2: Save question sequence to order BEFORE sending any emails
-    console.log(`Saving ${questionIds.length} question IDs to order`)
+    // STEP 2: Save question sequence to order BEFORE creating the partner survey link
+    console.log('STEP 2: Saving question sequence to order')
     const { error: updateError } = await supabase
       .from('orders')
       .update({ user_question_sequence: questionIds })
@@ -86,9 +86,8 @@ Deno.serve(async (req) => {
       throw new Error(`Failed to save question sequence: ${updateError.message}`)
     }
     
-    console.log('Successfully saved question sequence to order')
-    
-    // STEP 3: Verify that the sequence was saved correctly
+    // STEP 3: Verify the sequence was saved correctly
+    console.log('STEP 3: Verifying question sequence was saved')
     const { data: updatedOrder, error: refetchError } = await supabase
       .from('orders')
       .select('*')
@@ -100,13 +99,14 @@ Deno.serve(async (req) => {
     }
     
     if (!updatedOrder.user_question_sequence || updatedOrder.user_question_sequence.length === 0) {
+      console.error('Verification failed: Question sequence not found in order after update')
       throw new Error('Failed to save question sequence to order')
     }
     
-    console.log(`Order now has ${updatedOrder.user_question_sequence.length} questions in sequence`)
+    console.log(`Verification successful: Order now has ${updatedOrder.user_question_sequence.length} questions in sequence:`, updatedOrder.user_question_sequence)
 
     // STEP 4: Send thank you email to user
-    console.log(`Sending thank you email to user: ${updatedOrder.user_email}`)
+    console.log('STEP 4: Sending thank you email to user')
     const userEmailResult = await resend.emails.send({
       from: 'Ankieta Seksualna <no-reply@seks-ankieta.pl>',
       to: updatedOrder.user_email,
@@ -125,9 +125,9 @@ Deno.serve(async (req) => {
 
     console.log('User email sent:', userEmailResult)
 
-    // STEP 5: Send invitation email to partner
+    // STEP 5: Send invitation email to partner with link to the survey
     const partnerSurveyUrl = `${new URL(req.url).origin}/survey?token=${updatedOrder.partner_survey_token}`
-    console.log(`Sending invitation email to partner: ${updatedOrder.partner_email}`)
+    console.log('STEP 5: Sending invitation email to partner')
     console.log(`Partner survey URL: ${partnerSurveyUrl}`)
     
     const partnerEmailResult = await resend.emails.send({
@@ -168,7 +168,8 @@ Deno.serve(async (req) => {
         message: 'Emails sent successfully',
         userEmail: userEmailResult,
         partnerEmail: partnerEmailResult,
-        questionCount: updatedOrder.user_question_sequence.length
+        questionCount: updatedOrder.user_question_sequence.length,
+        questions: updatedOrder.user_question_sequence
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
