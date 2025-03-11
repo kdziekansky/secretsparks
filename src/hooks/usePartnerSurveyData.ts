@@ -8,11 +8,13 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
   const [selectedQuestionIds, setSelectedQuestionIds] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [dataFetched, setDataFetched] = useState(false);
 
   // Fetch order question sequence for partners
   useEffect(() => {
     const fetchOrderData = async () => {
-      if (!partnerToken) return;
+      // Don't fetch if we've already fetched successfully or if we don't have a token
+      if (!partnerToken || dataFetched) return;
       
       setIsLoading(true);
       setError(null);
@@ -37,6 +39,8 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
         // After finding the order, fetch the exact sequence of questions that the user answered
         await fetchOrderQuestionSequence(orderData.id);
         
+        // Mark data as fetched to prevent further fetches
+        setDataFetched(true);
       } catch (err: any) {
         console.error('Error in fetchOrderData:', err);
         setError(err.message || 'Wystąpił błąd podczas ładowania ankiety');
@@ -90,12 +94,13 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
     if (partnerToken) {
       fetchOrderData();
     }
-  }, [partnerToken]);
+  }, [partnerToken, dataFetched]);
 
   return {
     partnerOrderId,
     selectedQuestionIds,
     error,
-    isLoading
+    isLoading,
+    dataFetched
   };
 };

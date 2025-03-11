@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSurvey } from '@/contexts/SurveyContext';
@@ -35,11 +36,13 @@ const SurveyPage: React.FC = () => {
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   const [isLoadingOrder, setIsLoadingOrder] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [orderFetched, setOrderFetched] = useState<boolean>(false);
   
   useEffect(() => {
     // Fetch order details if this is a partner survey
     const fetchOrderDetails = async () => {
-      if (!partnerToken) return;
+      // Prevent refetching if already fetched
+      if (!partnerToken || orderFetched) return;
       
       setIsLoadingOrder(true);
       setError(null);
@@ -119,13 +122,16 @@ const SurveyPage: React.FC = () => {
       setPartnerGender(partnerGender as 'male' | 'female');
       setGameLevel(gameLevel as 'discover' | 'explore' | 'exceed');
       
+      // Mark as fetched to prevent repeated fetches
+      setOrderFetched(true);
+      
       toast.success('Ankieta załadowana pomyślnie');
     };
     
-    if (partnerToken) {
+    if (partnerToken && !orderFetched) {
       fetchOrderDetails();
     }
-  }, [partnerToken, setUserGender, setPartnerGender, setGameLevel, setOrderId]);
+  }, [partnerToken, orderFetched, setUserGender, setPartnerGender, setGameLevel, setOrderId]);
   
   if (isLoadingOrder) {
     return (

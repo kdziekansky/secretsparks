@@ -30,8 +30,10 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     isConfigComplete: false
   });
 
+  // Get partner survey data from the hook
   const { partnerOrderId, selectedQuestionIds, error, isLoading } = usePartnerSurveyData(partnerToken);
   
+  // Get filtered questions based on config
   const filteredQuestions = useQuestionSelection(
     questions,
     surveyConfig,
@@ -208,8 +210,6 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const completeConfig = useCallback(() => {    
     setSurveyConfig(prev => ({ ...prev, isConfigComplete: true }));
     setCurrentQuestionIndex(0);
-    
-    // No need for setSelectedQuestionIds as it's now handled by the hook
   }, []);
 
   const value = {
@@ -234,8 +234,9 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     filteredQuestions,
     saveAnswer,
     setOrderId: (orderId: string) => {
-      // This is now just a stub since partnerOrderId is managed by the hook
-      return partnerOrderId;
+      // This is just a stub since partnerOrderId is now managed by the hook
+      console.log('Order ID set:', orderId);
+      return orderId;
     },
     getOrderId: () => partnerOrderId,
   };
