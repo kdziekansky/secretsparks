@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import RatingScale from './RatingScale';
 import { useSurvey } from '@/contexts/SurveyContext';
 import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, Image as ImageIcon } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface QuestionCardProps {
   isPartnerSurvey?: boolean;
@@ -11,6 +12,7 @@ interface QuestionCardProps {
 
 const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const partnerToken = searchParams.get('token');
   
   const {
@@ -49,36 +51,42 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
   const handleNext = async () => {
     // Dodatkowe zabezpieczenie
     if (!hasAnswer) {
-      alert("Wybierz opcję, aby kontynuować");
+      toast.error("Wybierz opcję, aby kontynuować");
       return;
     }
     
     setIsAnimating(true);
     
     // If it's the last question, save the answer before redirecting
-    if (isLastQuestion && isPartnerSurvey) {
-      try {
-        await saveAnswer(true);
-        console.log('Final answer saved successfully');
-      } catch (error) {
-        console.error('Error saving final answer:', error);
+    if (isLastQuestion) {
+      if (isPartnerSurvey) {
+        try {
+          await saveAnswer(true);
+          console.log('Final answer saved successfully');
+        } catch (error) {
+          console.error('Error saving final answer:', error);
+          toast.error("Wystąpił błąd podczas zapisywania odpowiedzi");
+        }
       }
-    }
-    
-    setTimeout(() => {
-      if (isLastQuestion) {
+      
+      setTimeout(() => {
         // If it's a partner survey, redirect to thank you page
         if (isPartnerSurvey) {
           window.location.href = '/thank-you';
         } else {
-          window.location.href = '/payment';
+          console.log('Navigating to payment page with all answers:', answers);
+          navigate('/payment');
         }
-      } else {
+        setIsAnimating(false);
+      }, 300);
+    } else {
+      // For non-last questions, just move to the next one
+      setTimeout(() => {
         nextQuestion();
         setShowFullDescription(false);
-      }
-      setIsAnimating(false);
-    }, 300);
+        setIsAnimating(false);
+      }, 300);
+    }
   };
   
   const handlePrev = () => {
@@ -117,7 +125,6 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     : 'Zapisz odpowiedź';
   
   return (
-    
     <div className={`glass-panel w-full max-w-4xl transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100 animate-slide-up'}`}>
       <div className="flex flex-col md:flex-row">
         {/* Left side - Illustration */}

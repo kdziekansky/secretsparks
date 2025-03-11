@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSurvey } from '@/contexts/SurveyContext';
 import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -28,9 +28,29 @@ const PaymentPage: React.FC = () => {
   const [showErrors, setShowErrors] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isProcessing, setIsProcessing] = useState(false);
+  const [surveyCompleted, setSurveyCompleted] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const orderId = searchParams.get('orderId');
 
   const { answers, surveyConfig } = useSurvey();
+  
+  // Check if survey is completed when component mounts
+  useEffect(() => {
+    const checkSurveyStatus = () => {
+      const answersCount = Object.keys(answers).length;
+      console.log('Current answers count:', answersCount);
+      
+      // Consider survey completed if there are answers or if coming back from payment with orderId
+      if (answersCount > 0 || orderId) {
+        setSurveyCompleted(true);
+      } else {
+        setSurveyCompleted(false);
+      }
+    };
+    
+    checkSurveyStatus();
+  }, [answers, orderId]);
   
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -131,7 +151,8 @@ const PaymentPage: React.FC = () => {
       return;
     }
     
-    if (Object.keys(answers).length === 0) {
+    // Even if orderId exists, still check if there are answers in context
+    if (!surveyCompleted && Object.keys(answers).length === 0) {
       toast.error('Nie możesz złożyć zamówienia bez wypełnienia ankiety. Proszę wypełnij ankietę.');
       navigate('/survey');
       return;
@@ -166,23 +187,71 @@ const PaymentPage: React.FC = () => {
       // Save survey responses and wait for completion
       const responsesSaved = await saveResponses(orderData.id);
       
-      if (!responsesSaved) {
+      if (!responsesSaved && Object.keys(answers).length > 0) {
         console.error('Failed to save survey responses');
         toast.error('Wystąpił błąd podczas zapisywania odpowiedzi z ankiety. Spróbuj ponownie później.');
         setIsProcessing(false);
         return;
       }
       
-      // Redirect to payment gateway
-      // For now, just navigate to a thank you page
-      toast.success('Zamówienie złożone! Przekierowywanie do płatności...');
-      setTimeout(() => {
-        navigate('/thank-you');
-      }, 2000);
-      
-    } catch (error) {
-      console.error('Payment error:', error);
-      toast.error('Wystąpił błąd podczas przetwarzania płatności. Spróbuj ponownie.');
+      // Proceed to create payment using Supabase edge function
+      try {
+        console.log('Creating payment for order:', orderData.id);
+        
+        const { data, error } = await supabase.functions.invoke('create-payment', {
+          body: {
+            data: {
+              price: PRODUCT_PRICE + (giftWrap ? 20 : 0),
+              currency: 'pln',
+              user_name: userName,
+              user_email: userEmail,
+              partner_name: partnerName,
+              partner_email: partnerEmail,
+              gift_wrap: giftWrap,
+              order_id: orderData.id
+            }
+          }
+        });
+        
+        if (error) {
+          console.error('Payment creation error:', error);
+          throw new Error('Nie udało się utworzyć płatności: ' + error.message);
+        }
+        
+        if (data.error) {
+          console.error('Payment API error:', data.error);
+          throw new Error('Błąd API płatności: ' + data.error);
+        }
+        
+        if (!data.url) {
+          console.error('Payment URL missing:', data);
+          throw new Error('Nie otrzymano URL do płatności');
+        }
+        
+        console.log('Payment session created, redirecting to:', data.url);
+        
+        // Update order with payment session ID
+        if (data.sessionId) {
+          const { error: updateError } = await supabase
+            .from('orders')
+            .update({ payment_id: data.sessionId })
+            .eq('id', orderData.id);
+            
+          if (updateError) {
+            console.error('Failed to update order with payment ID:', updateError);
+          }
+        }
+        
+        // Redirect to Stripe
+        window.location.href = data.url;
+      } catch (paymentError: any) {
+        console.error('Payment creation failed:', paymentError);
+        toast.error(paymentError.message || 'Wystąpił błąd podczas tworzenia płatności');
+        setIsProcessing(false);
+      }
+    } catch (error: any) {
+      console.error('Order creation error:', error);
+      toast.error('Wystąpił błąd podczas przetwarzania zamówienia. Spróbuj ponownie.');
       setIsProcessing(false);
     }
   };
