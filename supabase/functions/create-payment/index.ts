@@ -9,22 +9,22 @@ const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') || '';
 
 // Debug logs for environment variables
 console.log("Environment check:");
-console.log("- STRIPE_SECRET_KEY configured:", STRIPE_SECRET_KEY ? "YES (starts with " + STRIPE_SECRET_KEY.substring(0, 5) + "...)" : "NO");
+console.log("- STRIPE_SECRET_KEY configured:", STRIPE_SECRET_KEY ? "YES (starts with " + (STRIPE_SECRET_KEY.length > 5 ? STRIPE_SECRET_KEY.substring(0, 5) : "TOO_SHORT") + "...)" : "NO");
 console.log("- SUPABASE_URL configured:", SUPABASE_URL ? "YES" : "NO");
 console.log("- SUPABASE_ANON_KEY configured:", SUPABASE_ANON_KEY ? "YES" : "NO");
-
-// Hard-coded fallback for testing (REMOVE IN PRODUCTION)
-const FALLBACK_SECRET_KEY = 'sk_test_51R1AxJIY3wH8ltzbzmKVEkBpdbvqmh0Fh1FizaouBlIq6tkTWLZOVGkqdSgrMjUOLlRlDyKRmKITY7r5HAcGcqS4006uNS2Hw6';
 
 // Initialize Stripe with error handling
 let stripe;
 try {
-  // Use the environment variable if available, otherwise use the fallback
-  const keyToUse = STRIPE_SECRET_KEY || FALLBACK_SECRET_KEY;
-  stripe = new Stripe(keyToUse, {
+  if (!STRIPE_SECRET_KEY) {
+    console.error("No Stripe secret key provided in environment variables");
+    throw new Error("Brak klucza Stripe w zmiennych środowiskowych");
+  }
+  
+  stripe = new Stripe(STRIPE_SECRET_KEY, {
     apiVersion: '2023-10-16',
   });
-  console.log("Stripe initialized successfully with key starting with:", keyToUse.substring(0, 5));
+  console.log("Stripe initialized successfully with key starting with:", STRIPE_SECRET_KEY.substring(0, 5));
 } catch (error) {
   console.error("Failed to initialize Stripe:", error.message);
 }
@@ -50,13 +50,13 @@ serve(async (req) => {
   }
 
   try {
-    // Don't validate Stripe configuration during development/testing
+    // Validate Stripe configuration
     if (!stripe) {
-      console.error('Stripe client initialization failed');
+      console.error('Stripe client initialization failed - missing secret key');
       return new Response(
-        JSON.stringify({ error: "Nie udało się zainicjalizować klienta Stripe. Spróbuj ponownie później." }),
+        JSON.stringify({ error: "Nie skonfigurowano klucza API Stripe. Skontaktuj się z administratorem systemu." }),
         {
-          status: 200,
+          status: 200, // Always use 200 for responses from Edge Functions
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       );
@@ -64,16 +64,32 @@ serve(async (req) => {
 
     console.log("Processing payment request");
     
-    // Parse request body
+    // Parse and validate request body
     const body = await req.text();
     console.log("Request body length:", body.length);
-    console.log("Request body preview:", body.substring(0, 100) + "...");
+    
+    if (!body || body.length === 0) {
+      console.error("Empty request body");
+      return new Response(
+        JSON.stringify({ error: "Puste żądanie. Brak danych do przetworzenia." }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
     
     let data;
     try {
       const jsonData = JSON.parse(body);
       data = jsonData.data;
-      console.log("Successfully parsed JSON data:", JSON.stringify(data));
+      
+      // Validate data object
+      if (!data) {
+        throw new Error("Brak obiektu 'data' w żądaniu");
+      }
+      
+      console.log("Successfully parsed JSON data");
     } catch (error) {
       console.error("JSON parse error:", error.message);
       return new Response(
@@ -85,7 +101,7 @@ serve(async (req) => {
       );
     }
     
-    // Extract parameters from request
+    // Extract parameters from request with validation
     const { 
       price, 
       currency = 'pln', 
@@ -97,19 +113,24 @@ serve(async (req) => {
       order_id
     } = data;
 
-    console.log("Creating Stripe session with params:", { 
-      price, 
-      currency, 
-      order_id,
-      user_email: user_email ? "provided" : "missing",
-      user_name: user_name ? "provided" : "missing"
-    });
-
     // Validate required fields
-    if (!price || !order_id || !user_email) {
-      console.error("Missing required fields", { price, order_id, user_email });
+    const requiredFields = {
+      price: price !== undefined && typeof price === 'number' && price > 0,
+      order_id: typeof order_id === 'string' && order_id.length > 0,
+      user_email: typeof user_email === 'string' && user_email.length > 0 && user_email.includes('@')
+    };
+    
+    const missingFields = Object.entries(requiredFields)
+      .filter(([_, isValid]) => !isValid)
+      .map(([field]) => field);
+      
+    if (missingFields.length > 0) {
+      console.error("Missing or invalid required fields:", missingFields);
       return new Response(
-        JSON.stringify({ error: "Brakuje wymaganych pól: cena, ID zamówienia lub email" }),
+        JSON.stringify({ 
+          error: `Brakujące lub nieprawidłowe dane: ${missingFields.join(', ')}`, 
+          fields: missingFields 
+        }),
         {
           status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -121,7 +142,7 @@ serve(async (req) => {
     const origin = req.headers.get('origin') || 'https://bqbgrjpxufblrgcoxpfk.supabase.co';
     console.log("Using origin for redirect URLs:", origin);
 
-    // Create Stripe checkout session
+    // Create Stripe checkout session with data validation
     try {
       console.log("Calling Stripe checkout sessions create");
       const sessionParams = {
@@ -132,7 +153,7 @@ serve(async (req) => {
               currency: currency,
               product_data: {
                 name: 'Secret Sparks Report',
-                description: `Raport dla ${user_name} i ${partner_name}`,
+                description: `Raport dla ${user_name || 'użytkownika'} i ${partner_name || 'partnera'}`,
               },
               unit_amount: Math.round(price * 100),
             },
@@ -146,15 +167,14 @@ serve(async (req) => {
         customer_email: user_email,
         metadata: {
           order_id: order_id,
-          user_name: user_name,
+          user_name: user_name || '',
           user_email: user_email,
-          partner_name: partner_name,
-          partner_email: partner_email,
+          partner_name: partner_name || '',
+          partner_email: partner_email || '',
           gift_wrap: gift_wrap ? 'true' : 'false',
         },
       };
       
-      console.log("Session params:", JSON.stringify(sessionParams));
       const session = await stripe.checkout.sessions.create(sessionParams);
 
       console.log("Stripe session created:", { 

@@ -54,24 +54,43 @@ const PaymentPage: React.FC = () => {
   }, [answers, orderId, surveyConfig]);
   
   const isValidEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // Bardziej rygorystyczna walidacja email
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(email);
   };
 
   const validateForm = () => {
     const newErrors: FormErrors = {};
-    if (!userName) newErrors.userName = 'Imię jest wymagane';
-    if (!userEmail) {
+    
+    // Walidacja pól formularza z lepszym sanityzowaniem
+    if (!userName || userName.trim().length === 0) {
+      newErrors.userName = 'Imię jest wymagane';
+    } else if (userName.length > 100) {
+      newErrors.userName = 'Imię jest za długie (maksymalnie 100 znaków)';
+    }
+    
+    if (!userEmail || userEmail.trim().length === 0) {
       newErrors.userEmail = 'Email jest wymagany';
     } else if (!isValidEmail(userEmail)) {
       newErrors.userEmail = 'Nieprawidłowy format email';
+    } else if (userEmail.length > 150) {
+      newErrors.userEmail = 'Email jest za długi (maksymalnie 150 znaków)';
     }
-    if (!partnerName) newErrors.partnerName = 'Imię partnera jest wymagane';
-    if (!partnerEmail) {
+    
+    if (!partnerName || partnerName.trim().length === 0) {
+      newErrors.partnerName = 'Imię partnera jest wymagane';
+    } else if (partnerName.length > 100) {
+      newErrors.partnerName = 'Imię partnera jest za długie (maksymalnie 100 znaków)';
+    }
+    
+    if (!partnerEmail || partnerEmail.trim().length === 0) {
       newErrors.partnerEmail = 'Email partnera jest wymagany';
     } else if (!isValidEmail(partnerEmail)) {
-      newErrors.partnerEmail = 'Nieprawidłowy format email';
+      newErrors.partnerEmail = 'Nieprawidłowy format email partnera';
+    } else if (partnerEmail.length > 150) {
+      newErrors.partnerEmail = 'Email partnera jest za długi (maksymalnie 150 znaków)';
     }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -217,6 +236,12 @@ const PaymentPage: React.FC = () => {
       return;
     }
     
+    // Sanityzacja danych przed zapisem
+    const sanitizedUserName = userName.trim().substring(0, 100);
+    const sanitizedUserEmail = userEmail.trim().toLowerCase().substring(0, 150);
+    const sanitizedPartnerName = partnerName.trim().substring(0, 100);
+    const sanitizedPartnerEmail = partnerEmail.trim().toLowerCase().substring(0, 150);
+    
     // Set default values for survey config
     const safeConfig = {
       userGender: surveyConfig.userGender || 'unknown',
@@ -226,7 +251,6 @@ const PaymentPage: React.FC = () => {
     
     console.log('Using survey config for order:', safeConfig);
     
-    // Allow for proceeding even if survey is not completed (for testing)
     if (!surveyCompleted && Object.keys(answers).length === 0 && !orderId) {
       console.warn('Survey not completed, but proceeding for testing purposes');
     }
@@ -236,14 +260,19 @@ const PaymentPage: React.FC = () => {
     try {
       console.log('Creating order in database');
       
+      // Dodanie walidacji przed wysłaniem do Supabase
+      if (!sanitizedUserEmail || !sanitizedPartnerEmail) {
+        throw new Error('Brak wymaganych danych: email użytkownika lub partnera');
+      }
+      
       // Also save survey configuration to orders table
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .insert({
-          user_name: userName,
-          user_email: userEmail,
-          partner_name: partnerName,
-          partner_email: partnerEmail,
+          user_name: sanitizedUserName,
+          user_email: sanitizedUserEmail,
+          partner_name: sanitizedPartnerName,
+          partner_email: sanitizedPartnerEmail,
           gift_wrap: giftWrap,
           price: PRODUCT_PRICE + (giftWrap ? 20 : 0),
           user_gender: safeConfig.userGender,
@@ -270,19 +299,29 @@ const PaymentPage: React.FC = () => {
         return;
       }
       
-      // Proceed to create payment using Supabase edge function
+      // Proceed to create payment using Supabase edge function with walidacją danych
       try {
         console.log('Creating payment for order:', orderData.id);
+        
+        // Sanityzacja i walidacja danych przed wysłaniem do funkcji edge
+        if (!orderData.id || typeof orderData.id !== 'string') {
+          throw new Error('Nieprawidłowe ID zamówienia');
+        }
+        
+        const price = PRODUCT_PRICE + (giftWrap ? 20 : 0);
+        if (isNaN(price) || price <= 0) {
+          throw new Error('Nieprawidłowa kwota zamówienia');
+        }
         
         const result = await supabase.functions.invoke('create-payment', {
           body: {
             data: {
-              price: PRODUCT_PRICE + (giftWrap ? 20 : 0),
+              price: price,
               currency: 'pln',
-              user_name: userName,
-              user_email: userEmail,
-              partner_name: partnerName,
-              partner_email: partnerEmail,
+              user_name: sanitizedUserName,
+              user_email: sanitizedUserEmail,
+              partner_name: sanitizedPartnerName,
+              partner_email: sanitizedPartnerEmail,
               gift_wrap: giftWrap,
               order_id: orderData.id
             }
@@ -291,12 +330,18 @@ const PaymentPage: React.FC = () => {
         
         console.log('Payment creation response:', result);
         
+        // Lepsza obsługa błędów
         if (result.error) {
           console.error('Payment creation error:', result.error);
-          throw new Error('Nie udało się utworzyć płatności: ' + result.error.message);
+          throw new Error('Nie udało się utworzyć płatności: ' + (result.error.message || 'Nieznany błąd'));
         }
         
         const data = result.data;
+        
+        if (!data) {
+          console.error('Payment API returned no data');
+          throw new Error('Brak danych w odpowiedzi z API płatności');
+        }
         
         if (data.error) {
           console.error('Payment API error:', data.error);
@@ -319,11 +364,18 @@ const PaymentPage: React.FC = () => {
             
           if (updateError) {
             console.error('Failed to update order with payment ID:', updateError);
+            // Kontynuujemy pomimo błędu, ponieważ nie jest to krytyczne
           }
         }
         
-        // Redirect to Stripe
-        window.location.href = data.url;
+        // Bezpieczniejsze przekierowanie
+        if (data.url.startsWith('https://checkout.stripe.com/')) {
+          // Redirect to Stripe tylko gdy URL jest poprawny
+          window.location.href = data.url;
+        } else {
+          console.error('Invalid Stripe URL:', data.url);
+          throw new Error('Otrzymano nieprawidłowy URL płatności');
+        }
       } catch (paymentError: any) {
         console.error('Payment creation failed:', paymentError);
         toast.error(paymentError.message || 'Wystąpił błąd podczas tworzenia płatności. Spróbuj ponownie.');

@@ -1,3 +1,4 @@
+
 // @ts-nocheck
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import Stripe from 'https://esm.sh/stripe@12.4.0?target=deno';
@@ -9,6 +10,15 @@ const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
 const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY') || '';
 const endpointSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET') || '';
 // ===== KONIEC KONFIGURACJI =====
+
+// Walidacja zmiennych środowiskowych
+if (!supabaseUrl || !supabaseServiceKey) {
+  console.error("Brak wymaganych kluczy Supabase. Webhook nie będzie działać poprawnie!");
+}
+
+if (!stripeSecretKey) {
+  console.error("Brak wymaganego klucza Stripe. Webhook nie będzie działać poprawnie!");
+}
 
 // Ustaw nagłówki CORS - dodajemy stripe-signature do dozwolonych nagłówków
 const corsHeaders = {
@@ -29,9 +39,6 @@ serve(async (req) => {
   }
   
   try {
-    // Inicjalizuj klienty - przeniesiono do wnętrza try-catch
-    console.log("Inicjalizacja klientów Supabase i Stripe");
-    
     // Sprawdź i wypisz klucze konfiguracyjne (bezpiecznie, bez pokazywania pełnych wartości)
     console.log("Konfiguracja:");
     console.log("- SUPABASE_URL:", supabaseUrl ? `ustawiony (${supabaseUrl.slice(0, 20)}...)` : "BRAK");
@@ -41,35 +48,70 @@ serve(async (req) => {
     
     // Jeśli brakuje kluczy, zwróć błąd wcześniej
     if (!supabaseUrl || !supabaseServiceKey) {
-      console.error("Brak wymaganych kluczy Supabase!");
-      return new Response(JSON.stringify({ error: "Brak wymaganych kluczy Supabase", received: true }), {
+      return new Response(JSON.stringify({ 
+        error: "Brak wymaganych kluczy Supabase", 
+        received: true, 
+        status: "configuration_error" 
+      }), {
         status: 200, // Zawsze 200 dla Stripe
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
     
     if (!stripeSecretKey) {
-      console.error("Brak wymaganego klucza Stripe!");
-      return new Response(JSON.stringify({ error: "Brak wymaganego klucza Stripe", received: true }), {
+      return new Response(JSON.stringify({ 
+        error: "Brak wymaganego klucza Stripe", 
+        received: true, 
+        status: "configuration_error" 
+      }), {
         status: 200, // Zawsze 200 dla Stripe
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
     
-    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
-    });
+    // Inicjalizuj klienty
+    let supabase;
+    let stripe;
     
-    const stripe = new Stripe(stripeSecretKey, {
-      apiVersion: '2023-10-16',
-    });
+    try {
+      supabase = createClient(supabaseUrl, supabaseServiceKey, {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      });
+      
+      stripe = new Stripe(stripeSecretKey, {
+        apiVersion: '2023-10-16',
+      });
+      
+      console.log("Klienty Supabase i Stripe zostały zainicjalizowane pomyślnie");
+    } catch (initError) {
+      console.error("Błąd inicjalizacji klientów:", initError.message);
+      return new Response(JSON.stringify({ 
+        error: "Błąd inicjalizacji klientów", 
+        details: initError.message,
+        received: true 
+      }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
     
     // Pobierz body i nagłówki
     const body = await req.text();
     const signature = req.headers.get('stripe-signature');
+    
+    if (!body) {
+      console.error("Brak body w żądaniu");
+      return new Response(JSON.stringify({ 
+        error: "Brak body w żądaniu", 
+        received: true 
+      }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
     
     console.log("Raw body length:", body.length);
     console.log("Signature provided:", signature ? "YES" : "NO");
@@ -108,11 +150,26 @@ serve(async (req) => {
         console.log("Parsowanie jako prosty JSON (brak sekretu webhooka lub podpisu)");
       } catch (parseError) {
         console.error("Błąd parsowania JSON:", parseError.message);
-        return new Response(JSON.stringify({ error: "Nieprawidłowy format JSON", received: true }), {
+        return new Response(JSON.stringify({ 
+          error: "Nieprawidłowy format JSON", 
+          details: parseError.message,
+          received: true 
+        }), {
           status: 200, // Zawsze 200 dla Stripe
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
+    }
+    
+    if (!event || !event.type) {
+      console.error("Brak typu zdarzenia w żądaniu");
+      return new Response(JSON.stringify({ 
+        error: "Brak typu zdarzenia w żądaniu", 
+        received: true 
+      }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
     
     console.log("Typ zdarzenia:", event.type);
@@ -159,6 +216,19 @@ serve(async (req) => {
     // Ten webhook jest wywoływany TYLKO po pomyślnej płatności
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
+      
+      // Walidacja danych sesji
+      if (!session) {
+        console.error("Brak danych sesji w zdarzeniu");
+        return new Response(JSON.stringify({ 
+          error: "Brak danych sesji", 
+          received: true 
+        }), {
+          status: 200,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      
       const orderId = session.client_reference_id || session.metadata?.order_id;
       const paymentId = session.payment_intent;
       
@@ -167,7 +237,10 @@ serve(async (req) => {
       
       if (!orderId) {
         console.error("Brak ID zamówienia w sesji:", session.id);
-        return new Response(JSON.stringify({ error: "Brak ID zamówienia", received: true }), {
+        return new Response(JSON.stringify({ 
+          error: "Brak ID zamówienia", 
+          received: true 
+        }), {
           status: 200, // Zwracamy 200 aby Stripe nie próbował ponownie
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
@@ -178,8 +251,12 @@ serve(async (req) => {
         .from('orders')
         .select('status, payment_id, user_question_sequence, game_level')
         .eq('id', orderId)
-        .single();
+        .maybeSingle();
         
+      if (orderCheckError) {
+        console.error("Błąd pobierania zamówienia:", orderCheckError);
+      }
+      
       console.log("Obecny stan zamówienia przed aktualizacją:", orderCheck);
       
       // Aktualizuj status tylko jeśli to konieczne
@@ -212,21 +289,29 @@ serve(async (req) => {
         .from('orders')
         .select('*')
         .eq('id', orderId)
-        .single();
+        .maybeSingle();
         
+      if (checkError) {
+        console.error("Błąd pobierania zaktualizowanego zamówienia:", checkError);
+      }
+      
       console.log("Stan zamówienia po aktualizacji:", updatedOrder);
       
       // Pobierz odpowiedzi użytkownika, aby zapisać sekwencję pytań
-      if (!updatedOrder?.user_question_sequence || updatedOrder.user_question_sequence.length === 0) {
+      if (updatedOrder && (!updatedOrder.user_question_sequence || updatedOrder.user_question_sequence.length === 0)) {
         console.log("Próba pobrania i zapisania sekwencji pytań z odpowiedzi użytkownika");
         
-        const { data: userResponses } = await supabase
+        const { data: userResponses, error: responsesError } = await supabase
           .from('survey_responses')
           .select('question_id, created_at')
           .eq('order_id', orderId)
           .eq('user_type', 'user')
           .order('created_at', { ascending: true });
           
+        if (responsesError) {
+          console.error("Błąd pobierania odpowiedzi użytkownika:", responsesError);
+        }
+        
         if (userResponses && userResponses.length > 0) {
           const questionIds = userResponses.map(r => r.question_id);
           console.log(`Znaleziono ${questionIds.length} odpowiedzi użytkownika, zapisuję sekwencję:`, questionIds);
@@ -265,9 +350,14 @@ serve(async (req) => {
       }
       
       // Wysyłaj e-maile po aktualizacji statusu
-      if (!orderCheck?.emails_sent) {
+      if (updatedOrder && !updatedOrder.emails_sent) {
         try {
           console.log("Wywołanie funkcji wysyłania e-maili");
+          
+          if (!supabaseUrl || !supabaseServiceKey) {
+            throw new Error("Brak wymaganych kluczy do wywołania funkcji wysyłania e-maili");
+          }
+          
           const emailResponse = await fetch(
             `${supabaseUrl}/functions/v1/send-order-emails`,
             {
@@ -295,15 +385,17 @@ serve(async (req) => {
             
           console.log("Zamówienie oznaczone jako emails_sent = true");
         } catch (emailError) {
-          console.error("Błąd wysyłania e-maili:", emailError);
+          console.error("Błąd wysyłania e-maili:", emailError.message);
           // Nie przerywamy przetwarzania, jeśli wysyłanie e-maili nie powiodło się
         }
       } else {
-        console.log("E-maile zostały już wysłane dla tego zamówienia");
+        console.log("E-maile zostały już wysłane dla tego zamówienia lub zamówienie nie istnieje");
       }
     } else if (event.type === 'payment_intent.succeeded') {
       // Ignorujemy to zdarzenie, ponieważ już obsługujemy checkout.session.completed
       console.log("Zignorowano zdarzenie payment_intent.succeeded - używamy tylko checkout.session.completed");
+    } else {
+      console.log(`Zignorowano nieobsługiwane zdarzenie: ${event.type}`);
     }
     
     // Zawsze zwracamy sukces 200 do Stripe, aby zapobiec ponownym próbom
@@ -315,7 +407,11 @@ serve(async (req) => {
     // Loguj i zwróć błąd, ale zawsze z kodem 200 dla Stripe
     console.error("Ogólny błąd webhooka:", error.message);
     console.error("Stack trace:", error.stack);
-    return new Response(JSON.stringify({ error: error.message, received: true }), {
+    return new Response(JSON.stringify({ 
+      error: error.message, 
+      received: true,
+      status: "error" 
+    }), {
       status: 200, // Zawsze zwracamy 200 do Stripe
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
