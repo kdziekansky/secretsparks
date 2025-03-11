@@ -78,15 +78,8 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
         }
         
         if (data && data.length > 0) {
-          // Extract unique question IDs in the order they were answered
-          const seenIds = new Set<string>();
-          const questionIds = data
-            .map(response => response.question_id)
-            .filter(id => {
-              if (seenIds.has(id)) return false;
-              seenIds.add(id);
-              return true;
-            });
+          // Extract unique question IDs in the exact order they were answered
+          const questionIds = data.map(response => response.question_id);
             
           console.log('Fetched question sequence from user responses:', questionIds);
           

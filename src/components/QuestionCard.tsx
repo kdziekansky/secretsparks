@@ -70,16 +70,10 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
       }
       
       setTimeout(() => {
-        // If it's a partner survey, redirect to thank you page with orderId
+        // If it's a partner survey, redirect to thank you page WITHOUT orderId
         if (isPartnerSurvey) {
-          const orderId = getOrderId();
-          console.log('Navigating to thank you page with orderId:', orderId);
-          if (orderId) {
-            navigate(`/thank-you?orderId=${orderId}`);
-          } else {
-            console.error('No orderId available for redirection');
-            window.location.href = '/thank-you';
-          }
+          console.log('Partner survey completed, redirecting to thank you page');
+          navigate('/thank-you');
         } else {
           console.log('Navigating to payment page with all answers:', answers);
           navigate('/payment');
@@ -115,7 +109,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     setImageError(true);
     setImageLoaded(false);
   };
-  
+
   if (!currentQuestion) return null;
   
   const truncateDescription = (text: string, length = 150) => {

@@ -69,21 +69,10 @@ export const useQuestionSelection = (
     if (isPartnerSurvey && selectedQuestionIds.length > 0) {
       console.log('Using predefined question sequence for partner:', selectedQuestionIds);
       
-      // Get questions in the exact same order as the user answered them
-      const orderedQuestions = selectedQuestionIds
+      // This is the critical fix: get questions in EXACTLY the same order as the IDs
+      return selectedQuestionIds
         .map(id => questions.find(q => q.id === id))
         .filter((q): q is Question => q !== undefined);
-        
-      console.log(`Found ${orderedQuestions.length} matching questions from ${selectedQuestionIds.length} ids`);
-      
-      // If we found fewer questions than expected, log a warning
-      if (orderedQuestions.length < selectedQuestionIds.length) {
-        console.warn(`Some question IDs were not found in the question database: ${
-          selectedQuestionIds.filter(id => !questions.some(q => q.id === id)).join(', ')
-        }`);
-      }
-      
-      return orderedQuestions;
     }
     
     // Don't generate questions if config is not complete

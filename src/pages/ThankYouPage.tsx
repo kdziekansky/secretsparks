@@ -15,18 +15,20 @@ const ThankYouPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { toast: uiToast } = useToast();
+  const [isPartnerCompletion, setIsPartnerCompletion] = useState(false);
   
   useEffect(() => {
     console.log("ThankYouPage mounted, orderId:", orderId);
     
+    // If no orderId, check if it's a partner completion
+    if (!orderId) {
+      console.log("No orderId found, assuming partner completion");
+      setIsPartnerCompletion(true);
+      setLoading(false);
+      return;
+    }
+    
     const fetchOrderDetails = async () => {
-      if (!orderId) {
-        console.log("No orderId found in URL params");
-        setLoading(false);
-        setError("Nie znaleziono identyfikatora zamówienia");
-        return;
-      }
-
       try {
         console.log("Fetching order details for orderId:", orderId);
         const { data, error: fetchError } = await supabase
@@ -64,15 +66,8 @@ const ThankYouPage: React.FC = () => {
             console.error('Error fetching user responses:', responsesError);
           } else if (responses && responses.length > 0) {
             console.log(`Found ${responses.length} responses, saving question sequence`);
-            // Extract unique question IDs in order
-            const seenIds = new Set<string>();
-            const questionIds = responses
-              .map(response => response.question_id)
-              .filter(id => {
-                if (seenIds.has(id)) return false;
-                seenIds.add(id);
-                return true;
-              });
+            // Extract question IDs in order
+            const questionIds = responses.map(response => response.question_id);
               
             // Save sequence to order
             const { error: updateError } = await supabase
@@ -105,7 +100,7 @@ const ThankYouPage: React.FC = () => {
   }, [orderId]);
 
   // Partner thank you message (when no order ID is provided but it's a partner survey completion)
-  if (!orderId && !loading) {
+  if (isPartnerCompletion) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6">
         <div className="glass-panel p-8 w-full max-w-xl text-center animate-fade-in">
