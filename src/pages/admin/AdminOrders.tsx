@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
@@ -207,15 +206,22 @@ const AdminOrders: React.FC = () => {
 
     try {
       setIsSubmitting(true);
+      console.log(`Próba usunięcia zamówienia ${orderToDelete.id}`);
 
-      // Usuń zamówienie - dzięki kaskadowemu usuwaniu, wszystkie powiązane dane zostaną również usunięte
+      // Bezpośrednie usunięcie z tabeli orders - dzięki kaskadowym ograniczeniom FK,
+      // to spowoduje również usunięcie powiązanych rekordów z innych tabel
       const { error } = await supabase
         .from('orders')
         .delete()
         .eq('id', orderToDelete.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Błąd podczas usuwania zamówienia:', error);
+        toast.error('Wystąpił błąd podczas usuwania zamówienia: ' + error.message);
+        throw error;
+      }
 
+      console.log('Zamówienie zostało pomyślnie usunięte');
       toast.success('Zamówienie zostało całkowicie usunięte wraz z powiązanymi danymi');
       
       // Jeśli usunięte zamówienie było otwarte w szczegółach, zamknij dialog
@@ -224,10 +230,14 @@ const AdminOrders: React.FC = () => {
         setSelectedOrder(null);
       }
       
-      refetch();
+      // Aktualizacja stanu lokalnego - usuń zamówienie z listy by nie czekać na refetch
+      if (orders) {
+        const updatedOrders = orders.filter(order => order.id !== orderToDelete.id);
+        refetch();
+      }
     } catch (error) {
-      console.error('Error deleting order:', error);
-      toast.error('Wystąpił błąd podczas usuwania zamówienia');
+      console.error('Nieoczekiwany błąd:', error);
+      toast.error('Wystąpił nieoczekiwany błąd podczas usuwania zamówienia');
     } finally {
       setIsSubmitting(false);
       setIsDeleteDialogOpen(false);

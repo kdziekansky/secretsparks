@@ -38,6 +38,11 @@ try {
         'Content-Type': 'application/json',
       },
     },
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    },
   });
   
   // For debugging - log configuration keys in browser console
