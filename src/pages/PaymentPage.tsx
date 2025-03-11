@@ -41,6 +41,7 @@ const PaymentPage: React.FC = () => {
     const checkSurveyStatus = () => {
       const answersCount = Object.keys(answers).length;
       console.log('Current answers count:', answersCount);
+      console.log('Current survey config:', surveyConfig);
       
       // Consider survey completed if there are answers or if coming back from payment with orderId
       if (answersCount > 0 || orderId) {
@@ -51,7 +52,7 @@ const PaymentPage: React.FC = () => {
     };
     
     checkSurveyStatus();
-  }, [answers, orderId]);
+  }, [answers, orderId, surveyConfig]);
   
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -110,11 +111,14 @@ const PaymentPage: React.FC = () => {
         return true; // Changed to true to allow order to proceed even without answers
       }
       
-      if (!surveyConfig.userGender || !surveyConfig.partnerGender || !surveyConfig.gameLevel) {
-        console.error('Missing survey configuration data!', surveyConfig);
-        toast.error('Brak pełnej konfiguracji ankiety. Spróbuj ponownie od początku ankiety.');
-        return false;
-      }
+      // Set default values for survey config if they're missing
+      const safeConfig = {
+        userGender: surveyConfig.userGender || 'unknown',
+        partnerGender: surveyConfig.partnerGender || 'unknown',
+        gameLevel: surveyConfig.gameLevel || 'discover'
+      };
+      
+      console.log('Using survey config for responses:', safeConfig);
       
       // Prepare survey responses for insertion with survey configuration data
       const responsesToSave = Object.entries(answers).map(([questionId, answer]) => ({
@@ -122,9 +126,9 @@ const PaymentPage: React.FC = () => {
         question_id: questionId,
         answer: answer,
         user_type: 'user',
-        user_gender: surveyConfig.userGender,
-        partner_gender: surveyConfig.partnerGender,
-        game_level: surveyConfig.gameLevel
+        user_gender: safeConfig.userGender,
+        partner_gender: safeConfig.partnerGender,
+        game_level: safeConfig.gameLevel
       }));
       
       console.log('Saving responses with config:', responsesToSave);
@@ -155,13 +159,14 @@ const PaymentPage: React.FC = () => {
       return;
     }
     
-    // Check if survey configuration is complete before proceeding
-    if (Object.keys(answers).length > 0 && 
-        (!surveyConfig.userGender || !surveyConfig.partnerGender || !surveyConfig.gameLevel)) {
-      console.error('Survey configuration incomplete:', surveyConfig);
-      toast.error('Konfiguracja ankiety jest niekompletna. Proszę wrócić do ankiety i uzupełnić wszystkie dane.');
-      return;
-    }
+    // Set default values for survey config
+    const safeConfig = {
+      userGender: surveyConfig.userGender || 'unknown',
+      partnerGender: surveyConfig.partnerGender || 'unknown',
+      gameLevel: surveyConfig.gameLevel || 'discover'
+    };
+    
+    console.log('Using survey config for order:', safeConfig);
     
     // Allow for proceeding even if survey is not completed (for testing)
     if (!surveyCompleted && Object.keys(answers).length === 0 && !orderId) {
@@ -183,9 +188,9 @@ const PaymentPage: React.FC = () => {
           partner_email: partnerEmail,
           gift_wrap: giftWrap,
           price: PRODUCT_PRICE + (giftWrap ? 20 : 0),
-          user_gender: surveyConfig.userGender,
-          partner_gender: surveyConfig.partnerGender,
-          game_level: surveyConfig.gameLevel
+          user_gender: safeConfig.userGender,
+          partner_gender: safeConfig.partnerGender,
+          game_level: safeConfig.gameLevel
         })
         .select()
         .single();

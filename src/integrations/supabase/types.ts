@@ -34,9 +34,11 @@ export type Database = {
         Row: {
           archived: boolean
           created_at: string
+          game_level: string | null
           gift_wrap: boolean
           id: string
           partner_email: string
+          partner_gender: string | null
           partner_name: string
           partner_survey_token: string | null
           payment_id: string | null
@@ -44,14 +46,17 @@ export type Database = {
           status: string
           updated_at: string
           user_email: string
+          user_gender: string | null
           user_name: string
         }
         Insert: {
           archived?: boolean
           created_at?: string
+          game_level?: string | null
           gift_wrap?: boolean
           id?: string
           partner_email: string
+          partner_gender?: string | null
           partner_name: string
           partner_survey_token?: string | null
           payment_id?: string | null
@@ -59,14 +64,17 @@ export type Database = {
           status?: string
           updated_at?: string
           user_email: string
+          user_gender?: string | null
           user_name: string
         }
         Update: {
           archived?: boolean
           created_at?: string
+          game_level?: string | null
           gift_wrap?: boolean
           id?: string
           partner_email?: string
+          partner_gender?: string | null
           partner_name?: string
           partner_survey_token?: string | null
           payment_id?: string | null
@@ -74,6 +82,7 @@ export type Database = {
           status?: string
           updated_at?: string
           user_email?: string
+          user_gender?: string | null
           user_name?: string
         }
         Relationships: []
@@ -117,34 +126,34 @@ export type Database = {
         Row: {
           answer: number
           created_at: string
-          game_level: string
+          game_level: string | null
           id: string
           order_id: string | null
-          partner_gender: string
+          partner_gender: string | null
           question_id: string
-          user_gender: string
+          user_gender: string | null
           user_type: string
         }
         Insert: {
           answer: number
           created_at?: string
-          game_level: string
+          game_level?: string | null
           id?: string
           order_id?: string | null
-          partner_gender: string
+          partner_gender?: string | null
           question_id: string
-          user_gender: string
+          user_gender?: string | null
           user_type: string
         }
         Update: {
           answer?: number
           created_at?: string
-          game_level?: string
+          game_level?: string | null
           id?: string
           order_id?: string | null
-          partner_gender?: string
+          partner_gender?: string | null
           question_id?: string
-          user_gender?: string
+          user_gender?: string | null
           user_type?: string
         }
         Relationships: [
