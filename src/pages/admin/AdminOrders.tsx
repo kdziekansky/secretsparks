@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
@@ -11,11 +12,21 @@ import {
 } from '@/components/ui/table';
 import { 
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, 
-  DropdownMenuTrigger 
+  DropdownMenuTrigger, DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { 
-  Archive, CheckCircle, ChevronDown, ExternalLink, 
-  Eye, FileText, Loader2, Package, RotateCcw 
+  Archive, AlertTriangle, CheckCircle, ChevronDown, ExternalLink, 
+  Eye, FileText, Loader2, Package, RotateCcw, Trash2
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { pl } from 'date-fns/locale';
@@ -61,6 +72,8 @@ const AdminOrders: React.FC = () => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("details");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [orderToDelete, setOrderToDelete] = useState<Order | null>(null);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -84,6 +97,7 @@ const AdminOrders: React.FC = () => {
 
       if (error) {
         console.error('Error fetching orders:', error);
+        toast.error('Wystąpił błąd podczas pobierania zamówień');
         throw error;
       }
       console.log('Fetched orders:', data);
@@ -163,6 +177,7 @@ const AdminOrders: React.FC = () => {
 
   const handleToggleArchive = async (order: Order) => {
     try {
+      setIsSubmitting(true);
       const { error } = await supabase
         .from('orders')
         .update({ archived: !order.archived })
@@ -177,6 +192,77 @@ const AdminOrders: React.FC = () => {
     } catch (error) {
       console.error('Error toggling archive status:', error);
       toast.error('Wystąpił błąd podczas zmiany statusu zamówienia');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const confirmDeleteOrder = (order: Order) => {
+    setOrderToDelete(order);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteOrder = async () => {
+    if (!orderToDelete) return;
+
+    try {
+      setIsSubmitting(true);
+
+      // Usuń zamówienie - dzięki kaskadowemu usuwaniu, wszystkie powiązane dane zostaną również usunięte
+      const { error } = await supabase
+        .from('orders')
+        .delete()
+        .eq('id', orderToDelete.id);
+
+      if (error) throw error;
+
+      toast.success('Zamówienie zostało całkowicie usunięte wraz z powiązanymi danymi');
+      
+      // Jeśli usunięte zamówienie było otwarte w szczegółach, zamknij dialog
+      if (selectedOrder?.id === orderToDelete.id) {
+        setIsDetailsOpen(false);
+        setSelectedOrder(null);
+      }
+      
+      refetch();
+    } catch (error) {
+      console.error('Error deleting order:', error);
+      toast.error('Wystąpił błąd podczas usuwania zamówienia');
+    } finally {
+      setIsSubmitting(false);
+      setIsDeleteDialogOpen(false);
+      setOrderToDelete(null);
+    }
+  };
+
+  const regeneratePartnerToken = async (order: Order) => {
+    try {
+      setIsSubmitting(true);
+      const newToken = crypto.randomUUID();
+      
+      const { error } = await supabase
+        .from('orders')
+        .update({ partner_survey_token: newToken })
+        .eq('id', order.id);
+
+      if (error) throw error;
+
+      toast.success('Wygenerowano nowy token dla partnera');
+      
+      // Aktualizacja danych w UI
+      if (selectedOrder?.id === order.id) {
+        setSelectedOrder({
+          ...selectedOrder,
+          partner_survey_token: newToken
+        });
+      }
+      
+      refetch();
+    } catch (error) {
+      console.error('Error regenerating partner token:', error);
+      toast.error('Wystąpił błąd podczas generowania nowego tokenu');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -235,6 +321,7 @@ const AdminOrders: React.FC = () => {
           <Button
             variant="outline"
             onClick={() => setViewArchived(!viewArchived)}
+            disabled={isSubmitting}
           >
             {viewArchived ? (
               <><Package className="mr-2 h-4 w-4" /> Pokaż aktywne</>
@@ -253,7 +340,7 @@ const AdminOrders: React.FC = () => {
           />
         </div>
 
-        {ordersLoading ? (
+        {ordersLoading || isSubmitting ? (
           <div className="flex justify-center p-8">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
@@ -286,15 +373,15 @@ const AdminOrders: React.FC = () => {
                       <span className="text-xs text-muted-foreground">{order.partner_email}</span>
                     </TableCell>
                     <TableCell>
-  {order.status === 'completed' || order.status === 'paid' ? (
-    <div className="flex items-center">
-      <CheckCircle className="mr-1 h-4 w-4 text-green-500" />
-      Zapłacone
-    </div>
-  ) : (
-    <div className="text-amber-600">Oczekujące</div>
-  )}
-</TableCell>
+                      {order.status === 'completed' || order.status === 'paid' ? (
+                        <div className="flex items-center">
+                          <CheckCircle className="mr-1 h-4 w-4 text-green-500" />
+                          Zapłacone
+                        </div>
+                      ) : (
+                        <div className="text-amber-600">Oczekujące</div>
+                      )}
+                    </TableCell>
                     <TableCell>
                       {formatDistanceToNow(new Date(order.created_at), {
                         addSuffix: true,
@@ -305,7 +392,7 @@ const AdminOrders: React.FC = () => {
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
+                          <Button variant="ghost" size="sm" disabled={isSubmitting}>
                             <span className="sr-only">Otwórz menu</span>
                             <ChevronDown className="h-4 w-4" />
                           </Button>
@@ -319,6 +406,7 @@ const AdminOrders: React.FC = () => {
                             <FileText className="mr-2 h-4 w-4" />
                             Odpowiedzi z ankiety
                           </DropdownMenuItem>
+                          <DropdownMenuSeparator />
                           <DropdownMenuItem onClick={() => handleToggleArchive(order)}>
                             {order.archived ? (
                               <>
@@ -345,6 +433,21 @@ const AdminOrders: React.FC = () => {
                               Kopiuj link do ankiety partnera
                             </DropdownMenuItem>
                           )}
+                          
+                          <DropdownMenuItem onClick={() => regeneratePartnerToken(order)}>
+                            <RotateCcw className="mr-2 h-4 w-4 text-amber-500" />
+                            Zresetuj token partnera
+                          </DropdownMenuItem>
+                          
+                          <DropdownMenuSeparator />
+                          
+                          <DropdownMenuItem 
+                            onClick={() => confirmDeleteOrder(order)}
+                            className="text-red-600"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Usuń zamówienie całkowicie
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -404,20 +507,43 @@ const AdminOrders: React.FC = () => {
                         <p className="text-sm text-muted-foreground">{selectedOrder.partner_email}</p>
                       </div>
                       
-                      {selectedOrder.partner_survey_token && (
-                        <Button
-                          variant="outline"
-                          onClick={() => {
-                            navigator.clipboard.writeText(
-                              `${window.location.origin}/survey?token=${selectedOrder.partner_survey_token}`
-                            );
-                            toast.success('Link skopiowany do schowka');
-                          }}
-                        >
-                          <ExternalLink className="mr-2 h-4 w-4" />
-                          Kopiuj link do ankiety partnera
-                        </Button>
-                      )}
+                      <div className="space-y-2">
+                        <h3 className="font-medium">Link do ankiety partnera</h3>
+                        {selectedOrder.partner_survey_token ? (
+                          <div className="flex flex-col gap-2">
+                            <Input 
+                              readOnly 
+                              value={`${window.location.origin}/survey?token=${selectedOrder.partner_survey_token}`}
+                              className="text-xs font-mono"
+                            />
+                            <div className="flex gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(
+                                    `${window.location.origin}/survey?token=${selectedOrder.partner_survey_token}`
+                                  );
+                                  toast.success('Link skopiowany do schowka');
+                                }}
+                              >
+                                <ExternalLink className="mr-2 h-4 w-4" />
+                                Kopiuj link
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => regeneratePartnerToken(selectedOrder)}
+                              >
+                                <RotateCcw className="mr-2 h-4 w-4" />
+                                Zresetuj token
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="text-sm text-muted-foreground">Brak tokenu dla partnera</p>
+                        )}
+                      </div>
                     </div>
 
                     <div className="space-y-4">
@@ -429,25 +555,40 @@ const AdminOrders: React.FC = () => {
                         <p>Pakowanie na prezent: {selectedOrder.gift_wrap ? 'Tak' : 'Nie'}</p>
                       </div>
                       
-                      <Button
-                        variant={selectedOrder.archived ? "default" : "outline"}
-                        onClick={() => {
-                          handleToggleArchive(selectedOrder);
-                          setIsDetailsOpen(false);
-                        }}
-                      >
-                        {selectedOrder.archived ? (
-                          <>
-                            <RotateCcw className="mr-2 h-4 w-4" />
-                            Przywróć z archiwum
-                          </>
-                        ) : (
-                          <>
-                            <Archive className="mr-2 h-4 w-4" />
-                            Archiwizuj zamówienie
-                          </>
-                        )}
-                      </Button>
+                      <div className="space-y-2 pt-4">
+                        <Button
+                          variant={selectedOrder.archived ? "default" : "outline"}
+                          onClick={() => {
+                            handleToggleArchive(selectedOrder);
+                            setIsDetailsOpen(false);
+                          }}
+                          className="w-full"
+                        >
+                          {selectedOrder.archived ? (
+                            <>
+                              <RotateCcw className="mr-2 h-4 w-4" />
+                              Przywróć z archiwum
+                            </>
+                          ) : (
+                            <>
+                              <Archive className="mr-2 h-4 w-4" />
+                              Archiwizuj zamówienie
+                            </>
+                          )}
+                        </Button>
+                        
+                        <Button
+                          variant="destructive"
+                          onClick={() => {
+                            confirmDeleteOrder(selectedOrder);
+                            setIsDetailsOpen(false);
+                          }}
+                          className="w-full"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Usuń zamówienie całkowicie
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -483,6 +624,50 @@ const AdminOrders: React.FC = () => {
             </Tabs>
           </DialogContent>
         </Dialog>
+
+        {/* Dialog potwierdzenia usunięcia zamówienia */}
+        <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Potwierdź usunięcie zamówienia</AlertDialogTitle>
+              <AlertDialogDescription>
+                <div className="space-y-3">
+                  <div className="flex items-center text-amber-600">
+                    <AlertTriangle className="h-5 w-5 mr-2" />
+                    <span>Ta operacja jest nieodwracalna!</span>
+                  </div>
+                  <p>
+                    Usunięcie zamówienia spowoduje trwałe usunięcie wszystkich powiązanych danych, 
+                    w tym odpowiedzi z ankiety i raportów.
+                  </p>
+                  {orderToDelete && (
+                    <div className="bg-muted p-3 rounded-md">
+                      <p><strong>Zamówienie:</strong> {orderToDelete.id.substring(0, 8)}...</p>
+                      <p><strong>Zamawiający:</strong> {orderToDelete.user_name} ({orderToDelete.user_email})</p>
+                      <p><strong>Partner:</strong> {orderToDelete.partner_name} ({orderToDelete.partner_email})</p>
+                    </div>
+                  )}
+                </div>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Anuluj</AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={handleDeleteOrder}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Usuwanie...
+                  </>
+                ) : (
+                  'Tak, usuń całkowicie'
+                )}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </AdminLayout>
   );
