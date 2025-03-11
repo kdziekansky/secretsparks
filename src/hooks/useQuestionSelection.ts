@@ -65,14 +65,14 @@ export const useQuestionSelection = (
   isPartnerSurvey: boolean = false
 ) => {
   return useMemo(() => {
-    // Dla ankiety partnera z istniejącymi ID pytań, upewnij się, że używamy DOKŁADNIE tej samej sekwencji
+    // For partner survey with existing question IDs, ensure we use EXACTLY the same sequence
     if (isPartnerSurvey && selectedQuestionIds.length > 0) {
       console.log('Partner survey: Using pre-defined question sequence:', selectedQuestionIds);
       
-      // Utwórz mapę wszystkich pytań według ID dla szybkiego wyszukiwania
+      // Create a map of all questions by ID for quick lookup
       const questionMap = new Map(questions.map(q => [q.id, q]));
       
-      // Pobierz pytania DOKŁADNIE w takiej samej kolejności jak w tablicy selectedQuestionIds
+      // Get questions EXACTLY in the same order as in the selectedQuestionIds array
       const mappedQuestions = selectedQuestionIds
         .map(id => {
           const question = questionMap.get(id);
@@ -86,14 +86,14 @@ export const useQuestionSelection = (
       
       console.log(`Successfully mapped ${mappedQuestions.length} partner questions out of ${selectedQuestionIds.length} IDs`);
       
-      // WAŻNE: Zwróć zmapowane pytania bez żadnego dalszego filtrowania czy przetwarzania
+      // IMPORTANT: Return the mapped questions without any further filtering or processing
       return mappedQuestions;
     }
     
-    // Nie generuj pytań, jeśli konfiguracja nie jest kompletna
+    // Don't generate questions if configuration is not complete
     if (!config.isConfigComplete) return [];
     
-    // Dla zwykłej ankiety użytkownika generuj losowe pytania
+    // For regular user survey, generate randomized questions
     const randomizedQuestions = getRandomizedQuestions(questions, config, 15);
     console.log(`Generated ${randomizedQuestions.length} randomized questions for user`);
     return randomizedQuestions;

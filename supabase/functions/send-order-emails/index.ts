@@ -65,7 +65,7 @@ Deno.serve(async (req) => {
       throw new Error(`Failed to fetch user responses: ${responsesError.message}`)
     }
 
-    // ISTOTNA WALIDACJA: Nie wysyłaj maila do partnera, jeśli zamawiający nie wypełnił ankiety
+    // CRITICAL VALIDATION: Do not send partner email if user hasn't completed the survey
     if (!userResponses || userResponses.length === 0) {
       throw new Error('Zamawiający nie wypełnił jeszcze swojej ankiety. Nie można wysłać ankiety do partnera.')
     }
@@ -123,7 +123,10 @@ Deno.serve(async (req) => {
     // STEP 4: Mark emails as sent
     const { error: markSentError } = await supabase
       .from('orders')
-      .update({ emails_sent: true })
+      .update({ 
+        emails_sent: true,
+        user_question_sequence: questionIds // Store the question sequence in the order table
+      })
       .eq('id', orderId)
 
     if (markSentError) {

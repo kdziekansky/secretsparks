@@ -31,6 +31,7 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
           .single();
         
         if (orderError || !orderData) {
+          console.error('Order fetch error:', orderError);
           throw new Error('Nie znaleziono ankiety lub link jest nieprawidłowy');
         }
         
@@ -38,9 +39,7 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
         setPartnerOrderId(orderData.id);
         setOrderFetched(true);
         
-        // Pobierz odpowiedzi Zamawiającego z tabeli survey_responses
-        // WAŻNE: Użyj .neq('user_type', 'partner') zamiast .eq('user_type', 'user') 
-        // gdyż w niektórych rekordach 'user_type' może mieć inne wartości
+        // IMPROVED: More specific query for user responses with proper order
         const { data: userResponses, error: responsesError } = await supabase
           .from('survey_responses')
           .select('question_id, created_at')
@@ -53,34 +52,26 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
           throw new Error('Nie można pobrać sekwencji pytań zamawiającego');
         }
         
-        // Bardziej szczegółowe logowanie aby zobaczyć co dokładnie jest w odpowiedzi
         console.log('User responses from survey_responses:', userResponses);
-        console.log('User responses raw data:', JSON.stringify(userResponses));
         
-        // Jeśli są odpowiedzi użytkownika, użyj ich do utworzenia sekwencji pytań
-        if (userResponses && userResponses.length > 0) {
-          // Wyodrębnij ID pytań w kolejności, w jakiej na nie odpowiedziano
-          const questionIds = userResponses.map(response => response.question_id);
-          console.log(`Found ${questionIds.length} questions from user responses:`, questionIds);
-          
-          // Dodaj dodatkowe logowanie dla weryfikacji
-          console.log('Question IDs sequence for partner:', JSON.stringify(questionIds));
-          
-          setSelectedQuestionIds(questionIds);
-          setDataFetched(true);
-          toast.success('Ankieta załadowana pomyślnie');
-          setIsLoading(false);
-          return;
+        // If no user responses found, show a clear error message
+        if (!userResponses || userResponses.length === 0) {
+          console.log('No user responses found for this order');
+          throw new Error('Zamawiający nie wypełnił jeszcze swojej ankiety. Spróbuj ponownie później.');
         }
         
-        // Jeśli dotarliśmy tutaj, nie ma jeszcze odpowiedzi użytkownika
-        console.log('No user responses found for this order');
-        throw new Error('Zamawiający nie wypełnił jeszcze swojej ankiety. Spróbuj ponownie później.');
+        // Extract question IDs in order they were answered by user
+        const questionIds = userResponses.map(response => response.question_id);
+        console.log(`Found ${questionIds.length} questions from user responses:`, questionIds);
+        
+        setSelectedQuestionIds(questionIds);
+        setDataFetched(true);
+        toast.success('Ankieta załadowana pomyślnie');
         
       } catch (err: any) {
         console.error('Error in fetchOrderData:', err);
         setError(err.message || 'Wystąpił błąd podczas ładowania ankiety');
-        // Oznacz jako pobrane, aby zapobiec nieskończonym próbom
+        // Mark as fetched to prevent infinite retry loops
         setOrderFetched(true);
         setDataFetched(true);
       } finally {

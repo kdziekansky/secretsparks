@@ -7,8 +7,9 @@ import ProgressBar from '@/components/ProgressBar';
 import QuestionCard from '@/components/QuestionCard';
 import SurveyConfig from '@/components/SurveyConfig';
 import PartnerWelcome from '@/components/PartnerWelcome';
-import { Loader2 } from 'lucide-react';
+import { Loader2, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface OrderDetails {
   userName: string;
@@ -55,7 +56,7 @@ const SurveyPage: React.FC = () => {
           // Get the order associated with this partner token
           const { data: orderData, error: orderError } = await supabase
             .from('orders')
-            .select('user_name, partner_name, id, user_gender, partner_gender, game_level')
+            .select('user_name, partner_name, id, user_gender, partner_gender, game_level, user_question_sequence')
             .eq('partner_survey_token', partnerToken)
             .single();
           
@@ -105,8 +106,17 @@ const SurveyPage: React.FC = () => {
       const partnerGender = orderData.partner_gender || 'female';
       const gameLevel = orderData.game_level || 'discover';
       
-      // ISTOTNA ZMIANA: Dla ankiety partnera, ustawiamy DOKŁADNIE TAKĄ SAMĄ KONFIGURACJĘ
-      // jak w ankiecie zamawiającego, aby zagwarantować identyczne pytania
+      // Check if we have stored user_question_sequence for partner survey
+      if (isPartnerSurvey && (!orderData.user_question_sequence || orderData.user_question_sequence.length === 0)) {
+        // If we don't have question sequence, we need to fetch user responses from survey_responses table
+        // This happens automatically in usePartnerSurveyData
+        console.log('No stored question sequence found in order table. Will try to fetch from survey_responses.');
+      } else if (isPartnerSurvey && orderData.user_question_sequence) {
+        console.log('Found stored question sequence in order table:', orderData.user_question_sequence);
+      }
+      
+      // CRITICAL: For partner survey, use EXACTLY the same configuration
+      // as in the user's survey to guarantee identical questions
       setOrderDetails({
         userName: orderData.user_name,
         partnerName: orderData.partner_name,
@@ -116,8 +126,7 @@ const SurveyPage: React.FC = () => {
         orderId: orderData.id
       });
       
-      // Pre-configure the survey with the same settings as the user's survey
-      // We use the SAME user_gender and partner_gender as in the original survey
+      // Pre-configure the survey with the SAME settings as the user's survey
       setUserGender(userGender as 'male' | 'female');
       setPartnerGender(partnerGender as 'male' | 'female');
       setGameLevel(gameLevel as 'discover' | 'explore' | 'exceed');
@@ -131,7 +140,7 @@ const SurveyPage: React.FC = () => {
     if (partnerToken && !orderFetched) {
       fetchOrderDetails();
     }
-  }, [partnerToken, orderFetched, setUserGender, setPartnerGender, setGameLevel, setOrderId]);
+  }, [partnerToken, orderFetched, setUserGender, setPartnerGender, setGameLevel, setOrderId, isPartnerSurvey]);
   
   if (isLoadingOrder) {
     return (
@@ -148,8 +157,20 @@ const SurveyPage: React.FC = () => {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
         <div className="glass-panel w-full max-w-md p-6 text-center">
-          <h2 className="text-xl font-bold text-red-500 mb-4">Błąd</h2>
-          <p className="mb-4">{error}</p>
+          <Alert variant="destructive" className="mb-4">
+            <AlertTriangle className="h-5 w-5 mr-2" />
+            <AlertDescription className="font-medium text-lg">
+              {error}
+            </AlertDescription>
+          </Alert>
+          
+          <p className="mb-4">
+            {partnerToken ? 
+              'Zamawiający musi najpierw wypełnić swoją ankietę, zanim partner będzie mógł wypełnić swoją.' : 
+              'Wystąpił błąd podczas ładowania ankiety.'
+            }
+          </p>
+          
           <p className="text-sm text-gray-500">
             Skontaktuj się z osobą, która wysłała Ci zaproszenie, aby otrzymać nowy link.
           </p>
