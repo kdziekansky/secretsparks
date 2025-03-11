@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { questionsDatabase } from '@/contexts/questions-data';
 import { supabase } from '@/integrations/supabase/client';
@@ -5,7 +6,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SurveyResponsesTable from './SurveyResponsesTable';
 import ReportGenerator from './ReportGenerator';
 import { Loader2, RefreshCw, AlertTriangle } from 'lucide-react';
@@ -24,7 +25,7 @@ interface SurveyResponse {
 }
 
 interface SurveyResponsesViewProps {
-  responses: SurveyResponse[] | null;
+  responses: SurveyResponse[];
   isLoading: boolean;
 }
 
@@ -44,10 +45,13 @@ const getRatingLabel = (rating: number): string => {
 };
 
 const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: initialResponses, isLoading }) => {
-  const [refreshedResponses, setRefreshedResponses] = useState<SurveyResponse[] | null>(null);
+  // Ensure initialResponses is always an array
+  const safeInitialResponses = Array.isArray(initialResponses) ? initialResponses : [];
+  
+  const [refreshedResponses, setRefreshedResponses] = useState<SurveyResponse[]>([]);
   const [refreshLoading, setRefreshLoading] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
-  const [viewType, setViewType] = useState<'cards' | 'table'>('table');
+  const [viewType, setViewType] = useState<'table'>('table');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [order, setOrder] = useState<any | null>(null);
   
@@ -55,9 +59,9 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
   useEffect(() => {
     const extractOrderId = () => {
       // Try to get from responses
-      if (initialResponses && initialResponses.length > 0) {
-        console.log('Setting orderId from responses:', initialResponses[0].order_id);
-        return initialResponses[0].order_id;
+      if (safeInitialResponses.length > 0) {
+        console.log('Setting orderId from responses:', safeInitialResponses[0].order_id);
+        return safeInitialResponses[0].order_id;
       }
       
       // Try to get from URL params
@@ -109,7 +113,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
     } else if (!newOrderId) {
       console.warn('No order ID could be extracted from any source');
     }
-  }, [initialResponses, orderId]);
+  }, [safeInitialResponses, orderId]);
   
   // Fetch order details when we have an ID
   const fetchOrderDetails = async (id: string) => {
@@ -138,15 +142,15 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
   // Debug logging
   useEffect(() => {
     console.log('SurveyResponsesView state:', {
-      receivedResponses: initialResponses,
+      receivedResponses: safeInitialResponses,
       refreshedResponses,
       orderId,
       hasOrderId: !!orderId,
-      responsesLength: initialResponses?.length || 0,
-      refreshedResponsesLength: refreshedResponses?.length || 0,
+      responsesLength: safeInitialResponses.length,
+      refreshedResponsesLength: refreshedResponses.length,
       order
     });
-  }, [initialResponses, refreshedResponses, orderId, order]);
+  }, [safeInitialResponses, refreshedResponses, orderId, order]);
   
   const refreshResponses = async () => {
     if (!orderId) {
@@ -162,35 +166,28 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
       console.log('Refreshing responses for order ID:', orderId);
       
       // Clear out any previous refreshed responses while loading
-      setRefreshedResponses(null);
+      setRefreshedResponses([]);
       
-      // Use the edge function to get responses
-      const { data, error } = await supabase.functions.invoke('get-survey-responses', {
-        body: { orderId }
-      });
-      
-      console.log('Edge function response:', data);
+      // Try to get responses directly with SDK first
+      const { data, error } = await supabase
+        .from('survey_responses')
+        .select('*')
+        .eq('order_id', orderId);
       
       if (error) {
-        console.error('Edge function error:', error);
-        setErrorMessage(`Błąd funkcji: ${error.message}`);
+        console.error('Error fetching responses with SDK:', error);
+        setErrorMessage(`Błąd: ${error.message}`);
         throw error;
       }
       
-      if (data && data.responses) {
-        console.log(`Received ${data.responses.length} responses from edge function`);
-        setRefreshedResponses(data.responses);
-        
-        if (data.responses.length > 0) {
-          toast.success(`Odpowiedzi odświeżone (${data.responses.length})`);
-        } else {
-          toast.info('Brak odpowiedzi dla tego zamówienia w bazie danych');
-        }
+      if (data && data.length > 0) {
+        console.log(`Retrieved ${data.length} responses from database`);
+        setRefreshedResponses(data);
+        toast.success(`Odpowiedzi odświeżone (${data.length})`);
       } else {
-        console.error('Unexpected response format from edge function:', data);
+        console.log('No responses found in database');
         setRefreshedResponses([]);
-        setErrorMessage('Nieoczekiwany format odpowiedzi z serwera');
-        toast.error('Błąd podczas pobierania odpowiedzi');
+        toast.info('Brak odpowiedzi dla tego zamówienia w bazie danych');
       }
     } catch (err: any) {
       console.error('Failed to refresh responses:', err);
@@ -205,16 +202,16 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
 
   // Use refreshed responses if available, otherwise use the provided responses
   // Ensure we never have undefined responses by defaulting to empty array
-  const responses = refreshedResponses !== null ? refreshedResponses : (initialResponses || []);
+  const responses = refreshedResponses.length > 0 ? refreshedResponses : safeInitialResponses;
   const currentLoading = refreshLoading || isLoading;
   
   // Auto-refresh responses when orderId changes or component mounts
   useEffect(() => {
-    if (orderId && (!initialResponses || initialResponses.length === 0) && !refreshLoading) {
+    if (orderId && safeInitialResponses.length === 0 && !refreshLoading) {
       console.log('Auto-refreshing responses for order ID:', orderId);
       refreshResponses();
     }
-  }, [orderId, initialResponses]);
+  }, [orderId, safeInitialResponses]);
   
   if (currentLoading) {
     return (
@@ -225,7 +222,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
   }
 
   // The empty state with a clear message and prominent refresh button
-  if (!responses || responses.length === 0) {
+  if (responses.length === 0) {
     return (
       <div className="space-y-4">
         <div className="text-center p-6 border rounded-md bg-muted/10">
@@ -270,62 +267,11 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
   console.log('User responses:', userResponses.length);
   console.log('Partner responses:', partnerResponses.length);
 
-  // Function to render responses for a specific user type as cards
-  const renderUserResponsesCards = (responses: SurveyResponse[], userType: string) => {
-    if (!responses || responses.length === 0) {
-      return (
-        <div className="text-center p-2 text-muted-foreground">
-          Brak odpowiedzi od {userType === 'user' ? 'zamawiającego' : 'partnera'}.
-        </div>
-      );
-    }
-
-    return (
-      <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2">
-        {responses.map(response => {
-          const question = questionsDatabase.find(q => q.id === response.question_id);
-          return (
-            <Card key={response.id} className="overflow-hidden">
-              <CardHeader className="bg-muted/50 p-4">
-                <CardTitle className="text-base">
-                  {question?.text || `Pytanie (${response.question_id})`}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4">
-                <div className="flex items-center mt-2">
-                  <Badge variant="outline">
-                    {getRatingLabel(response.answer)}
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-    );
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center space-x-2">
           <h2 className="text-xl font-semibold">Odpowiedzi ankiety</h2>
-          <TabsList className="ml-4">
-            <TabsTrigger 
-              value="table" 
-              className={viewType === 'table' ? 'bg-primary text-primary-foreground' : ''}
-              onClick={() => setViewType('table')}
-            >
-              Tabela
-            </TabsTrigger>
-            <TabsTrigger 
-              value="cards" 
-              className={viewType === 'cards' ? 'bg-primary text-primary-foreground' : ''}
-              onClick={() => setViewType('cards')}
-            >
-              Karty
-            </TabsTrigger>
-          </TabsList>
         </div>
         <Button 
           onClick={refreshResponses}
@@ -352,35 +298,21 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
         <ReportGenerator responses={responses} order={order} />
       </div>
       
-      {viewType === 'table' ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium border-b pb-2">Odpowiedzi zamawiającego ({userResponses.length})</h3>
-            <div className="max-h-[50vh] overflow-y-auto pr-2">
-              <SurveyResponsesTable responses={userResponses} userType="user" />
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium border-b pb-2">Odpowiedzi partnera ({partnerResponses.length})</h3>
-            <div className="max-h-[50vh] overflow-y-auto pr-2">
-              <SurveyResponsesTable responses={partnerResponses} userType="partner" />
-            </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium border-b pb-2">Odpowiedzi zamawiającego ({userResponses.length})</h3>
+          <div className="max-h-[50vh] overflow-y-auto pr-2">
+            <SurveyResponsesTable responses={userResponses} userType="user" />
           </div>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium border-b pb-2">Odpowiedzi zamawiającego ({userResponses.length})</h3>
-            {renderUserResponsesCards(userResponses, 'user')}
-          </div>
 
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium border-b pb-2">Odpowiedzi partnera ({partnerResponses.length})</h3>
-            {renderUserResponsesCards(partnerResponses, 'partner')}
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium border-b pb-2">Odpowiedzi partnera ({partnerResponses.length})</h3>
+          <div className="max-h-[50vh] overflow-y-auto pr-2">
+            <SurveyResponsesTable responses={partnerResponses} userType="partner" />
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

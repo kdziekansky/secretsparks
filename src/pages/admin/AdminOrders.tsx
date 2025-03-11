@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
@@ -60,6 +61,7 @@ const AdminOrders: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("details");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -100,40 +102,45 @@ const AdminOrders: React.FC = () => {
     queryFn: async () => {
       if (!selectedOrder?.id) {
         console.log('No selected order ID for fetching responses');
-        return null;
+        return [];
       }
       
-      console.log(`Fetching survey responses for order ID: ${selectedOrder.id}`);
-      
-      // Use direct API call to bypass any potential client issues
+      setIsSubmitting(true);
       try {
-        // First try with the SDK
-        const { data, error } = await supabase
-          .from('survey_responses')
-          .select('*')
-          .eq('order_id', selectedOrder.id);
+        console.log(`Fetching survey responses for order ID: ${selectedOrder.id}`);
+        
+        // Use direct API call to bypass any potential client issues
+        try {
+          // First try with the SDK
+          const { data, error } = await supabase
+            .from('survey_responses')
+            .select('*')
+            .eq('order_id', selectedOrder.id);
 
-        if (error) {
-          console.error('Error fetching responses with SDK:', error);
-          throw error;
+          if (error) {
+            console.error('Error fetching responses with SDK:', error);
+            throw error;
+          }
+          
+          console.log(`SDK query returned ${data?.length || 0} responses`);
+          
+          if (data && data.length > 0) {
+            return data;
+          }
+          
+          // If SDK returns no data, try direct API call as fallback
+          console.log('Trying direct API call as fallback');
+          const directData = await fetchFromSupabase(`survey_responses?order_id=eq.${encodeURIComponent(selectedOrder.id)}`);
+          
+          console.log(`Direct API call returned ${directData?.length || 0} responses`);
+          return directData || [];
+        } catch (err) {
+          console.error('Failed to fetch survey responses:', err);
+          toast.error('Wystąpił błąd podczas pobierania odpowiedzi');
+          return [];
         }
-        
-        console.log(`SDK query returned ${data?.length || 0} responses`);
-        
-        if (data && data.length > 0) {
-          return data;
-        }
-        
-        // If SDK returns no data, try direct API call as fallback
-        console.log('Trying direct API call as fallback');
-        const directData = await fetchFromSupabase(`survey_responses?order_id=eq.${encodeURIComponent(selectedOrder.id)}`);
-        
-        console.log(`Direct API call returned ${directData?.length || 0} responses`);
-        return directData || [];
-      } catch (err) {
-        console.error('Failed to fetch survey responses:', err);
-        toast.error('Wystąpił błąd podczas pobierania odpowiedzi');
-        return [];
+      } finally {
+        setIsSubmitting(false);
       }
     },
     enabled: isAuthenticated && !!selectedOrder?.id,
@@ -167,6 +174,7 @@ const AdminOrders: React.FC = () => {
   };
 
   const viewSurveyResponses = (order: Order) => {
+    setIsSubmitting(true);
     setSelectedOrder(order);
     setActiveTab("responses");
     setIsDetailsOpen(true);
@@ -355,7 +363,7 @@ const AdminOrders: React.FC = () => {
               </DialogDescription>
             </DialogHeader>
 
-            <Tabs defaultValue={activeTab} onValueChange={(value) => {
+            <Tabs defaultValue={activeTab} value={activeTab} onValueChange={(value) => {
               setActiveTab(value);
               if (value === "responses" && refetchResponses) {
                 console.log('Tab changed to responses, refetching');
@@ -439,14 +447,21 @@ const AdminOrders: React.FC = () => {
                     {selectedOrder?.id}
                   </div>
                   
-                  <SurveyResponsesView 
-                    responses={surveyResponses} 
-                    isLoading={responsesLoading} 
-                  />
+                  {isSubmitting ? (
+                    <div className="flex justify-center p-8">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                      <span className="ml-3">Ładowanie odpowiedzi...</span>
+                    </div>
+                  ) : (
+                    <SurveyResponsesView 
+                      responses={surveyResponses || []} 
+                      isLoading={responsesLoading} 
+                    />
+                  )}
                   
                   <div className="flex justify-end mt-6">
                     <ReportGenerator 
-                      responses={surveyResponses} 
+                      responses={surveyResponses || []} 
                       order={selectedOrder}
                     />
                   </div>
