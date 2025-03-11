@@ -51,8 +51,8 @@ Deno.serve(async (req) => {
       )
     }
 
-    // STEP 1: FIRST - Check if user responses exist and create the question sequence
-    console.log('STEP 1: Checking for user responses to build question sequence')
+    // STEP 1: Get user responses to determine question sequence
+    console.log('STEP 1: Getting user responses from survey_responses table')
     const { data: userResponses, error: responsesError } = await supabase
       .from('survey_responses')
       .select('question_id, created_at')
@@ -64,7 +64,7 @@ Deno.serve(async (req) => {
       console.error('Error fetching user responses:', responsesError)
       throw new Error(`Failed to fetch user responses: ${responsesError.message}`)
     }
-    
+
     let questionIds = []
     
     // If we have user responses, use them to create the question sequence
@@ -91,49 +91,18 @@ Deno.serve(async (req) => {
       questionIds = sampleResponses.map(q => q.question_id)
       console.log(`Generated default set of ${questionIds.length} questions:`, questionIds)
     }
-    
-    // STEP 2: Save question sequence to order BEFORE creating the partner survey link
-    console.log('STEP 2: Saving question sequence to order')
-    const { error: updateError } = await supabase
-      .from('orders')
-      .update({ user_question_sequence: questionIds })
-      .eq('id', orderId)
-    
-    if (updateError) {
-      console.error('Failed to save question sequence to order:', updateError)
-      throw new Error(`Failed to save question sequence: ${updateError.message}`)
-    }
-    
-    // STEP 3: Verify the sequence was saved correctly
-    console.log('STEP 3: Verifying question sequence was saved')
-    const { data: updatedOrder, error: refetchError } = await supabase
-      .from('orders')
-      .select('*')
-      .eq('id', orderId)
-      .single()
-      
-    if (refetchError || !updatedOrder) {
-      throw new Error(`Failed to refetch updated order: ${refetchError?.message || 'Order not found'}`)
-    }
-    
-    if (!updatedOrder.user_question_sequence || updatedOrder.user_question_sequence.length === 0) {
-      console.error('Verification failed: Question sequence not found in order after update')
-      throw new Error('Failed to save question sequence to order')
-    }
-    
-    console.log(`Verification successful: Order now has ${updatedOrder.user_question_sequence.length} questions in sequence:`, updatedOrder.user_question_sequence)
 
-    // STEP 4: Send thank you email to user
-    console.log('STEP 4: Sending thank you email to user')
+    // STEP 2: Send thank you email to user
+    console.log('STEP 2: Sending thank you email to user')
     const userEmailResult = await resend.emails.send({
       from: 'Ankieta Seksualna <no-reply@seks-ankieta.pl>',
-      to: updatedOrder.user_email,
+      to: order.user_email,
       subject: 'Dziękujemy za zamówienie ankiety seksualnej',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h1 style="color: #333; text-align: center;">Dziękujemy za zamówienie!</h1>
-          <p>Cześć ${updatedOrder.user_name},</p>
-          <p>Dziękujemy za wypełnienie ankiety seksualnej. Twój partner ${updatedOrder.partner_name} wkrótce otrzyma zaproszenie do wypełnienia swojej części ankiety.</p>
+          <p>Cześć ${order.user_name},</p>
+          <p>Dziękujemy za wypełnienie ankiety seksualnej. Twój partner ${order.partner_name} wkrótce otrzyma zaproszenie do wypełnienia swojej części ankiety.</p>
           <p>Po wypełnieniu ankiety przez partnera, otrzymasz szczegółowy raport porównawczy na adres email.</p>
           <p>W razie pytań, prosimy o kontakt.</p>
           <p>Pozdrawiamy,<br>Zespół Ankiety Seksualnej</p>
@@ -143,20 +112,20 @@ Deno.serve(async (req) => {
 
     console.log('User email sent:', userEmailResult)
 
-    // STEP 5: Send invitation email to partner with link to the survey
-    const partnerSurveyUrl = `${new URL(req.url).origin}/survey?token=${updatedOrder.partner_survey_token}`
-    console.log('STEP 5: Sending invitation email to partner')
+    // STEP 3: Send invitation email to partner with link to the survey
+    const partnerSurveyUrl = `${new URL(req.url).origin}/survey?token=${order.partner_survey_token}`
+    console.log('STEP 3: Sending invitation email to partner')
     console.log(`Partner survey URL: ${partnerSurveyUrl}`)
     
     const partnerEmailResult = await resend.emails.send({
       from: 'Ankieta Seksualna <no-reply@seks-ankieta.pl>',
-      to: updatedOrder.partner_email,
-      subject: `${updatedOrder.user_name} zaprasza Cię do wypełnienia ankiety seksualnej`,
+      to: order.partner_email,
+      subject: `${order.user_name} zaprasza Cię do wypełnienia ankiety seksualnej`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h1 style="color: #333; text-align: center;">Zaproszenie do Ankiety Seksualnej</h1>
-          <p>Cześć ${updatedOrder.partner_name},</p>
-          <p>${updatedOrder.user_name} zaprasza Cię do wypełnienia krótkiej ankiety seksualnej. Jej celem jest porównanie Waszych preferencji i pomoc w lepszym zrozumieniu siebie nawzajem.</p>
+          <p>Cześć ${order.partner_name},</p>
+          <p>${order.user_name} zaprasza Cię do wypełnienia krótkiej ankiety seksualnej. Jej celem jest porównanie Waszych preferencji i pomoc w lepszym zrozumieniu siebie nawzajem.</p>
           <p>Aby wypełnić ankietę, kliknij poniższy link:</p>
           <p style="text-align: center;">
             <a href="${partnerSurveyUrl}" style="background-color: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; margin-top: 10px;">Wypełnij ankietę</a>
@@ -169,7 +138,7 @@ Deno.serve(async (req) => {
 
     console.log('Partner email sent:', partnerEmailResult)
 
-    // STEP 6: Mark emails as sent
+    // STEP 4: Mark emails as sent
     const { error: markSentError } = await supabase
       .from('orders')
       .update({ emails_sent: true })
@@ -186,8 +155,8 @@ Deno.serve(async (req) => {
         message: 'Emails sent successfully',
         userEmail: userEmailResult,
         partnerEmail: partnerEmailResult,
-        questionCount: updatedOrder.user_question_sequence.length,
-        questions: updatedOrder.user_question_sequence
+        questionCount: questionIds.length,
+        questions: questionIds
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )

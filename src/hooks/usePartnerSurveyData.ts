@@ -27,7 +27,7 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
         // Get the order associated with this partner token
         const { data: orderData, error: orderError } = await supabase
           .from('orders')
-          .select('id, user_gender, partner_gender, game_level, user_question_sequence')
+          .select('id, user_gender, partner_gender, game_level')
           .eq('partner_survey_token', partnerToken)
           .single();
         
@@ -39,22 +39,7 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
         setPartnerOrderId(orderData.id);
         setOrderFetched(true);
         
-        // PRIORITY 1: Use the sequence saved in the order itself
-        if (orderData.user_question_sequence && 
-            Array.isArray(orderData.user_question_sequence) && 
-            orderData.user_question_sequence.length > 0) {
-          
-          console.log('Using pre-saved question sequence from order:', orderData.user_question_sequence);
-          setSelectedQuestionIds(orderData.user_question_sequence);
-          setDataFetched(true);
-          toast.success('Ankieta załadowana pomyślnie');
-          setIsLoading(false);
-          return;
-        }
-        
-        console.log('No pre-saved question sequence in order, fetching from user responses');
-          
-        // PRIORITY 2: DIRECTLY query the survey_responses table to get the user's responses
+        // DIRECTLY query the survey_responses table to get the user's responses
         const { data: userResponses, error: responsesError } = await supabase
           .from('survey_responses')
           .select('question_id, created_at')
@@ -75,26 +60,15 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
           const questionIds = userResponses.map(response => response.question_id);
           console.log(`Found ${questionIds.length} questions from user responses:`, questionIds);
           
-          // Save the question sequence to the order for future reference
-          const { error: updateError } = await supabase
-            .from('orders')
-            .update({ user_question_sequence: questionIds })
-            .eq('id', orderData.id);
-          
-          if (updateError) {
-            console.error('Failed to save question sequence to order:', updateError);
-          } else {
-            console.log('Successfully saved question sequence to order');
-          }
-          
           setSelectedQuestionIds(questionIds);
           setDataFetched(true);
           toast.success('Ankieta załadowana pomyślnie');
+          setIsLoading(false);
           return;
         }
         
         // If we reach here, there are no user responses yet
-        console.log('No user responses found in survey_responses table for this order');
+        console.log('No user responses found for this order');
         throw new Error('Brak odpowiedzi od zamawiającego. Nie można utworzyć ankiety dla partnera.');
         
       } catch (err: any) {
