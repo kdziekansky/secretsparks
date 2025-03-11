@@ -167,7 +167,7 @@ Deno.serve(async (req) => {
       })
       .eq('id', order.id)
 
-    // Return success response
+    // Return success response with the session ID
     return new Response(
       JSON.stringify({
         success: true,

@@ -96,10 +96,16 @@ const PaymentPage: React.FC = () => {
         throw new Error(paymentError.message || 'Payment failed');
       }
 
+      if (!paymentData || !paymentData.sessionId) {
+        throw new Error('No session ID returned from server');
+      }
+
       // Store the order ID in the survey context
-      if (paymentData?.orderId) {
+      if (paymentData.orderId) {
         setOrderId(paymentData.orderId);
       }
+
+      console.log('Redirecting to Stripe checkout with sessionId:', paymentData.sessionId);
 
       // Redirect to Stripe payment page
       const stripe = await stripePromise;
@@ -113,6 +119,7 @@ const PaymentPage: React.FC = () => {
       });
 
       if (stripeError) {
+        console.error('Stripe redirect error:', stripeError);
         throw new Error(stripeError.message || 'Error redirecting to payment page');
       }
       
