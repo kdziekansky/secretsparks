@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { FileDown, Loader2 } from 'lucide-react';
@@ -85,17 +84,13 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
       return;
     }
 
-    // Ensure responses is an array, even if empty
     const safeResponses = responses || [];
-    
     console.log("Generating PDF with responses:", safeResponses.length);
     setIsGenerating(true);
     
     try {
       // Create new PDF document
       const doc = new jsPDF();
-      
-      // Set font
       doc.setFont("helvetica");
       
       // Add title and order info with normalized Polish characters
@@ -108,11 +103,31 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
       doc.text(`Zamawiajacy: ${normalizePolishChars(order.user_name)} (${order.user_email})`, 14, 44);
       doc.text(`Partner: ${normalizePolishChars(order.partner_name)} (${order.partner_email})`, 14, 51);
       
-      // Group responses
-      const userResponses = safeResponses.filter(r => r.user_type === 'user');
-      const partnerResponses = safeResponses.filter(r => r.user_type === 'partner');
+      // Group and deduplicate responses
+      const deduplicateResponses = (responses: SurveyResponse[], type: 'user' | 'partner') => {
+        const seen = new Set<string>();
+        return responses
+          .filter(r => r.user_type === type)
+          .sort((a, b) => {
+            const dateA = new Date(a.created_at || 0).getTime();
+            const dateB = new Date(b.created_at || 0).getTime();
+            return dateB - dateA; // Sort by newest first
+          })
+          .filter(response => {
+            const key = `${response.question_id}`;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+          });
+      };
 
-      console.log("Filtered responses for PDF:", { userResponses: userResponses.length, partnerResponses: partnerResponses.length });
+      const userResponses = deduplicateResponses(safeResponses, 'user');
+      const partnerResponses = deduplicateResponses(safeResponses, 'partner');
+
+      console.log("Filtered responses for PDF:", {
+        userResponses: userResponses.length,
+        partnerResponses: partnerResponses.length
+      });
 
       // Helper to format responses for the table
       const formatResponsesForTable = (responses: SurveyResponse[]) => {
@@ -143,8 +158,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
           ];
         });
       };
-
-      // Fixed starting position
+      
       let currentY = 65;
       
       // Add user responses section header
@@ -181,7 +195,6 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
       currentY += 10;
       
       if (partnerResponses.length > 0) {
-        // Add partner responses table
         autoTable(doc, {
           startY: currentY,
           head: [['Pytanie', 'Odpowiedz']],

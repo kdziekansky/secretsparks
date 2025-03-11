@@ -83,11 +83,11 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
         response.question_id &&
         typeof response.answer === 'number'
       ))
-      // Sort by creation date (newest first) to ensure we get the latest answer for each question
+      // Sort by creation date (newest first) to ensure we get the latest answer
       .sort((a, b) => {
         const dateA = new Date(a.created_at || 0).getTime();
         const dateB = new Date(b.created_at || 0).getTime();
-        return dateB - dateA; // Descending order (newest first)
+        return dateB - dateA;
       })
       // Keep only one response per question_id (the first one after sorting, which is the newest)
       .filter(response => {
@@ -99,11 +99,11 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
         seen.add(questionId);
         return true;
       })
-      // Now sort by created_at ascending for display order
+      // Sort by created_at ascending for display
       .sort((a, b) => {
         const dateA = new Date(a.created_at || 0).getTime();
         const dateB = new Date(b.created_at || 0).getTime();
-        return dateA - dateB; // Ascending order by creation date
+        return dateA - dateB;
       });
   })();
 
