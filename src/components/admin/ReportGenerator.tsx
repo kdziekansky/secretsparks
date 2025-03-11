@@ -5,14 +5,7 @@ import { FileDown, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { questionsDatabase } from '@/contexts/questions-data';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
-
-// Add the type definition for jsPDF-autotable
-declare module 'jspdf' {
-  interface jsPDF {
-    autoTable: (options: any) => jsPDF;
-  }
-}
+import autoTable from 'jspdf-autotable';
 
 interface SurveyResponse {
   id: string;
@@ -102,7 +95,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
 
       console.log("Filtered responses for PDF:", { userResponses: userResponses.length, partnerResponses: partnerResponses.length });
 
-      // Helper to format responses for the PDF table
+      // Helper to format responses for the table
       const formatResponsesForTable = (responses: SurveyResponse[]) => {
         return responses.map(response => {
           // Safety check to make sure questionsDatabase is defined and is an array
@@ -139,14 +132,15 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
       
       if (userResponses.length > 0) {
         // Add user responses table
-        doc.autoTable({
+        autoTable(doc, {
           startY: currentY,
           head: [['Pytanie', 'Odpowiedź']],
           body: formatResponsesForTable(userResponses),
         });
         
         // Get the last Y position after the table
-        currentY = (doc as any).lastAutoTable.finalY + 15;
+        // @ts-ignore - this property is added by autoTable
+        currentY = doc.lastAutoTable.finalY + 15;
       } else {
         doc.setFontSize(12);
         doc.text("Brak odpowiedzi od zamawiającego", 14, currentY);
@@ -160,7 +154,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
       
       if (partnerResponses.length > 0) {
         // Add partner responses table
-        doc.autoTable({
+        autoTable(doc, {
           startY: currentY,
           head: [['Pytanie', 'Odpowiedź']],
           body: formatResponsesForTable(partnerResponses),
