@@ -50,15 +50,6 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'p6', 
-    text: 'Pozycja "na plecach z uniesionymi nogami"',
-    description: "Tutaj będzie przykładowy opis",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      gameLevel: ['discover'] 
-    }
-  },
-  { 
-    id: 'p7', 
     text: 'Pozycja "bokiem z bliskim kontaktem"',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
@@ -67,7 +58,7 @@ export const questionsDatabase: Question[] = [
     }
   },
   { 
-    id: 'p8', 
+    id: 'p7', 
     text: 'Pozycja "na brzuchu"',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
@@ -76,7 +67,7 @@ export const questionsDatabase: Question[] = [
     }
   },
   { 
-    id: 'p9', 
+    id: 'p8', 
     text: 'Pozycja "na sofie"',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
@@ -85,7 +76,7 @@ export const questionsDatabase: Question[] = [
     }
   },
   { 
-    id: 'p10', 
+    id: 'p9', 
     text: 'Pozycja "twarzą w twarz, siedząc"',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
@@ -94,7 +85,7 @@ export const questionsDatabase: Question[] = [
     }
   },
   { 
-    id: 'p11', 
+    id: 'p10', 
     text: 'Pozycja "69"',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
@@ -103,7 +94,7 @@ export const questionsDatabase: Question[] = [
     }
   },
   { 
-    id: 'p12', 
+    id: 'p11', 
     text: 'Pozycja "lotus"',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
@@ -112,7 +103,7 @@ export const questionsDatabase: Question[] = [
     }
   },
   { 
-    id: 'p13', 
+    id: 'p12', 
     text: 'Pozycja "stojąca"',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
@@ -121,16 +112,16 @@ export const questionsDatabase: Question[] = [
     }
   },
   { 
-    id: 'p14', 
+    id: 'p13', 
     text: 'Pozycja "na krześle"',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
-      gameLevel: ['explore'] 
+      gameLevel: ['discover', 'explore'] 
     }
   },
   { 
-    id: 'p15', 
+    id: 'p14', 
     text: 'Pozycja "skorpion"',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
@@ -139,7 +130,7 @@ export const questionsDatabase: Question[] = [
     }
   },
   { 
-    id: 'p16', 
+    id: 'p15', 
     text: 'Pozycja "stojąca z podparciem"',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
@@ -148,25 +139,25 @@ export const questionsDatabase: Question[] = [
     }
   },
   { 
-    id: 'p17', 
+    id: 'p16', 
     text: 'Pozycja "na stole"',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
-      gameLevel: ['explore'] 
+      gameLevel: ['discover', 'explore'] 
     }
   },
   { 
-    id: 'p18', 
+    id: 'p17', 
     text: 'Pozycja "na krawędzi łóżka"',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
-      gameLevel: ['explore'] 
+      gameLevel: ['discover', 'explore'] 
     }
   },
   { 
-    id: 'p19', 
+    id: 'p18', 
     text: 'Pozycja "od tyłu na fotelu"',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
@@ -175,7 +166,7 @@ export const questionsDatabase: Question[] = [
     }
   },
   { 
-    id: 'p20', 
+    id: 'p19', 
     text: 'Pozycja "mostek"',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
@@ -184,7 +175,7 @@ export const questionsDatabase: Question[] = [
     }
   },
   { 
-    id: 'p21', 
+    id: 'p20', 
     text: 'Pozycja "wisząca"',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
@@ -193,7 +184,7 @@ export const questionsDatabase: Question[] = [
     }
   },
   { 
-    id: 'p22', 
+    id: 'p21', 
     text: 'Pozycja "wisząca na drzwiach"',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
@@ -202,7 +193,7 @@ export const questionsDatabase: Question[] = [
     }
   },
   { 
-    id: 'p23', 
+    id: 'p22', 
     text: 'Pozycja "przy ścianie"',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
@@ -211,7 +202,7 @@ export const questionsDatabase: Question[] = [
     }
   },
   { 
-    id: 'p24', 
+    id: 'p23', 
     text: 'Pozycja "na siodle"',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
@@ -220,7 +211,7 @@ export const questionsDatabase: Question[] = [
     }
   },
   { 
-    id: 'p25', 
+    id: 'p24', 
     text: 'Pozycja "w głębokim rozkroku"',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
@@ -229,7 +220,7 @@ export const questionsDatabase: Question[] = [
     }
   },
   { 
-    id: 'p26', 
+    id: 'p25', 
     text: 'Pozycja "w całkowitym związaniu rąk"',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
@@ -241,7 +232,7 @@ export const questionsDatabase: Question[] = [
   // FANTAZJE I ODGRYWANIE RÓL
   { 
     id: 'r1', 
-    text: 'Nauczyciel i uczeń',
+    text: 'Odgrywanie ról: Nauczyciel i uczeń',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
@@ -250,7 +241,7 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'r2', 
-    text: 'Policjant i zatrzymany',
+    text: 'Odgrywanie ról: Policjant i zatrzymany',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
@@ -259,7 +250,7 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'r3', 
-    text: 'Szef i pracownik',
+    text: 'Odgrywanie ról: Szef i pracownik',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
@@ -268,7 +259,7 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'r4', 
-    text: 'Ratownik i topielec',
+    text: 'Odgrywanie ról: Ratownik i topielec',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
@@ -277,7 +268,7 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'r5', 
-    text: 'Trener i sportowiec',
+    text: 'Odgrywanie ról: Trener i sportowiec',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
@@ -286,7 +277,7 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'r6', 
-    text: 'Fotograf i model',
+    text: 'Odgrywanie ról: Fotograf i model',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
@@ -295,7 +286,7 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'r7', 
-    text: 'Strażak i uratowany',
+    text: 'Odgrywanie ról: Strażak i uratowany',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
@@ -304,7 +295,7 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'r8', 
-    text: 'Celebryta i jego ochroniarz',
+    text: 'Odgrywanie ról: Celebryta i jego ochroniarz',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
@@ -313,7 +304,7 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'r9', 
-    text: 'Mechanik i klient',
+    text: 'Odgrywanie ról: Mechanik i klient',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
@@ -322,7 +313,7 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'r10', 
-    text: 'Lekarz i pacjent',
+    text: 'Odgrywanie ról: Lekarz i pacjent',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
@@ -331,7 +322,7 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'r11', 
-    text: 'Gwiazda muzyczna i jego fan',
+    text: 'Odgrywanie ról: Gwiazda muzyczna i jego fan',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
@@ -340,7 +331,7 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'r12', 
-    text: 'Wojskowy i rekrut',
+    text: 'Odgrywanie ról: Wojskowy i rekrut',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
@@ -349,25 +340,7 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'r13', 
-    text: 'Seks przez telefon lub kamerę jako element scenariusza',
-    description: "Tutaj będzie przykładowy opis",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      gameLevel: ['explore'] 
-    }
-  },
-  { 
-    id: 'r14', 
-    text: 'Rozmowa na czacie jako inna osoba',
-    description: "Tutaj będzie przykładowy opis",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      gameLevel: ['explore'] 
-    }
-  },
-  { 
-    id: 'r15', 
-    text: 'Scenariusz randki w klubie i spontanicznego seksu',
+    text: 'Seks przez telefon lub kamerę',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
@@ -402,17 +375,8 @@ export const questionsDatabase: Question[] = [
     }
   },
   { 
-    id: 'r19', 
-    text: 'Obiekt pożądania i osoba, która go zdobywa',
-    description: "Tutaj będzie przykładowy opis",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      gameLevel: ['exceed'] 
-    }
-  },
-  { 
     id: 'r20', 
-    text: 'Seks podczas randki BDSM w klubie',
+    text: 'Seks z elementami BDSM',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
@@ -477,7 +441,7 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'u6', 
-    text: 'Wspólna kąpiel jako element gry wstępnej',
+    text: 'Seks w kąpieli',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
@@ -486,16 +450,7 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'u7', 
-    text: 'Wspólne czytanie erotycznych opowiadań',
-    description: "Tutaj będzie przykładowy opis",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      gameLevel: ['discover'] 
-    }
-  },
-  { 
-    id: 'u8', 
-    text: 'Stymulacja dźwiękami (np. erotyczne szepty)',
+    text: 'Dirty talk',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
@@ -504,29 +459,20 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'u9', 
-    text: 'Seks w ciemności, bez widzenia siebie nawzajem',
+    text: 'Seks w ciemności/po omacku',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
-      gameLevel: ['discover'] 
+      gameLevel: ['discover', 'explore'] 
     }
   },
   { 
     id: 'u10', 
-    text: 'Seks przy użyciu pachnących olejków',
+    text: 'Post cum torture',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
-      gameLevel: ['discover'] 
-    }
-  },
-  { 
-    id: 'u11', 
-    text: 'Zabawy z opaską na oczy',
-    description: "Tutaj będzie przykładowy opis",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      gameLevel: ['explore'] 
+      gameLevel: ['exceed'] 
     }
   },
   { 
@@ -558,7 +504,7 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'u15', 
-    text: 'Używanie lubrykantu chłodzącego lub rozgrzewającego',
+    text: 'Ciepło i chłód',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
@@ -567,38 +513,11 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'u16', 
-    text: 'Wspólne oglądanie filmów erotycznych o różnej tematyce',
+    text: 'Deep throat – głębokie gardło',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
-      gameLevel: ['explore'] 
-    }
-  },
-  { 
-    id: 'u17', 
-    text: 'Seks oralny z elementami dominacji i kontroli',
-    description: "Tutaj będzie przykładowy opis",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      gameLevel: ['explore'] 
-    }
-  },
-  { 
-    id: 'u18', 
-    text: 'Seks w ubraniach – stopniowe rozbieranie się',
-    description: "Tutaj będzie przykładowy opis",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      gameLevel: ['explore'] 
-    }
-  },
-  { 
-    id: 'u19', 
-    text: 'Wykorzystanie materiałów jak jedwab czy lateks podczas gry wstępnej',
-    description: "Tutaj będzie przykładowy opis",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      gameLevel: ['explore'] 
+      gameLevel: ['explore', 'exceed'] 
     }
   },
   { 
@@ -630,7 +549,7 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'u23', 
-    text: 'Seks w plenerze z wykorzystaniem otoczenia (np. drzewa, samochód)',
+    text: 'Seks w plenerze',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
@@ -753,7 +672,7 @@ export const questionsDatabase: Question[] = [
   // INNE PRAKTYKI
   { 
     id: 'i1', 
-    text: 'Pegging – penetrowanie partnera za pomocą dildo',
+    text: 'Pegging – za pomocą dildo',
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 

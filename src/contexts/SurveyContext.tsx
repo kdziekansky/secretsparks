@@ -55,13 +55,14 @@ interface SurveyContextType {
 // Funkcja do losowego wyboru pytań z zachowaniem par
 const getRandomizedQuestions = (questions: Question[], config: SurveyConfig, maxQuestions: number = 15) => {
   // 1. Najpierw filtrujemy pytania pod kątem konfiguracji
+  // UWAGA: Zmieniamy logikę, aby ignorować userGender i partnerGender,
+  // dzięki czemu każda konfiguracja płci dostanie te same pytania
   const filteredByConfig = questions.filter(question => {
     if (!question.forConfig) return true;
     
-    const { userGender, partnerGender, gameLevel } = question.forConfig;
+    // Jedynym filtrem zostaje gameLevel
+    const { gameLevel } = question.forConfig;
     
-    if (userGender && userGender !== config.userGender) return false;
-    if (partnerGender && partnerGender !== config.partnerGender) return false;
     if (gameLevel && !gameLevel.includes(config.gameLevel as GameLevel)) return false;
     
     return true;
@@ -375,6 +376,98 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const getOrderId = useCallback(() => {
     return partnerOrderId;
   }, [partnerOrderId]);
+
+  // Use the same configuration settings for partner survey
+  useEffect(() => {
+    // Fetch order details if this is a partner survey
+    const fetchOrderDetails = async () => {
+      if (!partnerToken) return;
+      
+      setIsLoadingOrder(true);
+      setError(null);
+      
+      try {
+        console.log('Fetching order details for partner token:', partnerToken);
+        
+        // Try first with normal client
+        try {
+          // Get the order associated with this partner token
+          const { data: orderData, error: orderError } = await supabase
+            .from('orders')
+            .select('id, user_name, partner_name, user_gender, partner_gender, game_level')
+            .eq('partner_survey_token', partnerToken)
+            .single();
+          
+          if (!orderError && orderData) {
+            console.log('Found order with SDK:', orderData);
+            
+            // Process and return the order data
+            processOrderData(orderData);
+            return;
+          }
+          
+          console.error('Error or no data from SDK, trying direct API:', orderError);
+          
+          // If SDK fails, try direct API
+          const directData = await fetchFromSupabase(`orders?partner_survey_token=eq.${encodeURIComponent(partnerToken)}`);
+          
+          if (directData && directData.length > 0) {
+            console.log('Found order with direct API:', directData[0]);
+            processOrderData(directData[0]);
+            return;
+          }
+          
+          throw new Error('Nie znaleziono ankiety lub link jest nieprawidłowy');
+        } catch (err) {
+          console.error('All methods failed to fetch order:', err);
+          throw new Error('Nie znaleziono ankiety dla tego linku');
+        }
+      } catch (err: any) {
+        console.error('Error fetching order details:', err);
+        setError(err.message || 'Wystąpił błąd podczas ładowania ankiety');
+      } finally {
+        setIsLoadingOrder(false);
+      }
+    };
+    
+    const processOrderData = (orderData: any) => {
+      // Check if the order exists and is valid
+      if (!orderData.id) {
+        throw new Error('Nieprawidłowe dane zamówienia');
+      }
+      
+      // Store the order ID in the survey context
+      setOrderId(orderData.id);
+      
+      // Set default configuration if any values are missing
+      const userGender = orderData.user_gender || 'male';
+      const partnerGender = orderData.partner_gender || 'female';
+      const gameLevel = orderData.game_level || 'discover';
+      
+      // ISTOTNA ZMIANA: Dla ankiety partnera, przekazujemy DOKŁADNIE TAKĄ SAMĄ KONFIGURACJĘ
+      // jak w ankiecie zamawiającego, aby zagwarantować identyczne pytania
+      setOrderDetails({
+        userName: orderData.user_name,
+        partnerName: orderData.partner_name,
+        userGender: userGender as 'male' | 'female',
+        partnerGender: partnerGender as 'male' | 'female',
+        gameLevel: gameLevel as 'discover' | 'explore' | 'exceed',
+        orderId: orderData.id
+      });
+      
+      // Pre-configure the survey with the same settings as the user's survey
+      // We use the SAME user_gender and partner_gender as in the original survey
+      setUserGender(userGender as 'male' | 'female');
+      setPartnerGender(partnerGender as 'male' | 'female');
+      setGameLevel(gameLevel as 'discover' | 'explore' | 'exceed');
+      
+      toast.success('Ankieta załadowana pomyślnie');
+    };
+    
+    if (partnerToken) {
+      fetchOrderDetails();
+    }
+  }, [partnerToken, setUserGender, setPartnerGender, setGameLevel, setOrderId]);
 
   const value = {
     currentQuestionIndex,
