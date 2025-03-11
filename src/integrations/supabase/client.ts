@@ -71,25 +71,52 @@ try {
 // Export the fetch function for direct API calls
 export const fetchFromSupabase = async (path: string, options = {}) => {
   const url = `${SUPABASE_URL}/rest/v1/${path}`;
-  const headers = {
-    'apikey': SUPABASE_ANON_KEY,
-    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-    'Content-Type': 'application/json',
-    'Prefer': 'return=representation',
-  };
+  
+  // Głębokie logowanie zapytania
+  console.log(`Przygotowywanie zapytania do Supabase:`, {
+    url,
+    method: (options as any).method || 'GET',
+    headers: {
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation',
+      ...(options as any).headers
+    }
+  });
 
   try {
     console.log(`Direct API call to: ${url}`);
     const response = await fetch(url, {
       ...options,
       headers: {
-        ...headers,
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation',
         ...(options as any).headers,
       },
     });
 
+    console.log(`Otrzymano odpowiedź od API:`, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: Object.fromEntries([...(response.headers as any)]),
+    });
+
+    // Dla operacji DELETE zwracamy status powodzenia
+    if ((options as any).method === 'DELETE') {
+      if (response.status >= 200 && response.status < 300) {
+        return { success: true, status: response.status };
+      } else {
+        const error = await response.json().catch(() => ({ message: response.statusText }));
+        console.error('Supabase DELETE error:', error);
+        throw new Error(error.message || `Błąd usuwania (status ${response.status})`);
+      }
+    }
+
     if (!response.ok) {
-      const error = await response.json();
+      const error = await response.json().catch(() => ({ message: response.statusText }));
       console.error('Supabase direct API error:', error);
       throw new Error(error.message || 'Failed to fetch from Supabase');
     }

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
@@ -208,41 +209,93 @@ const AdminOrders: React.FC = () => {
       setIsSubmitting(true);
       console.log(`Próba usunięcia zamówienia ${orderToDelete.id}`);
 
-      // Używamy bezpośredniego wywołania API zamiast SDK, aby upewnić się, że mamy pełne uprawnienia
-      try {
-        await fetchFromSupabase(`orders?id=eq.${orderToDelete.id}`, {
-          method: 'DELETE'
-        });
-        
-        console.log('Zamówienie zostało pomyślnie usunięte przez bezpośrednie API');
-        toast.success('Zamówienie zostało całkowicie usunięte wraz z powiązanymi danymi');
-        
-        // Jeśli usunięte zamówienie było otwarte w szczegółach, zamknij dialog
-        if (selectedOrder?.id === orderToDelete.id) {
-          setIsDetailsOpen(false);
-          setSelectedOrder(null);
-        }
-        
-        // Odświeżamy listę zamówień
-        await refetch();
-        
-      } catch (apiError) {
-        console.error('Błąd przy użyciu bezpośredniego API:', apiError);
-        
-        // Próba alternatywnej metody - przez SDK
-        console.log('Próba usunięcia przez SDK');
-        const { error } = await supabase
-          .from('orders')
-          .delete()
-          .eq('id', orderToDelete.id);
+      // Dodajmy trzy próby usunięcia - jeśli jedna metoda nie zadziała, próbujemy innej
+      let deleted = false;
+      let lastError = null;
 
-        if (error) {
-          console.error('Błąd podczas usuwania zamówienia przez SDK:', error);
-          toast.error('Wystąpił błąd podczas usuwania zamówienia: ' + error.message);
-          throw error;
+      // Próba 1: REST API z metodą DELETE i prefixem "eq."
+      if (!deleted) {
+        try {
+          console.log("Próba 1: REST API z prefixem eq.");
+          const result = await fetchFromSupabase(`orders?id=eq.${orderToDelete.id}`, {
+            method: 'DELETE'
+          });
+          
+          console.log('Rezultat usuwania (próba 1):', result);
+          
+          // Sprawdzamy, czy usunięcie się powiodło poprzez próbę pobrania zamówienia
+          const checkResult = await fetchFromSupabase(`orders?id=eq.${orderToDelete.id}&select=id`, {
+            method: 'GET'
+          });
+          
+          console.log('Weryfikacja usunięcia (próba 1):', checkResult);
+          
+          if (Array.isArray(checkResult) && checkResult.length === 0) {
+            console.log('Potwierdzono usunięcie zamówienia (próba 1)');
+            deleted = true;
+          } else {
+            console.log('Zamówienie nadal istnieje po próbie 1');
+          }
+        } catch (error) {
+          console.error('Błąd w próbie 1:', error);
+          lastError = error;
         }
-        
-        console.log('Zamówienie zostało pomyślnie usunięte przez SDK');
+      }
+
+      // Próba 2: REST API z użyciem alternatywnej składni
+      if (!deleted) {
+        try {
+          console.log("Próba 2: REST API z alternatywną składnią");
+          const result = await fetch(`${import.meta.env.VITE_SUPABASE_URL || "https://bqbgrjpxufblrgcoxpfk.supabase.co"}/rest/v1/orders?id=eq.${orderToDelete.id}`, {
+            method: 'DELETE',
+            headers: {
+              'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxYmdyanB4dWZibHJnY294cGZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE1Mzk4NzUsImV4cCI6MjA1NzExNTg3NX0.kSryhe5Z4BILp_ss5LpSxanGSvx4HZzZtVzYia4bgik",
+              'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxYmdyanB4dWZibHJnY294cGZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE1Mzk4NzUsImV4cCI6MjA1NzExNTg3NX0.kSryhe5Z4BILp_ss5LpSxanGSvx4HZzZtVzYia4bgik"}`,
+              'Content-Type': 'application/json',
+              'Prefer': 'return=minimal'
+            }
+          });
+          
+          console.log('Rezultat usuwania (próba 2):', {
+            status: result.status,
+            statusText: result.statusText
+          });
+          
+          if (result.status >= 200 && result.status < 300) {
+            deleted = true;
+            console.log('Zamówienie pomyślnie usunięte (próba 2)');
+          }
+        } catch (error) {
+          console.error('Błąd w próbie 2:', error);
+          lastError = error;
+        }
+      }
+
+      // Próba 3: Użycie SDK Supabase
+      if (!deleted) {
+        try {
+          console.log("Próba 3: Użycie SDK Supabase");
+          const { error } = await supabase
+            .from('orders')
+            .delete()
+            .eq('id', orderToDelete.id);
+
+          if (error) {
+            console.error('Błąd podczas usuwania zamówienia przez SDK:', error);
+            lastError = error;
+          } else {
+            deleted = true;
+            console.log('Zamówienie pomyślnie usunięte (próba 3)');
+          }
+        } catch (error) {
+          console.error('Błąd w próbie 3:', error);
+          lastError = error;
+        }
+      }
+
+      // Sprawdzamy wynik
+      if (deleted) {
+        console.log('Zamówienie zostało pomyślnie usunięte');
         toast.success('Zamówienie zostało całkowicie usunięte wraz z powiązanymi danymi');
         
         // Jeśli usunięte zamówienie było otwarte w szczegółach, zamknij dialog
@@ -251,8 +304,12 @@ const AdminOrders: React.FC = () => {
           setSelectedOrder(null);
         }
         
-        // Odświeżamy listę zamówień
+        // Wymuszamy odświeżenie danych
         await refetch();
+      } else {
+        const errorMessage = lastError ? `${lastError.message || 'Nieznany błąd'}` : 'Nie udało się usunąć zamówienia';
+        console.error('Wszystkie próby usunięcia nie powiodły się:', errorMessage);
+        toast.error(`Wystąpił błąd podczas usuwania zamówienia: ${errorMessage}`);
       }
     } catch (error) {
       console.error('Nieoczekiwany błąd:', error);
