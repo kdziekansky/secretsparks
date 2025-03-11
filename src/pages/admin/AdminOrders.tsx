@@ -286,15 +286,15 @@ const AdminOrders: React.FC = () => {
                       <span className="text-xs text-muted-foreground">{order.partner_email}</span>
                     </TableCell>
                     <TableCell>
-                      {order.status === 'completed' ? (
-                        <div className="flex items-center">
-                          <CheckCircle className="mr-1 h-4 w-4 text-green-500" />
-                          Zapłacone
-                        </div>
-                      ) : (
-                        <div className="text-amber-600">Oczekujące</div>
-                      )}
-                    </TableCell>
+  {order.status === 'completed' || order.status === 'paid' ? (
+    <div className="flex items-center">
+      <CheckCircle className="mr-1 h-4 w-4 text-green-500" />
+      Zapłacone
+    </div>
+  ) : (
+    <div className="text-amber-600">Oczekujące</div>
+  )}
+</TableCell>
                     <TableCell>
                       {formatDistanceToNow(new Date(order.created_at), {
                         addSuffix: true,

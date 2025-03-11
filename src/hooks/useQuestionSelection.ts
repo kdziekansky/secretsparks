@@ -1,4 +1,3 @@
-
 import { useMemo } from 'react';
 import { Question, SurveyConfig } from '@/types/survey';
 
@@ -65,8 +64,14 @@ export const useQuestionSelection = (
   isPartnerSurvey: boolean = false
 ) => {
   return useMemo(() => {
-    // For partner survey with existing question IDs, ensure we use EXACTLY the same sequence
-    if (isPartnerSurvey && selectedQuestionIds.length > 0) {
+    // WAŻNE: Dla ankiety partnera z istniejącymi ID pytań, używamy DOKŁADNIE tej samej sekwencji
+    if (isPartnerSurvey) {
+      // Nawet jeśli nie mamy jeszcze ID pytań, zwracamy pustą tablicę zamiast losować
+      if (selectedQuestionIds.length === 0) {
+        console.log('Partner survey: Waiting for question sequence data');
+        return [];
+      }
+      
       console.log('Partner survey: Using pre-defined question sequence:', selectedQuestionIds);
       
       // Create a map of all questions by ID for quick lookup

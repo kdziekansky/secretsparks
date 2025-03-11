@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSurvey } from '@/contexts/SurveyContext';
@@ -7,7 +6,7 @@ import ProgressBar from '@/components/ProgressBar';
 import QuestionCard from '@/components/QuestionCard';
 import SurveyConfig from '@/components/SurveyConfig';
 import PartnerWelcome from '@/components/PartnerWelcome';
-import { Loader2, AlertTriangle } from 'lucide-react';
+import { Loader2, AlertTriangle, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
@@ -30,7 +29,8 @@ const SurveyPage: React.FC = () => {
     setUserGender,
     setPartnerGender,
     setGameLevel,
-    setOrderId
+    setOrderId,
+    filteredQuestions
   } = useSurvey();
   
   const [isPartnerSurvey, setIsPartnerSurvey] = useState<boolean>(!!partnerToken);
@@ -38,6 +38,7 @@ const SurveyPage: React.FC = () => {
   const [isLoadingOrder, setIsLoadingOrder] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [orderFetched, setOrderFetched] = useState<boolean>(false);
+  const [waitingForQuestions, setWaitingForQuestions] = useState<boolean>(false);
   
   useEffect(() => {
     // Fetch order details if this is a partner survey
@@ -108,11 +109,12 @@ const SurveyPage: React.FC = () => {
       
       // Check if we have stored user_question_sequence for partner survey
       if (isPartnerSurvey && (!orderData.user_question_sequence || orderData.user_question_sequence.length === 0)) {
-        // If we don't have question sequence, we need to fetch user responses from survey_responses table
-        // This happens automatically in usePartnerSurveyData
-        console.log('No stored question sequence found in order table. Will try to fetch from survey_responses.');
+        // If we don't have question sequence, we need to wait for it
+        console.log('No stored question sequence found in order table. Will wait for data.');
+        setWaitingForQuestions(true);
       } else if (isPartnerSurvey && orderData.user_question_sequence) {
         console.log('Found stored question sequence in order table:', orderData.user_question_sequence);
+        setWaitingForQuestions(false);
       }
       
       // CRITICAL: For partner survey, use EXACTLY the same configuration
@@ -141,6 +143,14 @@ const SurveyPage: React.FC = () => {
       fetchOrderDetails();
     }
   }, [partnerToken, orderFetched, setUserGender, setPartnerGender, setGameLevel, setOrderId, isPartnerSurvey]);
+  
+  // Dodany efekt do sprawdzania, czy mamy już pytania dla partnera
+  useEffect(() => {
+    if (isPartnerSurvey && waitingForQuestions && filteredQuestions.length > 0) {
+      console.log('Question sequence loaded successfully, questions available:', filteredQuestions.length);
+      setWaitingForQuestions(false);
+    }
+  }, [isPartnerSurvey, waitingForQuestions, filteredQuestions]);
   
   if (isLoadingOrder) {
     return (
@@ -174,6 +184,24 @@ const SurveyPage: React.FC = () => {
           <p className="text-sm text-gray-500">
             Skontaktuj się z osobą, która wysłała Ci zaproszenie, aby otrzymać nowy link.
           </p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Dodane nowe renderowanie dla stanu oczekiwania na pytania
+  if (isPartnerSurvey && !isLoadingOrder && waitingForQuestions) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <div className="glass-panel w-full max-w-md p-6 text-center">
+          <Clock className="w-12 h-12 text-amber-500 mx-auto mb-4" />
+          <h2 className="text-xl font-medium mb-2">Oczekiwanie na pytania</h2>
+          <p className="mb-6">
+            Oczekujemy na dane z ankiety zamawiającego. Proszę odczekać chwilę...
+          </p>
+          <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div className="h-full bg-amber-500 animate-pulse" style={{ width: '100%' }}></div>
+          </div>
         </div>
       </div>
     );
