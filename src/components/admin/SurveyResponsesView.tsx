@@ -65,7 +65,12 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
       
       console.log('Fetched responses:', data);
       setRefreshedResponses(data as SurveyResponse[]);
-      toast.success('Odpowiedzi odświeżone');
+      
+      if (data && data.length > 0) {
+        toast.success('Odpowiedzi odświeżone');
+      } else {
+        toast.info('Brak odpowiedzi dla tego zamówienia');
+      }
     } catch (error) {
       console.error('Failed to refresh responses:', error);
     } finally {
@@ -76,6 +81,13 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
   // Use refreshed responses if available, otherwise use the provided responses
   const displayResponses = refreshedResponses || responses;
   const currentLoading = refreshLoading || isLoading;
+  
+  useEffect(() => {
+    // Auto-refresh responses on mount if orderId is available
+    if (orderId && (!responses || responses.length === 0)) {
+      refreshResponses();
+    }
+  }, [orderId]);
   
   if (currentLoading) {
     return (
