@@ -1,7 +1,8 @@
+
 import React, { useEffect, useState } from 'react';
 import { Loader2, RefreshCw } from 'lucide-react';
 import { questionsDatabase } from '@/contexts/questions-data';
-import { supabase, fetchFromSupabase } from '@/integrations/supabase/client';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -31,6 +32,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
   const [refreshLoading, setRefreshLoading] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [viewType, setViewType] = useState<'cards' | 'table'>('table');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
   // More comprehensive order ID extraction
   useEffect(() => {
@@ -107,30 +109,45 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
     }
     
     setRefreshLoading(true);
+    setErrorMessage(null);
+    
     try {
       console.log('Refreshing responses for order ID:', orderId);
       
       // Clear out any previous refreshed responses while loading
       setRefreshedResponses(null);
       
+      // Use the edge function to get responses
       const { data, error } = await supabase.functions.invoke('get-survey-responses', {
         body: { orderId }
       });
       
+      console.log('Edge function response:', data);
+      
       if (error) {
+        console.error('Edge function error:', error);
+        setErrorMessage(`Błąd funkcji: ${error.message}`);
         throw error;
       }
       
-      if (data.responses && data.responses.length > 0) {
+      if (data && data.responses) {
         console.log(`Received ${data.responses.length} responses from edge function`);
         setRefreshedResponses(data.responses);
-        toast.success(`Odpowiedzi odświeżone (${data.responses.length})`);
+        
+        if (data.responses.length > 0) {
+          toast.success(`Odpowiedzi odświeżone (${data.responses.length})`);
+        } else {
+          toast.info('Brak odpowiedzi dla tego zamówienia w bazie danych');
+        }
       } else {
+        console.error('Unexpected response format from edge function:', data);
         setRefreshedResponses([]);
-        toast.info('Brak odpowiedzi dla tego zamówienia w bazie danych');
+        setErrorMessage('Nieoczekiwany format odpowiedzi z serwera');
+        toast.error('Błąd podczas pobierania odpowiedzi');
       }
     } catch (err: any) {
       console.error('Failed to refresh responses:', err);
+      setErrorMessage(`Błąd: ${err.message}`);
       toast.error('Wystąpił błąd podczas odświeżania odpowiedzi');
     } finally {
       setRefreshLoading(false);
@@ -169,6 +186,9 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
               'Brak identyfikatora zamówienia'
             }
           </p>
+          {errorMessage && (
+            <p className="text-sm text-red-500 mb-4">{errorMessage}</p>
+          )}
           {orderId && (
             <Button 
               onClick={refreshResponses}
@@ -273,6 +293,12 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
           Odśwież odpowiedzi
         </Button>
       </div>
+      
+      {errorMessage && (
+        <div className="p-2 mb-4 bg-red-50 border border-red-200 rounded text-red-600 text-sm">
+          {errorMessage}
+        </div>
+      )}
       
       {viewType === 'table' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
