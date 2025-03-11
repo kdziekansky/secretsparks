@@ -1,6 +1,5 @@
-
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useRef } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { ChevronDown, ArrowRight, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,7 +10,33 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const Index = () => {
+  const location = useLocation();
   const [isMoreOpen, setIsMoreOpen] = useState(false);
+  
+  // Refs for different sections
+  const ideaRef = useRef<HTMLElement>(null);
+  const zasadyGryRef = useRef<HTMLElement>(null);
+  const priveaiRef = useRef<HTMLElement>(null);
+  const aboutUsRef = useRef<HTMLElement>(null);
+  const contactRef = useRef<HTMLElement>(null);
+  const regulaminRef = useRef<HTMLElement>(null);
+
+  // Scroll to section based on URL path
+  React.useEffect(() => {
+    if (location.pathname === '/idea' && ideaRef.current) {
+      ideaRef.current.scrollIntoView({ behavior: 'smooth' });
+    } else if (location.pathname === '/zasady-gry' && zasadyGryRef.current) {
+      zasadyGryRef.current.scrollIntoView({ behavior: 'smooth' });
+    } else if (location.pathname === '/priveai' && priveaiRef.current) {
+      priveaiRef.current.scrollIntoView({ behavior: 'smooth' });
+    } else if (location.pathname === '/o-nas' && aboutUsRef.current) {
+      aboutUsRef.current.scrollIntoView({ behavior: 'smooth' });
+    } else if (location.pathname === '/kontakt' && contactRef.current) {
+      contactRef.current.scrollIntoView({ behavior: 'smooth' });
+    } else if (location.pathname === '/regulamin' && regulaminRef.current) {
+      regulaminRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [location.pathname]);
 
   return (
     <div className="bg-white text-gray-800">
@@ -32,13 +57,13 @@ const Index = () => {
                 Więcej <ChevronDown className="ml-1 h-4 w-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link to="/o-nas" className="w-full">O nas</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link to="/kontakt" className="w-full">Kontakt</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link to="/regulamin" className="w-full">Regulamin</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -82,6 +107,47 @@ const Index = () => {
               [Ilustracja: Telefon z aplikacją]
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Sekcja Idea */}
+      <section ref={ideaRef} id="idea" className="min-h-[80vh] flex items-center py-24 md:py-32 bg-gray-50">
+        <div className="container mx-auto px-4 md:px-8">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">
+            Idea
+          </h2>
+          <p className="text-gray-600 mb-6 text-lg">
+            Secret Sparks to gra, która ma na celu pomóc parom w odkrywaniu wspólnych pragnień i fantazji w bezpieczny sposób.
+            Wierzymy, że otwarta komunikacja jest kluczem do satysfakcjonującego życia intymnego.
+          </p>
+        </div>
+      </section>
+
+      {/* Sekcja Zasady Gry */}
+      <section ref={zasadyGryRef} id="zasady-gry" className="min-h-[80vh] flex items-center py-24 md:py-32">
+        <div className="container mx-auto px-4 md:px-8">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">
+            Zasady gry
+          </h2>
+          <p className="text-gray-600 mb-6 text-lg">
+            Każdy z partnerów odpowiada na te same pytania dotyczące preferencji seksualnych. 
+            Wasze odpowiedzi są analizowane przez nasz system, który generuje spersonalizowany raport 
+            zawierający tylko te aktywności, które oboje uznaliście za interesujące.
+          </p>
+        </div>
+      </section>
+
+      {/* Sekcja PrivéAI */}
+      <section ref={priveaiRef} id="priveai" className="min-h-[80vh] flex items-center py-24 md:py-32 bg-gray-50">
+        <div className="container mx-auto px-4 md:px-8">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">
+            PrivéAI™
+          </h2>
+          <p className="text-gray-600 mb-6 text-lg">
+            PrivéAI™ to nasza zaawansowana technologia, która analizuje odpowiedzi partnerów i generuje 
+            spersonalizowane rekomendacje. Jest zaprojektowana z myślą o prywatności i bezpieczeństwie
+            Waszych danych.
+          </p>
         </div>
       </section>
 
@@ -371,6 +437,71 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Sekcja O nas */}
+      <section ref={aboutUsRef} id="o-nas" className="min-h-[80vh] flex items-center py-24 md:py-32">
+        <div className="container mx-auto px-4 md:px-8">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">
+            O nas
+          </h2>
+          <p className="text-gray-600 mb-6 text-lg">
+            Jesteśmy zespołem pasjonatów, którzy wierzą w siłę zdrowej komunikacji w relacjach.
+            Secret Sparks powstało z myślą o parach, które chcą pogłębić swoją więź poprzez
+            lepsze zrozumienie wzajemnych pragnień i fantazji.
+          </p>
+        </div>
+      </section>
+
+      {/* Sekcja Kontakt */}
+      <section ref={contactRef} id="kontakt" className="min-h-[80vh] flex items-center py-24 md:py-32 bg-gray-50">
+        <div className="container mx-auto px-4 md:px-8">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">
+            Kontakt
+          </h2>
+          <p className="text-gray-600 mb-6 text-lg">
+            Masz pytania? Chcesz podzielić się swoimi doświadczeniami z grą? Skontaktuj się z nami!
+          </p>
+          <div className="mt-8">
+            <p className="text-lg mb-2"><strong>Email:</strong> kontakt@secretsparks.pl</p>
+            <p className="text-lg mb-2"><strong>Adres:</strong> ul. Przykładowa 123, 00-000 Warszawa</p>
+            <p className="text-lg"><strong>Telefon:</strong> +48 123 456 789</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Sekcja Regulamin */}
+      <section ref={regulaminRef} id="regulamin" className="min-h-[80vh] flex items-center py-24 md:py-32">
+        <div className="container mx-auto px-4 md:px-8">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">
+            Regulamin
+          </h2>
+          <div className="prose prose-lg max-w-none">
+            <h3 className="text-2xl font-semibold mt-6 mb-4">§1 Postanowienia ogólne</h3>
+            <p>
+              1.1. Niniejszy regulamin określa zasady korzystania z serwisu Secret Sparks dostępnego pod adresem secretsparks.pl.
+            </p>
+            <p>
+              1.2. Właścicielem serwisu jest Secret Sparks Sp. z o.o. z siedzibą w Warszawie.
+            </p>
+            
+            <h3 className="text-2xl font-semibold mt-6 mb-4">§2 Definicje</h3>
+            <p>
+              2.1. Serwis - strona internetowa dostępna pod adresem secretsparks.pl.
+            </p>
+            <p>
+              2.2. Użytkownik - osoba fizyczna korzystająca z Serwisu.
+            </p>
+            
+            <h3 className="text-2xl font-semibold mt-6 mb-4">§3 Ochrona Danych Osobowych</h3>
+            <p>
+              3.1. Administratorem danych osobowych Użytkowników jest Secret Sparks Sp. z o.o.
+            </p>
+            <p>
+              3.2. Dane osobowe są przetwarzane zgodnie z Rozporządzeniem Parlamentu Europejskiego i Rady (UE) 2016/679.
+            </p>
+          </div>
+        </div>
+      </section>
       
       {/* Sekcja CTA końcowa */}
       <section className="min-h-[60vh] flex items-center py-24 md:py-32 text-center">
@@ -403,14 +534,14 @@ const Index = () => {
               </div>
               
               <div className="grid grid-cols-2 gap-x-8 gap-y-3">
-                <Link to="#" className="block text-sm text-gray-600 hover:text-purple-800">Idea</Link>
-                <Link to="#" className="block text-sm text-gray-600 hover:text-purple-800">Zasady gry</Link>
-                <Link to="#" className="block text-sm text-gray-600 hover:text-purple-800">PrivéAI™</Link>
-                <Link to="#" className="block text-sm text-gray-600 hover:text-purple-800">Zespół</Link>
-                <Link to="#" className="block text-sm text-gray-600 hover:text-purple-800">Kontakt</Link>
-                <Link to="#" className="block text-sm text-gray-600 hover:text-purple-800">Regulamin</Link>
+                <Link to="/idea" className="block text-sm text-gray-600 hover:text-purple-800">Idea</Link>
+                <Link to="/zasady-gry" className="block text-sm text-gray-600 hover:text-purple-800">Zasady gry</Link>
+                <Link to="/priveai" className="block text-sm text-gray-600 hover:text-purple-800">PrivéAI™</Link>
+                <Link to="/o-nas" className="block text-sm text-gray-600 hover:text-purple-800">O nas</Link>
+                <Link to="/kontakt" className="block text-sm text-gray-600 hover:text-purple-800">Kontakt</Link>
+                <Link to="/regulamin" className="block text-sm text-gray-600 hover:text-purple-800">Regulamin</Link>
                 <Link to="#" className="block text-sm text-gray-600 hover:text-purple-800">Polityka Prywatności</Link>
-                <Link to="#" className="block text-sm text-gray-600 hover:text-purple-800">Obowiązek informacyjny RODO</Link>
+                <Link to="#" className="block text-sm text-gray-600 hover:text-purple-800">RODO</Link>
               </div>
             </div>
             
@@ -434,19 +565,4 @@ const Index = () => {
                   className="rounded-l-full border border-gray-300 px-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-purple-800 focus:border-transparent"
                 />
                 <button className="rounded-r-full bg-purple-800 text-white px-5 py-3 hover:bg-purple-900">
-                  <ArrowRight className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <div className="mt-16 text-center text-sm text-gray-500">
-            © 2025 Secret Sparks™. Wszelkie prawa zastrzeżone.
-          </div>
-        </div>
-      </footer>
-    </div>
-  );
-};
-
-export default Index;
+                  <ArrowRight className

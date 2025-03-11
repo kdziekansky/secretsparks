@@ -39,12 +39,12 @@ const App = () => {
             <AdminAuthProvider>
               <Routes>
                 <Route path="/" element={<Index />} />
-                <Route path="/idea" element={<Navigate to="/" />} />
-                <Route path="/zasady-gry" element={<Navigate to="/" />} />
-                <Route path="/priveai" element={<Navigate to="/" />} />
-                <Route path="/o-nas" element={<Navigate to="/" />} />
-                <Route path="/kontakt" element={<Navigate to="/" />} />
-                <Route path="/regulamin" element={<Navigate to="/" />} />
+                <Route path="/idea" element={<Index />} />
+                <Route path="/zasady-gry" element={<Index />} />
+                <Route path="/priveai" element={<Index />} />
+                <Route path="/o-nas" element={<Index />} />
+                <Route path="/kontakt" element={<Index />} />
+                <Route path="/regulamin" element={<Index />} />
                 <Route path="/survey" element={<SurveyPage />} />
                 <Route path="/payment" element={<PaymentPage />} />
                 <Route path="/thank-you" element={<ThankYouPage />} />
