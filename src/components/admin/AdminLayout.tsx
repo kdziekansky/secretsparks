@@ -3,8 +3,7 @@ import React, { ReactNode, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import { 
-  LayoutDashboard, Package, Settings, LogOut, Menu, X, 
-  ShieldAlert 
+  LayoutDashboard, Package, Settings, LogOut, Menu, X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -58,7 +57,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       >
         <div className="flex h-16 items-center justify-between px-4 border-b">
           <div className="flex items-center">
-            <ShieldAlert className="h-8 w-8 text-primary" />
+            <img 
+              src="/lovable-uploads/d54cd97a-3024-4d2f-87fd-23769403237c.png" 
+              alt="Secret Sparks Logo" 
+              className="h-8"
+            />
             <span className="ml-2 font-semibold text-lg">Admin Panel</span>
           </div>
           <button
@@ -124,7 +127,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             <span className="sr-only">Otwórz menu</span>
           </button>
 
-          <ShieldAlert className="h-8 w-8 text-primary" />
+          <img 
+            src="/lovable-uploads/d54cd97a-3024-4d2f-87fd-23769403237c.png" 
+            alt="Secret Sparks Logo" 
+            className="h-8"
+          />
           <span className="ml-2 font-semibold text-lg">Admin Panel</span>
         </div>
 

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, ArrowRight, Check, Menu, X } from 'lucide-react';
@@ -439,8 +440,11 @@ const Index = () => {
           <div className="grid md:grid-cols-3 gap-12">
             <div>
               <Link to="/" className="flex items-center gap-2 mb-6">
-                <div className="h-10 w-10 rounded-full bg-purple-700"></div>
-                <span className="text-xl font-bold text-purple-700">Secret Sparks</span>
+                <img 
+                  src="/lovable-uploads/d54cd97a-3024-4d2f-87fd-23769403237c.png" 
+                  alt="Secret Sparks Logo" 
+                  className="h-12"
+                />
               </Link>
               <p className="text-gray-500 max-w-xs">
                 Gra dla par, która pomoże Wam odkryć wspólne pragnienia i fantazje.
