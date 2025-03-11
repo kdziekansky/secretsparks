@@ -1,4 +1,3 @@
-
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import Stripe from 'https://esm.sh/stripe@12.4.0?target=deno';
 
@@ -79,7 +78,7 @@ serve(async (req) => {
     try {
       const jsonData = JSON.parse(body);
       data = jsonData.data;
-      console.log("Successfully parsed JSON data");
+      console.log("Successfully parsed JSON data:", JSON.stringify(data));
     } catch (error) {
       console.error("JSON parse error:", error.message);
       return new Response(
@@ -129,7 +128,8 @@ serve(async (req) => {
 
     // Create Stripe checkout session
     try {
-      const session = await stripe.checkout.sessions.create({
+      console.log("Calling Stripe checkout sessions create");
+      const sessionParams = {
         payment_method_types: ['card', 'blik', 'p24'],
         line_items: [
           {
@@ -157,12 +157,29 @@ serve(async (req) => {
           partner_email: partner_email,
           gift_wrap: gift_wrap ? 'true' : 'false',
         },
+      };
+      
+      console.log("Session params:", JSON.stringify(sessionParams));
+      const session = await stripe.checkout.sessions.create(sessionParams);
+
+      console.log("Stripe session created:", { 
+        id: session.id, 
+        url: session.url ? session.url.substring(0, 30) + "..." : "Missing" 
       });
 
-      console.log("Stripe session created successfully:", { 
-        id: session.id, 
-        url: session.url ? "Generated" : "Missing" 
-      });
+      if (!session || !session.url) {
+        console.error("Stripe session missing URL:", JSON.stringify(session));
+        return new Response(
+          JSON.stringify({ 
+            error: "Stripe nie zwrócił URL do płatności", 
+            sessionData: session ? JSON.stringify(session) : "null" 
+          }),
+          {
+            status: 200,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
 
       return new Response(
         JSON.stringify({ url: session.url, sessionId: session.id }),
