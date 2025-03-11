@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
@@ -34,15 +33,14 @@ const PaymentPage: React.FC = () => {
   } = useSurvey();
   
   const [loading, setLoading] = useState(false);
-  const [paymentError, setPaymentError] = useState<string | null>(null);
   
-  // Ensure we have a Stripe instance
+  // Initialize Stripe
   const [stripePromise] = useState(() => {
     console.log('Initializing Stripe with key:', STRIPE_PUBLISHABLE_KEY);
     return loadStripe(STRIPE_PUBLISHABLE_KEY);
   });
   
-  // Initialize the form
+  // Initialize form
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -61,13 +59,11 @@ const PaymentPage: React.FC = () => {
     }
   }, [navigate, currentQuestion, filteredQuestions, answers]);
 
-  // Handle form submission
   const onSubmit = async (data: FormData) => {
     setLoading(true);
-    setPaymentError(null);
     
     try {
-      // Prepare the questions answered by the user
+      // Prepare the user responses
       const userResponses = filteredQuestions.map(question => ({
         question_id: question.id,
         answer: answers[question.id] || 0,
@@ -78,10 +74,10 @@ const PaymentPage: React.FC = () => {
       
       console.log(`Submitting payment with ${userResponses.length} responses`);
       
-      // Create the payment intent
-      const { data: paymentData, error: paymentError } = await supabase.functions.invoke('create-payment', {
+      // Create payment session
+      const { data: paymentData, error } = await supabase.functions.invoke('create-payment', {
         body: {
-          amount: 4900, // 49 PLN in groszy
+          amount: 4900,
           currency: 'pln',
           user_email: data.userEmail,
           user_name: data.userName,
@@ -91,57 +87,49 @@ const PaymentPage: React.FC = () => {
           partner_gender: surveyConfig.partnerGender,
           game_level: surveyConfig.gameLevel,
           user_responses: userResponses,
-          question_ids: filteredQuestions.map(q => q.id), // Include question sequence
+          question_ids: filteredQuestions.map(q => q.id),
         },
       });
 
-      console.log('Payment response:', paymentData, paymentError);
+      console.log('Payment response:', paymentData, error);
 
-      if (paymentError) {
-        throw new Error(paymentError.message || 'Payment failed');
+      if (error) {
+        throw error;
       }
 
       if (!paymentData) {
         throw new Error('No response data returned from server');
       }
 
-      if (!paymentData.sessionId) {
-        throw new Error('No session ID returned from server');
+      if (!paymentData.sessionId && !paymentData.checkoutUrl) {
+        throw new Error('No session ID or checkout URL returned from server');
       }
 
-      // Store the order ID in the survey context
+      // Store the order ID
       if (paymentData.orderId) {
         setOrderId(paymentData.orderId);
       }
 
-      console.log('Redirecting to Stripe checkout with sessionId:', paymentData.sessionId);
-
-      // First try to use the direct checkout URL if available
+      // Redirect to Stripe checkout
       if (paymentData.checkoutUrl) {
-        console.log('Using direct checkout URL:', paymentData.checkoutUrl);
         window.location.href = paymentData.checkoutUrl;
         return;
       }
 
-      // Fall back to redirectToCheckout method
       const stripe = await stripePromise;
-      
       if (!stripe) {
         throw new Error('Stripe failed to load');
       }
-      
+
       const { error: stripeError } = await stripe.redirectToCheckout({
         sessionId: paymentData.sessionId,
       });
 
       if (stripeError) {
-        console.error('Stripe redirect error:', stripeError);
-        throw new Error(stripeError.message || 'Error redirecting to payment page');
+        throw stripeError;
       }
-      
     } catch (error: any) {
       console.error('Payment submission error:', error);
-      setPaymentError(error.message || 'Wystąpił błąd podczas przetwarzania płatności');
       toast.error('Błąd płatności', {
         description: error.message || 'Wystąpił błąd podczas przetwarzania płatności',
       });
@@ -223,11 +211,7 @@ const PaymentPage: React.FC = () => {
               />
             </div>
             
-            {paymentError && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                {paymentError}
-              </div>
-            )}
+            {/* Display payment error */}
             
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Przetwarzanie...' : 'Zapłać 49 PLN'}

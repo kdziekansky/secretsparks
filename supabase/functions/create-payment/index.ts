@@ -16,13 +16,11 @@ Deno.serve(async (req) => {
   try {
     // Validate environment variables
     if (!supabaseUrl || !supabaseServiceKey) {
-      console.error('Missing required Supabase configuration')
-      throw new Error('Server configuration error')
+      throw new Error('Missing Supabase configuration')
     }
 
     if (!stripeSecretKey) {
-      console.error('Missing Stripe secret key configuration')
-      throw new Error('Server configuration error')
+      throw new Error('Missing Stripe configuration')
     }
 
     const stripe = new Stripe(stripeSecretKey, {
@@ -47,42 +45,36 @@ Deno.serve(async (req) => {
       partner_gender,
       game_level,
       user_responses,
-      question_ids, // Question sequence parameter
+      question_ids,
     } = requestData
-
-    console.log(`Request data received:`, JSON.stringify({
-      user_email,
-      partner_email,
-      amount,
-      responses_count: user_responses?.length,
-      questions_count: question_ids?.length
-    }))
 
     // Validate required fields
     if (!amount || !user_email || !partner_email) {
-      console.error('Missing required fields:', { amount, user_email, partner_email })
       throw new Error('Missing required fields')
     }
 
     // Validate that we have responses
-    if (!user_responses || user_responses.length === 0) {
-      console.error('No survey responses provided')
+    if (!user_responses?.length) {
       throw new Error('No survey responses provided')
     }
-    
+
     // Validate that we have question IDs
-    if (!question_ids || question_ids.length === 0) {
-      console.error('No question sequence provided')
+    if (!question_ids?.length) {
       throw new Error('No question sequence provided')
     }
 
-    console.log(`Creating order for user: ${user_name} (${user_email}), partner: ${partner_name} (${partner_email})`)
-    console.log(`Received ${user_responses.length} user responses and ${question_ids.length} question IDs`)
+    console.log('Creating order with data:', {
+      user_email,
+      partner_email,
+      amount,
+      responses_count: user_responses.length,
+      questions_count: question_ids.length
+    })
 
     // Create a unique partner survey token
     const partnerSurveyToken = crypto.randomUUID()
 
-    // Create an order record - ENSURE the question sequence is stored
+    // Create an order record
     const { data: order, error: orderError } = await supabase
       .from('orders')
       .insert({
@@ -97,7 +89,7 @@ Deno.serve(async (req) => {
         currency,
         payment_status: 'pending',
         partner_survey_token: partnerSurveyToken,
-        user_question_sequence: question_ids, // Save the question sequence here
+        user_question_sequence: question_ids,
       })
       .select('id')
       .single()
@@ -107,10 +99,9 @@ Deno.serve(async (req) => {
       throw new Error('Failed to create order')
     }
 
-    console.log(`Created order with ID: ${order.id}`)
-    console.log(`Stored question sequence with ${question_ids.length} questions`)
+    console.log('Created order:', order)
 
-    // Save user responses with the order ID
+    // Save user responses
     const responsesWithOrderId = user_responses.map((response) => ({
       ...response,
       order_id: order.id,
@@ -123,81 +114,64 @@ Deno.serve(async (req) => {
 
     if (responsesError) {
       console.error('Error saving survey responses:', responsesError)
-      // Continue anyway, as we've created the order and will create a Stripe session
-    } else {
-      console.log(`Saved ${responsesWithOrderId.length} survey responses`)
     }
 
-    // Get the origin from the request
+    // Get the request origin for success/cancel URLs
     const requestUrl = new URL(req.url)
     const origin = `${requestUrl.protocol}//${requestUrl.host}`
-    
-    console.log(`Creating Stripe checkout session with origin: ${origin}`)
-    
+
     // Create Stripe checkout session
-    try {
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card', 'blik'],
-        line_items: [
-          {
-            price_data: {
-              currency,
-              product_data: {
-                name: 'Ankieta Seksualna',
-                description: 'Porównanie preferencji seksualnych dla par'
-              },
-              unit_amount: amount,
-            },
-            quantity: 1,
-          },
-        ],
-        mode: 'payment',
-        success_url: `${origin}/thank-you?orderId=${order.id}`,
-        cancel_url: `${origin}/payment?canceled=true`,
-        metadata: {
-          order_id: order.id,
-        },
-        customer_email: user_email,
-      })
-
-      console.log(`Created Stripe session: ${session.id}`)
-
-      // Verify session was created successfully
-      if (!session || !session.id) {
-        console.error('Failed to create Stripe session - no session ID returned')
-        throw new Error('Failed to create payment session')
-      }
-
-      // Update order with Stripe session ID
-      await supabase
-        .from('orders')
-        .update({
-          stripe_session_id: session.id,
-        })
-        .eq('id', order.id)
-
-      // Return success response with the session ID and URL
-      return new Response(
-        JSON.stringify({
-          success: true,
-          sessionId: session.id,
-          orderId: order.id,
-          partnerSurveyToken,
-          checkoutUrl: session.url,
-        }),
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card', 'blik'],
+      line_items: [
         {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200,
-        }
-      )
-    } catch (stripeError) {
-      console.error('Stripe session creation error:', stripeError)
-      throw new Error(`Failed to create Stripe session: ${stripeError.message}`)
+          price_data: {
+            currency,
+            product_data: {
+              name: 'Ankieta Seksualna',
+              description: 'Porównanie preferencji seksualnych dla par'
+            },
+            unit_amount: amount,
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: `${origin}/thank-you?orderId=${order.id}`,
+      cancel_url: `${origin}/payment?canceled=true`,
+      metadata: {
+        order_id: order.id,
+      },
+      customer_email: user_email,
+    })
+
+    if (!session?.id) {
+      throw new Error('Failed to create Stripe session')
     }
+
+    // Update order with Stripe session ID
+    await supabase
+      .from('orders')
+      .update({ stripe_session_id: session.id })
+      .eq('id', order.id)
+
+    // Return success response with session data
+    return new Response(
+      JSON.stringify({
+        success: true,
+        sessionId: session.id,
+        orderId: order.id,
+        partnerSurveyToken,
+        checkoutUrl: session.url,
+      }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      }
+    )
   } catch (error) {
     console.error('Payment processing error:', error)
     
-    // Ensure we return a proper JSON response with appropriate headers
     return new Response(
       JSON.stringify({
         success: false,
@@ -205,7 +179,7 @@ Deno.serve(async (req) => {
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200, // Return 200 even for errors to avoid CORS issues
+        status: 200, // Keep 200 to avoid CORS issues
       }
     )
   }
