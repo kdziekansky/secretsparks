@@ -91,7 +91,7 @@ const Index = () => {
           </div>
         )}
       </header>
-
+      
       {/* Hero Section - Bento Grid Style */}
       <section className="section-padding pt-12 md:pt-16">
         <div className="section-container">
@@ -174,33 +174,31 @@ const Index = () => {
               </p>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Statistics Bento Grid - Moved closer to hero section */}
-      <section className="section-padding py-10 md:py-14">
-        <div className="section-container">
-          <div className="feature-grid">
-            <div className="bento-cell text-center py-10">
-              <h3 className="text-4xl font-bold text-primary mb-3">250+</h3>
-              <p className="text-muted-foreground">Pytań które pomagają odkryć wspólne pragnienia</p>
-            </div>
-            
-            <div className="bento-cell text-center py-10">
-              <h3 className="text-4xl font-bold text-primary mb-3">97%</h3>
-              <p className="text-muted-foreground">Par raportuje wzrost satysfakcji w relacji</p>
-            </div>
-            
-            <div className="bento-cell text-center py-10">
-              <h3 className="text-4xl font-bold text-primary mb-3">5min</h3>
-              <p className="text-muted-foreground">Tyle zajmuje wypełnienie ankiety. Efekty - długoterminowe</p>
+          
+          {/* Statistics section - moved inside hero section to appear connected */}
+          <div className="mt-10 md:mt-12">
+            <div className="feature-grid">
+              <div className="bento-cell text-center py-10">
+                <h3 className="text-4xl font-bold text-primary mb-3">250+</h3>
+                <p className="text-muted-foreground">Pytań które pomagają odkryć wspólne pragnienia</p>
+              </div>
+              
+              <div className="bento-cell text-center py-10">
+                <h3 className="text-4xl font-bold text-primary mb-3">97%</h3>
+                <p className="text-muted-foreground">Par raportuje wzrost satysfakcji w relacji</p>
+              </div>
+              
+              <div className="bento-cell text-center py-10">
+                <h3 className="text-4xl font-bold text-primary mb-3">5min</h3>
+                <p className="text-muted-foreground">Tyle zajmuje wypełnienie ankiety. Efekty - długoterminowe</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Scientific Section - Bento Grid - Added additional card */}
-      <section className="section-padding">
+      <section className="section-padding pt-20 md:pt-28">
         <div className="section-container">
           <h2 className="section-title">
             Naukowy punkt widzenia
@@ -397,9 +395,9 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Final CTA Section - Full width */}
+      {/* Final CTA Section - Fixed width to match other sections */}
       <section className="section-padding py-24 md:py-32 text-center">
-        <div className="container mx-auto px-0 sm:px-4">
+        <div className="section-container">
           <div className="mx-auto p-12 rounded-3xl glass-panel animate-fade-in">
             <div className="hero-badge">
               NAJBARDZIEJ EKSCYTUJĄCA GRA DLA PAR
