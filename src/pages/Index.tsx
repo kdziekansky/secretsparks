@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ArrowRight, Check, Menu, X } from 'lucide-react';
+import { ChevronDown, ArrowRight, Check, Menu, X, Sparkles, Heart, ExternalLink, Clock, Zap, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -93,22 +93,28 @@ const Index = () => {
         )}
       </header>
 
-      {/* Hero Section */}
+      {/* Hero Section - Bento Grid Style */}
       <section className="py-16 md:py-24 lg:py-32">
         <div className="container mx-auto px-4 md:px-8">
-          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-            <div className="lg:w-1/2 space-y-6">
-              <div className="inline-block px-4 py-2 rounded-full bg-accent/20 text-primary text-sm font-medium mb-2">
-                GRA DLA PAR
+          {/* Main hero bento grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            
+            {/* Featured main card - spans 2 columns on larger screens */}
+            <div className="lg:col-span-2 rounded-3xl bg-accent p-8 md:p-10 flex flex-col justify-between gap-8 hover:bg-accent/90 transition-colors glass-panel">
+              <div>
+                <div className="inline-block px-4 py-2 rounded-full bg-accent/20 text-primary text-sm font-medium mb-4">
+                  GRA DLA PAR
+                </div>
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-6">
+                  Przenieście <span className="block">Wasze <span className="text-primary">życie seksualne</span></span> na wyższy poziom
+                </h1>
+                <p className="text-muted-foreground text-lg max-w-2xl mb-8">
+                  Dzięki tej grze odkryjecie swoje skryte pragnienia w bezpieczny sposób, 
+                  bez konieczności mówienia o nich wprost.
+                </p>
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                Przenieście <span className="block">Wasze <span className="text-primary">życie seksualne</span> na</span> wyższy poziom
-              </h1>
-              <p className="text-muted-foreground text-lg md:text-xl max-w-2xl">
-                Dzięki tej grze odkryjecie swoje skryte pragnienia w bezpieczny sposób, 
-                bez konieczności mówienia o nich wprost.
-              </p>
-              <div className="pt-4 flex flex-wrap gap-4">
+              
+              <div className="flex flex-wrap gap-4">
                 <Link to="/survey">
                   <Button className="rounded-full bg-primary hover:bg-primary/80 px-8 py-6 text-base">
                     Rozpocznij Grę
@@ -119,29 +125,19 @@ const Index = () => {
                 </Button>
               </div>
             </div>
-            <div className="lg:w-1/2 flex justify-center">
-              <div className="relative w-full max-w-md">
-                <div className="absolute -z-10 w-64 h-64 rounded-full bg-accent/20 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
-                <div className="w-full h-[450px] bg-card rounded-2xl flex items-center justify-center">
-                  [Ilustracja: Telefon z aplikacją]
-                </div>
+            
+            {/* Side card with app preview */}
+            <div className="rounded-3xl bg-card p-6 flex flex-col justify-center items-center relative overflow-hidden hover:bg-card/90 transition-colors glass-panel">
+              <div className="absolute -z-10 w-64 h-64 rounded-full bg-accent/20 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
+              <div className="w-full max-w-[280px] h-[400px] bg-card rounded-2xl flex items-center justify-center border border-border/40">
+                [Aplikacja]
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-20 bg-gradient-to-b from-background to-accent/10">
-        <div className="container mx-auto px-4 md:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-16">
-            Ponad 100 sposobów na wspólną zabawę i rozpalenie namiętności
-          </h2>
-          
-          <div className="grid md:grid-cols-3 gap-10 max-w-5xl mx-auto">
-            <div className="bg-card p-8 rounded-xl shadow-sm border border-border/40">
+            
+            {/* Feature cards in grid */}
+            <div className="rounded-3xl bg-card p-8 glass-panel hover:bg-card/90 transition-colors">
               <div className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-full bg-accent/20">
-                <span className="text-2xl">✨</span>
+                <Sparkles className="h-7 w-7 text-primary" />
               </div>
               <h3 className="text-xl font-bold mb-4">Poznajcie się na nowo</h3>
               <p className="text-muted-foreground">
@@ -150,9 +146,9 @@ const Index = () => {
               </p>
             </div>
             
-            <div className="bg-card p-8 rounded-xl shadow-sm border border-border/40">
+            <div className="rounded-3xl bg-card p-8 glass-panel hover:bg-card/90 transition-colors">
               <div className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-full bg-accent/20">
-                <span className="text-2xl">🔥</span>
+                <Heart className="h-7 w-7 text-primary" />
               </div>
               <h3 className="text-xl font-bold mb-4">Podkręćcie temperaturę</h3>
               <p className="text-muted-foreground">
@@ -162,9 +158,9 @@ const Index = () => {
               </p>
             </div>
             
-            <div className="bg-card p-8 rounded-xl shadow-sm border border-border/40">
+            <div className="rounded-3xl bg-card p-8 glass-panel hover:bg-card/90 transition-colors">
               <div className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-full bg-accent/20">
-                <span className="text-2xl">🔄</span>
+                <Zap className="h-7 w-7 text-primary" />
               </div>
               <h3 className="text-xl font-bold mb-4">Odkrywajcie nowe miejsca</h3>
               <p className="text-muted-foreground">
@@ -176,237 +172,204 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Intimate Evening Section */}
-      <section className="py-20 md:py-32">
+      {/* Statistics Bento Grid */}
+      <section className="py-12 md:py-16">
         <div className="container mx-auto px-4 md:px-8">
-          <div className="flex flex-col md:flex-row items-center gap-12 md:gap-16">
-            <div className="md:w-1/2">
-              <div className="w-full h-[400px] bg-card rounded-2xl flex items-center justify-center border border-border/40">
-                [Ilustracja: Para]
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+            <div className="bg-card rounded-3xl p-8 glass-panel hover:bg-card/90 transition-colors">
+              <h3 className="text-4xl font-bold text-primary mb-2">250+</h3>
+              <p className="text-muted-foreground">Pytań które pomagają odkryć wspólne pragnienia</p>
             </div>
-            <div className="md:w-1/2 space-y-6">
-              <h2 className="text-3xl md:text-4xl font-bold">
-                Ekscytujący wieczór tylko dla Was
-              </h2>
-              <p className="text-muted-foreground text-lg">
-                Pozwólcie sobie na otwartość i szczerość, bez obaw o presję i dyskomfort. 
-                Secret Sparks to przepis na wieczór pełen ekscytacji i wzajemnego zrozumienia.
-              </p>
-              <div className="pt-4">
-                <Link to="/survey">
-                  <Button className="rounded-full bg-primary hover:bg-primary/80 px-6 py-5">
-                    Rozpocznij Grę
-                  </Button>
-                </Link>
-              </div>
+            
+            <div className="bg-card rounded-3xl p-8 glass-panel hover:bg-card/90 transition-colors">
+              <h3 className="text-4xl font-bold text-primary mb-2">97%</h3>
+              <p className="text-muted-foreground">Par raportuje wzrost satysfakcji w relacji</p>
             </div>
-          </div>
-        </div>
-      </section>
-      
-      {/* Scientific Section */}
-      <section className="py-20 md:py-32 bg-accent/10">
-        <div className="container mx-auto px-4 md:px-8">
-          <div className="flex flex-col md:flex-row-reverse items-center gap-12 md:gap-16">
-            <div className="md:w-1/2">
-              <div className="w-full h-[400px] bg-card rounded-2xl flex items-center justify-center border border-border/40">
-                [Ilustracja: Para]
-              </div>
-            </div>
-            <div className="md:w-1/2 space-y-8">
-              <h2 className="text-3xl md:text-4xl font-bold">
-                Naukowy punkt widzenia
-              </h2>
-              <p className="text-muted-foreground">
-                Pary, które często uprawiają seks, wzmacniają więź i lojalność wobec siebie. 
-                Badania wskazują, że regularna i satysfakcjonująca aktywność seksualna może 
-                prowadzić do bardziej stabilnej relacji.
-              </p>
-              
-              <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="h-10 w-10 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
-                    <span className="text-primary">🧠</span>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold mb-2">Satysfakcja seksualna</h3>
-                    <p className="text-muted-foreground">
-                      Satysfakcja seksualna jest istotną składową oceny jakości życia. 
-                      Naukowcy wykazują ścisłą korelację pomiędzy życiem seksualnym a jakością zdrowia.
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-4">
-                  <div className="h-10 w-10 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
-                    <span className="text-primary">💫</span>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold mb-2">Nie tylko orgazm</h3>
-                    <p className="text-muted-foreground">
-                      Satysfakcja seksualna to pojęcie znacznie szersze niż dążenie do osiągnięcia orgazmu; 
-                      to wielowymiarowe doświadczenie.
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-4">
-                  <div className="h-10 w-10 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
-                    <span className="text-primary">🔄</span>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold mb-2">Zmiany w mózgu</h3>
-                    <p className="text-muted-foreground">
-                      Pogłębianie namiętności powoduje zmiany w mózgu: wytwarza się oksytocyna - hormon 
-                      bliskości oraz wzrasta poziom dopaminy.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="pt-4">
-                <Link to="/survey">
-                  <Button className="rounded-full bg-primary hover:bg-primary/80 px-6 py-5">
-                    Rozpocznij Grę
-                  </Button>
-                </Link>
-              </div>
+            
+            <div className="bg-card rounded-3xl p-8 glass-panel hover:bg-card/90 transition-colors">
+              <h3 className="text-4xl font-bold text-primary mb-2">5min</h3>
+              <p className="text-muted-foreground">Tyle zajmuje wypełnienie ankiety. Efekty - długoterminowe</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section className="py-20 md:py-32">
-        <div className="container mx-auto px-4 md:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Krok po kroku</h2>
-          <p className="text-muted-foreground mb-16 max-w-2xl mx-auto">
-            Zobacz, jakie to proste. Tylko kilka kroków dzieli Cię od ekscytującej przygody.
-          </p>
+      {/* Scientific Section - Bento Grid */}
+      <section className="py-16 md:py-24">
+        <div className="container mx-auto px-4 md:px-8">
+          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
+            Naukowy punkt widzenia
+          </h2>
           
-          <div className="relative max-w-5xl mx-auto">
-            {/* Line connecting steps */}
-            <div className="absolute top-16 left-14 right-14 h-0.5 bg-accent/20 hidden md:block"></div>
-            
-            <div className="grid md:grid-cols-4 gap-8">
-              <div className="relative">
-                <div className="mb-6 flex justify-center">
-                  <div className="h-16 w-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center z-10 relative">
-                    <span className="text-xl">1</span>
-                  </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {/* Featured scientific insight */}
+            <div className="lg:col-span-2 bg-card rounded-3xl p-8 glass-panel hover:bg-card/90 transition-colors">
+              <div className="flex items-start gap-6">
+                <div className="h-12 w-12 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
+                  <Clock className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-bold mb-3">Zaczynasz grę</h3>
-                <p className="text-muted-foreground">
-                  Odpowiadasz szczerze na pytania i podajesz email swój oraz partnera. Twoje odpowiedzi pozostają prywatne.
-                </p>
-              </div>
-              
-              <div className="relative">
-                <div className="mb-6 flex justify-center">
-                  <div className="h-16 w-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center z-10 relative">
-                    <span className="text-xl">2</span>
-                  </div>
+                <div>
+                  <h3 className="text-xl font-bold mb-4">Długoterminowe badania wykazują</h3>
+                  <p className="text-muted-foreground mb-6">
+                    Pary, które często uprawiają seks, wzmacniają więź i lojalność wobec siebie. 
+                    Badania wskazują, że regularna i satysfakcjonująca aktywność seksualna może 
+                    prowadzić do bardziej stabilnej relacji.
+                  </p>
+                  <Link to="/survey" className="text-primary hover:underline flex items-center">
+                    Zacznij teraz <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
                 </div>
-                <h3 className="text-xl font-bold mb-3">Zaprosź partnera</h3>
-                <p className="text-muted-foreground">
-                  Twój partner otrzymuje email z zaproszeniem i odpowiada na te same pytania, zachowując prywatność.
-                </p>
-              </div>
-              
-              <div className="relative">
-                <div className="mb-6 flex justify-center">
-                  <div className="h-16 w-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center z-10 relative">
-                    <span className="text-xl">3</span>
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold mb-3">Otrzymujecie raport</h3>
-                <p className="text-muted-foreground">
-                  Oboje dostajecie dostęp do raportu zawierającego tylko te fantazje, które oboje uznaliście za atrakcyjne.
-                </p>
-              </div>
-              
-              <div className="relative">
-                <div className="mb-6 flex justify-center">
-                  <div className="h-16 w-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center z-10 relative">
-                    <span className="text-xl">4</span>
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold mb-3">Odkrycie siebie</h3>
-                <p className="text-muted-foreground">
-                  Teraz wszystko w Waszych rękach – czas zacząć realizować wspólne fantazje!
-                </p>
               </div>
             </div>
-          </div>
-          
-          <div className="flex justify-center mt-16">
-            <div className="flex space-x-1">
-              {[...Array(5)].map((_, i) => (
-                <div key={i} className="text-yellow-400 text-2xl">★</div>
-              ))}
+            
+            {/* Scientific points */}
+            <div className="bg-card rounded-3xl p-8 glass-panel hover:bg-card/90 transition-colors">
+              <div className="h-12 w-12 rounded-full bg-accent/20 flex items-center justify-center mb-6">
+                <Heart className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold mb-4">Satysfakcja seksualna</h3>
+              <p className="text-muted-foreground">
+                Satysfakcja seksualna jest istotną składową oceny jakości życia. 
+                Naukowcy wykazują ścisłą korelację pomiędzy życiem seksualnym a jakością zdrowia.
+              </p>
+            </div>
+            
+            <div className="bg-card rounded-3xl p-8 glass-panel hover:bg-card/90 transition-colors">
+              <div className="h-12 w-12 rounded-full bg-accent/20 flex items-center justify-center mb-6">
+                <Sparkles className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold mb-4">Nie tylko orgazm</h3>
+              <p className="text-muted-foreground">
+                Satysfakcja seksualna to pojęcie znacznie szersze niż dążenie do osiągnięcia orgazmu; 
+                to wielowymiarowe doświadczenie.
+              </p>
+            </div>
+            
+            <div className="bg-card rounded-3xl p-8 glass-panel hover:bg-card/90 transition-colors">
+              <div className="h-12 w-12 rounded-full bg-accent/20 flex items-center justify-center mb-6">
+                <ExternalLink className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold mb-4">Zmiany w mózgu</h3>
+              <p className="text-muted-foreground">
+                Pogłębianie namiętności powoduje zmiany w mózgu: wytwarza się oksytocyna - hormon 
+                bliskości oraz wzrasta poziom dopaminy.
+              </p>
             </div>
           </div>
         </div>
       </section>
-      
-      {/* Security Section */}
-      <section className="py-20 md:py-32 bg-accent/10">
+
+      {/* How It Works - Bento Timeline */}
+      <section className="py-16 md:py-24 lg:py-32">
         <div className="container mx-auto px-4 md:px-8">
-          <div className="flex flex-col md:flex-row items-center gap-12 md:gap-16">
-            <div className="md:w-1/2">
-              <div className="w-full h-[400px] bg-card rounded-2xl flex items-center justify-center border border-border/40">
-                [Ilustracja: Bezpieczne dane]
+          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
+            Krok po kroku
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+            <div className="bg-card rounded-3xl p-8 glass-panel hover:bg-card/90 transition-colors">
+              <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white font-bold text-lg mb-6">
+                1
               </div>
+              <h3 className="text-xl font-bold mb-4">Zaczynasz grę</h3>
+              <p className="text-muted-foreground">
+                Odpowiadasz szczerze na pytania i podajesz email swój oraz partnera. 
+                Twoje odpowiedzi pozostają prywatne.
+              </p>
             </div>
-            <div className="md:w-1/2 space-y-6">
-              <h2 className="text-3xl md:text-4xl font-bold">
+            
+            <div className="bg-card rounded-3xl p-8 glass-panel hover:bg-card/90 transition-colors">
+              <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white font-bold text-lg mb-6">
+                2
+              </div>
+              <h3 className="text-xl font-bold mb-4">Zaprosź partnera</h3>
+              <p className="text-muted-foreground">
+                Twój partner otrzymuje email z zaproszeniem i odpowiada na te same pytania, 
+                zachowując prywatność.
+              </p>
+            </div>
+            
+            <div className="bg-card rounded-3xl p-8 glass-panel hover:bg-card/90 transition-colors">
+              <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white font-bold text-lg mb-6">
+                3
+              </div>
+              <h3 className="text-xl font-bold mb-4">Otrzymujecie raport</h3>
+              <p className="text-muted-foreground">
+                Oboje dostajecie dostęp do raportu zawierającego tylko te fantazje, 
+                które oboje uznaliście za atrakcyjne.
+              </p>
+            </div>
+            
+            <div className="bg-card rounded-3xl p-8 glass-panel hover:bg-card/90 transition-colors">
+              <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white font-bold text-lg mb-6">
+                4
+              </div>
+              <h3 className="text-xl font-bold mb-4">Odkrycie siebie</h3>
+              <p className="text-muted-foreground">
+                Teraz wszystko w Waszych rękach – czas zacząć realizować wspólne fantazje!
+              </p>
+            </div>
+          </div>
+          
+          <div className="mt-16 text-center">
+            <Link to="/survey">
+              <Button className="rounded-full bg-primary hover:bg-primary/80 px-10 py-6 text-lg">
+                Rozpocznij Grę
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+      
+      {/* Security Section - Bento Grid */}
+      <section className="py-16 md:py-24">
+        <div className="container mx-auto px-4 md:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+            {/* Main security card */}
+            <div className="md:col-span-2 bg-card rounded-3xl p-8 md:p-10 glass-panel hover:bg-card/90 transition-colors">
+              <div className="h-16 w-16 rounded-full bg-accent/20 flex items-center justify-center mb-6">
+                <Shield className="h-8 w-8 text-primary" />
+              </div>
+              <h2 className="text-3xl font-bold mb-6">
                 Bezpieczeństwo Waszych danych to nasz priorytet
               </h2>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground mb-8">
                 Tworząc grę Secret Sparks zawsze stawiamy na pierwszym miejscu bezpieczeństwo 
                 danych naszych użytkowników.
               </p>
               
-              <div className="space-y-4 pt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex items-center">
                   <div className="h-8 w-8 rounded-full bg-green-100/20 flex items-center justify-center mr-4">
                     <Check className="h-5 w-5 text-green-600" />
                   </div>
-                  <p>Korzystamy z szyfrowanego połączenia SSL</p>
+                  <p>Szyfrowane połączenie SSL</p>
                 </div>
                 <div className="flex items-center">
                   <div className="h-8 w-8 rounded-full bg-green-100/20 flex items-center justify-center mr-4">
                     <Check className="h-5 w-5 text-green-600" />
                   </div>
-                  <p>Nie sprzedajemy Waszych danych osobowych</p>
+                  <p>Brak sprzedaży danych</p>
                 </div>
                 <div className="flex items-center">
                   <div className="h-8 w-8 rounded-full bg-green-100/20 flex items-center justify-center mr-4">
                     <Check className="h-5 w-5 text-green-600" />
                   </div>
-                  <p>Po 7 dniach dane osobowe są trwale usuwane</p>
+                  <p>Usuwanie danych po 7 dniach</p>
                 </div>
                 <div className="flex items-center">
                   <div className="h-8 w-8 rounded-full bg-green-100/20 flex items-center justify-center mr-4">
                     <Check className="h-5 w-5 text-green-600" />
                   </div>
-                  <p>Nie wysyłamy spamu</p>
-                </div>
-                <div className="flex items-center">
-                  <div className="h-8 w-8 rounded-full bg-green-100/20 flex items-center justify-center mr-4">
-                    <Check className="h-5 w-5 text-green-600" />
-                  </div>
-                  <p>Jesteśmy zgodni z RODO</p>
+                  <p>Zgodność z RODO</p>
                 </div>
               </div>
-              
-              <div className="pt-6">
-                <Link to="/survey">
-                  <Button className="rounded-full bg-primary hover:bg-primary/80 px-6 py-5">
-                    Rozpocznij Grę
-                  </Button>
-                </Link>
+            </div>
+            
+            {/* Side illustration */}
+            <div className="bg-card rounded-3xl p-8 glass-panel flex items-center justify-center hover:bg-card/90 transition-colors">
+              <div className="w-full h-[300px] bg-accent/10 rounded-2xl flex items-center justify-center border border-border/40">
+                [Bezpieczeństwo]
               </div>
             </div>
           </div>
@@ -414,10 +377,10 @@ const Index = () => {
       </section>
       
       {/* Final CTA Section */}
-      <section className="py-24 md:py-32 text-center bg-gradient-to-b from-background to-accent/10">
+      <section className="py-20 md:py-32 text-center">
         <div className="container mx-auto px-4 md:px-8">
-          <div className="max-w-3xl mx-auto">
-            <div className="inline-block px-4 py-2 rounded-full bg-accent/20 text-primary text-sm font-medium mb-6">
+          <div className="max-w-3xl mx-auto bg-accent/20 p-12 rounded-3xl glass-panel">
+            <div className="inline-block px-4 py-2 rounded-full bg-accent/30 text-primary text-sm font-medium mb-6">
               NAJBARDZIEJ EKSCYTUJĄCA GRA DLA PAR
             </div>
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
