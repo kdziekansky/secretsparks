@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, fetchFromSupabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { 
   Table, TableBody, TableCell, TableHead, 
@@ -208,32 +208,51 @@ const AdminOrders: React.FC = () => {
       setIsSubmitting(true);
       console.log(`Próba usunięcia zamówienia ${orderToDelete.id}`);
 
-      // Bezpośrednie usunięcie z tabeli orders - dzięki kaskadowym ograniczeniom FK,
-      // to spowoduje również usunięcie powiązanych rekordów z innych tabel
-      const { error } = await supabase
-        .from('orders')
-        .delete()
-        .eq('id', orderToDelete.id);
+      // Używamy bezpośredniego wywołania API zamiast SDK, aby upewnić się, że mamy pełne uprawnienia
+      try {
+        await fetchFromSupabase(`orders?id=eq.${orderToDelete.id}`, {
+          method: 'DELETE'
+        });
+        
+        console.log('Zamówienie zostało pomyślnie usunięte przez bezpośrednie API');
+        toast.success('Zamówienie zostało całkowicie usunięte wraz z powiązanymi danymi');
+        
+        // Jeśli usunięte zamówienie było otwarte w szczegółach, zamknij dialog
+        if (selectedOrder?.id === orderToDelete.id) {
+          setIsDetailsOpen(false);
+          setSelectedOrder(null);
+        }
+        
+        // Odświeżamy listę zamówień
+        await refetch();
+        
+      } catch (apiError) {
+        console.error('Błąd przy użyciu bezpośredniego API:', apiError);
+        
+        // Próba alternatywnej metody - przez SDK
+        console.log('Próba usunięcia przez SDK');
+        const { error } = await supabase
+          .from('orders')
+          .delete()
+          .eq('id', orderToDelete.id);
 
-      if (error) {
-        console.error('Błąd podczas usuwania zamówienia:', error);
-        toast.error('Wystąpił błąd podczas usuwania zamówienia: ' + error.message);
-        throw error;
-      }
-
-      console.log('Zamówienie zostało pomyślnie usunięte');
-      toast.success('Zamówienie zostało całkowicie usunięte wraz z powiązanymi danymi');
-      
-      // Jeśli usunięte zamówienie było otwarte w szczegółach, zamknij dialog
-      if (selectedOrder?.id === orderToDelete.id) {
-        setIsDetailsOpen(false);
-        setSelectedOrder(null);
-      }
-      
-      // Aktualizacja stanu lokalnego - usuń zamówienie z listy by nie czekać na refetch
-      if (orders) {
-        const updatedOrders = orders.filter(order => order.id !== orderToDelete.id);
-        refetch();
+        if (error) {
+          console.error('Błąd podczas usuwania zamówienia przez SDK:', error);
+          toast.error('Wystąpił błąd podczas usuwania zamówienia: ' + error.message);
+          throw error;
+        }
+        
+        console.log('Zamówienie zostało pomyślnie usunięte przez SDK');
+        toast.success('Zamówienie zostało całkowicie usunięte wraz z powiązanymi danymi');
+        
+        // Jeśli usunięte zamówienie było otwarte w szczegółach, zamknij dialog
+        if (selectedOrder?.id === orderToDelete.id) {
+          setIsDetailsOpen(false);
+          setSelectedOrder(null);
+        }
+        
+        // Odświeżamy listę zamówień
+        await refetch();
       }
     } catch (error) {
       console.error('Nieoczekiwany błąd:', error);
