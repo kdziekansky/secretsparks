@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -49,6 +48,8 @@ interface SurveyContextType {
   isInConfigurationMode: boolean;
   filteredQuestions: Question[];
   saveAnswer: (isPartnerSurvey?: boolean) => Promise<void>;
+  setOrderId: (orderId: string) => void;
+  getOrderId: () => string | null;
 }
 
 // Funkcja do losowego wyboru pytań z zachowaniem par
@@ -364,6 +365,17 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setCurrentQuestionIndex(0);
   }, []);
 
+  // Add the setOrderId method to update the orderId
+  const setOrderId = useCallback((orderId: string) => {
+    console.log('Setting order ID:', orderId);
+    setPartnerOrderId(orderId);
+  }, []);
+
+  // Add the getOrderId method to retrieve the orderId
+  const getOrderId = useCallback(() => {
+    return partnerOrderId;
+  }, [partnerOrderId]);
+
   const value = {
     currentQuestionIndex,
     answers,
@@ -385,6 +397,8 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     isInConfigurationMode,
     filteredQuestions,
     saveAnswer,
+    setOrderId,
+    getOrderId,
   };
 
   return <SurveyContext.Provider value={value}>{children}</SurveyContext.Provider>;
