@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useCallback } from 'react';
 import { questionsDatabase } from '@/contexts/questions-data';
 import { supabase } from '@/integrations/supabase/client';
@@ -345,9 +344,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
         </Alert>
       )}
       
-      <div className="mb-6 border-b pb-4">
-        <ReportGenerator responses={currentResponses} order={order} />
-      </div>
+      
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-4">
