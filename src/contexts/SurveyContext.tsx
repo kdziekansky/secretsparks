@@ -29,7 +29,7 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     isConfigComplete: false
   });
 
-  const { partnerOrderId, selectedQuestionIds } = usePartnerSurveyData(partnerToken);
+  const { partnerOrderId, selectedQuestionIds, error, isLoading } = usePartnerSurveyData(partnerToken);
   
   const filteredQuestions = useQuestionSelection(
     questions,
@@ -97,7 +97,6 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   }, [partnerToken, partnerOrderId, surveyConfig]);
 
-  // Save answer to database
   const saveAnswer = useCallback(async (isPartnerSurvey = false) => {
     if (!currentQuestion) return;
     
@@ -211,7 +210,6 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     
     if (!partnerToken) {
       // Clear any previously cached question sequence for new user surveys
-      setSelectedQuestionIds([]);
     }
   }, [partnerToken]);
 
@@ -236,7 +234,7 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     isInConfigurationMode: !surveyConfig.isConfigComplete,
     filteredQuestions,
     saveAnswer,
-    setOrderId: (orderId: string) => setPartnerOrderId(orderId),
+    setOrderId: (orderId: string) => partnerOrderId, // Remove this line as it's not needed anymore
     getOrderId: () => partnerOrderId,
   };
 

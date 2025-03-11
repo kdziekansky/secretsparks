@@ -1,5 +1,4 @@
-
-import { Question } from './SurveyContext';
+import { Question } from '@/types/survey';
 
 export const questionsDatabase: Question[] = [
   // POZYCJE SEKSUALNE
