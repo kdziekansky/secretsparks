@@ -7,8 +7,9 @@ import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Loader2, CheckCircle, Info } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Link } from 'react-router-dom';
 
 interface FormErrors {
   userName?: string;
@@ -17,7 +18,7 @@ interface FormErrors {
   partnerEmail?: string;
 }
 
-const PRODUCT_PRICE = 199;
+const PRODUCT_PRICE = 29;
 
 const PaymentPage: React.FC = () => {
   const [userName, setUserName] = useState('');
@@ -188,98 +189,134 @@ const PaymentPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <Card className="shadow-lg rounded-lg">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">Podsumowanie zamówienia</CardTitle>
-            <CardDescription className="text-gray-500 text-center">Wypełnij dane, aby złożyć zamówienie</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <form onSubmit={handleSubmit}>
-              <div className="space-y-2">
-                <Label htmlFor="userName">Imię</Label>
-                <Input
-                  type="text"
-                  id="userName"
-                  name="userName"
-                  value={userName}
-                  onChange={handleChange}
-                  required
-                  placeholder="Twoje imię"
-                />
-                {showErrors && errors.userName && (
-                  <p className="text-red-500 text-sm">{errors.userName}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="userEmail">Email</Label>
-                <Input
-                  type="email"
-                  id="userEmail"
-                  name="userEmail"
-                  value={userEmail}
-                  onChange={handleChange}
-                  required
-                  placeholder="Twój email"
-                />
-                {showErrors && errors.userEmail && (
-                  <p className="text-red-500 text-sm">{errors.userEmail}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="partnerName">Imię partnera/partnerki</Label>
-                <Input
-                  type="text"
-                  id="partnerName"
-                  name="partnerName"
-                  value={partnerName}
-                  onChange={handleChange}
-                  required
-                  placeholder="Imię Twojej drugiej połówki"
-                />
-                {showErrors && errors.partnerName && (
-                  <p className="text-red-500 text-sm">{errors.partnerName}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="partnerEmail">Email partnera/partnerki</Label>
-                <Input
-                  type="email"
-                  id="partnerEmail"
-                  name="partnerEmail"
-                  value={partnerEmail}
-                  onChange={handleChange}
-                  required
-                  placeholder="Email Twojej drugiej połówki"
-                />
-                {showErrors && errors.partnerEmail && (
-                  <p className="text-red-500 text-sm">{errors.partnerEmail}</p>
-                )}
-              </div>
-              <div className="flex items-center space-x-2 mt-4 mb-6">
-                <Input
-                  type="checkbox"
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-lg w-full bg-white rounded-lg shadow-sm p-8">
+        <div className="space-y-6">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold">Dokończ zamówienie 👋</h1>
+            <div className="mt-4 bg-green-50 text-green-800 rounded-md py-2 px-4 flex items-center justify-center gap-2">
+              <CheckCircle className="h-5 w-5" />
+              <p>Raport dostępny za jedyne {PRODUCT_PRICE} zł</p>
+            </div>
+            <p className="mt-4 text-gray-600">
+              Czas zaprosić do gry Twoją drugą połówkę. Na końcu poznacie Wasze ukryte pragnienia.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Input
+                type="text"
+                id="userName"
+                name="userName"
+                value={userName}
+                onChange={handleChange}
+                required
+                placeholder="Twoje imię"
+                className="w-full"
+              />
+              {showErrors && errors.userName && (
+                <p className="text-red-500 text-sm mt-1">{errors.userName}</p>
+              )}
+            </div>
+            
+            <div>
+              <Input
+                type="email"
+                id="userEmail"
+                name="userEmail"
+                value={userEmail}
+                onChange={handleChange}
+                required
+                placeholder="Twój e-mail (tam wyślemy raport)"
+                className="w-full"
+              />
+              {showErrors && errors.userEmail && (
+                <p className="text-red-500 text-sm mt-1">{errors.userEmail}</p>
+              )}
+            </div>
+            
+            <div>
+              <Input
+                type="text"
+                id="partnerName"
+                name="partnerName"
+                value={partnerName}
+                onChange={handleChange}
+                required
+                placeholder="Imię Twojej partnerki/partnera"
+                className="w-full"
+              />
+              {showErrors && errors.partnerName && (
+                <p className="text-red-500 text-sm mt-1">{errors.partnerName}</p>
+              )}
+            </div>
+            
+            <div>
+              <Input
+                type="email"
+                id="partnerEmail"
+                name="partnerEmail"
+                value={partnerEmail}
+                onChange={handleChange}
+                required
+                placeholder="E-mail partnerki/partnera (tam wyślemy zaproszenie)"
+                className="w-full"
+              />
+              {showErrors && errors.partnerEmail && (
+                <p className="text-red-500 text-sm mt-1">{errors.partnerEmail}</p>
+              )}
+            </div>
+            
+            <div className="flex items-start mt-6">
+              <div className="flex items-center h-5">
+                <Checkbox
                   id="giftWrap"
                   name="giftWrap"
                   checked={giftWrap}
-                  onChange={handleChange}
-                  className="w-4 h-4"
+                  onCheckedChange={(checked) => setGiftWrap(checked === true)}
                 />
-                <Label htmlFor="giftWrap">Zapakuj na prezent (+20zł)</Label>
               </div>
-              <div>
-                <Button type="submit" disabled={isProcessing} className="w-full">
-                  {isProcessing ? (
-                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Przetwarzanie...</>
-                  ) : (
-                    <>Zapłać {PRODUCT_PRICE + (giftWrap ? 20 : 0)} zł</>
-                  )}
-                </Button>
+              <div className="ml-3 text-sm flex items-center">
+                <label htmlFor="giftWrap" className="font-medium text-gray-700 cursor-pointer">
+                  Zapakuj na prezent (bezpłatnie)
+                </label>
+                <Info className="h-4 w-4 ml-1 text-gray-400" />
               </div>
-            </form>
-          </CardContent>
-        </Card>
+            </div>
+            
+            <div className="text-xs text-gray-500 mt-4">
+              Grając, akceptujesz przyjazny <a href="#" className="text-primary">Regulamin</a> i <a href="#" className="text-primary">Politykę Prywatności</a>, która gwarantuje bezpieczeństwo Waszych danych. Usuniemy je po 7 dniach.
+            </div>
+            
+            <div className="pt-4">
+              <Button 
+                type="submit" 
+                disabled={isProcessing} 
+                className="w-full py-6 bg-red-900 hover:bg-red-800 text-white font-medium text-base"
+              >
+                {isProcessing ? (
+                  <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Przetwarzanie...</>
+                ) : (
+                  <>Zapłać {PRODUCT_PRICE + (giftWrap ? 0 : 0)} zł</>
+                )}
+              </Button>
+            </div>
+            
+            <div className="flex justify-center pt-2">
+              <Link 
+                to="/survey" 
+                className="text-gray-500 text-sm hover:text-gray-700"
+              >
+                Wróć do ankiety
+              </Link>
+            </div>
+            
+            <div className="text-center text-xs text-gray-500 pt-4">
+              Płatność jest zabezpieczona szyfrowaniem SSL
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

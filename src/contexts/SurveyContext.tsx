@@ -1,8 +1,8 @@
-
 import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { questionsDatabase } from './questions-data';
+import { toast } from 'sonner';
 
 export type Gender = 'male' | 'female' | null;
 export type GameLevel = 'discover' | 'explore' | 'exceed' | null;
@@ -49,6 +49,7 @@ interface SurveyContextType {
   isInConfigurationMode: boolean;
   filteredQuestions: Question[];
   saveAnswer: (isPartnerSurvey?: boolean) => Promise<void>;
+  saveAllAnswers: (orderId: string, userType: 'user' | 'partner') => Promise<boolean>;
 }
 
 // Funkcja do losowego wyboru pytań z zachowaniem par
@@ -301,6 +302,7 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           
         if (saveError) {
           console.error('Error saving partner response:', saveError);
+          toast.error('Wystąpił błąd podczas zapisywania odpowiedzi');
         } else {
           console.log('Successfully saved partner response');
         }
@@ -308,8 +310,46 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       // The regular user response saving is handled in the payment process
     } catch (error) {
       console.error('Error in saveAnswer:', error);
+      toast.error('Wystąpił błąd podczas zapisywania odpowiedzi');
     }
   }, [currentQuestion, answers, partnerOrderId, surveyConfig]);
+
+  // Save all answers at once
+  const saveAllAnswers = useCallback(async (orderId: string, userType: 'user' | 'partner') => {
+    if (Object.keys(answers).length === 0) {
+      console.warn('No answers to save!');
+      return false;
+    }
+    
+    try {
+      console.log(`Saving all ${userType} answers for order ${orderId}`);
+      
+      const responsesToSave = Object.entries(answers).map(([questionId, answer]) => ({
+        order_id: orderId,
+        question_id: questionId,
+        answer: answer,
+        user_type: userType,
+        user_gender: surveyConfig.userGender,
+        partner_gender: surveyConfig.partnerGender,
+        game_level: surveyConfig.gameLevel
+      }));
+      
+      const { error } = await supabase
+        .from('survey_responses')
+        .insert(responsesToSave);
+        
+      if (error) {
+        console.error(`Error saving ${userType} responses:`, error);
+        return false;
+      }
+      
+      console.log(`Successfully saved all ${userType} responses`);
+      return true;
+    } catch (error) {
+      console.error(`Error in saveAllAnswers for ${userType}:`, error);
+      return false;
+    }
+  }, [answers, surveyConfig]);
 
   const nextQuestion = useCallback(() => {
     // Blokujemy przejście, jeśli nie ma odpowiedzi na aktualne pytanie
@@ -385,6 +425,7 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     isInConfigurationMode,
     filteredQuestions,
     saveAnswer,
+    saveAllAnswers,
   };
 
   return <SurveyContext.Provider value={value}>{children}</SurveyContext.Provider>;
