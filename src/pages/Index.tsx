@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, ArrowRight, Check, Menu, X, Sparkles, Heart, ExternalLink, Clock, Zap, Shield } from 'lucide-react';
@@ -102,14 +103,14 @@ const Index = () => {
             <div className="lg:col-span-2 bento-cell p-8 md:p-10 flex flex-col justify-between">
               <div>
                 <div className="hero-badge">
-                  GRA DLA PAR
+                  NOWY WYMIAR INTYMNEJ KOMUNIKACJI
                 </div>
                 <h1 className="hero-title">
-                  Przenieście <span className="block">Wasze <span className="text-primary">życie seksualne</span></span> na wyższy poziom
+                  Porozumienie bez słów. <span className="block"><span className="text-primary">Życie seksualne</span> na wyższym poziomie</span>
                 </h1>
                 <p className="hero-subtitle">
-                  Dzięki tej grze odkryjecie swoje skryte pragnienia w bezpieczny sposób, 
-                  bez konieczności mówienia o nich wprost.
+                  W każdym związku istnieją pragnienia, które trudno wyrazić na głos. Secret Sparks to przestrzeń, 
+                  gdzie Twoje niewypowiedziane myśli spotykają się z pragnieniami partnera, tworząc mapę wspólnych uniesień.
                 </p>
               </div>
               
@@ -144,10 +145,10 @@ const Index = () => {
               <div className="bento-icon-container">
                 <Sparkles className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="bento-title">Poznajcie się na nowo</h3>
+              <h3 className="bento-title">Odkryjcie siebie</h3>
               <p className="bento-text">
-                Odkryjcie nieznane dotąd pragnienia i marzenia Waszych partnerów. 
-                Secret Sparks pozwoli Wam spojrzeć na siebie z nowej perspektywy.
+                Poznajcie siebie w zupełnie nowym świetle. Secret Sparks ujawnia te pragnienia, 
+                które łączą Was oboje, tworząc mapę wspólnych fascynacji i otwierając drzwi do głębszej bliskości.
               </p>
             </div>
             
@@ -155,11 +156,10 @@ const Index = () => {
               <div className="bento-icon-container">
                 <Heart className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="bento-title">Podkręćcie temperaturę</h3>
+              <h3 className="bento-title">Rozpalcie siebie nawzajem</h3>
               <p className="bento-text">
-                Dodajcie iskry do Waszych intymnych chwil.
-                Gra wprowadza ekscytujące elementy, które sprawią, że każdy wieczór 
-                będzie pełen namiętności.
+                Wprowadźcie element ekscytacji do swojego związku. Nasza aplikacja pomoże Wam 
+                przełamać rutynę i zbudować głębszą intymność opartą na wzajemnym zrozumieniu i autentycznym pożądaniu.
               </p>
             </div>
             
@@ -167,10 +167,10 @@ const Index = () => {
               <div className="bento-icon-container">
                 <Zap className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="bento-title">Odkrywajcie nowe miejsca</h3>
+              <h3 className="bento-title">Eksplorujcie pragnienia</h3>
               <p className="bento-text">
-                Eksplorujcie nowe możliwości zarówno w domu, jak i poza nim, 
-                ciesząc się ekscytującymi chwilami wszędzie tam, gdzie poniesie Was wyobraźnia.
+                Twórzcie nowe wspomnienia w bezpiecznej przestrzeni wzajemnego zaufania. Od subtelnych sugestii 
+                po odważne propozycje – odkryjcie, jak ekscytująca może być wspólna eksploracja pragnień.
               </p>
             </div>
           </div>
@@ -180,17 +180,17 @@ const Index = () => {
             <div className="feature-grid">
               <div className="bento-cell text-center py-8">
                 <h3 className="text-4xl font-bold text-primary mb-3">250+</h3>
-                <p className="text-muted-foreground">Pytań które pomagają odkryć wspólne pragnienia</p>
+                <p className="text-muted-foreground">Unikalnych scenariuszy i pomysłów na wzbogacenie Waszej intymnej relacji</p>
               </div>
               
               <div className="bento-cell text-center py-8">
-                <h3 className="text-4xl font-bold text-primary mb-3">97%</h3>
-                <p className="text-muted-foreground">Par raportuje wzrost satysfakcji w relacji</p>
+                <h3 className="text-4xl font-bold text-primary mb-3">100%</h3>
+                <p className="text-muted-foreground">Gwarancja bezpieczeństwa danych i pełnej anonimowości każdej ankiety</p>
               </div>
               
               <div className="bento-cell text-center py-8">
                 <h3 className="text-4xl font-bold text-primary mb-3">5min</h3>
-                <p className="text-muted-foreground">Tyle zajmuje wypełnienie ankiety. Efekty - długoterminowe</p>
+                <p className="text-muted-foreground">Szybka ankieta, której rezultaty zmienią Waszą relację na zawsze</p>
               </div>
             </div>
           </div>
@@ -259,7 +259,6 @@ const Index = () => {
               </p>
             </div>
             
-            {/* Added new scientific point to fill space */}
             <div className="bento-cell">
               <div className="h-12 w-12 rounded-full bg-accent/20 flex items-center justify-center mb-6">
                 <Shield className="h-6 w-6 text-primary" />
