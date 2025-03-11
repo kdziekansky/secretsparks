@@ -1,7 +1,10 @@
+
 import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { questionsDatabase } from './questions-data';
+import { fetchFromSupabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export type Gender = 'male' | 'female' | null;
 export type GameLevel = 'discover' | 'explore' | 'exceed' | null;
@@ -190,6 +193,11 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   // Store orderId for partner surveys
   const [partnerOrderId, setPartnerOrderId] = useState<string | null>(null);
+  
+  // Add missing state variables for loading and error handling
+  const [isLoadingOrder, setIsLoadingOrder] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [orderDetails, setOrderDetails] = useState<any | null>(null);
 
   // If this is a partner survey, get the order ID associated with the token
   useEffect(() => {
@@ -376,6 +384,30 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const getOrderId = useCallback(() => {
     return partnerOrderId;
   }, [partnerOrderId]);
+
+  // Fetch order details if this is a partner survey
+  const fetchOrderDetails = async (orderId: string) => {
+    try {
+      console.log('Fetching order details for:', orderId);
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('id', orderId)
+        .single();
+        
+      if (error) {
+        console.error('Error fetching order details:', error);
+        return;
+      }
+      
+      if (data) {
+        console.log('Found order details:', data);
+        setOrderDetails(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch order details:', err);
+    }
+  };
 
   // Use the same configuration settings for partner survey
   useEffect(() => {
