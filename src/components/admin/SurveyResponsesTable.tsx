@@ -68,30 +68,6 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
     );
   }
 
-  const renderResponseRow = (response: SurveyResponse, index: number) => {
-    try {
-      const question = questionsDatabase.find(q => q.id === response.question_id);
-      const questionText = question?.text || `Pytanie (${response.question_id})`;
-      const answer = typeof response.answer === 'number' ? response.answer : 0;
-      
-      return (
-        <TableRow key={response.id || `row-${index}`}>
-          <TableCell className="font-medium">
-            {questionText}
-          </TableCell>
-          <TableCell>
-            <Badge variant="outline">
-              {getRatingLabel(answer)}
-            </Badge>
-          </TableCell>
-        </TableRow>
-      );
-    } catch (error) {
-      console.error(`Error rendering response row at index ${index}:`, error);
-      return null;
-    }
-  };
-
   return (
     <div className="border rounded-md overflow-hidden">
       <Table>
@@ -102,7 +78,27 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {safeResponses.map((response, index) => renderResponseRow(response, index))}
+          {safeResponses.map((response, index) => {
+            const question = questionsDatabase.find(q => q.question_id === response.question_id);
+            
+            if (!question) {
+              console.log(`Question not found for ID: ${response.question_id}`);
+              return null;
+            }
+            
+            return (
+              <TableRow key={response.id || `row-${index}`}>
+                <TableCell className="font-medium">
+                  {question.title}
+                </TableCell>
+                <TableCell>
+                  <Badge variant="outline">
+                    {getRatingLabel(response.answer)}
+                  </Badge>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </div>
