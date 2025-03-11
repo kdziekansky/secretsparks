@@ -32,6 +32,7 @@ export type Database = {
       }
       orders: {
         Row: {
+          archived: boolean
           created_at: string
           gift_wrap: boolean
           id: string
@@ -46,6 +47,7 @@ export type Database = {
           user_name: string
         }
         Insert: {
+          archived?: boolean
           created_at?: string
           gift_wrap?: boolean
           id?: string
@@ -60,6 +62,7 @@ export type Database = {
           user_name: string
         }
         Update: {
+          archived?: boolean
           created_at?: string
           gift_wrap?: boolean
           id?: string

@@ -62,13 +62,18 @@ const AdminOrders: React.FC = () => {
   } = useQuery({
     queryKey: ['admin-orders', viewArchived],
     queryFn: async () => {
+      console.log('Fetching orders with archived =', viewArchived);
       const { data, error } = await supabase
         .from('orders')
         .select('*')
         .eq('archived', viewArchived)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching orders:', error);
+        throw error;
+      }
+      console.log('Fetched orders:', data);
       return data as Order[];
     },
     enabled: isAuthenticated,
