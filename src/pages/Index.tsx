@@ -277,7 +277,7 @@ const Index = () => {
             Krok po kroku
           </h2>
           
-          <div className="bento-grid grid-cols-1 md:grid-cols-2">
+          <div className="bento-grid grid-cols-1 md:grid-cols-4">
             <div className="bento-cell">
               <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white font-bold text-lg mb-6">
                 1
