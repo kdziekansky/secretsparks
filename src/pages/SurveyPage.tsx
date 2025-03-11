@@ -52,6 +52,8 @@ const SurveyPage: React.FC = () => {
           throw new Error('Nie znaleziono ankiety lub link jest nieprawidłowy');
         }
         
+        console.log('Found order:', orderData.id);
+        
         // Get the user's responses to extract configuration
         const { data: responsesData, error: responsesError } = await supabase
           .from('survey_responses')
@@ -86,6 +88,8 @@ const SurveyPage: React.FC = () => {
           if (countError) {
             console.error('Error checking user response count:', countError);
           }
+          
+          console.log('User response count:', count);
           
           // If there are no responses at all, the user hasn't completed their survey
           if (count === 0) {

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSurvey } from '@/contexts/SurveyContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -86,6 +87,11 @@ const PaymentPage: React.FC = () => {
     try {
       console.log('Saving user survey responses for order:', orderId);
       
+      if (Object.keys(answers).length === 0) {
+        console.warn('No answers to save! Skipping survey response saving.');
+        return false;
+      }
+      
       // Prepare survey responses for insertion
       const responsesToSave = Object.entries(answers).map(([questionId, answer]) => ({
         order_id: orderId,
@@ -97,11 +103,6 @@ const PaymentPage: React.FC = () => {
         game_level: surveyConfig.gameLevel
       }));
       
-      if (responsesToSave.length === 0) {
-        console.warn('No answers to save!');
-        return;
-      }
-      
       console.log('Saving responses:', responsesToSave);
       
       const { error } = await supabase
@@ -111,11 +112,14 @@ const PaymentPage: React.FC = () => {
       if (error) {
         console.error('Error saving survey responses:', error);
         toast.error('Wystąpił błąd podczas zapisywania odpowiedzi z ankiety');
+        return false;
       } else {
         console.log('Survey responses saved successfully');
+        return true;
       }
     } catch (error) {
       console.error('Failed to save survey responses:', error);
+      return false;
     }
   };
   
@@ -124,6 +128,12 @@ const PaymentPage: React.FC = () => {
     
     if (!isValid()) {
       setShowErrors(true);
+      return;
+    }
+    
+    if (Object.keys(answers).length === 0) {
+      toast.error('Nie możesz złożyć zamówienia bez wypełnienia ankiety. Proszę wypełnij ankietę.');
+      navigate('/survey');
       return;
     }
     
@@ -139,7 +149,7 @@ const PaymentPage: React.FC = () => {
           partner_name: partnerName,
           partner_email: partnerEmail,
           gift_wrap: giftWrap,
-          price: PRODUCT_PRICE,
+          price: PRODUCT_PRICE + (giftWrap ? 20 : 0),
           user_gender: surveyConfig.userGender,
           partner_gender: surveyConfig.partnerGender,
           game_level: surveyConfig.gameLevel
@@ -153,8 +163,15 @@ const PaymentPage: React.FC = () => {
       
       console.log('Order created:', orderData);
       
-      // Save survey responses
-      await saveResponses(orderData.id);
+      // Save survey responses and wait for completion
+      const responsesSaved = await saveResponses(orderData.id);
+      
+      if (!responsesSaved) {
+        console.error('Failed to save survey responses');
+        toast.error('Wystąpił błąd podczas zapisywania odpowiedzi z ankiety. Spróbuj ponownie później.');
+        setIsProcessing(false);
+        return;
+      }
       
       // Redirect to payment gateway
       // For now, just navigate to a thank you page
@@ -240,18 +257,19 @@ const PaymentPage: React.FC = () => {
                   <p className="text-red-500 text-sm">{errors.partnerEmail}</p>
                 )}
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 mt-4 mb-6">
                 <Input
                   type="checkbox"
                   id="giftWrap"
                   name="giftWrap"
                   checked={giftWrap}
                   onChange={handleChange}
+                  className="w-4 h-4"
                 />
                 <Label htmlFor="giftWrap">Zapakuj na prezent (+20zł)</Label>
               </div>
               <div>
-                <Button disabled={isProcessing} className="w-full">
+                <Button type="submit" disabled={isProcessing} className="w-full">
                   {isProcessing ? (
                     <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Przetwarzanie...</>
                   ) : (
