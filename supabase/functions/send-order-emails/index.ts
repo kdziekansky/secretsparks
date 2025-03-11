@@ -1,4 +1,3 @@
-
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from '../_shared/cors.ts'
 import { Resend } from 'https://esm.sh/resend@1.0.0'
@@ -67,30 +66,14 @@ Deno.serve(async (req) => {
 
     let questionIds = []
     
-    // If we have user responses, use them to create the question sequence
-    if (userResponses && userResponses.length > 0) {
-      // Extract question IDs in order they were answered
-      questionIds = userResponses.map(response => response.question_id)
-      console.log(`Found ${questionIds.length} questions from user responses:`, questionIds)
-    } else {
-      // No user responses found, we need to fetch questions database
-      console.log('No user responses found, generating default question sequence')
-      
-      // Fetch some questions from survey_responses of any order to get question IDs
-      // This is a workaround since we can't access the questionsDatabase directly in edge function
-      const { data: sampleResponses, error: sampleError } = await supabase
-        .from('survey_responses')
-        .select('distinct question_id')
-        .limit(15)
-      
-      if (sampleError || !sampleResponses || sampleResponses.length === 0) {
-        console.error('Error fetching sample questions:', sampleError)
-        throw new Error('No questions available to create a sequence')
-      }
-      
-      questionIds = sampleResponses.map(q => q.question_id)
-      console.log(`Generated default set of ${questionIds.length} questions:`, questionIds)
+    // We MUST have user responses to send emails - no fallbacks!
+    if (!userResponses || userResponses.length === 0) {
+      throw new Error('Zamawiający nie wypełnił jeszcze swojej ankiety')
     }
+
+    // Extract question IDs in order they were answered by user
+    questionIds = userResponses.map(response => response.question_id)
+    console.log(`Found ${questionIds.length} questions from user responses:`, questionIds)
 
     // STEP 2: Send thank you email to user
     console.log('STEP 2: Sending thank you email to user')
