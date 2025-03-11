@@ -1,8 +1,9 @@
+
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Confetti } from '@/components/Confetti';
 import { Button } from '@/components/ui/button';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -11,30 +12,42 @@ const ThankYouPage: React.FC = () => {
   const orderId = searchParams.get('orderId');
   const [orderDetails, setOrderDetails] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
+    console.log("ThankYouPage mounted, orderId:", orderId);
+    
     const fetchOrderDetails = async () => {
       if (!orderId) {
+        console.log("No orderId found in URL params");
         setLoading(false);
         return;
       }
 
       try {
-        const { data, error } = await supabase
+        console.log("Fetching order details for orderId:", orderId);
+        const { data, error: fetchError } = await supabase
           .from('orders')
           .select('*')
           .eq('id', orderId)
-          .single();
+          .maybeSingle();
 
-        if (error) throw error;
+        if (fetchError) {
+          console.error('Error fetching order:', fetchError);
+          setError(fetchError.message);
+          throw fetchError;
+        }
+        
+        console.log("Order data received:", data);
         setOrderDetails(data);
-      } catch (error) {
-        console.error('Error fetching order:', error);
+      } catch (err: any) {
+        console.error('Error in fetchOrderDetails:', err);
+        setError(err.message || 'Wystąpił nieznany błąd');
         toast({
           variant: "destructive",
           title: "Błąd",
-          description: "Nie udało się pobrać szczegółów zamówienia.",
+          description: "Nie udało się pobrać szczegółów zamówienia: " + err.message,
         });
       } finally {
         setLoading(false);
@@ -45,19 +58,35 @@ const ThankYouPage: React.FC = () => {
   }, [orderId, toast]);
 
   // Jeśli nie ma orderId lub wystąpił błąd
-  if (!orderId && !loading) {
+  if ((!orderId || error) && !loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6">
         <div className="glass-panel p-8 w-full max-w-xl text-center animate-fade-in">
+          <div className="flex justify-center mb-6">
+            <AlertCircle className="text-red-500 h-16 w-16" />
+          </div>
+          
           <h1 className="text-2xl sm:text-3xl font-medium mb-4">
-            Nie znaleziono zamówienia
+            {error ? "Wystąpił błąd" : "Nie znaleziono zamówienia"}
           </h1>
+          
           <p className="text-lg text-muted-foreground mb-8">
-            Nie znaleźliśmy szczegółów Twojego zamówienia. Spróbuj ponownie lub skontaktuj się z nami.
+            {error ? error : "Nie znaleźliśmy szczegółów Twojego zamówienia. Spróbuj ponownie lub skontaktuj się z nami."}
           </p>
+          
           <Link to="/">
             <Button>Wróć do strony głównej</Button>
           </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6">
+        <div className="glass-panel p-8 w-full max-w-xl text-center">
+          <p className="text-lg">Ładowanie szczegółów zamówienia...</p>
         </div>
       </div>
     );
