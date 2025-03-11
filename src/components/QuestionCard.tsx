@@ -55,7 +55,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     setIsAnimating(true);
     setTimeout(() => {
       if (isLastQuestion) {
-        // If it's a partner survey, redirect to thank you page instead of payment
+        // If it's a partner survey, redirect to thank you page
         if (isPartnerSurvey) {
           window.location.href = '/thank-you';
         } else {

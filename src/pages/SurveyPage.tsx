@@ -89,7 +89,7 @@ const SurveyPage: React.FC = () => {
         setPartnerGender(config.userGender);
         setGameLevel(config.gameLevel);
         
-      } catch (err) {
+      } catch (err: any) {
         console.error('Error fetching order details:', err);
         setError(err.message || 'Wystąpił błąd podczas ładowania ankiety');
       } finally {
