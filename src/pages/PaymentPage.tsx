@@ -34,7 +34,7 @@ const PaymentPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get('orderId');
 
-  const { answers } = useSurvey();
+  const { answers, surveyConfig } = useSurvey();
   
   // Check if survey is completed when component mounts
   useEffect(() => {
@@ -110,15 +110,24 @@ const PaymentPage: React.FC = () => {
         return true; // Changed to true to allow order to proceed even without answers
       }
       
-      // Prepare survey responses for insertion
+      if (!surveyConfig.userGender || !surveyConfig.partnerGender || !surveyConfig.gameLevel) {
+        console.error('Missing survey configuration data!', surveyConfig);
+        toast.error('Brak pełnej konfiguracji ankiety. Spróbuj ponownie od początku ankiety.');
+        return false;
+      }
+      
+      // Prepare survey responses for insertion with survey configuration data
       const responsesToSave = Object.entries(answers).map(([questionId, answer]) => ({
         order_id: orderId,
         question_id: questionId,
         answer: answer,
-        user_type: 'user'
+        user_type: 'user',
+        user_gender: surveyConfig.userGender,
+        partner_gender: surveyConfig.partnerGender,
+        game_level: surveyConfig.gameLevel
       }));
       
-      console.log('Saving responses:', responsesToSave);
+      console.log('Saving responses with config:', responsesToSave);
       
       const { error } = await supabase
         .from('survey_responses')
@@ -146,6 +155,14 @@ const PaymentPage: React.FC = () => {
       return;
     }
     
+    // Check if survey configuration is complete before proceeding
+    if (Object.keys(answers).length > 0 && 
+        (!surveyConfig.userGender || !surveyConfig.partnerGender || !surveyConfig.gameLevel)) {
+      console.error('Survey configuration incomplete:', surveyConfig);
+      toast.error('Konfiguracja ankiety jest niekompletna. Proszę wrócić do ankiety i uzupełnić wszystkie dane.');
+      return;
+    }
+    
     // Allow for proceeding even if survey is not completed (for testing)
     if (!surveyCompleted && Object.keys(answers).length === 0 && !orderId) {
       console.warn('Survey not completed, but proceeding for testing purposes');
@@ -156,7 +173,7 @@ const PaymentPage: React.FC = () => {
     try {
       console.log('Creating order in database');
       
-      // Create order in database
+      // Also save survey configuration to orders table
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .insert({
@@ -166,6 +183,9 @@ const PaymentPage: React.FC = () => {
           partner_email: partnerEmail,
           gift_wrap: giftWrap,
           price: PRODUCT_PRICE + (giftWrap ? 20 : 0),
+          user_gender: surveyConfig.userGender,
+          partner_gender: surveyConfig.partnerGender,
+          game_level: surveyConfig.gameLevel
         })
         .select()
         .single();
