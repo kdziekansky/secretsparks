@@ -55,22 +55,23 @@ const SurveyPage: React.FC = () => {
         
         console.log('Found order:', orderData);
         
-        // Check if user has completed their survey
-        const { count, error: countError } = await supabase
+        // Check if user has completed their survey - look for ANY user survey responses
+        const { data: responsesData, error: responsesError } = await supabase
           .from('survey_responses')
-          .select('*', { count: 'exact', head: true })
+          .select('id')
           .eq('order_id', orderData.id)
-          .eq('user_type', 'user');
+          .eq('user_type', 'user')
+          .limit(1);
           
-        if (countError) {
-          console.error('Error checking user response count:', countError);
+        if (responsesError) {
+          console.error('Error checking user responses:', responsesError);
           throw new Error('Wystąpił błąd podczas sprawdzania odpowiedzi zamawiającego');
         }
         
-        console.log('User response count:', count);
+        console.log('User responses check:', responsesData);
         
-        // If there are no responses at all, the user hasn't completed their survey
-        if (count === 0) {
+        // If there are no responses at all from the user, show error
+        if (!responsesData || responsesData.length === 0) {
           throw new Error('Zamawiający nie wypełnił jeszcze swojej ankiety');
         }
         

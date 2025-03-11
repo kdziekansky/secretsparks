@@ -47,6 +47,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
   const refreshResponses = async () => {
     if (!orderId) {
       console.error('No order ID available for refresh');
+      toast.error('Brak ID zamówienia do odświeżenia');
       return;
     }
     
@@ -68,7 +69,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
       setRefreshedResponses(data as SurveyResponse[]);
       
       if (data && data.length > 0) {
-        toast.success('Odpowiedzi odświeżone');
+        toast.success(`Odpowiedzi odświeżone (${data.length})`);
       } else {
         toast.info('Brak odpowiedzi dla tego zamówienia');
       }
