@@ -1,7 +1,8 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { questionsDatabase } from '@/contexts/questions-data';
+import { supabase } from '@/integrations/supabase/client';
 
 interface SurveyResponse {
   id: string;
@@ -10,6 +11,9 @@ interface SurveyResponse {
   answer: number;
   user_type: 'user' | 'partner';
   created_at: string;
+  user_gender?: string;
+  partner_gender?: string;
+  game_level?: string;
 }
 
 interface SurveyResponsesViewProps {
@@ -18,7 +22,50 @@ interface SurveyResponsesViewProps {
 }
 
 const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, isLoading }) => {
-  if (isLoading) {
+  const [refreshedResponses, setRefreshedResponses] = useState<SurveyResponse[] | null>(null);
+  const [refreshLoading, setRefreshLoading] = useState(false);
+  const [orderId, setOrderId] = useState<string | null>(null);
+  
+  // Extract order ID from responses
+  useEffect(() => {
+    if (responses && responses.length > 0) {
+      setOrderId(responses[0].order_id);
+    } else if (responses && responses.length === 0) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get('id');
+      if (id) setOrderId(id);
+    }
+  }, [responses]);
+  
+  // Function to manually refresh responses
+  const refreshResponses = async () => {
+    if (!orderId) return;
+    
+    setRefreshLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('survey_responses')
+        .select('*')
+        .eq('order_id', orderId);
+        
+      if (error) {
+        console.error('Error refreshing responses:', error);
+        throw error;
+      }
+      
+      setRefreshedResponses(data as SurveyResponse[]);
+    } catch (error) {
+      console.error('Failed to refresh responses:', error);
+    } finally {
+      setRefreshLoading(false);
+    }
+  };
+  
+  // Use refreshed responses if available, otherwise use the provided responses
+  const displayResponses = refreshedResponses || responses;
+  const currentLoading = refreshLoading || isLoading;
+  
+  if (currentLoading) {
     return (
       <div className="flex justify-center p-4">
         <Loader2 className="h-6 w-6 animate-spin" />
@@ -26,17 +73,29 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
     );
   }
 
-  if (!responses || responses.length === 0) {
+  if (!displayResponses || displayResponses.length === 0) {
     return (
-      <div className="text-center p-4 text-muted-foreground">
-        Brak odpowiedzi z ankiety.
+      <div className="space-y-4">
+        <div className="text-center p-4 text-muted-foreground">
+          Brak odpowiedzi z ankiety.
+        </div>
+        {orderId && (
+          <div className="flex justify-center">
+            <button 
+              onClick={refreshResponses}
+              className="px-4 py-2 text-sm bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+            >
+              Odśwież odpowiedzi
+            </button>
+          </div>
+        )}
       </div>
     );
   }
 
   // Group responses by user type
-  const userResponses = responses.filter(r => r.user_type === 'user');
-  const partnerResponses = responses.filter(r => r.user_type === 'partner');
+  const userResponses = displayResponses.filter(r => r.user_type === 'user');
+  const partnerResponses = displayResponses.filter(r => r.user_type === 'partner');
 
   // Function to render responses for a specific user type
   const renderUserResponses = (responses: SurveyResponse[], userType: string) => {
@@ -73,6 +132,15 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
 
   return (
     <div className="space-y-6">
+      <div className="flex justify-end mb-4">
+        <button 
+          onClick={refreshResponses}
+          className="px-4 py-2 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
+        >
+          Odśwież odpowiedzi
+        </button>
+      </div>
+      
       <div>
         <h3 className="text-lg font-medium mb-3">Odpowiedzi zamawiającego</h3>
         {renderUserResponses(userResponses, 'user')}

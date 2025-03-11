@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import { questionsDatabase } from './questions-data';
 
 export type Gender = 'male' | 'female' | null;
@@ -45,6 +47,7 @@ interface SurveyContextType {
   completeConfig: () => void;
   isInConfigurationMode: boolean;
   filteredQuestions: Question[];
+  saveAnswer: (isPartnerSurvey?: boolean) => Promise<void>;
 }
 
 // Funkcja do losowego wyboru pytań z zachowaniem par
@@ -169,6 +172,9 @@ const getRandomizedQuestions = (questions: Question[], config: SurveyConfig, max
 const SurveyContext = createContext<SurveyContextType | undefined>(undefined);
 
 export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [searchParams] = useSearchParams();
+  const partnerToken = searchParams.get('token');
+  
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [questions] = useState<Question[]>(questionsDatabase);
@@ -202,6 +208,54 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setAnswers(prev => ({ ...prev, [questionId]: value }));
   }, []);
 
+  // Save answer to database
+  const saveAnswer = useCallback(async (isPartnerSurvey = false) => {
+    if (!currentQuestion) return;
+    
+    try {
+      // Only save if we have a value for the current question
+      const answerValue = answers[currentQuestion.id];
+      if (answerValue === undefined) return;
+      
+      if (!isPartnerSurvey) {
+        // For regular user survey, save directly with order_id created during payment
+        console.log("Would save user answer, but needs order_id from payment process");
+        // This will be handled during the payment process
+      } else if (partnerToken) {
+        // For partner survey, get the order_id from the token and save as partner
+        const { data: orderData, error: orderError } = await supabase
+          .from('orders')
+          .select('id')
+          .eq('partner_survey_token', partnerToken)
+          .single();
+          
+        if (orderError || !orderData) {
+          console.error('Error fetching order:', orderError);
+          return;
+        }
+        
+        // Save the partner's answer
+        const { error: saveError } = await supabase
+          .from('survey_responses')
+          .insert({
+            order_id: orderData.id,
+            question_id: currentQuestion.id,
+            answer: answerValue,
+            user_type: 'partner',
+            user_gender: surveyConfig.userGender,
+            partner_gender: surveyConfig.partnerGender,
+            game_level: surveyConfig.gameLevel
+          });
+          
+        if (saveError) {
+          console.error('Error saving partner response:', saveError);
+        }
+      }
+    } catch (error) {
+      console.error('Error in saveAnswer:', error);
+    }
+  }, [currentQuestion, answers, partnerToken, surveyConfig]);
+
   const nextQuestion = useCallback(() => {
     // Blokujemy przejście, jeśli nie ma odpowiedzi na aktualne pytanie
     const currentQ = filteredQuestions[currentQuestionIndex];
@@ -210,10 +264,15 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       return;
     }
     
+    // Try to save the answer (for partner surveys)
+    if (partnerToken) {
+      saveAnswer(true);
+    }
+    
     if (currentQuestionIndex < filteredQuestions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
     }
-  }, [currentQuestionIndex, filteredQuestions, answers]);
+  }, [currentQuestionIndex, filteredQuestions, answers, partnerToken, saveAnswer]);
 
   const prevQuestion = useCallback(() => {
     if (!isFirstQuestion) {
@@ -270,6 +329,7 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     completeConfig,
     isInConfigurationMode,
     filteredQuestions,
+    saveAnswer,
   };
 
   return <SurveyContext.Provider value={value}>{children}</SurveyContext.Provider>;

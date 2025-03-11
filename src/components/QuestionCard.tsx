@@ -1,9 +1,18 @@
+
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import RatingScale from './RatingScale';
 import { useSurvey } from '@/contexts/SurveyContext';
 import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, Image as ImageIcon } from 'lucide-react';
 
-const QuestionCard: React.FC = () => {
+interface QuestionCardProps {
+  isPartnerSurvey?: boolean;
+}
+
+const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) => {
+  const [searchParams] = useSearchParams();
+  const partnerToken = searchParams.get('token');
+  
   const {
     currentQuestion,
     answers,
@@ -46,8 +55,12 @@ const QuestionCard: React.FC = () => {
     setIsAnimating(true);
     setTimeout(() => {
       if (isLastQuestion) {
-        // Bezpośrednio przekieruj do strony płatności
-        window.location.href = '/payment';
+        // If it's a partner survey, redirect to thank you page instead of payment
+        if (isPartnerSurvey) {
+          window.location.href = '/thank-you';
+        } else {
+          window.location.href = '/payment';
+        }
       } else {
         nextQuestion();
         setShowFullDescription(false);
@@ -85,6 +98,11 @@ const QuestionCard: React.FC = () => {
   
   // Get question number from ID (for placeholder)
   const questionNumber = currentQuestion.id.replace(/\D/g, '');
+  
+  // Adjusted button text based on whether it's a partner survey
+  const nextButtonText = isLastQuestion 
+    ? (isPartnerSurvey ? 'Zakończ ankietę' : 'Przejdź do płatności') 
+    : 'Zapisz odpowiedź';
   
   return (
     <div className={`glass-panel w-full max-w-4xl transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100 animate-slide-up'}`}>
@@ -215,7 +233,7 @@ const QuestionCard: React.FC = () => {
                   opacity: hasAnswer ? 1 : 0.5
                 }}
               >
-                <span style={{fontSize: '14px'}}>{isLastQuestion ? 'Przejdź do płatności' : 'Zapisz odpowiedź'}</span>
+                <span style={{fontSize: '14px'}}>{nextButtonText}</span>
                 <ArrowRight style={{width: '16px', height: '16px'}} />
               </button>
             </div>
