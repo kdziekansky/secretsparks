@@ -51,7 +51,7 @@ Deno.serve(async (req) => {
       )
     }
 
-    // STEP 1: FIRST - Get actual user responses and create the question sequence
+    // STEP 1: FIRST - Check if user responses exist and create the question sequence
     console.log('STEP 1: Checking for user responses to build question sequence')
     const { data: userResponses, error: responsesError } = await supabase
       .from('survey_responses')
