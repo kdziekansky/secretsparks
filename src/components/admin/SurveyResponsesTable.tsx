@@ -68,6 +68,16 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
     );
   }
 
+  // Pre-check if we have valid questionsDatabase to avoid runtime errors
+  if (!questionsDatabase || !Array.isArray(questionsDatabase) || questionsDatabase.length === 0) {
+    console.error('Questions database is missing or empty');
+    return (
+      <div className="text-center p-2 text-muted-foreground text-red-500">
+        Błąd: Baza pytań jest niedostępna
+      </div>
+    );
+  }
+
   return (
     <div className="border rounded-md overflow-hidden">
       <Table>
@@ -79,13 +89,24 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
         </TableHeader>
         <TableBody>
           {safeResponses.map((response, index) => {
-            // Looking at the questionsDatabase structure, we need to use 'id' not 'question_id'
-            // And 'text' property instead of 'title'
+            // Try to find the question in the database
             const question = questionsDatabase.find(q => q.id === response.question_id);
             
+            // If question not found, render a placeholder row
             if (!question) {
               console.log(`Question not found for ID: ${response.question_id}`);
-              return null;
+              return (
+                <TableRow key={response.id || `row-${index}`}>
+                  <TableCell className="font-medium text-muted-foreground">
+                    Pytanie (ID: {response.question_id})
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline">
+                      {getRatingLabel(response.answer)}
+                    </Badge>
+                  </TableCell>
+                </TableRow>
+              );
             }
             
             return (
