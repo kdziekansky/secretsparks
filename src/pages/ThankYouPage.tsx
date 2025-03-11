@@ -15,7 +15,7 @@ const ThankYouPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { toast: uiToast } = useToast();
-
+  
   useEffect(() => {
     console.log("ThankYouPage mounted, orderId:", orderId);
     
@@ -23,6 +23,7 @@ const ThankYouPage: React.FC = () => {
       if (!orderId) {
         console.log("No orderId found in URL params");
         setLoading(false);
+        setError("Nie znaleziono identyfikatora zamówienia");
         return;
       }
 
@@ -38,6 +39,12 @@ const ThankYouPage: React.FC = () => {
           console.error('Error fetching order:', fetchError);
           setError(fetchError.message);
           throw fetchError;
+        }
+        
+        if (!data) {
+          console.error('No order found with ID:', orderId);
+          setError("Nie znaleziono zamówienia o podanym identyfikatorze");
+          return;
         }
         
         console.log("Order data received:", data);
@@ -56,8 +63,33 @@ const ThankYouPage: React.FC = () => {
     fetchOrderDetails();
   }, [orderId]);
 
-  // If no orderId or error occurred and not loading
-  if ((!orderId || error) && !loading) {
+  // Partner thank you message (when no order ID is provided but it's a partner survey completion)
+  if (!orderId && !loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6">
+        <div className="glass-panel p-8 w-full max-w-xl text-center animate-fade-in">
+          <div className="flex justify-center mb-6">
+            <CheckCircle className="text-green-500 h-16 w-16" />
+          </div>
+          
+          <h1 className="text-2xl sm:text-3xl font-medium mb-4">
+            Dziękujemy za wypełnienie ankiety!
+          </h1>
+          
+          <p className="text-lg text-muted-foreground mb-8">
+            Twoje odpowiedzi zostały zapisane. Dziękujemy za współpracę.
+          </p>
+          
+          <Link to="/">
+            <Button>Powrót na stronę główną</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // If error occurred and not loading
+  if (error && !loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6">
         <div className="glass-panel p-8 w-full max-w-xl text-center animate-fade-in">
@@ -66,15 +98,15 @@ const ThankYouPage: React.FC = () => {
           </div>
           
           <h1 className="text-2xl sm:text-3xl font-medium mb-4">
-            {error ? "An error occurred" : "Order not found"}
+            {error ? "Wystąpił błąd" : "Nie znaleziono zamówienia"}
           </h1>
           
           <p className="text-lg text-muted-foreground mb-8">
-            {error ? error : "We couldn't find your order details. Please try again or contact us."}
+            {error || "Nie mogliśmy znaleźć szczegółów Twojego zamówienia. Spróbuj ponownie lub skontaktuj się z nami."}
           </p>
           
           <Link to="/">
-            <Button>Return to home page</Button>
+            <Button>Powrót na stronę główną</Button>
           </Link>
         </div>
       </div>
@@ -85,7 +117,7 @@ const ThankYouPage: React.FC = () => {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6">
         <div className="glass-panel p-8 w-full max-w-xl text-center">
-          <p className="text-lg">Loading order details...</p>
+          <p className="text-lg">Ładowanie szczegółów zamówienia...</p>
         </div>
       </div>
     );
@@ -100,18 +132,18 @@ const ThankYouPage: React.FC = () => {
         </div>
         
         <h1 className="text-2xl sm:text-3xl font-medium mb-4">
-          Thank you for your purchase!
+          Dziękujemy za zakup!
         </h1>
         
         <p className="text-lg text-muted-foreground mb-4">
-          Your order has been successfully placed.
+          Twoje zamówienie zostało pomyślnie złożone.
         </p>
 
         {orderDetails && (
           <div className="bg-white p-6 rounded-lg shadow-sm mb-8 text-left">
-            <h2 className="text-xl font-semibold mb-4">Order details</h2>
+            <h2 className="text-xl font-semibold mb-4">Szczegóły zamówienia</h2>
             <div className="space-y-2">
-              <p><strong>Order:</strong> #{orderDetails.id.substring(0, 8)}</p>
+              <p><strong>Zamówienie:</strong> #{orderDetails.id.substring(0, 8)}</p>
               <p><strong>Email:</strong> {orderDetails.user_email}</p>
               <p><strong>Partner:</strong> {orderDetails.partner_name}</p>
             </div>
@@ -119,11 +151,11 @@ const ThankYouPage: React.FC = () => {
         )}
         
         <p className="text-muted-foreground mb-8">
-          We've sent a confirmation to your email. Your partner will receive a survey invitation soon.
+          Wysłaliśmy potwierdzenie na Twój adres email. Twój partner otrzyma wkrótce zaproszenie do ankiety.
         </p>
         
         <Link to="/">
-          <Button>Return to home page</Button>
+          <Button>Powrót na stronę główną</Button>
         </Link>
       </div>
     </div>

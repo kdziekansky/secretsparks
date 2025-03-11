@@ -23,7 +23,8 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     prevQuestion,
     isFirstQuestion,
     isLastQuestion,
-    saveAnswer
+    saveAnswer,
+    getOrderId
   } = useSurvey();
   
   const [isAnimating, setIsAnimating] = useState(false);
@@ -70,9 +71,16 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
       }
       
       setTimeout(() => {
-        // If it's a partner survey, redirect to thank you page
+        // If it's a partner survey, redirect to thank you page with orderId
         if (isPartnerSurvey) {
-          window.location.href = '/thank-you';
+          const orderId = getOrderId();
+          console.log('Navigating to thank you page with orderId:', orderId);
+          if (orderId) {
+            navigate(`/thank-you?orderId=${orderId}`);
+          } else {
+            console.error('No orderId available for redirection');
+            window.location.href = '/thank-you';
+          }
         } else {
           console.log('Navigating to payment page with all answers:', answers);
           navigate('/payment');

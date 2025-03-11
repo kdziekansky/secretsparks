@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSurvey } from '@/contexts/SurveyContext';
@@ -16,6 +15,7 @@ interface OrderDetails {
   userGender: 'male' | 'female';
   partnerGender: 'male' | 'female';
   gameLevel: 'discover' | 'explore' | 'exceed';
+  orderId?: string;
 }
 
 const SurveyPage: React.FC = () => {
@@ -27,7 +27,8 @@ const SurveyPage: React.FC = () => {
     isInConfigurationMode,
     setUserGender,
     setPartnerGender,
-    setGameLevel
+    setGameLevel,
+    setOrderId
   } = useSurvey();
   
   const [isPartnerSurvey, setIsPartnerSurvey] = useState<boolean>(!!partnerToken);
@@ -70,6 +71,9 @@ const SurveyPage: React.FC = () => {
           throw new Error('Nieprawidłowe dane zamówienia');
         }
         
+        // Store the order ID in the survey context
+        setOrderId(orderData.id);
+        
         // Set default configuration if any values are missing
         const userGender = orderData.user_gender || 'male';
         const partnerGender = orderData.partner_gender || 'female';
@@ -82,7 +86,8 @@ const SurveyPage: React.FC = () => {
           partnerName: orderData.partner_name,
           userGender: userGender as 'male' | 'female',
           partnerGender: partnerGender as 'male' | 'female',
-          gameLevel: gameLevel as 'discover' | 'explore' | 'exceed'
+          gameLevel: gameLevel as 'discover' | 'explore' | 'exceed',
+          orderId: orderData.id
         });
         
         // Pre-configure the survey with the same settings as the user's survey
@@ -104,7 +109,7 @@ const SurveyPage: React.FC = () => {
     if (partnerToken) {
       fetchOrderDetails();
     }
-  }, [partnerToken, setUserGender, setPartnerGender, setGameLevel]);
+  }, [partnerToken, setUserGender, setPartnerGender, setGameLevel, setOrderId]);
   
   if (isLoadingOrder) {
     return (
