@@ -70,10 +70,14 @@ export const useQuestionSelection = (
     // For partner survey with existing questions
     if (isPartnerSurvey && selectedQuestionIds.length > 0) {
       console.log('Using predefined question sequence for partner:', selectedQuestionIds);
-      // Map question IDs to actual questions in the same order
-      return selectedQuestionIds
+      
+      // IMPROVED: Get questions in the exact same order as the user answered them
+      const orderedQuestions = selectedQuestionIds
         .map(id => questions.find(q => q.id === id))
-        .filter(q => q !== undefined) as Question[];
+        .filter((q): q is Question => q !== undefined);
+        
+      console.log(`Found ${orderedQuestions.length} matching questions from ${selectedQuestionIds.length} ids`);
+      return orderedQuestions;
     }
     
     // For regular user survey, generate random questions

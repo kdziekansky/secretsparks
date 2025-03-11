@@ -138,7 +138,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
     }
   };
   
-  // Updated refresh function with deduplication logic
+  // Updated refresh function with better deduplication logic
   const refreshResponses = async () => {
     if (!orderId) {
       console.error('No order ID available for refresh');
@@ -226,26 +226,31 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
     }
   };
 
-  // Helper function to process and deduplicate responses
+  // IMPROVED: Better deduplication - keep only the most recent answer for each question_id+user_type combination
   const processAndDeduplicateResponses = (responses: SurveyResponse[]): SurveyResponse[] => {
     if (!responses || !Array.isArray(responses)) return [];
     
-    // Group responses by user_type and question_id
-    const responseMap: Record<string, SurveyResponse> = {};
+    // Create a map to hold the most recent response for each question_id + user_type
+    const latestResponses: Record<string, SurveyResponse> = {};
     
-    // Process each response, keeping the most recent one for each question_id and user_type
     responses.forEach(response => {
+      if (!response || !response.question_id || !response.user_type) return;
+      
+      // Create a unique key for each question_id + user_type combination
       const key = `${response.user_type}_${response.question_id}`;
       
-      // If this is the first response of this type or it's newer than the existing one, keep it
-      if (!responseMap[key] || 
-          new Date(response.created_at) > new Date(responseMap[key].created_at)) {
-        responseMap[key] = response;
+      // Get the timestamp for comparison
+      const responseDate = new Date(response.created_at || 0).getTime();
+      
+      // If we haven't seen this combination yet, or this response is newer
+      if (!latestResponses[key] || 
+          responseDate > new Date(latestResponses[key].created_at || 0).getTime()) {
+        latestResponses[key] = response;
       }
     });
     
-    // Convert back to array
-    return Object.values(responseMap);
+    // Convert map back to array
+    return Object.values(latestResponses);
   };
 
   // Effect to check for responses based on refreshedResponses or initialResponses
@@ -339,12 +344,13 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
     );
   }
 
-  // Ensure userResponses and partnerResponses are safe to use and deduplicated
-  const userResponses = currentResponses.filter(r => r.user_type === 'user') || [];
-  const partnerResponses = currentResponses.filter(r => r.user_type === 'partner') || [];
+  // IMPROVED: Ensure userResponses and partnerResponses are properly deduplicated
+  const processedResponses = processAndDeduplicateResponses(currentResponses);
+  const userResponses = processedResponses.filter(r => r.user_type === 'user') || [];
+  const partnerResponses = processedResponses.filter(r => r.user_type === 'partner') || [];
 
-  console.log('User responses:', userResponses.length);
-  console.log('Partner responses:', partnerResponses.length);
+  console.log('User responses after deduplication:', userResponses.length);
+  console.log('Partner responses after deduplication:', partnerResponses.length);
 
   return (
     <div className="space-y-6">

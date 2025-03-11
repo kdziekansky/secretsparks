@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -208,10 +209,8 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setSurveyConfig(prev => ({ ...prev, isConfigComplete: true }));
     setCurrentQuestionIndex(0);
     
-    if (!partnerToken) {
-      // Clear any previously cached question sequence for new user surveys
-    }
-  }, [partnerToken]);
+    // No need for setSelectedQuestionIds as it's now handled by the hook
+  }, []);
 
   const value = {
     currentQuestionIndex,
@@ -234,7 +233,10 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     isInConfigurationMode: !surveyConfig.isConfigComplete,
     filteredQuestions,
     saveAnswer,
-    setOrderId: (orderId: string) => partnerOrderId, // Remove this line as it's not needed anymore
+    setOrderId: (orderId: string) => {
+      // This is now just a stub since partnerOrderId is managed by the hook
+      return partnerOrderId;
+    },
     getOrderId: () => partnerOrderId,
   };
 

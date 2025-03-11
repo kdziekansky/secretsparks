@@ -71,43 +71,36 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
     );
   }
 
-  // Filter and deduplicate responses
+  // FIXED: Better response deduplication by question_id
   const uniqueResponses = (() => {
-    // Keep track of seen question IDs
-    const seen = new Set<string>();
-    // Filter responses and keep only the latest one for each question
-    return safeResponses
-      .filter(response => (
-        response && 
-        typeof response === 'object' && 
-        response.question_id &&
-        typeof response.answer === 'number'
-      ))
-      // Sort by creation date (newest first) to ensure we get the latest answer
-      .sort((a, b) => {
-        const dateA = new Date(a.created_at || 0).getTime();
-        const dateB = new Date(b.created_at || 0).getTime();
-        return dateB - dateA;
-      })
-      // Keep only one response per question_id (the first one after sorting, which is the newest)
-      .filter(response => {
-        const questionId = response.question_id;
-        if (seen.has(questionId)) {
-          console.log(`Filtering out duplicate response for question ${questionId}`);
-          return false;
-        }
-        seen.add(questionId);
-        return true;
-      })
-      // Sort by created_at ascending for display
-      .sort((a, b) => {
-        const dateA = new Date(a.created_at || 0).getTime();
-        const dateB = new Date(b.created_at || 0).getTime();
-        return dateA - dateB;
-      });
+    // Keep track of latest response for each question_id
+    const latestResponses: Record<string, SurveyResponse> = {};
+    
+    // Process all responses to find the latest one for each question
+    safeResponses.forEach(response => {
+      if (!response || !response.question_id || response.answer === undefined) {
+        return; // Skip invalid responses
+      }
+      
+      const questionId = response.question_id;
+      const responseDate = new Date(response.created_at || 0).getTime();
+      
+      // If we haven't seen this question yet, or this is a newer response
+      if (!latestResponses[questionId] || 
+          responseDate > new Date(latestResponses[questionId].created_at || 0).getTime()) {
+        latestResponses[questionId] = response;
+      }
+    });
+    
+    // Convert map to array and sort by created_at
+    return Object.values(latestResponses).sort((a, b) => {
+      const dateA = new Date(a.created_at || 0).getTime();
+      const dateB = new Date(b.created_at || 0).getTime();
+      return dateA - dateB;
+    });
   })();
 
-  console.log(`Filtered ${uniqueResponses.length} unique responses for ${userType} from ${safeResponses.length} total`);
+  console.log(`Found ${uniqueResponses.length} unique responses for ${userType} from ${safeResponses.length} total`);
 
   if (uniqueResponses.length === 0) {
     return (
