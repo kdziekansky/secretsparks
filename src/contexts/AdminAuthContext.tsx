@@ -22,6 +22,9 @@ export const useAdminAuth = () => {
   return context;
 };
 
+// Create a local storage key for the demo admin
+const DEMO_ADMIN_KEY = 'demo_admin_authenticated';
+
 interface AdminAuthProviderProps {
   children: ReactNode;
 }
@@ -37,6 +40,23 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
     const checkAuth = async () => {
       try {
         setIsLoading(true);
+        
+        // First check if demo admin is logged in
+        const demoAdminEmail = localStorage.getItem(DEMO_ADMIN_KEY);
+        if (demoAdminEmail === 'admin@example.com') {
+          console.log('Demo admin is already logged in');
+          setIsAuthenticated(true);
+          setAdminEmail(demoAdminEmail);
+          
+          if (location.pathname === '/spe43al-adm1n-p4nel') {
+            navigate('/spe43al-adm1n-p4nel/dashboard');
+          }
+          
+          setIsLoading(false);
+          return;
+        }
+        
+        // If not demo admin, check Supabase session
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session) {
@@ -44,7 +64,7 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
             .from('admin_users')
             .select('email')
             .eq('email', session.user.email)
-            .single();
+            .maybeSingle();
 
           if (adminCheckError || !adminUser) {
             // Not an admin user, log them out from admin area
@@ -77,6 +97,12 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
         }
       } catch (error) {
         console.error('Error checking authentication:', error);
+        // Even if there's an error, let's check if demo admin is logged in
+        const demoAdminEmail = localStorage.getItem(DEMO_ADMIN_KEY);
+        if (demoAdminEmail === 'admin@example.com') {
+          setIsAuthenticated(true);
+          setAdminEmail(demoAdminEmail);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -88,13 +114,21 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event);
       
+      // First always check demo admin
+      const demoAdminEmail = localStorage.getItem(DEMO_ADMIN_KEY);
+      if (demoAdminEmail === 'admin@example.com') {
+        setIsAuthenticated(true);
+        setAdminEmail(demoAdminEmail);
+        return;
+      }
+      
       if (event === 'SIGNED_IN' && session) {
         // Check if the signed-in user is an admin
         const { data: adminUser, error: adminCheckError } = await supabase
           .from('admin_users')
           .select('email')
           .eq('email', session.user.email)
-          .single();
+          .maybeSingle();
 
         if (adminCheckError || !adminUser) {
           // Not an admin, sign them out
@@ -112,8 +146,11 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
           }
         }
       } else if (event === 'SIGNED_OUT') {
-        setIsAuthenticated(false);
-        setAdminEmail(null);
+        const demoAdminEmail = localStorage.getItem(DEMO_ADMIN_KEY);
+        if (demoAdminEmail !== 'admin@example.com') {
+          setIsAuthenticated(false);
+          setAdminEmail(null);
+        }
       }
     });
 
@@ -137,26 +174,14 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
       if (email === 'admin@example.com' && password === 'admin123') {
         console.log('Special admin login path for admin@example.com');
         
-        try {
-          // Try to sign in with Supabase
-          const { data, error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-          });
-          
-          // Even if Supabase auth fails, we allow this specific admin account
-          // This is just for demo purposes - in production, use proper auth
-          setIsAuthenticated(true);
-          setAdminEmail(email);
-          navigate('/spe43al-adm1n-p4nel/dashboard');
-          return;
-        } catch (signInError) {
-          console.log('Supabase sign-in failed, but allowing admin access anyway:', signInError);
-          setIsAuthenticated(true);
-          setAdminEmail(email);
-          navigate('/spe43al-adm1n-p4nel/dashboard');
-          return;
-        }
+        // Store demo admin status in localStorage to persist through page refreshes
+        localStorage.setItem(DEMO_ADMIN_KEY, email);
+        
+        // Set authenticated state
+        setIsAuthenticated(true);
+        setAdminEmail(email);
+        navigate('/spe43al-adm1n-p4nel/dashboard');
+        return;
       }
       
       // For other admin users, check in admin_users table
@@ -201,7 +226,15 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
   const logout = async () => {
     try {
       setIsLoading(true);
-      await supabase.auth.signOut();
+      
+      // Check if this is the demo admin
+      if (adminEmail === 'admin@example.com') {
+        localStorage.removeItem(DEMO_ADMIN_KEY);
+      } else {
+        // Regular Supabase auth logout
+        await supabase.auth.signOut();
+      }
+      
       setIsAuthenticated(false);
       setAdminEmail(null);
       navigate('/spe43al-adm1n-p4nel');

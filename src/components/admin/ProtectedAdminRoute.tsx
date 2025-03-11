@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { Navigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import { Loader2 } from 'lucide-react';
 
@@ -10,6 +10,12 @@ interface ProtectedAdminRouteProps {
 
 const ProtectedAdminRoute: React.FC<ProtectedAdminRouteProps> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAdminAuth();
+  const location = useLocation();
+  
+  // Debug logging
+  useEffect(() => {
+    console.log('Protected route check - isAuthenticated:', isAuthenticated, 'isLoading:', isLoading);
+  }, [isAuthenticated, isLoading]);
 
   if (isLoading) {
     return (
@@ -20,9 +26,11 @@ const ProtectedAdminRoute: React.FC<ProtectedAdminRouteProps> = ({ children }) =
   }
 
   if (!isAuthenticated) {
+    console.log('Not authenticated, redirecting to login');
     return <Navigate to="/spe43al-adm1n-p4nel" replace />;
   }
 
+  console.log('User is authenticated, rendering protected content');
   return <>{children}</>;
 };
 
