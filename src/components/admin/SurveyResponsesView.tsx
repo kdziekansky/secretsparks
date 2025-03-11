@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Loader2, RefreshCw } from 'lucide-react';
 import { questionsDatabase } from '@/contexts/questions-data';
@@ -45,7 +46,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
   const [refreshedResponses, setRefreshedResponses] = useState<SurveyResponse[] | null>(null);
   const [refreshLoading, setRefreshLoading] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
-  const [viewType, setViewType<'cards' | 'table'>('table');
+  const [viewType, setViewType] = useState<'cards' | 'table'>('table');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
   // More comprehensive order ID extraction
@@ -236,7 +237,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
     }
 
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
         {responses.map(response => {
           const question = questionsDatabase.find(q => q.id === response.question_id);
           return (
@@ -307,12 +308,16 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <h3 className="text-lg font-medium border-b pb-2">Odpowiedzi zamawiającego ({userResponses.length})</h3>
-            <SurveyResponsesTable responses={userResponses} userType="user" />
+            <div className="max-h-[60vh] overflow-y-auto pr-2">
+              <SurveyResponsesTable responses={userResponses} userType="user" />
+            </div>
           </div>
 
           <div className="space-y-4">
             <h3 className="text-lg font-medium border-b pb-2">Odpowiedzi partnera ({partnerResponses.length})</h3>
-            <SurveyResponsesTable responses={partnerResponses} userType="partner" />
+            <div className="max-h-[60vh] overflow-y-auto pr-2">
+              <SurveyResponsesTable responses={partnerResponses} userType="partner" />
+            </div>
           </div>
         </div>
       ) : (
