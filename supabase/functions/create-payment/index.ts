@@ -14,6 +14,17 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Validate environment variables
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.error('Missing required Supabase configuration')
+      throw new Error('Server configuration error')
+    }
+
+    if (!stripeSecretKey) {
+      console.error('Missing Stripe secret key configuration')
+      throw new Error('Server configuration error')
+    }
+
     const stripe = new Stripe(stripeSecretKey, {
       apiVersion: '2023-10-16',
     })
@@ -24,6 +35,7 @@ Deno.serve(async (req) => {
     )
 
     // Get request body
+    const requestData = await req.json()
     const {
       amount,
       currency = 'pln',
@@ -35,20 +47,32 @@ Deno.serve(async (req) => {
       partner_gender,
       game_level,
       user_responses,
-      question_ids, // Added question sequence parameter
-    } = await req.json()
+      question_ids, // Question sequence parameter
+    } = requestData
 
+    console.log(`Request data received:`, JSON.stringify({
+      user_email,
+      partner_email,
+      amount,
+      responses_count: user_responses?.length,
+      questions_count: question_ids?.length
+    }))
+
+    // Validate required fields
     if (!amount || !user_email || !partner_email) {
+      console.error('Missing required fields:', { amount, user_email, partner_email })
       throw new Error('Missing required fields')
     }
 
     // Validate that we have responses
     if (!user_responses || user_responses.length === 0) {
+      console.error('No survey responses provided')
       throw new Error('No survey responses provided')
     }
     
     // Validate that we have question IDs
     if (!question_ids || question_ids.length === 0) {
+      console.error('No question sequence provided')
       throw new Error('No question sequence provided')
     }
 
@@ -87,7 +111,7 @@ Deno.serve(async (req) => {
     console.log(`Stored question sequence with ${question_ids.length} questions`)
 
     // Save user responses with the order ID
-    const responsesWithOrderId = user_responses.map((response: any) => ({
+    const responsesWithOrderId = user_responses.map((response) => ({
       ...response,
       order_id: order.id,
       user_type: 'user',
@@ -105,6 +129,10 @@ Deno.serve(async (req) => {
     }
 
     // Create Stripe checkout session
+    const origin = new URL(req.url).origin
+    
+    console.log(`Creating Stripe checkout session with origin: ${origin}`)
+    
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card', 'blik'],
       line_items: [
@@ -121,13 +149,15 @@ Deno.serve(async (req) => {
         },
       ],
       mode: 'payment',
-      success_url: `${new URL(req.url).origin}/thank-you?orderId=${order.id}`,
-      cancel_url: `${new URL(req.url).origin}/payment?canceled=true`,
+      success_url: `${origin}/thank-you?orderId=${order.id}`,
+      cancel_url: `${origin}/payment?canceled=true`,
       metadata: {
         order_id: order.id,
       },
       customer_email: user_email,
     })
+
+    console.log(`Created Stripe session: ${session.id}`)
 
     // Update order with Stripe session ID
     await supabase
@@ -136,8 +166,6 @@ Deno.serve(async (req) => {
         stripe_session_id: session.id,
       })
       .eq('id', order.id)
-
-    console.log(`Created Stripe session: ${session.id}`)
 
     // Return success response
     return new Response(
@@ -149,18 +177,21 @@ Deno.serve(async (req) => {
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
       }
     )
   } catch (error) {
-    console.error('Error:', error)
+    console.error('Payment processing error:', error)
+    
+    // Ensure we return a proper JSON response with appropriate headers
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message,
+        error: error.message || 'An unknown error occurred',
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400,
+        status: 200, // Return 200 even for errors to avoid CORS issues
       }
     )
   }
