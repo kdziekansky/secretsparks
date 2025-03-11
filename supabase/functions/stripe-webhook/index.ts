@@ -1,3 +1,4 @@
+
 // @ts-nocheck
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import Stripe from 'https://esm.sh/stripe@12.4.0?target=deno';
@@ -32,6 +33,7 @@ serve(async (req) => {
   console.log("========== WEBHOOK INVOKED ==========");
   console.log("Method:", req.method);
   console.log("URL:", req.url);
+  console.log("Headers:", [...req.headers.entries()]);
   
   // Obsługa CORS preflight
   if (req.method === 'OPTIONS') {
@@ -44,18 +46,20 @@ serve(async (req) => {
     const signature = req.headers.get('stripe-signature');
     console.log("Body length:", body.length);
     console.log("Signature present:", !!signature);
+    console.log("Endpoint secret present:", !!endpointSecret);
     
     // Sparsuj event
     let event;
     try {
-      // Dla celów debugowania, będziemy tolerować brak weryfikacji
       if (signature && endpointSecret) {
         try {
-          console.log("Verifying signature with secret starting with:", endpointSecret.substring(0, 10));
+          console.log("Verifying signature with secret");
           event = stripe.webhooks.constructEvent(body, signature, endpointSecret);
+          console.log("Signature verification successful");
         } catch (verifyError) {
-          console.error("Signature verification failed, parsing body directly:", verifyError.message);
+          console.error("Signature verification failed:", verifyError.message);
           event = JSON.parse(body);
+          console.log("Parsed event directly from body");
         }
       } else {
         console.log("Skipping signature verification - parsing event directly");
@@ -70,6 +74,7 @@ serve(async (req) => {
     }
     
     console.log("Event type:", event.type);
+    console.log("Event data:", JSON.stringify(event.data.object));
     
     // Obsługa zdarzenia checkout.session.completed
     if (event.type === 'checkout.session.completed') {
@@ -87,6 +92,10 @@ serve(async (req) => {
         });
       }
       
+      // Loguj dane konfiguracyjne (bez pełnych kluczy)
+      console.log("Supabase URL:", supabaseUrl ? "set" : "not set");
+      console.log("Supabase Service Key:", supabaseServiceKey ? "set (starts with: " + supabaseServiceKey.substring(0, 5) + "...)" : "not set");
+      
       // Aktualizuj status zamówienia
       console.log("Updating order status to 'paid'");
       const { data, error } = await supabase
@@ -96,7 +105,8 @@ serve(async (req) => {
           payment_id: paymentId,
           updated_at: new Date().toISOString()
         })
-        .eq('id', orderId);
+        .eq('id', orderId)
+        .select();
       
       console.log("Update result:", error ? `ERROR: ${error.message}` : "SUCCESS");
       if (error) {
@@ -107,8 +117,44 @@ serve(async (req) => {
         });
       }
       
-      // Sukces - nie wywołujemy funkcji wysyłania e-maili na razie, aby uprościć
+      console.log("Updated data:", data);
       console.log("Successfully updated order status to paid");
+    } else if (event.type === 'payment_intent.succeeded') {
+      // Obsługa alternatywnego zdarzenia payment_intent.succeeded
+      const intent = event.data.object;
+      console.log("Payment intent succeeded:", intent.id);
+      
+      // Szukaj zamówienia po payment_id
+      const { data: orders, error: searchError } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('payment_id', intent.id);
+      
+      if (searchError) {
+        console.error("Error searching for order by payment ID:", searchError);
+      } else if (orders && orders.length > 0) {
+        console.log("Found order with matching payment ID:", orders[0].id);
+        
+        // Aktualizuj status zamówienia
+        const { data, error } = await supabase
+          .from('orders')
+          .update({ 
+            status: 'paid',
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', orders[0].id)
+          .select();
+        
+        console.log("Update result:", error ? `ERROR: ${error.message}` : "SUCCESS");
+        if (error) {
+          console.error("Database update error:", error);
+        } else {
+          console.log("Updated data:", data);
+          console.log("Successfully updated order status to paid");
+        }
+      } else {
+        console.log("No orders found with payment ID:", intent.id);
+      }
     }
     
     // Zwróć sukces
