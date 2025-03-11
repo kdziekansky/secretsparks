@@ -118,6 +118,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
       if (error) {
         console.error('Error refreshing responses:', error);
         toast.error('Błąd podczas odświeżania odpowiedzi: ' + error.message);
+        setResponses([]);
         return;
       }
       
@@ -136,21 +137,23 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
           
         if (exactError) {
           console.error('Error with exact match query:', exactError);
+          setResponses([]);
         } else if (exactData && exactData.length > 0) {
           console.log(`Found ${exactData.length} responses with exact filter query`);
           setResponses(exactData as SurveyResponse[]);
           setHasResponses(true);
           toast.success(`Odpowiedzi odświeżone (${exactData.length})`);
           return;
+        } else {
+          setResponses([]);
+          setHasResponses(false);
+          toast.info('Brak odpowiedzi dla tego zamówienia w bazie danych');
         }
-        
-        setResponses([]);
-        setHasResponses(false);
-        toast.info('Brak odpowiedzi dla tego zamówienia w bazie danych');
       }
     } catch (error) {
       console.error('Error refreshing responses:', error);
       toast.error('Wystąpił błąd podczas odświeżania odpowiedzi');
+      setResponses([]);
     } finally {
       setIsRefreshing(false);
     }
@@ -162,14 +165,11 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
       return;
     }
 
-    if (!responses || responses.length === 0) {
-      toast.error("Brak odpowiedzi ankietowych do wygenerowania raportu");
-      console.log("Missing responses data:", { responses, order });
-      return;
-    }
-
+    // Ensure responses is an array, even if empty
+    const safeResponses = responses || [];
+    
+    console.log("Generating PDF with responses:", safeResponses.length);
     setIsGenerating(true);
-    console.log("Generating PDF with responses:", responses.length);
     
     try {
       // Create new PDF document
@@ -186,8 +186,8 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
       doc.text(`Partner: ${order.partner_name} (${order.partner_email})`, 14, 51);
       
       // Group responses
-      const userResponses = responses.filter(r => r.user_type === 'user');
-      const partnerResponses = responses.filter(r => r.user_type === 'partner');
+      const userResponses = safeResponses.filter(r => r.user_type === 'user');
+      const partnerResponses = safeResponses.filter(r => r.user_type === 'partner');
 
       console.log("Filtered responses for PDF:", { userResponses: userResponses.length, partnerResponses: partnerResponses.length });
 
@@ -246,9 +246,9 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
     }
   };
 
-  // Only disable button if we're generating, have no order, or explicitly know there are no responses
-  // This allows clicking the button even when we're not sure if there are responses yet
-  const buttonDisabled = isGenerating || !order || (responses !== null && responses.length === 0);
+  // Updated button disabled logic - enable the button for all orders
+  // Only disable when we're actively generating
+  const buttonDisabled = isGenerating || !order;
   
   console.log("Button disabled status:", buttonDisabled, { 
     hasResponses, 

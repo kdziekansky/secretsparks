@@ -61,7 +61,10 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
     }
   }, []);
 
-  if (!responses || !Array.isArray(responses) || responses.length === 0) {
+  // Ensure we don't try to work with undefined responses
+  const safeResponses = responses || [];
+  
+  if (safeResponses.length === 0) {
     return (
       <div className="text-center p-2 text-muted-foreground">
         Brak odpowiedzi od {userType === 'user' ? 'zamawiającego' : 'partnera'}.
@@ -69,16 +72,16 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
     );
   }
 
-  const safeResponses = responses.filter(response => (
+  const filteredResponses = safeResponses.filter(response => (
     response && 
     typeof response === 'object' && 
     response.question_id &&
     typeof response.answer === 'number'
   ));
 
-  console.log(`Filtered ${safeResponses.length} responses for ${userType}`);
+  console.log(`Filtered ${filteredResponses.length} responses for ${userType}`);
 
-  if (safeResponses.length === 0) {
+  if (filteredResponses.length === 0) {
     return (
       <div className="text-center p-2 text-muted-foreground">
         Brak poprawnych odpowiedzi od {userType === 'user' ? 'zamawiającego' : 'partnera'}.
@@ -111,7 +114,7 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {safeResponses.map((response, index) => {
+          {filteredResponses.map((response, index) => {
             // Use a unique key that doesn't depend on potentially undefined values
             const rowKey = `${response.id || ''}${response.question_id || ''}${index}`;
             

@@ -196,13 +196,16 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
       console.error('Failed to refresh responses:', err);
       setErrorMessage(`Błąd: ${err.message}`);
       toast.error('Wystąpił błąd podczas odświeżania odpowiedzi');
+      // Ensure we set empty responses array to avoid undefined
+      setRefreshedResponses([]);
     } finally {
       setRefreshLoading(false);
     }
   };
 
   // Use refreshed responses if available, otherwise use the provided responses
-  const responses = refreshedResponses || initialResponses;
+  // Ensure we never have undefined responses by defaulting to empty array
+  const responses = refreshedResponses !== null ? refreshedResponses : (initialResponses || []);
   const currentLoading = refreshLoading || isLoading;
   
   // Auto-refresh responses when orderId changes or component mounts
@@ -260,16 +263,16 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
     );
   }
 
-  // Group responses by user type
-  const userResponses = responses.filter(r => r.user_type === 'user');
-  const partnerResponses = responses.filter(r => r.user_type === 'partner');
+  // Ensure userResponses and partnerResponses are safe to use (never undefined)
+  const userResponses = responses.filter(r => r.user_type === 'user') || [];
+  const partnerResponses = responses.filter(r => r.user_type === 'partner') || [];
 
   console.log('User responses:', userResponses.length);
   console.log('Partner responses:', partnerResponses.length);
 
   // Function to render responses for a specific user type as cards
   const renderUserResponsesCards = (responses: SurveyResponse[], userType: string) => {
-    if (responses.length === 0) {
+    if (!responses || responses.length === 0) {
       return (
         <div className="text-center p-2 text-muted-foreground">
           Brak odpowiedzi od {userType === 'user' ? 'zamawiającego' : 'partnera'}.
