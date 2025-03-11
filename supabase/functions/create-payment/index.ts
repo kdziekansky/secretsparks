@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
     // Create a unique partner survey token
     const partnerSurveyToken = crypto.randomUUID()
 
-    // Create an order record
+    // Create an order record - ENSURE the question sequence is stored
     const { data: order, error: orderError } = await supabase
       .from('orders')
       .insert({
@@ -84,6 +84,7 @@ Deno.serve(async (req) => {
     }
 
     console.log(`Created order with ID: ${order.id}`)
+    console.log(`Stored question sequence with ${question_ids.length} questions`)
 
     // Save user responses with the order ID
     const responsesWithOrderId = user_responses.map((response: any) => ({
