@@ -202,11 +202,12 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
         });
       };
 
-      // Add user responses table
+      // Add user responses section header
       doc.setFontSize(14);
       doc.text("Odpowiedzi zamawiającego", 14, 65);
       
       if (userResponses.length > 0) {
+        // Add user responses table
         doc.autoTable({
           startY: 70,
           head: [['Pytanie', 'Odpowiedź']],
@@ -217,13 +218,23 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
         doc.text("Brak odpowiedzi od zamawiającego", 14, 75);
       }
 
-      // Add partner responses table
-      const partnerStartY = userResponses.length > 0 ? (doc as any).lastAutoTable.finalY + 15 : 80;
+      // Calculate start position for partner section
+      // This is important - need to make sure text doesn't overlap with previous content
+      let partnerStartY;
+      if (userResponses.length > 0) {
+        // If we added a table, get its ending Y position and add some margin
+        partnerStartY = (doc as any).lastAutoTable.finalY + 15;
+      } else {
+        // If we only added the "no responses" text, use a fixed position with margin
+        partnerStartY = 90;
+      }
       
+      // Add partner responses section header
       doc.setFontSize(14);
       doc.text("Odpowiedzi partnera", 14, partnerStartY);
       
       if (partnerResponses.length > 0) {
+        // Add partner responses table
         doc.autoTable({
           startY: partnerStartY + 5,
           head: [['Pytanie', 'Odpowiedź']],
