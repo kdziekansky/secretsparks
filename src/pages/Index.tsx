@@ -14,9 +14,9 @@ const Index = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   return (
-    <div className="bg-background text-foreground">
+    <div className="bg-[#05050a] text-foreground min-h-screen">
       {/* Header/Navigation */}
-      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur">
+      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-[#05050a]/80 backdrop-blur">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8">
           <Link to="/" className="flex items-center gap-2">
             <img 
@@ -60,7 +60,7 @@ const Index = () => {
           
           <div className="hidden md:block">
             <Link to="/survey">
-              <Button className="rounded-full bg-primary hover:bg-primary/80">
+              <Button className="rounded-full bg-primary hover:bg-primary/80 px-6">
                 Rozpocznij Grę
               </Button>
             </Link>
@@ -69,7 +69,7 @@ const Index = () => {
         
         {/* Mobile menu */}
         {isMenuOpen && (
-          <div className="md:hidden p-4 pb-6 border-t border-border/40 bg-background">
+          <div className="md:hidden p-4 pb-6 border-t border-border/40 bg-[#05050a]">
             <nav className="flex flex-col space-y-4">
               <Link to="/about" className="text-muted-foreground hover:text-primary py-2">
                 O nas
@@ -94,18 +94,18 @@ const Index = () => {
       </header>
 
       {/* Hero Section - Bento Grid Style */}
-      <section className="py-16 md:py-24 lg:py-32">
+      <section className="py-16 md:py-20">
         <div className="container mx-auto px-4 md:px-8">
           {/* Main hero bento grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="bento-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             
             {/* Featured main card - spans 2 columns on larger screens */}
-            <div className="lg:col-span-2 rounded-3xl bg-accent p-8 md:p-10 flex flex-col justify-between gap-8 hover:bg-accent/90 transition-colors glass-panel">
+            <div className="lg:col-span-2 bento-cell p-8 md:p-10 flex flex-col justify-between">
               <div>
-                <div className="inline-block px-4 py-2 rounded-full bg-accent/20 text-primary text-sm font-medium mb-4">
+                <div className="inline-block px-4 py-2 rounded-full bg-accent/20 text-primary text-sm font-medium mb-6">
                   GRA DLA PAR
                 </div>
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-6">
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
                   Przenieście <span className="block">Wasze <span className="text-primary">życie seksualne</span></span> na wyższy poziom
                 </h1>
                 <p className="text-muted-foreground text-lg max-w-2xl mb-8">
@@ -127,43 +127,49 @@ const Index = () => {
             </div>
             
             {/* Side card with app preview */}
-            <div className="rounded-3xl bg-card p-6 flex flex-col justify-center items-center relative overflow-hidden hover:bg-card/90 transition-colors glass-panel">
-              <div className="absolute -z-10 w-64 h-64 rounded-full bg-accent/20 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
-              <div className="w-full max-w-[280px] h-[400px] bg-card rounded-2xl flex items-center justify-center border border-border/40">
-                [Aplikacja]
+            <div className="bento-cell items-center justify-center relative overflow-hidden">
+              <div className="absolute -z-10 w-64 h-64 rounded-full bg-accent/10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
+              <div className="w-full max-w-[280px] h-[400px] mx-auto bg-card rounded-2xl flex items-center justify-center border border-border/40">
+                <img 
+                  src="/lovable-uploads/516d860c-2c12-44c6-b85c-5ad4d8016e9c.png" 
+                  alt="Aplikacja mobilna" 
+                  className="w-full h-full object-cover rounded-2xl"
+                />
               </div>
             </div>
-            
-            {/* Feature cards in grid */}
-            <div className="rounded-3xl bg-card p-8 glass-panel hover:bg-card/90 transition-colors">
-              <div className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-full bg-accent/20">
-                <Sparkles className="h-7 w-7 text-primary" />
+          </div>
+          
+          {/* Feature cards in grid */}
+          <div className="bento-grid grid-cols-1 md:grid-cols-3 mt-8">
+            <div className="bento-cell">
+              <div className="bento-icon-container">
+                <Sparkles className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="text-xl font-bold mb-4">Poznajcie się na nowo</h3>
-              <p className="text-muted-foreground">
+              <h3 className="bento-title">Poznajcie się na nowo</h3>
+              <p className="bento-text">
                 Odkryjcie nieznane dotąd pragnienia i marzenia Waszych partnerów. 
                 Secret Sparks pozwoli Wam spojrzeć na siebie z nowej perspektywy.
               </p>
             </div>
             
-            <div className="rounded-3xl bg-card p-8 glass-panel hover:bg-card/90 transition-colors">
-              <div className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-full bg-accent/20">
-                <Heart className="h-7 w-7 text-primary" />
+            <div className="bento-cell">
+              <div className="bento-icon-container">
+                <Heart className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="text-xl font-bold mb-4">Podkręćcie temperaturę</h3>
-              <p className="text-muted-foreground">
+              <h3 className="bento-title">Podkręćcie temperaturę</h3>
+              <p className="bento-text">
                 Dodajcie iskry do Waszych intymnych chwil.
                 Gra wprowadza ekscytujące elementy, które sprawią, że każdy wieczór 
                 będzie pełen namiętności.
               </p>
             </div>
             
-            <div className="rounded-3xl bg-card p-8 glass-panel hover:bg-card/90 transition-colors">
-              <div className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-full bg-accent/20">
-                <Zap className="h-7 w-7 text-primary" />
+            <div className="bento-cell">
+              <div className="bento-icon-container">
+                <Zap className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="text-xl font-bold mb-4">Odkrywajcie nowe miejsca</h3>
-              <p className="text-muted-foreground">
+              <h3 className="bento-title">Odkrywajcie nowe miejsca</h3>
+              <p className="bento-text">
                 Eksplorujcie nowe możliwości zarówno w domu, jak i poza nim, 
                 ciesząc się ekscytującymi chwilami wszędzie tam, gdzie poniesie Was wyobraźnia.
               </p>
@@ -175,19 +181,19 @@ const Index = () => {
       {/* Statistics Bento Grid */}
       <section className="py-12 md:py-16">
         <div className="container mx-auto px-4 md:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            <div className="bg-card rounded-3xl p-8 glass-panel hover:bg-card/90 transition-colors">
-              <h3 className="text-4xl font-bold text-primary mb-2">250+</h3>
+          <div className="feature-grid">
+            <div className="bento-cell text-center py-10">
+              <h3 className="text-4xl font-bold text-primary mb-3">250+</h3>
               <p className="text-muted-foreground">Pytań które pomagają odkryć wspólne pragnienia</p>
             </div>
             
-            <div className="bg-card rounded-3xl p-8 glass-panel hover:bg-card/90 transition-colors">
-              <h3 className="text-4xl font-bold text-primary mb-2">97%</h3>
+            <div className="bento-cell text-center py-10">
+              <h3 className="text-4xl font-bold text-primary mb-3">97%</h3>
               <p className="text-muted-foreground">Par raportuje wzrost satysfakcji w relacji</p>
             </div>
             
-            <div className="bg-card rounded-3xl p-8 glass-panel hover:bg-card/90 transition-colors">
-              <h3 className="text-4xl font-bold text-primary mb-2">5min</h3>
+            <div className="bento-cell text-center py-10">
+              <h3 className="text-4xl font-bold text-primary mb-3">5min</h3>
               <p className="text-muted-foreground">Tyle zajmuje wypełnienie ankiety. Efekty - długoterminowe</p>
             </div>
           </div>
@@ -197,13 +203,13 @@ const Index = () => {
       {/* Scientific Section - Bento Grid */}
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
+          <h2 className="section-title">
             Naukowy punkt widzenia
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="bento-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {/* Featured scientific insight */}
-            <div className="lg:col-span-2 bg-card rounded-3xl p-8 glass-panel hover:bg-card/90 transition-colors">
+            <div className="lg:col-span-2 bento-cell">
               <div className="flex items-start gap-6">
                 <div className="h-12 w-12 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
                   <Clock className="h-6 w-6 text-primary" />
@@ -223,7 +229,7 @@ const Index = () => {
             </div>
             
             {/* Scientific points */}
-            <div className="bg-card rounded-3xl p-8 glass-panel hover:bg-card/90 transition-colors">
+            <div className="bento-cell">
               <div className="h-12 w-12 rounded-full bg-accent/20 flex items-center justify-center mb-6">
                 <Heart className="h-6 w-6 text-primary" />
               </div>
@@ -234,7 +240,7 @@ const Index = () => {
               </p>
             </div>
             
-            <div className="bg-card rounded-3xl p-8 glass-panel hover:bg-card/90 transition-colors">
+            <div className="bento-cell">
               <div className="h-12 w-12 rounded-full bg-accent/20 flex items-center justify-center mb-6">
                 <Sparkles className="h-6 w-6 text-primary" />
               </div>
@@ -245,7 +251,7 @@ const Index = () => {
               </p>
             </div>
             
-            <div className="bg-card rounded-3xl p-8 glass-panel hover:bg-card/90 transition-colors">
+            <div className="bento-cell">
               <div className="h-12 w-12 rounded-full bg-accent/20 flex items-center justify-center mb-6">
                 <ExternalLink className="h-6 w-6 text-primary" />
               </div>
@@ -260,14 +266,14 @@ const Index = () => {
       </section>
 
       {/* How It Works - Bento Timeline */}
-      <section className="py-16 md:py-24 lg:py-32">
+      <section className="py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
+          <h2 className="section-title">
             Krok po kroku
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-            <div className="bg-card rounded-3xl p-8 glass-panel hover:bg-card/90 transition-colors">
+          <div className="bento-grid grid-cols-1 md:grid-cols-2">
+            <div className="bento-cell">
               <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white font-bold text-lg mb-6">
                 1
               </div>
@@ -278,7 +284,7 @@ const Index = () => {
               </p>
             </div>
             
-            <div className="bg-card rounded-3xl p-8 glass-panel hover:bg-card/90 transition-colors">
+            <div className="bento-cell">
               <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white font-bold text-lg mb-6">
                 2
               </div>
@@ -289,7 +295,7 @@ const Index = () => {
               </p>
             </div>
             
-            <div className="bg-card rounded-3xl p-8 glass-panel hover:bg-card/90 transition-colors">
+            <div className="bento-cell">
               <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white font-bold text-lg mb-6">
                 3
               </div>
@@ -300,7 +306,7 @@ const Index = () => {
               </p>
             </div>
             
-            <div className="bg-card rounded-3xl p-8 glass-panel hover:bg-card/90 transition-colors">
+            <div className="bento-cell">
               <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white font-bold text-lg mb-6">
                 4
               </div>
@@ -324,9 +330,9 @@ const Index = () => {
       {/* Security Section - Bento Grid */}
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          <div className="bento-grid grid-cols-1 md:grid-cols-3">
             {/* Main security card */}
-            <div className="md:col-span-2 bg-card rounded-3xl p-8 md:p-10 glass-panel hover:bg-card/90 transition-colors">
+            <div className="md:col-span-2 bento-cell p-8 md:p-10">
               <div className="h-16 w-16 rounded-full bg-accent/20 flex items-center justify-center mb-6">
                 <Shield className="h-8 w-8 text-primary" />
               </div>
@@ -340,26 +346,26 @@ const Index = () => {
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex items-center">
-                  <div className="h-8 w-8 rounded-full bg-green-100/20 flex items-center justify-center mr-4">
-                    <Check className="h-5 w-5 text-green-600" />
+                  <div className="check-container">
+                    <Check className="green-check" />
                   </div>
                   <p>Szyfrowane połączenie SSL</p>
                 </div>
                 <div className="flex items-center">
-                  <div className="h-8 w-8 rounded-full bg-green-100/20 flex items-center justify-center mr-4">
-                    <Check className="h-5 w-5 text-green-600" />
+                  <div className="check-container">
+                    <Check className="green-check" />
                   </div>
                   <p>Brak sprzedaży danych</p>
                 </div>
                 <div className="flex items-center">
-                  <div className="h-8 w-8 rounded-full bg-green-100/20 flex items-center justify-center mr-4">
-                    <Check className="h-5 w-5 text-green-600" />
+                  <div className="check-container">
+                    <Check className="green-check" />
                   </div>
                   <p>Usuwanie danych po 7 dniach</p>
                 </div>
                 <div className="flex items-center">
-                  <div className="h-8 w-8 rounded-full bg-green-100/20 flex items-center justify-center mr-4">
-                    <Check className="h-5 w-5 text-green-600" />
+                  <div className="check-container">
+                    <Check className="green-check" />
                   </div>
                   <p>Zgodność z RODO</p>
                 </div>
@@ -367,9 +373,13 @@ const Index = () => {
             </div>
             
             {/* Side illustration */}
-            <div className="bg-card rounded-3xl p-8 glass-panel flex items-center justify-center hover:bg-card/90 transition-colors">
-              <div className="w-full h-[300px] bg-accent/10 rounded-2xl flex items-center justify-center border border-border/40">
-                [Bezpieczeństwo]
+            <div className="bento-cell flex items-center justify-center">
+              <div className="w-full h-[300px] bg-accent/10 rounded-2xl flex items-center justify-center border border-border/40 overflow-hidden">
+                <img 
+                  src="/lovable-uploads/a4798506-21aa-4666-805f-130a6259f84f.png" 
+                  alt="Bezpieczeństwo danych" 
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
           </div>
@@ -379,7 +389,7 @@ const Index = () => {
       {/* Final CTA Section */}
       <section className="py-20 md:py-32 text-center">
         <div className="container mx-auto px-4 md:px-8">
-          <div className="max-w-3xl mx-auto bg-accent/20 p-12 rounded-3xl glass-panel">
+          <div className="max-w-3xl mx-auto p-12 rounded-3xl glass-panel">
             <div className="inline-block px-4 py-2 rounded-full bg-accent/30 text-primary text-sm font-medium mb-6">
               NAJBARDZIEJ EKSCYTUJĄCA GRA DLA PAR
             </div>

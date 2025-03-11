@@ -78,6 +78,10 @@ export default {
 					900: '#8f0016',
 				},
 			},
+			backgroundColor: {
+				'dark-navy': '#05050a',
+				'card-dark': '#121321',
+			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
