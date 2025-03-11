@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SurveyProvider } from "./contexts/SurveyContext";
 import { useState } from "react";
 import Index from "./pages/Index";
@@ -37,36 +37,38 @@ const App = () => {
         <BrowserRouter>
           <SurveyProvider>
             <AdminAuthProvider>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/idea" element={<Index />} />
-                <Route path="/zasady-gry" element={<Index />} />
-                <Route path="/priveai" element={<Index />} />
-                <Route path="/o-nas" element={<Index />} />
-                <Route path="/kontakt" element={<Index />} />
-                <Route path="/regulamin" element={<Index />} />
-                <Route path="/survey" element={<SurveyPage />} />
-                <Route path="/payment" element={<PaymentPage />} />
-                <Route path="/thank-you" element={<ThankYouPage />} />
-                <Route path="/spe43al-adm1n-p4nel" element={<AdminLogin />} />
-                <Route 
-                  path="/spe43al-adm1n-p4nel/dashboard" 
-                  element={
-                    <ProtectedAdminRoute>
-                      <AdminDashboard />
-                    </ProtectedAdminRoute>
-                  } 
-                />
-                <Route 
-                  path="/spe43al-adm1n-p4nel/orders" 
-                  element={
-                    <ProtectedAdminRoute>
-                      <AdminOrders />
-                    </ProtectedAdminRoute>
-                  } 
-                />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+              <div className="dark">
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/idea" element={<Index />} />
+                  <Route path="/zasady-gry" element={<Index />} />
+                  <Route path="/priveai" element={<Index />} />
+                  <Route path="/o-nas" element={<Index />} />
+                  <Route path="/kontakt" element={<Index />} />
+                  <Route path="/regulamin" element={<Index />} />
+                  <Route path="/survey" element={<SurveyPage />} />
+                  <Route path="/payment" element={<PaymentPage />} />
+                  <Route path="/thank-you" element={<ThankYouPage />} />
+                  <Route path="/spe43al-adm1n-p4nel" element={<AdminLogin />} />
+                  <Route 
+                    path="/spe43al-adm1n-p4nel/dashboard" 
+                    element={
+                      <ProtectedAdminRoute>
+                        <AdminDashboard />
+                      </ProtectedAdminRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/spe43al-adm1n-p4nel/orders" 
+                    element={
+                      <ProtectedAdminRoute>
+                        <AdminOrders />
+                      </ProtectedAdminRoute>
+                    } 
+                  />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </div>
             </AdminAuthProvider>
           </SurveyProvider>
         </BrowserRouter>
