@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ChevronDown, ArrowRight, Check } from 'lucide-react';
@@ -565,4 +566,15 @@ const Index = () => {
                   className="rounded-l-full border border-gray-300 px-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-purple-800 focus:border-transparent"
                 />
                 <button className="rounded-r-full bg-purple-800 text-white px-5 py-3 hover:bg-purple-900">
-                  <ArrowRight className
+                  <ArrowRight className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default Index;
