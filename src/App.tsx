@@ -19,11 +19,9 @@ const App = () => {
       queries: {
         retry: 1,
         refetchOnWindowFocus: false,
-        // Use onSettled instead of onError for newer versions of react-query
-        onSettled: (data, error) => {
-          if (error) {
-            console.error("React Query error:", error);
-          }
+        // Use onError option for error handling in react-query
+        onError: (error) => {
+          console.error("React Query error:", error);
         }
       },
     },

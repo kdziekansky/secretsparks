@@ -8,32 +8,34 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "https://bqbgrjpxufblr
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxYmdyanB4dWZibHJnY294cGZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE1Mzk4NzUsImV4cCI6MjA1NzExNTg3NX0.kSryhe5Z4BILp_ss5LpSxanGSvx4HZzZtVzYia4bgik";
 
 // Log initialization
-console.info("Inicjalizacja Supabase klienta");
+console.info("Initializing Supabase client");
 
-// Sprawdź czy klucze są dostępne
+// Check if keys are available
 if (!SUPABASE_URL) {
-  console.error("Brak konfiguracji SUPABASE_URL - używam wartości domyślnej");
+  console.error("Missing SUPABASE_URL configuration - using default value");
 }
 
 if (!SUPABASE_ANON_KEY) {
-  console.error("Brak konfiguracji SUPABASE_ANON_KEY - używam wartości domyślnej");
+  console.error("Missing SUPABASE_ANON_KEY configuration - using default value");
 }
 
-console.info("Using URL:", SUPABASE_URL);
+console.info("Using Supabase URL:", SUPABASE_URL);
+
+let supabase;
 
 try {
   // Import the supabase client like this:
   // import { supabase } from "@/integrations/supabase/client";
-  export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY);
+  supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY);
   
-  // Dla debugowania - zapisz klucze konfiguracyjne w konsoli przeglądarki
+  // For debugging - log configuration keys in browser console
   console.info("Supabase URL configured:", SUPABASE_URL ? "YES" : "NO");
   console.info("Supabase ANON KEY configured:", SUPABASE_ANON_KEY ? "YES" : "NO");
 } catch (error) {
   console.error("Error creating Supabase client:", error);
   // Create a fallback client that will error gracefully
   // @ts-ignore - We know this will fail, but this prevents the app from crashing on load
-  export const supabase = {
+  supabase = {
     from: () => ({
       select: () => ({
         eq: () => ({
@@ -44,3 +46,5 @@ try {
     }),
   };
 }
+
+export { supabase };

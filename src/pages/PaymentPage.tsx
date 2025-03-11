@@ -30,14 +30,19 @@ const PaymentPage: React.FC = () => {
 
       try {
         setIsLoading(true);
+        console.log("Fetching order details for ID:", orderId);
         const { data, error } = await supabase
           .from('orders')
           .select('*')
           .eq('id', orderId)
           .single();
 
-        if (error) throw error;
+        if (error) {
+          console.error("Order fetch error:", error);
+          throw error;
+        }
 
+        console.log("Order data retrieved:", data);
         setFormData({
           userName: data.user_name,
           userEmail: data.user_email,
@@ -49,8 +54,8 @@ const PaymentPage: React.FC = () => {
         console.error('Error fetching order:', error);
         toastHook({
           variant: "destructive", 
-          title: "Błąd",
-          description: "Nie udało się pobrać danych zamówienia.",
+          title: "Error",
+          description: "Failed to retrieve order data.",
         });
       } finally {
         setIsLoading(false);
@@ -72,11 +77,11 @@ const PaymentPage: React.FC = () => {
   const createOrder = async () => {
     try {
       if (orderId) {
-        console.log("Używam istniejącego orderId:", orderId);
+        console.log("Using existing orderId:", orderId);
         return orderId;
       }
 
-      console.log("Tworzę nowe zamówienie w bazie danych...");
+      console.log("Creating new order in database...");
       const { data, error } = await supabase
         .from('orders')
         .insert([
@@ -93,11 +98,11 @@ const PaymentPage: React.FC = () => {
         .single();
 
       if (error) {
-        console.error("Błąd podczas tworzenia zamówienia:", error);
+        console.error("Error creating order:", error);
         throw error;
       }
       
-      console.log("Pomyślnie utworzono zamówienie:", data.id);
+      console.log("Order created successfully:", data.id);
       return data.id;
     } catch (error) {
       console.error('Error creating order:', error);
