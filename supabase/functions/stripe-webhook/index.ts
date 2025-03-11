@@ -48,33 +48,40 @@ serve(async (req) => {
     console.log("Signature present:", !!signature);
     console.log("Endpoint secret present:", !!endpointSecret);
     
+    // Sprawdź i wypisz klucze konfiguracyjne (bezpiecznie, bez pokazywania pełnych wartości)
+    console.log("Konfiguracja Supabase:");
+    console.log("- SUPABASE_URL:", supabaseUrl ? `ustawiony (${supabaseUrl.slice(0, 20)}...)` : "BRAK");
+    console.log("- SUPABASE_SERVICE_ROLE_KEY:", supabaseServiceKey ? `ustawiony (${supabaseServiceKey.slice(0, 5)}...)` : "BRAK");
+    console.log("- STRIPE_SECRET_KEY:", stripeSecretKey ? `ustawiony (${stripeSecretKey.slice(0, 5)}...)` : "BRAK");
+    console.log("- STRIPE_WEBHOOK_SECRET:", endpointSecret ? `ustawiony (${endpointSecret.slice(0, 5)}...)` : "BRAK");
+    
     // Sparsuj event
     let event;
     try {
       if (signature && endpointSecret) {
         try {
-          console.log("Verifying signature with secret");
+          console.log("Weryfikacja podpisu z sekretnym kluczem");
           event = stripe.webhooks.constructEvent(body, signature, endpointSecret);
-          console.log("Signature verification successful");
+          console.log("Weryfikacja podpisu udana");
         } catch (verifyError) {
-          console.error("Signature verification failed:", verifyError.message);
+          console.error("Weryfikacja podpisu nieudana:", verifyError.message);
           event = JSON.parse(body);
-          console.log("Parsed event directly from body");
+          console.log("Zdarzenie sparsowane bezpośrednio z body");
         }
       } else {
-        console.log("Skipping signature verification - parsing event directly");
+        console.log("Pomijam weryfikację podpisu - parsowanie zdarzenia bezpośrednio");
         event = JSON.parse(body);
       }
     } catch (err) {
-      console.error("Event parsing/verification error:", err.message);
+      console.error("Błąd parsowania/weryfikacji zdarzenia:", err.message);
       return new Response(JSON.stringify({ error: err.message }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
     
-    console.log("Event type:", event.type);
-    console.log("Event data:", JSON.stringify(event.data.object));
+    console.log("Typ zdarzenia:", event.type);
+    console.log("Dane zdarzenia:", JSON.stringify(event.data.object));
     
     // Obsługa zdarzenia checkout.session.completed
     if (event.type === 'checkout.session.completed') {
@@ -82,22 +89,18 @@ serve(async (req) => {
       const orderId = session.client_reference_id || session.metadata?.order_id;
       const paymentId = session.payment_intent;
       
-      console.log("Processing completed checkout for order:", orderId);
+      console.log("Przetwarzanie zakończonego checkout dla zamówienia:", orderId);
       
       if (!orderId) {
-        console.error("No order ID in session:", session.id);
-        return new Response(JSON.stringify({ error: "No order ID" }), {
+        console.error("Brak ID zamówienia w sesji:", session.id);
+        return new Response(JSON.stringify({ error: "Brak ID zamówienia" }), {
           status: 400, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
       
-      // Loguj dane konfiguracyjne (bez pełnych kluczy)
-      console.log("Supabase URL:", supabaseUrl ? "set" : "not set");
-      console.log("Supabase Service Key:", supabaseServiceKey ? "set (starts with: " + supabaseServiceKey.substring(0, 5) + "...)" : "not set");
-      
       // Aktualizuj status zamówienia
-      console.log("Updating order status to 'paid'");
+      console.log("Aktualizacja statusu zamówienia na 'paid'");
       const { data, error } = await supabase
         .from('orders')
         .update({ 
@@ -108,21 +111,21 @@ serve(async (req) => {
         .eq('id', orderId)
         .select();
       
-      console.log("Update result:", error ? `ERROR: ${error.message}` : "SUCCESS");
+      console.log("Wynik aktualizacji:", error ? `BŁĄD: ${error.message}` : "SUKCES");
       if (error) {
-        console.error("Database update error:", error);
-        return new Response(JSON.stringify({ error: `Database update failed: ${error.message}` }), {
+        console.error("Błąd aktualizacji bazy danych:", error);
+        return new Response(JSON.stringify({ error: `Aktualizacja bazy danych nie powiodła się: ${error.message}` }), {
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
       
-      console.log("Updated data:", data);
-      console.log("Successfully updated order status to paid");
+      console.log("Zaktualizowane dane:", data);
+      console.log("Pomyślnie zaktualizowano status zamówienia na opłacone");
     } else if (event.type === 'payment_intent.succeeded') {
       // Obsługa alternatywnego zdarzenia payment_intent.succeeded
       const intent = event.data.object;
-      console.log("Payment intent succeeded:", intent.id);
+      console.log("Płatność zakończona sukcesem:", intent.id);
       
       // Szukaj zamówienia po payment_id
       const { data: orders, error: searchError } = await supabase
@@ -131,9 +134,9 @@ serve(async (req) => {
         .eq('payment_id', intent.id);
       
       if (searchError) {
-        console.error("Error searching for order by payment ID:", searchError);
+        console.error("Błąd wyszukiwania zamówienia po ID płatności:", searchError);
       } else if (orders && orders.length > 0) {
-        console.log("Found order with matching payment ID:", orders[0].id);
+        console.log("Znaleziono zamówienie z pasującym ID płatności:", orders[0].id);
         
         // Aktualizuj status zamówienia
         const { data, error } = await supabase
@@ -145,15 +148,15 @@ serve(async (req) => {
           .eq('id', orders[0].id)
           .select();
         
-        console.log("Update result:", error ? `ERROR: ${error.message}` : "SUCCESS");
+        console.log("Wynik aktualizacji:", error ? `BŁĄD: ${error.message}` : "SUKCES");
         if (error) {
-          console.error("Database update error:", error);
+          console.error("Błąd aktualizacji bazy danych:", error);
         } else {
-          console.log("Updated data:", data);
-          console.log("Successfully updated order status to paid");
+          console.log("Zaktualizowane dane:", data);
+          console.log("Pomyślnie zaktualizowano status zamówienia na opłacone");
         }
       } else {
-        console.log("No orders found with payment ID:", intent.id);
+        console.log("Nie znaleziono zamówień z ID płatności:", intent.id);
       }
     }
     
@@ -164,7 +167,7 @@ serve(async (req) => {
     });
   } catch (error) {
     // Loguj i zwróć błąd
-    console.error("Webhook general error:", error.message);
+    console.error("Ogólny błąd webhooka:", error.message);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
