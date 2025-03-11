@@ -271,7 +271,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
       }
       
       // If we get here, no responses were found
-      console.log('No responses found in any data source');
+      console.log('No responses found in database');
       setRefreshedResponses([]);
       setHasResponses(false);
       toast.info('Brak odpowiedzi dla tego zamówienia w bazie danych');
@@ -374,7 +374,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
               </Button>
             )}
             
-            {/* Add Report Generator even in empty state */}
+            {/* ReportGenerator jest dostępny tylko w jednym miejscu */}
             <div className="mt-6 pt-4 border-t">
               <h4 className="font-medium mb-3">Generowanie raportu</h4>
               <ReportGenerator responses={currentResponses} order={order} />
@@ -422,6 +422,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
         </Alert>
       )}
       
+      {/* ReportGenerator jest dostępny tylko w jednym miejscu */}
       <div className="mb-6 border-b pb-4">
         <ReportGenerator responses={currentResponses} order={order} />
       </div>

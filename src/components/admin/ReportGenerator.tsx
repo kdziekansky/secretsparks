@@ -57,139 +57,19 @@ const getRatingLabel = (rating: number): string => {
 
 const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialResponses, order }) => {
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [hasResponses, setHasResponses] = useState(false);
   const [responses, setResponses] = useState<SurveyResponse[] | null>(initialResponses);
 
   // Log diagnostics
   console.log("ReportGenerator received initial responses:", initialResponses?.length || 0);
   console.log("ReportGenerator received order:", order?.id);
 
-  // Effect to check for responses on mount and when responses change
-  useEffect(() => {
-    const hasValidResponses = !!(responses && responses.length > 0);
-    console.log("Setting hasResponses to:", hasValidResponses);
-    setHasResponses(hasValidResponses);
-  }, [responses]);
-
   // Update local responses when props change
   useEffect(() => {
     if (initialResponses !== null) {
       console.log("Updating local responses from props:", initialResponses.length);
       setResponses(initialResponses);
-      setHasResponses(!!(initialResponses && initialResponses.length > 0));
     }
   }, [initialResponses]);
-
-  // Function to refresh responses directly from the database
-  const refreshResponses = async () => {
-    if (!order?.id) {
-      toast.error("Brak ID zamówienia do odświeżenia odpowiedzi");
-      return;
-    }
-
-    setIsRefreshing(true);
-    try {
-      console.log(`Refreshing responses for order ID: ${order.id}`);
-      
-      // First attempt: Try the Edge Function with URL parameters
-      try {
-        console.log('Attempting to fetch responses using Edge Function');
-        
-        const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-survey-responses?orderId=${encodeURIComponent(order.id)}`;
-        const response = await fetch(apiUrl, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Edge function returned status ${response.status}`);
-        }
-        
-        const result = await response.json();
-        
-        if (result.responses && result.responses.length > 0) {
-          console.log(`Retrieved ${result.responses.length} responses from Edge Function`);
-          setResponses(result.responses);
-          setHasResponses(true);
-          toast.success(`Odpowiedzi odświeżone (${result.responses.length})`);
-          return;
-        } else {
-          console.log('Edge Function returned no responses, trying alternative methods');
-        }
-      } catch (edgeFnError) {
-        console.error('Edge Function error:', edgeFnError);
-        // Continue to fallback methods
-      }
-      
-      // Try direct API call 
-      try {
-        const directData = await fetchFromSupabase(`survey_responses?order_id=eq.${encodeURIComponent(order.id.trim())}`);
-        
-        console.log(`Direct API call returned ${directData?.length || 0} responses`);
-        
-        if (directData && directData.length > 0) {
-          setResponses(directData as SurveyResponse[]);
-          setHasResponses(true);
-          toast.success(`Odpowiedzi odświeżone (${directData.length})`);
-          return;
-        }
-      } catch (err) {
-        console.error('Error with direct API call:', err);
-        // Continue to try with SDK
-      }
-      
-      // If direct call failed or returned no data, try standard SDK query
-      const { data, error } = await supabase
-        .from('survey_responses')
-        .select('*')
-        .eq('order_id', order.id.trim());
-        
-      if (error) {
-        console.error('Error refreshing responses:', error);
-        toast.error('Błąd podczas odświeżania odpowiedzi: ' + error.message);
-        return;
-      }
-      
-      console.log(`Fetched ${data?.length || 0} responses directly:`, data);
-      
-      if (data && data.length > 0) {
-        setResponses(data as SurveyResponse[]);
-        setHasResponses(true);
-        toast.success(`Odpowiedzi odświeżone (${data.length})`);
-      } else {
-        // Last resort: try with exact UUID format without modifications
-        const { data: exactData, error: exactError } = await supabase
-          .from('survey_responses')
-          .select('*')
-          .filter('order_id', 'eq', order.id);
-          
-        if (exactError) {
-          console.error('Error with exact match query:', exactError);
-          setResponses([]);
-        } else if (exactData && exactData.length > 0) {
-          console.log(`Found ${exactData.length} responses with exact filter query`);
-          setResponses(exactData as SurveyResponse[]);
-          setHasResponses(true);
-          toast.success(`Odpowiedzi odświeżone (${exactData.length})`);
-          return;
-        } else {
-          setResponses([]);
-          setHasResponses(false);
-          toast.info('Brak odpowiedzi dla tego zamówienia w bazie danych');
-        }
-      }
-    } catch (error) {
-      console.error('Error refreshing responses:', error);
-      toast.error('Wystąpił błąd podczas odświeżania odpowiedzi');
-      setResponses([]);
-    } finally {
-      setIsRefreshing(false);
-    }
-  };
 
   const generatePDF = () => {
     if (!order) {
@@ -214,7 +94,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
       doc.setFontSize(12);
       doc.text(`Zamówienie: #${order.id.substring(0, 8)}...`, 14, 30);
       doc.text(`Data zamówienia: ${new Date(order.created_at).toLocaleString('pl-PL')}`, 14, 37);
-      doc.text(`Zamawiający: ${order.user_name} (${order.user_email})`, 14, 44);
+      doc.text(`Z a m a w i a j ą c y: ${order.user_name} (${order.user_email})`, 14, 44);
       doc.text(`Partner: ${order.partner_name} (${order.partner_email})`, 14, 51);
       
       // Group responses
@@ -299,7 +179,6 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
   const buttonDisabled = isGenerating || !order;
   
   console.log("Button disabled status:", buttonDisabled, { 
-    hasResponses, 
     isGenerating, 
     hasOrder: !!order,
     responsesLength: responses?.length || 0,
@@ -307,54 +186,25 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
   });
 
   return (
-    <div className="space-y-3">
-      <div className="flex flex-col sm:flex-row gap-2">
-        <Button 
-          variant="default" 
-          onClick={generatePDF} 
-          disabled={buttonDisabled}
-          className="w-full md:w-auto"
-        >
-          {isGenerating ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Generowanie...
-            </>
-          ) : (
-            <>
-              <FileDown className="mr-2 h-4 w-4" />
-              Pobierz raport PDF
-            </>
-          )}
-        </Button>
-        
-        <Button
-          variant="outline"
-          onClick={refreshResponses}
-          disabled={isRefreshing || !order}
-          className="w-full md:w-auto"
-        >
-          {isRefreshing ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Odświeżanie...
-            </>
-          ) : (
-            <>
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Odśwież odpowiedzi
-            </>
-          )}
-        </Button>
-      </div>
-      
-      {!hasResponses && (
-        <p className="text-sm text-muted-foreground mt-2">
-          {responses === null 
-            ? "Ładowanie odpowiedzi ankietowych..." 
-            : "Brak odpowiedzi ankietowych dla tego zamówienia."}
-        </p>
-      )}
+    <div>
+      <Button 
+        variant="default" 
+        onClick={generatePDF} 
+        disabled={buttonDisabled}
+        className="w-full md:w-auto"
+      >
+        {isGenerating ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Generowanie...
+          </>
+        ) : (
+          <>
+            <FileDown className="mr-2 h-4 w-4" />
+            Pobierz raport PDF
+          </>
+        )}
+      </Button>
     </div>
   );
 };
