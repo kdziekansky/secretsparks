@@ -1,3 +1,4 @@
+
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import Stripe from 'https://esm.sh/stripe@12.4.0?target=deno';
 
@@ -48,9 +49,9 @@ serve(async (req) => {
     if (!STRIPE_SECRET_KEY) {
       console.error('Missing STRIPE_SECRET_KEY in environment variables');
       return new Response(
-        JSON.stringify({ error: "Missing Stripe configuration" }),
+        JSON.stringify({ error: "Brak konfiguracji Stripe. Skontaktuj się z administratorem." }),
         {
-          status: 500,
+          status: 200, // Always use 200 for Stripe
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       );
@@ -59,9 +60,9 @@ serve(async (req) => {
     if (!stripe) {
       console.error('Stripe client initialization failed');
       return new Response(
-        JSON.stringify({ error: "Nie udało się zainicjalizować klienta Stripe" }),
+        JSON.stringify({ error: "Nie udało się zainicjalizować klienta Stripe. Spróbuj ponownie później." }),
         {
-          status: 200, // Return 200 even for errors to prevent retries
+          status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       );
@@ -84,7 +85,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: "Błąd parsowania JSON: " + error.message }),
         {
-          status: 200, // Return 200 even for errors
+          status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       );
@@ -116,7 +117,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: "Brakuje wymaganych pól: cena, ID zamówienia lub email" }),
         {
-          status: 200, // Return 200 even for errors
+          status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       );
@@ -215,11 +216,11 @@ serve(async (req) => {
     console.error('Unexpected error:', error);
     return new Response(
       JSON.stringify({ 
-        error: "An unexpected error occurred",
+        error: "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później.",
         details: error.message
       }),
       {
-        status: 500,
+        status: 200, // Always use 200 for responses from Edge Functions
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     );
