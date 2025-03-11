@@ -11,26 +11,38 @@ import NotFound from "./pages/NotFound";
 import PaymentPage from "./pages/PaymentPage";
 import ThankYouPage from "./pages/ThankYouPage";
 
-const queryClient = new QueryClient();
+// Tworzenie klienta React Query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <SurveyProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/survey" element={<SurveyPage />} />
-            <Route path="/payment" element={<PaymentPage />} />
-            <Route path="/thank-you" element={<ThankYouPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </SurveyProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  console.log("Rendering App component");
+  
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <SurveyProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/survey" element={<SurveyPage />} />
+              <Route path="/payment" element={<PaymentPage />} />
+              <Route path="/thank-you" element={<ThankYouPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </SurveyProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

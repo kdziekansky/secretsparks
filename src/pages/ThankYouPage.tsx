@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Confetti } from '@/components/Confetti';
@@ -21,15 +22,21 @@ const ThankYouPage: React.FC = () => {
       }
 
       try {
+        console.log('Fetching order details for:', orderId);
         const { data, error } = await supabase
           .from('orders')
           .select('*')
           .eq('id', orderId)
           .single();
 
-        if (error) throw error;
+        if (error) {
+          console.error('Supabase error:', error);
+          throw error;
+        }
+        
+        console.log('Order details:', data);
         setOrderDetails(data);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching order:', error);
         toast({
           variant: "destructive",
