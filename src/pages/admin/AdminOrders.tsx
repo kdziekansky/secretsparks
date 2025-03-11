@@ -1,10 +1,9 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, fetchFromSupabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { 
   Table, TableBody, TableCell, TableHead, 
@@ -106,42 +105,40 @@ const AdminOrders: React.FC = () => {
       
       console.log(`Fetching survey responses for order ID: ${selectedOrder.id}`);
       
-      // Directly log the order ID to make sure it's correct
-      console.log(`Order ID used for query: "${selectedOrder.id}"`);
-      
-      // Implement more robust querying
-      const { data, error } = await supabase
-        .from('survey_responses')
-        .select('*')
-        .eq('order_id', selectedOrder.id.trim());
-
-      if (error) {
-        console.error('Error fetching survey responses:', error);
-        toast.error(`Błąd pobierania odpowiedzi: ${error.message}`);
-        throw error;
-      }
-      
-      console.log(`Found ${data?.length || 0} survey responses:`, data);
-      
-      // If no responses found with the trimmed ID, try with the raw ID
-      if (data.length === 0) {
-        console.log('No responses found with trimmed ID, trying with raw ID');
-        const { data: rawData, error: rawError } = await supabase
+      // Use direct API call to bypass any potential client issues
+      try {
+        // First try with the SDK
+        const { data, error } = await supabase
           .from('survey_responses')
           .select('*')
           .eq('order_id', selectedOrder.id);
-          
-        if (rawError) {
-          console.error('Error fetching with raw ID:', rawError);
-        } else if (rawData.length > 0) {
-          console.log(`Found ${rawData.length} responses with raw ID:`, rawData);
-          return rawData as SurveyResponse[];
+
+        if (error) {
+          console.error('Error fetching responses with SDK:', error);
+          throw error;
         }
+        
+        console.log(`SDK query returned ${data?.length || 0} responses`);
+        
+        if (data && data.length > 0) {
+          return data;
+        }
+        
+        // If SDK returns no data, try direct API call as fallback
+        console.log('Trying direct API call as fallback');
+        const directData = await fetchFromSupabase(`survey_responses?order_id=eq.${encodeURIComponent(selectedOrder.id)}`);
+        
+        console.log(`Direct API call returned ${directData?.length || 0} responses`);
+        return directData || [];
+      } catch (err) {
+        console.error('Failed to fetch survey responses:', err);
+        toast.error('Wystąpił błąd podczas pobierania odpowiedzi');
+        return [];
       }
-      
-      return data as SurveyResponse[];
     },
     enabled: isAuthenticated && !!selectedOrder?.id,
+    refetchOnWindowFocus: false,
+    staleTime: 60000, // 1 minute
   });
 
   const handleToggleArchive = async (order: Order) => {

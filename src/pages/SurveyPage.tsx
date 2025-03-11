@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSurvey } from '@/contexts/SurveyContext';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, fetchFromSupabase } from '@/integrations/supabase/client';
 import ProgressBar from '@/components/ProgressBar';
 import QuestionCard from '@/components/QuestionCard';
 import SurveyConfig from '@/components/SurveyConfig';
@@ -48,75 +48,79 @@ const SurveyPage: React.FC = () => {
       try {
         console.log('Fetching order details for partner token:', partnerToken);
         
-        // Get the order associated with this partner token
-        const { data: orderData, error: orderError } = await supabase
-          .from('orders')
-          .select('user_name, partner_name, id, user_gender, partner_gender, game_level')
-          .eq('partner_survey_token', partnerToken)
-          .single();
-        
-        if (orderError) {
-          console.error('Error fetching order:', orderError);
+        // Try first with normal client
+        try {
+          // Get the order associated with this partner token
+          const { data: orderData, error: orderError } = await supabase
+            .from('orders')
+            .select('user_name, partner_name, id, user_gender, partner_gender, game_level')
+            .eq('partner_survey_token', partnerToken)
+            .single();
+          
+          if (!orderError && orderData) {
+            console.log('Found order with SDK:', orderData);
+            
+            // Process and return the order data
+            processOrderData(orderData);
+            return;
+          }
+          
+          console.error('Error or no data from SDK, trying direct API:', orderError);
+          
+          // If SDK fails, try direct API
+          const directData = await fetchFromSupabase(`orders?partner_survey_token=eq.${encodeURIComponent(partnerToken)}`);
+          
+          if (directData && directData.length > 0) {
+            console.log('Found order with direct API:', directData[0]);
+            processOrderData(directData[0]);
+            return;
+          }
+          
           throw new Error('Nie znaleziono ankiety lub link jest nieprawidłowy');
-        }
-        
-        if (!orderData) {
-          console.error('No order found for token:', partnerToken);
+        } catch (err) {
+          console.error('All methods failed to fetch order:', err);
           throw new Error('Nie znaleziono ankiety dla tego linku');
         }
-        
-        console.log('Found order:', orderData);
-        
-        // Check if the order exists and is valid
-        if (!orderData.id) {
-          throw new Error('Nieprawidłowe dane zamówienia');
-        }
-        
-        // Store the order ID in the survey context
-        setOrderId(orderData.id);
-        
-        // Set default configuration if any values are missing
-        const userGender = orderData.user_gender || 'male';
-        const partnerGender = orderData.partner_gender || 'female';
-        const gameLevel = orderData.game_level || 'discover';
-        
-        // Allow partner survey even if the user hasn't completed their survey yet
-        // We'll just provide the configuration data
-        setOrderDetails({
-          userName: orderData.user_name,
-          partnerName: orderData.partner_name,
-          userGender: userGender as 'male' | 'female',
-          partnerGender: partnerGender as 'male' | 'female',
-          gameLevel: gameLevel as 'discover' | 'explore' | 'exceed',
-          orderId: orderData.id
-        });
-        
-        // Pre-configure the survey with the same settings as the user's survey
-        // Note: For partner survey, we swap userGender and partnerGender to match the partner's perspective
-        setUserGender(partnerGender as 'male' | 'female');
-        setPartnerGender(userGender as 'male' | 'female');
-        setGameLevel(gameLevel as 'discover' | 'explore' | 'exceed');
-        
-        toast.success('Ankieta załadowana pomyślnie');
-        
-        // Debug: Check if there are already any responses for this order
-        const { data: existingResponses, error: responsesError } = await supabase
-          .from('survey_responses')
-          .select('*')
-          .eq('order_id', orderData.id);
-          
-        if (responsesError) {
-          console.error('Error checking existing responses:', responsesError);
-        } else {
-          console.log(`Found ${existingResponses?.length || 0} existing responses for order:`, existingResponses);
-        }
-        
       } catch (err: any) {
         console.error('Error fetching order details:', err);
         setError(err.message || 'Wystąpił błąd podczas ładowania ankiety');
       } finally {
         setIsLoadingOrder(false);
       }
+    };
+    
+    const processOrderData = (orderData: any) => {
+      // Check if the order exists and is valid
+      if (!orderData.id) {
+        throw new Error('Nieprawidłowe dane zamówienia');
+      }
+      
+      // Store the order ID in the survey context
+      setOrderId(orderData.id);
+      
+      // Set default configuration if any values are missing
+      const userGender = orderData.user_gender || 'male';
+      const partnerGender = orderData.partner_gender || 'female';
+      const gameLevel = orderData.game_level || 'discover';
+      
+      // Allow partner survey even if the user hasn't completed their survey yet
+      // We'll just provide the configuration data
+      setOrderDetails({
+        userName: orderData.user_name,
+        partnerName: orderData.partner_name,
+        userGender: userGender as 'male' | 'female',
+        partnerGender: partnerGender as 'male' | 'female',
+        gameLevel: gameLevel as 'discover' | 'explore' | 'exceed',
+        orderId: orderData.id
+      });
+      
+      // Pre-configure the survey with the same settings as the user's survey
+      // Note: For partner survey, we swap userGender and partnerGender to match the partner's perspective
+      setUserGender(partnerGender as 'male' | 'female');
+      setPartnerGender(userGender as 'male' | 'female');
+      setGameLevel(gameLevel as 'discover' | 'explore' | 'exceed');
+      
+      toast.success('Ankieta załadowana pomyślnie');
     };
     
     if (partnerToken) {

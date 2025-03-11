@@ -1,8 +1,7 @@
-
 import React, { useEffect, useState } from 'react';
 import { Loader2, RefreshCw } from 'lucide-react';
 import { questionsDatabase } from '@/contexts/questions-data';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, fetchFromSupabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -50,49 +49,28 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
         return idFromUrl;
       }
       
-      // Try to get from the dialog title/subtitle
+      // Try to get from the dialog description/subtitle
       const dialogDescription = document.querySelector('.DialogDescription');
       if (dialogDescription) {
         const text = dialogDescription.textContent || '';
         console.log('Dialog description text:', text);
-        const idMatch = text.match(/Identyfikator: ([a-f0-9-]+)/);
+        const idMatch = text.match(/Identyfikator:\s*([a-f0-9-]+)/);
         if (idMatch && idMatch[1]) {
           console.log('Found orderId in dialog:', idMatch[1]);
           return idMatch[1];
         }
       }
       
-      // Try to get from specific dialog content for survey responses
+      // Try to get from data-testid attribute 
       const identifierElement = document.querySelector('[data-testid="order-identifier"]');
       if (identifierElement) {
         const identifierText = identifierElement.textContent || '';
         console.log('Identifier element text:', identifierText);
-        // Extract UUID pattern from the text
         const uuidPattern = /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i;
         const match = identifierText.match(uuidPattern);
         if (match && match[1]) {
           console.log('Found UUID in identifier:', match[1]);
           return match[1];
-        }
-      }
-      
-      // Try to extract from modal title
-      const modalTitle = document.querySelector('.DialogTitle');
-      if (modalTitle) {
-        const titleText = modalTitle.textContent || '';
-        console.log('Modal title:', titleText);
-        if (titleText.includes('Odpowiedzi z ankiety')) {
-          // Look for the closest element that might contain the order ID
-          const modalContent = document.querySelector('.DialogContent');
-          if (modalContent) {
-            const contentText = modalContent.textContent || '';
-            const uuidPattern = /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i;
-            const match = contentText.match(uuidPattern);
-            if (match && match[1]) {
-              console.log('Found UUID in modal content:', match[1]);
-              return match[1];
-            }
-          }
         }
       }
       
@@ -121,14 +99,6 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
     });
   }, [responses, refreshedResponses, orderId]);
   
-  // Auto-refresh responses when orderId changes or component mounts
-  useEffect(() => {
-    if (orderId && (!responses || responses.length === 0) && !refreshLoading) {
-      console.log('Auto-refreshing responses for order ID:', orderId);
-      refreshResponses();
-    }
-  }, [orderId, responses]);
-  
   // Function to manually refresh responses with improved query and error handling
   const refreshResponses = async () => {
     if (!orderId) {
@@ -148,50 +118,51 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
       const cleanOrderId = orderId.trim();
       console.log(`Using cleaned order ID for query: "${cleanOrderId}"`);
       
-      // Log the exact query we're about to run
-      console.log(`SQL equivalent: SELECT * FROM survey_responses WHERE order_id = '${cleanOrderId}'`);
-      
-      // Try with exact match first
-      const { data, error } = await supabase
-        .from('survey_responses')
-        .select('*')
-        .eq('order_id', cleanOrderId);
+      // Use direct API call to bypass any potential client issues
+      try {
+        const directData = await fetchFromSupabase(`survey_responses?order_id=eq.${encodeURIComponent(cleanOrderId)}`);
         
-      if (error) {
-        console.error('Error refreshing responses:', error);
-        toast.error('Nie udało się odświeżyć odpowiedzi: ' + error.message);
-        throw error;
-      }
-      
-      console.log(`Fetched ${data?.length || 0} responses for order ID ${cleanOrderId}:`, data);
-      
-      if (data && data.length > 0) {
-        setRefreshedResponses(data as SurveyResponse[]);
-        toast.success(`Odpowiedzi odświeżone (${data.length})`);
-      } else {
-        // If no responses found with exact match, try a broader query to debug
-        console.log('No responses found with exact match, trying a broader query to debug');
-        const { data: allResponses, error: allError } = await supabase
-          .from('survey_responses')
-          .select('*')
-          .limit(10);
-          
-        if (allError) {
-          console.error('Error fetching all responses:', allError);
-        } else {
-          console.log('Sample of all responses in the database:', allResponses);
-          if (allResponses && allResponses.length > 0) {
-            console.log('Order IDs in the database:', allResponses.map(r => r.order_id));
-          }
+        console.log(`Direct API call returned ${directData?.length || 0} responses`);
+        
+        if (directData && directData.length > 0) {
+          setRefreshedResponses(directData);
+          toast.success(`Odpowiedzi odświeżone (${directData.length})`);
+          return;
         }
         
-        // We got a successful response but no data
-        setRefreshedResponses([]);
-        toast.info('Brak odpowiedzi dla tego zamówienia w bazie danych');
+        // If no data from direct call, try standard SDK call
+        const { data, error } = await supabase
+          .from('survey_responses')
+          .select('*')
+          .eq('order_id', cleanOrderId);
+          
+        if (error) {
+          console.error('Error fetching with SDK:', error);
+          throw error;
+        }
+        
+        console.log(`SDK query returned ${data?.length || 0} responses`);
+        
+        if (data && data.length > 0) {
+          setRefreshedResponses(data as SurveyResponse[]);
+          toast.success(`Odpowiedzi odświeżone (${data.length})`);
+        } else {
+          setRefreshedResponses([]);
+          toast.info('Brak odpowiedzi dla tego zamówienia w bazie danych');
+          
+          // Log all survey responses in the database for debugging
+          console.log('Fetching sample of all responses for debugging');
+          const { data: allResponses } = await supabase
+            .from('survey_responses')
+            .select('*')
+            .limit(20);
+            
+          console.log('Sample of all responses in database:', allResponses);
+        }
+      } catch (err) {
+        console.error('Failed to refresh responses:', err);
+        toast.error('Wystąpił błąd podczas odświeżania odpowiedzi');
       }
-    } catch (error) {
-      console.error('Failed to refresh responses:', error);
-      // Already shown error toast above
     } finally {
       setRefreshLoading(false);
     }
@@ -200,6 +171,14 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
   // Use refreshed responses if available, otherwise use the provided responses
   const displayResponses = refreshedResponses || responses;
   const currentLoading = refreshLoading || isLoading;
+  
+  // Auto-refresh responses when orderId changes or component mounts
+  useEffect(() => {
+    if (orderId && (!responses || responses.length === 0) && !refreshLoading) {
+      console.log('Auto-refreshing responses for order ID:', orderId);
+      refreshResponses();
+    }
+  }, [orderId, responses]);
   
   if (currentLoading) {
     return (

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { FileDown, Loader2, RefreshCw } from 'lucide-react';
@@ -6,7 +5,7 @@ import { toast } from 'sonner';
 import { questionsDatabase } from '@/contexts/questions-data';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, fetchFromSupabase } from '@/integrations/supabase/client';
 
 // Add the type definition for jsPDF-autotable
 declare module 'jspdf' {
@@ -72,10 +71,28 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
     try {
       console.log(`Refreshing responses for order ID: ${order.id}`);
       
+      // Try direct API call first
+      try {
+        const directData = await fetchFromSupabase(`survey_responses?order_id=eq.${encodeURIComponent(order.id.trim())}`);
+        
+        console.log(`Direct API call returned ${directData?.length || 0} responses`);
+        
+        if (directData && directData.length > 0) {
+          setResponses(directData as SurveyResponse[]);
+          setHasResponses(true);
+          toast.success(`Odpowiedzi odświeżone (${directData.length})`);
+          return;
+        }
+      } catch (err) {
+        console.error('Error with direct API call:', err);
+        // Continue to try with SDK
+      }
+      
+      // If direct call failed or returned no data, try standard SDK query
       const { data, error } = await supabase
         .from('survey_responses')
         .select('*')
-        .eq('order_id', order.id);
+        .eq('order_id', order.id.trim());
         
       if (error) {
         console.error('Error refreshing responses:', error);
@@ -90,6 +107,22 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
         setHasResponses(true);
         toast.success(`Odpowiedzi odświeżone (${data.length})`);
       } else {
+        // Last resort: try with exact UUID format without modifications
+        const { data: exactData, error: exactError } = await supabase
+          .from('survey_responses')
+          .select('*')
+          .filter('order_id', 'eq', order.id);
+          
+        if (exactError) {
+          console.error('Error with exact match query:', exactError);
+        } else if (exactData && exactData.length > 0) {
+          console.log(`Found ${exactData.length} responses with exact filter query`);
+          setResponses(exactData as SurveyResponse[]);
+          setHasResponses(true);
+          toast.success(`Odpowiedzi odświeżone (${exactData.length})`);
+          return;
+        }
+        
         setResponses([]);
         setHasResponses(false);
         toast.info('Brak odpowiedzi dla tego zamówienia w bazie danych');
