@@ -39,7 +39,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     setImageError(false);
   }, [currentQuestion?.id]);
   
-  // Bezpośrednio sprawdzamy undefined, nie null
+  // Check if current question has an answer
   const hasAnswer = currentQuestion && 
                     answers[currentQuestion.id] !== undefined;
   
@@ -51,7 +51,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
   };
   
   const handleNext = async () => {
-    // Dodatkowe zabezpieczenie
+    // Safety check
     if (!hasAnswer) {
       toast.error("Wybierz opcję, aby kontynuować");
       return;
@@ -79,12 +79,20 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
           setIsAnimating(false);
         }
       } else {
-        // For user survey, proceed to payment screen without saving
-        // (answers will be saved during payment flow)
-        setTimeout(() => {
-          navigate('/payment');
+        // For user survey, save the current answer and proceed to payment screen
+        try {
+          await saveAnswer(false);
+          console.log('Final user answer saved locally');
+          setTimeout(() => {
+            navigate('/payment');
+            setIsSaving(false);
+          }, 500);
+        } catch (error) {
+          console.error('Error saving final user answer:', error);
+          toast.error('Wystąpił błąd podczas zapisywania odpowiedzi');
           setIsSaving(false);
-        }, 500);
+          setIsAnimating(false);
+        }
       }
     } else {
       // Not the last question, just proceed to next

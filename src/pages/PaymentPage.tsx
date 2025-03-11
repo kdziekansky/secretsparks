@@ -5,7 +5,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Loader2, CheckCircle, Info } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -31,7 +30,7 @@ const PaymentPage: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const navigate = useNavigate();
 
-  const { answers, surveyConfig } = useSurvey();
+  const { answers, saveAllAnswers, surveyConfig } = useSurvey();
   
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -83,47 +82,6 @@ const PaymentPage: React.FC = () => {
     }
   };
   
-  // Save survey responses before initiating payment
-  const saveResponses = async (orderId: string) => {
-    try {
-      console.log('Saving user survey responses for order:', orderId);
-      
-      if (Object.keys(answers).length === 0) {
-        console.warn('No answers to save! Skipping survey response saving.');
-        return false;
-      }
-      
-      // Prepare survey responses for insertion
-      const responsesToSave = Object.entries(answers).map(([questionId, answer]) => ({
-        order_id: orderId,
-        question_id: questionId,
-        answer: answer,
-        user_type: 'user',
-        user_gender: surveyConfig.userGender,
-        partner_gender: surveyConfig.partnerGender,
-        game_level: surveyConfig.gameLevel
-      }));
-      
-      console.log('Saving responses:', responsesToSave);
-      
-      const { error } = await supabase
-        .from('survey_responses')
-        .insert(responsesToSave);
-        
-      if (error) {
-        console.error('Error saving survey responses:', error);
-        toast.error('Wystąpił błąd podczas zapisywania odpowiedzi z ankiety');
-        return false;
-      } else {
-        console.log('Survey responses saved successfully');
-        return true;
-      }
-    } catch (error) {
-      console.error('Failed to save survey responses:', error);
-      return false;
-    }
-  };
-  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -150,7 +108,7 @@ const PaymentPage: React.FC = () => {
           partner_name: partnerName,
           partner_email: partnerEmail,
           gift_wrap: giftWrap,
-          price: PRODUCT_PRICE + (giftWrap ? 20 : 0),
+          price: PRODUCT_PRICE,
           user_gender: surveyConfig.userGender,
           partner_gender: surveyConfig.partnerGender,
           game_level: surveyConfig.gameLevel
@@ -164,8 +122,8 @@ const PaymentPage: React.FC = () => {
       
       console.log('Order created:', orderData);
       
-      // Save survey responses and wait for completion
-      const responsesSaved = await saveResponses(orderData.id);
+      // Save survey responses
+      const responsesSaved = await saveAllAnswers(orderData.id, 'user');
       
       if (!responsesSaved) {
         console.error('Failed to save survey responses');
@@ -174,23 +132,48 @@ const PaymentPage: React.FC = () => {
         return;
       }
       
-      // Redirect to payment gateway
-      // For now, just navigate to a thank you page
-      toast.success('Zamówienie złożone! Przekierowywanie do płatności...');
-      setTimeout(() => {
-        navigate('/thank-you');
-      }, 2000);
-      
-    } catch (error) {
-      console.error('Payment error:', error);
-      toast.error('Wystąpił błąd podczas przetwarzania płatności. Spróbuj ponownie.');
+      // Call the create-payment function to initiate payment
+      try {
+        const { data, error } = await supabase.functions.invoke('create-payment', {
+          body: {
+            data: {
+              price: PRODUCT_PRICE,
+              currency: 'pln',
+              user_name: userName,
+              user_email: userEmail,
+              partner_name: partnerName,
+              partner_email: partnerEmail,
+              gift_wrap: giftWrap,
+              order_id: orderData.id
+            }
+          }
+        });
+        
+        if (error) {
+          throw new Error(`Payment function error: ${error.message}`);
+        }
+        
+        if (data && data.url) {
+          // Redirect to Stripe checkout page
+          window.location.href = data.url;
+        } else {
+          throw new Error('No payment URL returned');
+        }
+      } catch (paymentError: any) {
+        console.error('Payment error:', paymentError);
+        toast.error('Wystąpił błąd podczas przetwarzania płatności. Spróbuj ponownie.');
+        setIsProcessing(false);
+      }
+    } catch (error: any) {
+      console.error('Order creation error:', error);
+      toast.error('Wystąpił błąd podczas przetwarzania zamówienia. Spróbuj ponownie.');
       setIsProcessing(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-lg w-full bg-white rounded-lg shadow-sm p-8">
+      <div className="max-w-md w-full bg-white rounded-lg shadow-sm p-8">
         <div className="space-y-6">
           <div className="text-center">
             <h1 className="text-2xl font-bold">Dokończ zamówienie 👋</h1>
@@ -204,71 +187,63 @@ const PaymentPage: React.FC = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Input
-                type="text"
-                id="userName"
-                name="userName"
-                value={userName}
-                onChange={handleChange}
-                required
-                placeholder="Twoje imię"
-                className="w-full"
-              />
-              {showErrors && errors.userName && (
-                <p className="text-red-500 text-sm mt-1">{errors.userName}</p>
-              )}
-            </div>
+            <Input
+              type="text"
+              id="userName"
+              name="userName"
+              value={userName}
+              onChange={handleChange}
+              required
+              placeholder="Twoje imię"
+              className="w-full"
+            />
+            {showErrors && errors.userName && (
+              <p className="text-red-500 text-sm mt-1">{errors.userName}</p>
+            )}
             
-            <div>
-              <Input
-                type="email"
-                id="userEmail"
-                name="userEmail"
-                value={userEmail}
-                onChange={handleChange}
-                required
-                placeholder="Twój e-mail (tam wyślemy raport)"
-                className="w-full"
-              />
-              {showErrors && errors.userEmail && (
-                <p className="text-red-500 text-sm mt-1">{errors.userEmail}</p>
-              )}
-            </div>
+            <Input
+              type="email"
+              id="userEmail"
+              name="userEmail"
+              value={userEmail}
+              onChange={handleChange}
+              required
+              placeholder="Twój e-mail (tam wyślemy raport)"
+              className="w-full"
+            />
+            {showErrors && errors.userEmail && (
+              <p className="text-red-500 text-sm mt-1">{errors.userEmail}</p>
+            )}
             
-            <div>
-              <Input
-                type="text"
-                id="partnerName"
-                name="partnerName"
-                value={partnerName}
-                onChange={handleChange}
-                required
-                placeholder="Imię Twojej partnerki/partnera"
-                className="w-full"
-              />
-              {showErrors && errors.partnerName && (
-                <p className="text-red-500 text-sm mt-1">{errors.partnerName}</p>
-              )}
-            </div>
+            <Input
+              type="text"
+              id="partnerName"
+              name="partnerName"
+              value={partnerName}
+              onChange={handleChange}
+              required
+              placeholder="Imię Twojej partnerki/partnera"
+              className="w-full"
+            />
+            {showErrors && errors.partnerName && (
+              <p className="text-red-500 text-sm mt-1">{errors.partnerName}</p>
+            )}
             
-            <div>
-              <Input
-                type="email"
-                id="partnerEmail"
-                name="partnerEmail"
-                value={partnerEmail}
-                onChange={handleChange}
-                required
-                placeholder="E-mail partnerki/partnera (tam wyślemy zaproszenie)"
-                className="w-full"
-              />
-              {showErrors && errors.partnerEmail && (
-                <p className="text-red-500 text-sm mt-1">{errors.partnerEmail}</p>
-              )}
-            </div>
+            <Input
+              type="email"
+              id="partnerEmail"
+              name="partnerEmail"
+              value={partnerEmail}
+              onChange={handleChange}
+              required
+              placeholder="E-mail partnerki/partnera (tam wyślemy zaproszenie)"
+              className="w-full"
+            />
+            {showErrors && errors.partnerEmail && (
+              <p className="text-red-500 text-sm mt-1">{errors.partnerEmail}</p>
+            )}
             
-            <div className="flex items-start mt-6">
+            <div className="flex items-start mt-4">
               <div className="flex items-center h-5">
                 <Checkbox
                   id="giftWrap"
@@ -277,15 +252,15 @@ const PaymentPage: React.FC = () => {
                   onCheckedChange={(checked) => setGiftWrap(checked === true)}
                 />
               </div>
-              <div className="ml-3 text-sm flex items-center">
-                <label htmlFor="giftWrap" className="font-medium text-gray-700 cursor-pointer">
+              <div className="ml-3 text-sm">
+                <label htmlFor="giftWrap" className="font-medium text-gray-700 cursor-pointer flex items-center">
                   Zapakuj na prezent (bezpłatnie)
+                  <Info className="h-4 w-4 ml-1 text-gray-400" />
                 </label>
-                <Info className="h-4 w-4 ml-1 text-gray-400" />
               </div>
             </div>
             
-            <div className="text-xs text-gray-500 mt-4">
+            <div className="text-xs text-gray-500 mt-2">
               Grając, akceptujesz przyjazny <a href="#" className="text-primary">Regulamin</a> i <a href="#" className="text-primary">Politykę Prywatności</a>, która gwarantuje bezpieczeństwo Waszych danych. Usuniemy je po 7 dniach.
             </div>
             
@@ -298,7 +273,7 @@ const PaymentPage: React.FC = () => {
                 {isProcessing ? (
                   <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Przetwarzanie...</>
                 ) : (
-                  <>Zapłać {PRODUCT_PRICE + (giftWrap ? 0 : 0)} zł</>
+                  <>Zapłać {PRODUCT_PRICE} zł</>
                 )}
               </Button>
             </div>
