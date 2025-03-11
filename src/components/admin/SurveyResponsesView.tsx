@@ -156,40 +156,31 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
       // Clear out any previous refreshed responses while loading
       setRefreshedResponses([]);
       
-      // First attempt: Try the Edge Function with URL parameters
-      try {
-        console.log('Attempting to fetch responses using Edge Function');
-        
-        const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-survey-responses?orderId=${encodeURIComponent(orderId)}`;
-        const response = await fetch(apiUrl, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Edge function returned status ${response.status}`);
+      // Use supabase.functions.invoke to call the edge function
+      const { data: edgeFunctionData, error: edgeFunctionError } = await supabase.functions.invoke(
+        'get-survey-responses',
+        {
+          body: { orderId },
         }
-        
-        const result = await response.json();
-        
-        if (result.responses && result.responses.length > 0) {
-          console.log(`Retrieved ${result.responses.length} responses from Edge Function`);
-          setRefreshedResponses(result.responses);
-          setHasResponses(true);
-          toast.success(`Odpowiedzi odświeżone (${result.responses.length})`);
-          return;
-        } else {
-          console.log('Edge Function returned no responses, trying alternative methods');
-        }
-      } catch (edgeFnError) {
-        console.error('Edge Function error:', edgeFnError);
-        // Continue to fallback methods
+      );
+      
+      console.log('Edge function response:', edgeFunctionData);
+      
+      if (edgeFunctionError) {
+        console.error('Edge function error:', edgeFunctionError);
+        throw new Error(`Edge function error: ${edgeFunctionError.message}`);
       }
       
-      // Second attempt: Try to get responses directly with SDK
+      if (edgeFunctionData && edgeFunctionData.responses && edgeFunctionData.responses.length > 0) {
+        console.log(`Retrieved ${edgeFunctionData.responses.length} responses from Edge Function`);
+        setRefreshedResponses(edgeFunctionData.responses);
+        setHasResponses(true);
+        toast.success(`Odpowiedzi odświeżone (${edgeFunctionData.responses.length})`);
+        return;
+      }
+      
+      // Fallback: Try to get responses directly with SDK
+      console.log('No responses from edge function, trying SDK...');
       const { data, error } = await supabase
         .from('survey_responses')
         .select('*')
@@ -206,68 +197,6 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
         setHasResponses(true);
         toast.success(`Odpowiedzi odświeżone (${data.length})`);
         return;
-      }
-      
-      // Third attempt: Try direct API call
-      try {
-        console.log('Trying direct API call');
-        const directUrl = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/survey_responses?order_id=eq.${encodeURIComponent(orderId)}`;
-        
-        const directResponse = await fetch(directUrl, {
-          headers: {
-            'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=representation'
-          }
-        });
-        
-        if (!directResponse.ok) {
-          throw new Error(`Direct API call failed with status ${directResponse.status}`);
-        }
-        
-        const directData = await directResponse.json();
-        
-        if (directData && directData.length > 0) {
-          console.log(`Retrieved ${directData.length} responses from direct API call`);
-          setRefreshedResponses(directData);
-          setHasResponses(true);
-          toast.success(`Odpowiedzi odświeżone (${directData.length})`);
-          return;
-        }
-      } catch (directApiError) {
-        console.error('Direct API call error:', directApiError);
-      }
-      
-      // Fourth attempt: Try posting to the Edge Function
-      try {
-        console.log('Trying POST to Edge Function');
-        
-        const postUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-survey-responses`;
-        const postResponse = await fetch(postUrl, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ orderId })
-        });
-        
-        if (!postResponse.ok) {
-          throw new Error(`POST to Edge Function failed with status ${postResponse.status}`);
-        }
-        
-        const postResult = await postResponse.json();
-        
-        if (postResult.responses && postResult.responses.length > 0) {
-          console.log(`Retrieved ${postResult.responses.length} responses from Edge Function POST`);
-          setRefreshedResponses(postResult.responses);
-          setHasResponses(true);
-          toast.success(`Odpowiedzi odświeżone (${postResult.responses.length})`);
-          return;
-        }
-      } catch (postError) {
-        console.error('POST to Edge Function error:', postError);
       }
       
       // If we get here, no responses were found
@@ -288,30 +217,17 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
     }
   };
 
-  // Debug logging
-  useEffect(() => {
-    console.log('SurveyResponsesView state:', {
-      receivedResponses: safeInitialResponses,
-      refreshedResponses,
-      orderId,
-      hasOrderId: !!orderId,
-      responsesLength: safeInitialResponses.length,
-      refreshedResponsesLength: refreshedResponses.length,
-      order
-    });
-  }, [safeInitialResponses, refreshedResponses, orderId, order]);
-
-  // Effect to check for responses on mount and when responses change
+  // Effect to check for responses based on refreshedResponses or initialResponses
   useEffect(() => {
     // Define currentResponses here, before using it
     const currentResponses = refreshedResponses.length > 0 ? refreshedResponses : safeInitialResponses;
     const hasValidResponses = !!(currentResponses && currentResponses.length > 0);
+    
     console.log("Setting hasResponses to:", hasValidResponses);
     setHasResponses(hasValidResponses);
   }, [refreshedResponses, safeInitialResponses]);
 
   // Use refreshed responses if available, otherwise use the provided responses
-  // Ensure we never have undefined responses by defaulting to empty array
   const currentResponses = refreshedResponses.length > 0 ? refreshedResponses : safeInitialResponses;
   const currentLoading = refreshLoading || isLoading;
   
@@ -321,7 +237,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
       console.log('Auto-refreshing responses for order ID:', orderId);
       refreshResponses();
     }
-  }, [orderId, safeInitialResponses]);
+  }, [orderId, safeInitialResponses, refreshLoading]);
   
   if (currentLoading) {
     return (
@@ -332,8 +248,17 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
     );
   }
 
+  // Debug logging
+  console.log('SurveyResponsesView rendering with:', {
+    hasResponses,
+    responsesCount: currentResponses.length,
+    orderId,
+    refreshedResponsesLength: refreshedResponses.length,
+    initialResponsesLength: safeInitialResponses.length
+  });
+
   // The empty state with a clear message and prominent refresh button
-  if (currentResponses.length === 0) {
+  if (!hasResponses || currentResponses.length === 0) {
     return (
       <div className="space-y-4">
         <div className="text-center p-6 border rounded-md bg-muted/10">
@@ -374,9 +299,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
               </Button>
             )}
             
-            {/* ReportGenerator jest dostępny tylko w jednym miejscu */}
             <div className="mt-6 pt-4 border-t">
-              <h4 className="font-medium mb-3">Generowanie raportu</h4>
               <ReportGenerator responses={currentResponses} order={order} />
             </div>
           </div>
@@ -422,7 +345,6 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
         </Alert>
       )}
       
-      {/* ReportGenerator jest dostępny tylko w jednym miejscu */}
       <div className="mb-6 border-b pb-4">
         <ReportGenerator responses={currentResponses} order={order} />
       </div>

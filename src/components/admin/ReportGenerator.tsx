@@ -1,12 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { FileDown, Loader2, RefreshCw } from 'lucide-react';
+import { FileDown, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { questionsDatabase } from '@/contexts/questions-data';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import { supabase, fetchFromSupabase } from '@/integrations/supabase/client';
 
 // Add the type definition for jsPDF-autotable
 declare module 'jspdf' {
