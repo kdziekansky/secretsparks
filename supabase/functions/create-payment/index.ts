@@ -1,222 +1,166 @@
 
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import Stripe from 'https://esm.sh/stripe@12.4.0?target=deno';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { corsHeaders } from '../_shared/cors.ts'
+import Stripe from 'https://esm.sh/stripe@11.18.0?target=deno'
 
-// Get environment variables
-const STRIPE_SECRET_KEY = Deno.env.get('STRIPE_SECRET_KEY') || '';
-const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
-const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') || '';
+const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
+const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
+const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY') || ''
 
-// Debug logs for environment variables
-console.log("Environment check:");
-console.log("- STRIPE_SECRET_KEY configured:", STRIPE_SECRET_KEY ? "YES (starts with " + STRIPE_SECRET_KEY.substring(0, 5) + "...)" : "NO");
-console.log("- SUPABASE_URL configured:", SUPABASE_URL ? "YES" : "NO");
-console.log("- SUPABASE_ANON_KEY configured:", SUPABASE_ANON_KEY ? "YES" : "NO");
-
-// Hard-coded fallback for testing (REMOVE IN PRODUCTION)
-const FALLBACK_SECRET_KEY = 'sk_test_51R1AxJIY3wH8ltzbzmKVEkBpdbvqmh0Fh1FizaouBlIq6tkTWLZOVGkqdSgrMjUOLlRlDyKRmKITY7r5HAcGcqS4006uNS2Hw6';
-
-// Initialize Stripe with error handling
-let stripe;
-try {
-  // Use the environment variable if available, otherwise use the fallback
-  const keyToUse = STRIPE_SECRET_KEY || FALLBACK_SECRET_KEY;
-  stripe = new Stripe(keyToUse, {
-    apiVersion: '2023-10-16',
-  });
-  console.log("Stripe initialized successfully with key starting with:", keyToUse.substring(0, 5));
-} catch (error) {
-  console.error("Failed to initialize Stripe:", error.message);
-}
-
-// CORS headers for browser requests
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
-serve(async (req) => {
-  console.log("Create payment function called");
-  console.log("Request method:", req.method);
-  console.log("Request URL:", req.url);
-  
-  // Handle CORS preflight requests
+Deno.serve(async (req) => {
+  // Handle CORS preflight request
   if (req.method === 'OPTIONS') {
-    console.log("Handling OPTIONS request");
-    return new Response(null, { 
-      status: 200,
-      headers: corsHeaders 
-    });
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    // Don't validate Stripe configuration during development/testing
-    if (!stripe) {
-      console.error('Stripe client initialization failed');
-      return new Response(
-        JSON.stringify({ error: "Nie udało się zainicjalizować klienta Stripe. Spróbuj ponownie później." }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
-    }
+    const stripe = new Stripe(stripeSecretKey, {
+      apiVersion: '2023-10-16',
+    })
 
-    console.log("Processing payment request");
-    
-    // Parse request body
-    const body = await req.text();
-    console.log("Request body length:", body.length);
-    console.log("Request body preview:", body.substring(0, 100) + "...");
-    
-    let data;
-    try {
-      const jsonData = JSON.parse(body);
-      data = jsonData.data;
-      console.log("Successfully parsed JSON data:", JSON.stringify(data));
-    } catch (error) {
-      console.error("JSON parse error:", error.message);
-      return new Response(
-        JSON.stringify({ error: "Błąd parsowania JSON: " + error.message }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
-    }
-    
-    // Extract parameters from request
-    const { 
-      price, 
-      currency = 'pln', 
-      user_name, 
+    const supabase = createClient(
+      supabaseUrl,
+      supabaseServiceKey
+    )
+
+    // Get request body
+    const {
+      amount,
+      currency = 'pln',
       user_email,
-      partner_name,
+      user_name,
       partner_email,
-      gift_wrap,
-      order_id
-    } = data;
+      partner_name,
+      user_gender,
+      partner_gender,
+      game_level,
+      user_responses,
+      question_ids, // Added question sequence parameter
+    } = await req.json()
 
-    console.log("Creating Stripe session with params:", { 
-      price, 
-      currency, 
-      order_id,
-      user_email: user_email ? "provided" : "missing",
-      user_name: user_name ? "provided" : "missing"
-    });
-
-    // Validate required fields
-    if (!price || !order_id || !user_email) {
-      console.error("Missing required fields", { price, order_id, user_email });
-      return new Response(
-        JSON.stringify({ error: "Brakuje wymaganych pól: cena, ID zamówienia lub email" }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
+    if (!amount || !user_email || !partner_email) {
+      throw new Error('Missing required fields')
     }
 
-    // Get origin for success and cancel URLs
-    const origin = req.headers.get('origin') || 'https://bqbgrjpxufblrgcoxpfk.supabase.co';
-    console.log("Using origin for redirect URLs:", origin);
+    // Validate that we have responses
+    if (!user_responses || user_responses.length === 0) {
+      throw new Error('No survey responses provided')
+    }
+    
+    // Validate that we have question IDs
+    if (!question_ids || question_ids.length === 0) {
+      throw new Error('No question sequence provided')
+    }
+
+    console.log(`Creating order for user: ${user_name} (${user_email}), partner: ${partner_name} (${partner_email})`)
+    console.log(`Received ${user_responses.length} user responses and ${question_ids.length} question IDs`)
+
+    // Create a unique partner survey token
+    const partnerSurveyToken = crypto.randomUUID()
+
+    // Create an order record
+    const { data: order, error: orderError } = await supabase
+      .from('orders')
+      .insert({
+        user_email,
+        user_name,
+        partner_email,
+        partner_name,
+        user_gender,
+        partner_gender,
+        game_level,
+        amount,
+        currency,
+        payment_status: 'pending',
+        partner_survey_token: partnerSurveyToken,
+        user_question_sequence: question_ids, // Save the question sequence here
+      })
+      .select('id')
+      .single()
+
+    if (orderError || !order) {
+      console.error('Error creating order:', orderError)
+      throw new Error('Failed to create order')
+    }
+
+    console.log(`Created order with ID: ${order.id}`)
+
+    // Save user responses with the order ID
+    const responsesWithOrderId = user_responses.map((response: any) => ({
+      ...response,
+      order_id: order.id,
+      user_type: 'user',
+    }))
+
+    const { error: responsesError } = await supabase
+      .from('survey_responses')
+      .insert(responsesWithOrderId)
+
+    if (responsesError) {
+      console.error('Error saving survey responses:', responsesError)
+      // Continue anyway, as we've created the order and will create a Stripe session
+    } else {
+      console.log(`Saved ${responsesWithOrderId.length} survey responses`)
+    }
 
     // Create Stripe checkout session
-    try {
-      console.log("Calling Stripe checkout sessions create");
-      const sessionParams = {
-        payment_method_types: ['card', 'blik', 'p24'],
-        line_items: [
-          {
-            price_data: {
-              currency: currency,
-              product_data: {
-                name: 'Secret Sparks Report',
-                description: `Raport dla ${user_name} i ${partner_name}`,
-              },
-              unit_amount: Math.round(price * 100),
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card', 'blik'],
+      line_items: [
+        {
+          price_data: {
+            currency,
+            product_data: {
+              name: 'Ankieta Seksualna',
+              description: 'Porównanie preferencji seksualnych dla par'
             },
-            quantity: 1,
+            unit_amount: amount,
           },
-        ],
-        mode: 'payment',
-        success_url: `${origin}/thank-you?orderId=${order_id}`,
-        cancel_url: `${origin}/payment?orderId=${order_id}`,
-        client_reference_id: order_id,
-        customer_email: user_email,
-        metadata: {
-          order_id: order_id,
-          user_name: user_name,
-          user_email: user_email,
-          partner_name: partner_name,
-          partner_email: partner_email,
-          gift_wrap: gift_wrap ? 'true' : 'false',
+          quantity: 1,
         },
-      };
-      
-      console.log("Session params:", JSON.stringify(sessionParams));
-      const session = await stripe.checkout.sessions.create(sessionParams);
+      ],
+      mode: 'payment',
+      success_url: `${new URL(req.url).origin}/thank-you?orderId=${order.id}`,
+      cancel_url: `${new URL(req.url).origin}/payment?canceled=true`,
+      metadata: {
+        order_id: order.id,
+      },
+      customer_email: user_email,
+    })
 
-      console.log("Stripe session created:", { 
-        id: session.id, 
-        url: session.url ? session.url.substring(0, 30) + "..." : "Missing" 
-      });
+    // Update order with Stripe session ID
+    await supabase
+      .from('orders')
+      .update({
+        stripe_session_id: session.id,
+      })
+      .eq('id', order.id)
 
-      if (!session || !session.url) {
-        console.error("Stripe session missing URL:", JSON.stringify(session));
-        return new Response(
-          JSON.stringify({ 
-            error: "Stripe nie zwrócił URL do płatności", 
-            sessionData: session ? JSON.stringify(session) : "null" 
-          }),
-          {
-            status: 200,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          }
-        );
-      }
+    console.log(`Created Stripe session: ${session.id}`)
 
-      return new Response(
-        JSON.stringify({ url: session.url, sessionId: session.id }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
-    } catch (stripeError) {
-      console.error('Stripe API error:', stripeError.message);
-      
-      // Log detailed Stripe error information
-      if (stripeError.type) {
-        console.error('Stripe error type:', stripeError.type);
-      }
-      if (stripeError.code) {
-        console.error('Stripe error code:', stripeError.code);
-      }
-      
-      return new Response(
-        JSON.stringify({ 
-          error: "Błąd API Stripe: " + stripeError.message,
-          type: stripeError.type,
-          code: stripeError.code
-        }),
-        {
-          status: 200, // Return 200 even for Stripe errors
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
-    }
-  } catch (error) {
-    console.error('Unexpected error:', error);
+    // Return success response
     return new Response(
-      JSON.stringify({ 
-        error: "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później.",
-        details: error.message
+      JSON.stringify({
+        success: true,
+        sessionId: session.id,
+        orderId: order.id,
+        partnerSurveyToken,
       }),
       {
-        status: 200, // Always use 200 for responses from Edge Functions
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
-    );
+    )
+  } catch (error) {
+    console.error('Error:', error)
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: error.message,
+      }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 400,
+      }
+    )
   }
-});
+})

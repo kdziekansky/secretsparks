@@ -76,7 +76,7 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
         const questionIds = userResponses.map(response => response.question_id);
         console.log(`Found ${questionIds.length} questions from user responses:`, questionIds);
         
-        // IMPROVEMENT: Also store the sequence in the orders table for future use
+        // CRITICAL: ALWAYS store the sequence in the orders table for future use
         const { error: updateError } = await supabase
           .from('orders')
           .update({ user_question_sequence: questionIds })

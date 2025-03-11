@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Confetti } from '@/components/Confetti';
@@ -16,6 +15,7 @@ const ThankYouPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const { toast: uiToast } = useToast();
   const [isPartnerCompletion, setIsPartnerCompletion] = useState(false);
+  const [saveSequenceAttempted, setSaveSequenceAttempted] = useState(false);
   
   useEffect(() => {
     console.log("ThankYouPage mounted, orderId:", orderId);
@@ -52,36 +52,9 @@ const ThankYouPage: React.FC = () => {
         console.log("Order data received:", data);
         setOrderDetails(data);
         
-        // If user question sequence isn't saved yet, check if we can save it
-        if (!data.user_question_sequence) {
-          console.log("No question sequence saved yet, checking for responses");
-          const { data: responses, error: responsesError } = await supabase
-            .from('survey_responses')
-            .select('question_id, created_at')
-            .eq('order_id', orderId)
-            .eq('user_type', 'user')
-            .order('created_at', { ascending: true });
-            
-          if (responsesError) {
-            console.error('Error fetching user responses:', responsesError);
-          } else if (responses && responses.length > 0) {
-            console.log(`Found ${responses.length} responses, saving question sequence`);
-            // Extract question IDs in order
-            const questionIds = responses.map(response => response.question_id);
-              
-            // Save sequence to order
-            const { error: updateError } = await supabase
-              .from('orders')
-              .update({ user_question_sequence: questionIds })
-              .eq('id', orderId);
-              
-            if (updateError) {
-              console.error('Error saving question sequence:', updateError);
-            } else {
-              console.log('Question sequence saved successfully');
-              toast.success('Sekwencja pytań zapisana dla partnera');
-            }
-          }
+        // CRITICAL FIX: ALWAYS check if we can save user question sequence
+        if (!data.user_question_sequence || data.user_question_sequence.length === 0) {
+          await ensureUserQuestionSequence(orderId);
         } else {
           console.log("Question sequence already saved:", data.user_question_sequence);
         }
@@ -96,8 +69,72 @@ const ThankYouPage: React.FC = () => {
       }
     };
 
+    // New function to ensure user question sequence is saved
+    const ensureUserQuestionSequence = async (orderId: string) => {
+      if (saveSequenceAttempted) return; // Prevent infinite loops
+      setSaveSequenceAttempted(true);
+      
+      console.log("Attempting to save user question sequence for order:", orderId);
+      
+      try {
+        // Get user responses for this order
+        const { data: responses, error: responsesError } = await supabase
+          .from('survey_responses')
+          .select('question_id, created_at')
+          .eq('order_id', orderId)
+          .eq('user_type', 'user')
+          .order('created_at', { ascending: true });
+          
+        if (responsesError) {
+          console.error('Error fetching user responses:', responsesError);
+          throw responsesError;
+        }
+        
+        if (!responses || responses.length === 0) {
+          console.log("No user responses found yet, nothing to save");
+          return;
+        }
+        
+        console.log(`Found ${responses.length} user responses, saving question sequence`);
+        
+        // Extract question IDs in order they were answered
+        const questionIds = responses.map(response => response.question_id);
+        
+        // CRITICAL: Save sequence to orders table
+        const { error: updateError } = await supabase
+          .from('orders')
+          .update({ 
+            user_question_sequence: questionIds,
+            // Also add any other critical fields as needed
+          })
+          .eq('id', orderId);
+          
+        if (updateError) {
+          console.error('Error saving question sequence:', updateError);
+          throw updateError;
+        }
+        
+        console.log('Question sequence saved successfully:', questionIds);
+        toast.success('Sekwencja pytań zapisana pomyślnie');
+        
+        // Update local state with new data
+        const { data: updatedOrder } = await supabase
+          .from('orders')
+          .select('*')
+          .eq('id', orderId)
+          .single();
+          
+        if (updatedOrder) {
+          setOrderDetails(updatedOrder);
+        }
+      } catch (err) {
+        console.error('Failed to save question sequence:', err);
+        toast.error('Nie udało się zapisać sekwencji pytań');
+      }
+    };
+
     fetchOrderDetails();
-  }, [orderId]);
+  }, [orderId, saveSequenceAttempted]);
 
   // Partner thank you message (when no order ID is provided but it's a partner survey completion)
   if (isPartnerCompletion) {
@@ -182,8 +219,14 @@ const ThankYouPage: React.FC = () => {
               <p><strong>Zamówienie:</strong> #{orderDetails.id.substring(0, 8)}</p>
               <p><strong>Email:</strong> {orderDetails.user_email}</p>
               <p><strong>Partner:</strong> {orderDetails.partner_name}</p>
-              {orderDetails.user_question_sequence && (
-                <p className="text-green-600">Sekwencja pytań została zapisana dla partnera</p>
+              {orderDetails.user_question_sequence && orderDetails.user_question_sequence.length > 0 ? (
+                <p className="text-green-600">
+                  Sekwencja pytań ({orderDetails.user_question_sequence.length}) została zapisana dla partnera
+                </p>
+              ) : (
+                <p className="text-amber-600">
+                  Sekwencja pytań zostanie zapisana po ukończeniu ankiety
+                </p>
               )}
             </div>
           </div>
