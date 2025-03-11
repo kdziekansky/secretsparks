@@ -105,8 +105,23 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
       // Helper to format responses for the PDF table
       const formatResponsesForTable = (responses: SurveyResponse[]) => {
         return responses.map(response => {
-          const questionObj = questionsDatabase.find(q => q.id === response.question_id);
-          const questionText = questionObj ? questionObj.text : `Pytanie (ID: ${response.question_id})`;
+          // Safety check to make sure questionsDatabase is defined and is an array
+          if (!questionsDatabase || !Array.isArray(questionsDatabase)) {
+            console.error('Questions database is not defined or not an array:', questionsDatabase);
+            return [
+              `Pytanie (ID: ${response.question_id})`,
+              getRatingLabel(response.answer)
+            ];
+          }
+          
+          // Find the question by ID
+          const questionObj = questionsDatabase.find(q => q && q.id === response.question_id);
+          
+          // Get question text or fallback to ID if not found
+          const questionText = questionObj && questionObj.text 
+            ? questionObj.text 
+            : `Pytanie (ID: ${response.question_id})`;
+            
           return [
             questionText,
             getRatingLabel(response.answer)
