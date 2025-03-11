@@ -51,8 +51,8 @@ Deno.serve(async (req) => {
       )
     }
 
-    // CRITICAL: Before sending emails, we MUST fetch the user's question sequence
-    console.log('Fetching user question sequence for consistent partner survey')
+    // STEP 1: First, ALWAYS fetch the user's question sequence
+    console.log('Fetching user question sequence for partner survey')
     const { data: userResponses, error: responsesError } = await supabase
       .from('survey_responses')
       .select('question_id, created_at')
@@ -74,7 +74,7 @@ Deno.serve(async (req) => {
     console.log(`Found ${userResponses.length} user responses`)
     const questionIds = userResponses.map(response => response.question_id)
     
-    // Save question sequence to order
+    // STEP 2: Save question sequence to order BEFORE sending any emails
     console.log(`Saving ${questionIds.length} question IDs to order`)
     const { error: updateError } = await supabase
       .from('orders')
@@ -88,7 +88,7 @@ Deno.serve(async (req) => {
     
     console.log('Successfully saved question sequence to order')
     
-    // Refetch order to ensure we have the updated data with question sequence
+    // STEP 3: Verify that the sequence was saved correctly
     const { data: updatedOrder, error: refetchError } = await supabase
       .from('orders')
       .select('*')
@@ -105,7 +105,7 @@ Deno.serve(async (req) => {
     
     console.log(`Order now has ${updatedOrder.user_question_sequence.length} questions in sequence`)
 
-    // Send thank you email to user
+    // STEP 4: Send thank you email to user
     console.log(`Sending thank you email to user: ${updatedOrder.user_email}`)
     const userEmailResult = await resend.emails.send({
       from: 'Ankieta Seksualna <no-reply@seks-ankieta.pl>',
@@ -125,7 +125,7 @@ Deno.serve(async (req) => {
 
     console.log('User email sent:', userEmailResult)
 
-    // Send invitation email to partner
+    // STEP 5: Send invitation email to partner
     const partnerSurveyUrl = `${new URL(req.url).origin}/survey?token=${updatedOrder.partner_survey_token}`
     console.log(`Sending invitation email to partner: ${updatedOrder.partner_email}`)
     console.log(`Partner survey URL: ${partnerSurveyUrl}`)
@@ -151,7 +151,7 @@ Deno.serve(async (req) => {
 
     console.log('Partner email sent:', partnerEmailResult)
 
-    // Mark emails as sent
+    // STEP 6: Mark emails as sent
     const { error: markSentError } = await supabase
       .from('orders')
       .update({ emails_sent: true })

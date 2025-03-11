@@ -38,57 +38,57 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
         setPartnerOrderId(orderData.id);
         setOrderFetched(true);
         
-        // If the user_question_sequence is missing or empty, try to fetch it from responses
-        if (!orderData.user_question_sequence || 
-            !Array.isArray(orderData.user_question_sequence) || 
-            orderData.user_question_sequence.length === 0) {
+        // First try to use the sequence saved in the order itself
+        if (orderData.user_question_sequence && 
+            Array.isArray(orderData.user_question_sequence) && 
+            orderData.user_question_sequence.length > 0) {
           
-          console.log('No question sequence in order, fetching from user responses');
-          
-          // Fetch the user's responses to get the question sequence
-          const { data: userResponses, error: responsesError } = await supabase
-            .from('survey_responses')
-            .select('question_id, created_at')
-            .eq('order_id', orderData.id)
-            .eq('user_type', 'user')
-            .order('created_at', { ascending: true });
-          
-          if (responsesError) {
-            console.error('Error fetching user responses:', responsesError);
-            throw new Error('Nie można pobrać sekwencji pytań zamawiającego');
-          }
-          
-          if (!userResponses || userResponses.length === 0) {
-            console.error('No user responses found for this order');
-            throw new Error('Brak odpowiedzi od zamawiającego. Nie można utworzyć ankiety dla partnera.');
-          }
-          
-          // Extract question IDs in order they were answered
-          const questionIds = userResponses.map(response => response.question_id);
-          console.log(`Found ${questionIds.length} questions from user responses`);
-          
-          // Save the question sequence back to the order for future reference
-          const { error: updateError } = await supabase
-            .from('orders')
-            .update({ user_question_sequence: questionIds })
-            .eq('id', orderData.id);
-          
-          if (updateError) {
-            console.error('Failed to save question sequence to order:', updateError);
-          } else {
-            console.log('Successfully saved question sequence to order');
-          }
-          
-          setSelectedQuestionIds(questionIds);
-          setDataFetched(true);
-          toast.success('Ankieta załadowana pomyślnie');
-        } else {
-          // Use the existing question sequence from the order
-          console.log('Using question sequence from order:', orderData.user_question_sequence);
+          console.log('Using pre-saved question sequence from order:', orderData.user_question_sequence);
           setSelectedQuestionIds(orderData.user_question_sequence);
           setDataFetched(true);
           toast.success('Ankieta załadowana pomyślnie');
+          return;
         }
+        
+        console.log('No pre-saved question sequence in order, fetching from user responses');
+          
+        // If no sequence is stored in the order, get it from the user's responses
+        const { data: userResponses, error: responsesError } = await supabase
+          .from('survey_responses')
+          .select('question_id, created_at')
+          .eq('order_id', orderData.id)
+          .eq('user_type', 'user')
+          .order('created_at', { ascending: true });
+        
+        if (responsesError) {
+          console.error('Error fetching user responses:', responsesError);
+          throw new Error('Nie można pobrać sekwencji pytań zamawiającego');
+        }
+        
+        if (!userResponses || userResponses.length === 0) {
+          console.error('No user responses found for this order');
+          throw new Error('Brak odpowiedzi od zamawiającego. Nie można utworzyć ankiety dla partnera.');
+        }
+        
+        // Extract question IDs in order they were answered
+        const questionIds = userResponses.map(response => response.question_id);
+        console.log(`Found ${questionIds.length} questions from user responses`);
+        
+        // Save the question sequence to the order for future reference
+        const { error: updateError } = await supabase
+          .from('orders')
+          .update({ user_question_sequence: questionIds })
+          .eq('id', orderData.id);
+        
+        if (updateError) {
+          console.error('Failed to save question sequence to order:', updateError);
+        } else {
+          console.log('Successfully saved question sequence to order');
+        }
+        
+        setSelectedQuestionIds(questionIds);
+        setDataFetched(true);
+        toast.success('Ankieta załadowana pomyślnie');
       } catch (err: any) {
         console.error('Error in fetchOrderData:', err);
         setError(err.message || 'Wystąpił błąd podczas ładowania ankiety');
