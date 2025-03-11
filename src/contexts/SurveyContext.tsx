@@ -58,14 +58,16 @@ interface SurveyContextType {
 // Funkcja do losowego wyboru pytań z zachowaniem par
 const getRandomizedQuestions = (questions: Question[], config: SurveyConfig, maxQuestions: number = 15) => {
   // 1. Najpierw filtrujemy pytania pod kątem konfiguracji
-  // UWAGA: Zmieniamy logikę, aby ignorować userGender i partnerGender,
-  // dzięki czemu każda konfiguracja płci dostanie te same pytania
   const filteredByConfig = questions.filter(question => {
     if (!question.forConfig) return true;
     
-    // Jedynym filtrem zostaje gameLevel
-    const { gameLevel } = question.forConfig;
+    const { userGender, partnerGender, gameLevel } = question.forConfig;
     
+    // Sprawdzamy filtrowanie po płci (jeśli określono)
+    if (userGender && userGender !== config.userGender) return false;
+    if (partnerGender && partnerGender !== config.partnerGender) return false;
+    
+    // Sprawdzamy filtrowanie po poziomie gry (jeśli określono)
     if (gameLevel && !gameLevel.includes(config.gameLevel as GameLevel)) return false;
     
     return true;
@@ -476,7 +478,7 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const partnerGender = orderData.partner_gender || 'female';
       const gameLevel = orderData.game_level || 'discover';
       
-      // ISTOTNA ZMIANA: Dla ankiety partnera, przekazujemy DOKŁADNIE TAKĄ SAMĄ KONFIGURACJĘ
+      // ISTOTNA ZMIANA: Dla ankiety partnera, ustawiamy DOKŁADNIE TAKĄ SAMĄ KONFIGURACJĘ
       // jak w ankiecie zamawiającego, aby zagwarantować identyczne pytania
       setOrderDetails({
         userName: orderData.user_name,

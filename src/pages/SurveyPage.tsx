@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSurvey } from '@/contexts/SurveyContext';
@@ -103,8 +102,8 @@ const SurveyPage: React.FC = () => {
       const partnerGender = orderData.partner_gender || 'female';
       const gameLevel = orderData.game_level || 'discover';
       
-      // Allow partner survey even if the user hasn't completed their survey yet
-      // We'll just provide the configuration data
+      // ISTOTNA ZMIANA: Dla ankiety partnera, ustawiamy DOKŁADNIE TAKĄ SAMĄ KONFIGURACJĘ
+      // jak w ankiecie zamawiającego, aby zagwarantować identyczne pytania
       setOrderDetails({
         userName: orderData.user_name,
         partnerName: orderData.partner_name,
@@ -115,9 +114,9 @@ const SurveyPage: React.FC = () => {
       });
       
       // Pre-configure the survey with the same settings as the user's survey
-      // Note: For partner survey, we swap userGender and partnerGender to match the partner's perspective
-      setUserGender(partnerGender as 'male' | 'female');
-      setPartnerGender(userGender as 'male' | 'female');
+      // We use the SAME user_gender and partner_gender as in the original survey
+      setUserGender(userGender as 'male' | 'female');
+      setPartnerGender(partnerGender as 'male' | 'female');
       setGameLevel(gameLevel as 'discover' | 'explore' | 'exceed');
       
       toast.success('Ankieta załadowana pomyślnie');
