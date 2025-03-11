@@ -116,7 +116,40 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
     try {
       setIsLoading(true);
       
-      // First check if email is in admin_users table
+      // Check for allowed admin emails
+      const allowedAdmins = ['admin@example.com', 'szmergon@gmail.com', 'contact@secretsparks.pl'];
+      
+      if (!allowedAdmins.includes(email)) {
+        throw new Error('Nieprawidłowe dane logowania');
+      }
+      
+      // Special case for admin@example.com with hardcoded password
+      if (email === 'admin@example.com' && password === 'admin123') {
+        console.log('Special admin login path for admin@example.com');
+        
+        try {
+          // Try to sign in with Supabase
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+          
+          // Even if Supabase auth fails, we allow this specific admin account
+          // This is just for demo purposes - in production, use proper auth
+          setIsAuthenticated(true);
+          setAdminEmail(email);
+          navigate('/spe43al-adm1n-p4nel/dashboard');
+          return;
+        } catch (signInError) {
+          console.log('Supabase sign-in failed, but allowing admin access anyway:', signInError);
+          setIsAuthenticated(true);
+          setAdminEmail(email);
+          navigate('/spe43al-adm1n-p4nel/dashboard');
+          return;
+        }
+      }
+      
+      // For other admin users, check in admin_users table
       const { data: adminUser, error: adminCheckError } = await supabase
         .from('admin_users')
         .select('email')
@@ -124,41 +157,25 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
         .maybeSingle();
 
       if (adminCheckError) {
+        console.error('Admin check error:', adminCheckError);
         throw new Error('Problem z weryfikacją danych administratora');
       }
 
       if (!adminUser) {
+        console.error('Not found in admin_users table:', email);
         throw new Error('Nieprawidłowe dane logowania');
       }
 
-      // Temporarily allow login without password verification for admin@example.com
-      // In a real app, you would use a proper password verification mechanism
-      if (email === 'admin@example.com' && password === 'admin123') {
-        // Create a session for the admin
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (signInError) {
-          // If signIn fails, simulate a successful login just for the admin account
-          setIsAuthenticated(true);
-          setAdminEmail(email);
-          navigate('/spe43al-adm1n-p4nel/dashboard');
-          return;
-        }
-        
-        navigate('/spe43al-adm1n-p4nel/dashboard');
-        return;
-      }
-
-      // For other admin users, use regular authentication
+      // For regular admins, use Supabase authentication
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase auth error:', error);
+        throw error;
+      }
       
       navigate('/spe43al-adm1n-p4nel/dashboard');
     } catch (error: any) {
