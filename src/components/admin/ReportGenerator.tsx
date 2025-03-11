@@ -37,14 +37,28 @@ const getRatingLabel = (rating: number): string => {
     case 1:
       return 'Nie, to nie dla mnie';
     case 2:
-      return 'Może warto rozważyć';
+      return 'Moze warto rozwazyc';
     case 3:
       return 'Zdecydowanie tak!';
     case 4:
-      return 'OK, jeśli jemu bardzo zależy';
+      return 'OK, jesli jemu bardzo zalezy';
     default:
       return 'Brak odpowiedzi';
   }
+};
+
+// Function to normalize Polish characters
+const normalizePolishChars = (text: string): string => {
+  return text
+    .replace(/ą/g, 'a').replace(/Ą/g, 'A')
+    .replace(/ć/g, 'c').replace(/Ć/g, 'C')
+    .replace(/ę/g, 'e').replace(/Ę/g, 'E')
+    .replace(/ł/g, 'l').replace(/Ł/g, 'L')
+    .replace(/ń/g, 'n').replace(/Ń/g, 'N')
+    .replace(/ó/g, 'o').replace(/Ó/g, 'O')
+    .replace(/ś/g, 's').replace(/Ś/g, 'S')
+    .replace(/ź/g, 'z').replace(/Ź/g, 'Z')
+    .replace(/ż/g, 'z').replace(/Ż/g, 'Z');
 };
 
 const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialResponses, order }) => {
@@ -76,21 +90,21 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
     setIsGenerating(true);
     
     try {
-      // Create new PDF document with Polish language support
+      // Create new PDF document
       const doc = new jsPDF();
       
-      // Set font to support Polish characters
+      // Set font
       doc.setFont("helvetica");
       
-      // Add title and order info
+      // Add title and order info with normalized Polish characters
       doc.setFontSize(18);
       doc.text("Raport Secret Sparks", 14, 20);
       
       doc.setFontSize(12);
-      doc.text(`Zamówienie: #${order.id.substring(0, 8)}...`, 14, 30);
-      doc.text(`Data zamówienia: ${new Date(order.created_at).toLocaleString('pl-PL')}`, 14, 37);
-      doc.text(`Zamawiający: ${order.user_name} (${order.user_email})`, 14, 44);
-      doc.text(`Partner: ${order.partner_name} (${order.partner_email})`, 14, 51);
+      doc.text(`Zamowienie: #${order.id.substring(0, 8)}...`, 14, 30);
+      doc.text(`Data zamowienia: ${new Date(order.created_at).toLocaleString('pl-PL')}`, 14, 37);
+      doc.text(`Zamawiajacy: ${normalizePolishChars(order.user_name)} (${order.user_email})`, 14, 44);
+      doc.text(`Partner: ${normalizePolishChars(order.partner_name)} (${order.partner_email})`, 14, 51);
       
       // Group responses
       const userResponses = safeResponses.filter(r => r.user_type === 'user');
@@ -114,10 +128,13 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
           const questionObj = questionsDatabase.find(q => q && q.id === response.question_id);
           
           // Get question text or fallback to ID if not found
-          const questionText = questionObj && questionObj.text 
+          let questionText = questionObj && questionObj.text 
             ? questionObj.text 
             : `Pytanie (ID: ${response.question_id})`;
             
+          // Normalize Polish characters in question text
+          questionText = normalizePolishChars(questionText);
+          
           return [
             questionText,
             getRatingLabel(response.answer)
@@ -130,14 +147,14 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
       
       // Add user responses section header
       doc.setFontSize(14);
-      doc.text("Odpowiedzi zamawiającego", 14, currentY);
+      doc.text("Odpowiedzi zamawiajacego", 14, currentY);
       currentY += 10;
       
       if (userResponses.length > 0) {
-        // Add user responses table with Polish character support
+        // Add user responses table
         autoTable(doc, {
           startY: currentY,
-          head: [['Pytanie', 'Odpowiedź']],
+          head: [['Pytanie', 'Odpowiedz']],
           body: formatResponsesForTable(userResponses),
           styles: {
             font: 'helvetica',
@@ -152,7 +169,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
         currentY = doc.lastAutoTable.finalY + 15;
       } else {
         doc.setFontSize(12);
-        doc.text("Brak odpowiedzi od zamawiającego", 14, currentY);
+        doc.text("Brak odpowiedzi od zamawiajacego", 14, currentY);
         currentY += 15;
       }
 
@@ -162,10 +179,10 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
       currentY += 10;
       
       if (partnerResponses.length > 0) {
-        // Add partner responses table with Polish character support
+        // Add partner responses table
         autoTable(doc, {
           startY: currentY,
-          head: [['Pytanie', 'Odpowiedź']],
+          head: [['Pytanie', 'Odpowiedz']],
           body: formatResponsesForTable(partnerResponses),
           styles: {
             font: 'helvetica',
@@ -182,16 +199,16 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
       // Add a note at the bottom if there are no responses at all
       if (userResponses.length === 0 && partnerResponses.length === 0) {
         doc.setFontSize(12);
-        doc.text("Uwaga: To zamówienie nie zawiera żadnych odpowiedzi ankietowych.", 14, doc.internal.pageSize.height - 20);
+        doc.text("Uwaga: To zamowienie nie zawiera zadnych odpowiedzi ankietowych.", 14, doc.internal.pageSize.height - 20);
       }
 
       // Save PDF with orderId in the name
       doc.save(`secret-sparks-raport-${order.id.substring(0, 8)}.pdf`);
       
-      toast.success("Raport został wygenerowany pomyślnie");
+      toast.success("Raport zostal wygenerowany pomyslnie");
     } catch (error) {
-      console.error("Błąd podczas generowania PDF:", error);
-      toast.error("Wystąpił błąd podczas generowania raportu");
+      console.error("Blad podczas generowania PDF:", error);
+      toast.error("Wystapil blad podczas generowania raportu");
     } finally {
       setIsGenerating(false);
     }
