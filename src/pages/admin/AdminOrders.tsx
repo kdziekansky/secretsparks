@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
@@ -105,10 +106,14 @@ const AdminOrders: React.FC = () => {
       
       console.log(`Fetching survey responses for order ID: ${selectedOrder.id}`);
       
+      // Directly log the order ID to make sure it's correct
+      console.log(`Order ID used for query: "${selectedOrder.id}"`);
+      
+      // Implement more robust querying
       const { data, error } = await supabase
         .from('survey_responses')
         .select('*')
-        .eq('order_id', selectedOrder.id);
+        .eq('order_id', selectedOrder.id.trim());
 
       if (error) {
         console.error('Error fetching survey responses:', error);
@@ -117,6 +122,23 @@ const AdminOrders: React.FC = () => {
       }
       
       console.log(`Found ${data?.length || 0} survey responses:`, data);
+      
+      // If no responses found with the trimmed ID, try with the raw ID
+      if (data.length === 0) {
+        console.log('No responses found with trimmed ID, trying with raw ID');
+        const { data: rawData, error: rawError } = await supabase
+          .from('survey_responses')
+          .select('*')
+          .eq('order_id', selectedOrder.id);
+          
+        if (rawError) {
+          console.error('Error fetching with raw ID:', rawError);
+        } else if (rawData.length > 0) {
+          console.log(`Found ${rawData.length} responses with raw ID:`, rawData);
+          return rawData as SurveyResponse[];
+        }
+      }
+      
       return data as SurveyResponse[];
     },
     enabled: isAuthenticated && !!selectedOrder?.id,
@@ -331,18 +353,18 @@ const AdminOrders: React.FC = () => {
               <DialogTitle>
                 {activeTab === "details" ? "Szczegóły zamówienia" : "Odpowiedzi z ankiety"}
               </DialogTitle>
-              <DialogDescription>
+              <DialogDescription className="DialogDescription">
                 Identyfikator: {selectedOrder?.id}
               </DialogDescription>
             </DialogHeader>
 
             <Tabs defaultValue={activeTab} onValueChange={(value) => {
-            setActiveTab(value);
-            if (value === "responses" && refetchResponses) {
-              console.log('Tab changed to responses, refetching');
-              refetchResponses();
-            }
-          }} className="w-full">
+              setActiveTab(value);
+              if (value === "responses" && refetchResponses) {
+                console.log('Tab changed to responses, refetching');
+                refetchResponses();
+              }
+            }} className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="details">Szczegóły</TabsTrigger>
                 <TabsTrigger value="responses">Odpowiedzi</TabsTrigger>
@@ -415,6 +437,11 @@ const AdminOrders: React.FC = () => {
 
               <TabsContent value="responses">
                 <div className="space-y-6">
+                  {/* Add order identifier for survey responses view to grab */}
+                  <div className="hidden" data-testid="order-identifier">
+                    {selectedOrder?.id}
+                  </div>
+                  
                   <SurveyResponsesView 
                     responses={surveyResponses} 
                     isLoading={responsesLoading} 

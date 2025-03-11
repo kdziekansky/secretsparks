@@ -1,11 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { FileDown, Loader2 } from 'lucide-react';
+import { FileDown, Loader2, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { questionsDatabase } from '@/contexts/questions-data';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { supabase } from '@/integrations/supabase/client';
 
 // Add the type definition for jsPDF-autotable
 declare module 'jspdf' {
@@ -38,12 +39,14 @@ interface ReportGeneratorProps {
   order: Order | null;
 }
 
-const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses, order }) => {
+const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialResponses, order }) => {
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [hasResponses, setHasResponses] = useState(false);
+  const [responses, setResponses] = useState<SurveyResponse[] | null>(initialResponses);
 
   // Add additional logging to debug responses
-  console.log("ReportGenerator received responses:", responses);
+  console.log("ReportGenerator received initial responses:", initialResponses);
   console.log("ReportGenerator received order:", order);
 
   // Effect to check for responses on mount and when responses change
@@ -52,6 +55,52 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses, order }) =
     console.log("Setting hasResponses to:", hasValidResponses);
     setHasResponses(hasValidResponses);
   }, [responses]);
+
+  // Update local responses when props change
+  useEffect(() => {
+    setResponses(initialResponses);
+  }, [initialResponses]);
+
+  // Function to refresh responses directly from the database
+  const refreshResponses = async () => {
+    if (!order?.id) {
+      toast.error("Brak ID zamówienia do odświeżenia odpowiedzi");
+      return;
+    }
+
+    setIsRefreshing(true);
+    try {
+      console.log(`Refreshing responses for order ID: ${order.id}`);
+      
+      const { data, error } = await supabase
+        .from('survey_responses')
+        .select('*')
+        .eq('order_id', order.id);
+        
+      if (error) {
+        console.error('Error refreshing responses:', error);
+        toast.error('Błąd podczas odświeżania odpowiedzi: ' + error.message);
+        return;
+      }
+      
+      console.log(`Fetched ${data?.length || 0} responses directly:`, data);
+      
+      if (data && data.length > 0) {
+        setResponses(data as SurveyResponse[]);
+        setHasResponses(true);
+        toast.success(`Odpowiedzi odświeżone (${data.length})`);
+      } else {
+        setResponses([]);
+        setHasResponses(false);
+        toast.info('Brak odpowiedzi dla tego zamówienia w bazie danych');
+      }
+    } catch (error) {
+      console.error('Error refreshing responses:', error);
+      toast.error('Wystąpił błąd podczas odświeżania odpowiedzi');
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   const generatePDF = () => {
     if (!order) {
@@ -86,7 +135,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses, order }) =
       const userResponses = responses.filter(r => r.user_type === 'user');
       const partnerResponses = responses.filter(r => r.user_type === 'partner');
 
-      console.log("Filtered responses:", { userResponses, partnerResponses });
+      console.log("Filtered responses for PDF:", { userResponses, partnerResponses });
 
       // Helper to format responses for the PDF table
       const formatResponsesForTable = (responses: SurveyResponse[]) => {
@@ -148,25 +197,46 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses, order }) =
   console.log("Button disabled status:", buttonDisabled, { hasResponses, isGenerating, hasOrder: !!order });
 
   return (
-    <div>
-      <Button 
-        variant="default" 
-        onClick={generatePDF} 
-        disabled={buttonDisabled}
-        className="w-full md:w-auto"
-      >
-        {isGenerating ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Generowanie...
-          </>
-        ) : (
-          <>
-            <FileDown className="mr-2 h-4 w-4" />
-            Pobierz raport PDF
-          </>
-        )}
-      </Button>
+    <div className="space-y-3">
+      <div className="flex flex-col sm:flex-row gap-2">
+        <Button 
+          variant="default" 
+          onClick={generatePDF} 
+          disabled={buttonDisabled}
+          className="w-full md:w-auto"
+        >
+          {isGenerating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Generowanie...
+            </>
+          ) : (
+            <>
+              <FileDown className="mr-2 h-4 w-4" />
+              Pobierz raport PDF
+            </>
+          )}
+        </Button>
+        
+        <Button
+          variant="outline"
+          onClick={refreshResponses}
+          disabled={isRefreshing || !order}
+          className="w-full md:w-auto"
+        >
+          {isRefreshing ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Odświeżanie...
+            </>
+          ) : (
+            <>
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Odśwież odpowiedzi
+            </>
+          )}
+        </Button>
+      </div>
       
       {!hasResponses && (
         <p className="text-sm text-muted-foreground mt-2">

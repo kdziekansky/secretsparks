@@ -33,10 +33,10 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
   const [orderId, setOrderId] = useState<string | null>(null);
   const [viewType, setViewType] = useState<'cards' | 'table'>('table');
   
-  // Extract order ID from responses, URL, or modal dialog data
+  // More comprehensive order ID extraction
   useEffect(() => {
     const extractOrderId = () => {
-      // First try to get from responses
+      // Try to get from responses
       if (responses && responses.length > 0) {
         console.log('Setting orderId from responses:', responses[0].order_id);
         return responses[0].order_id;
@@ -50,28 +50,62 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
         return idFromUrl;
       }
       
-      // Try to get from the dialog title/subtitle (fallback)
-      const dialogTitle = document.querySelector('.DialogDescription');
-      if (dialogTitle) {
-        const text = dialogTitle.textContent || '';
+      // Try to get from the dialog title/subtitle
+      const dialogDescription = document.querySelector('.DialogDescription');
+      if (dialogDescription) {
+        const text = dialogDescription.textContent || '';
+        console.log('Dialog description text:', text);
         const idMatch = text.match(/Identyfikator: ([a-f0-9-]+)/);
         if (idMatch && idMatch[1]) {
-          console.log('Setting orderId from dialog:', idMatch[1]);
+          console.log('Found orderId in dialog:', idMatch[1]);
           return idMatch[1];
         }
       }
       
+      // Try to get from specific dialog content for survey responses
+      const identifierElement = document.querySelector('[data-testid="order-identifier"]');
+      if (identifierElement) {
+        const identifierText = identifierElement.textContent || '';
+        console.log('Identifier element text:', identifierText);
+        // Extract UUID pattern from the text
+        const uuidPattern = /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i;
+        const match = identifierText.match(uuidPattern);
+        if (match && match[1]) {
+          console.log('Found UUID in identifier:', match[1]);
+          return match[1];
+        }
+      }
+      
+      // Try to extract from modal title
+      const modalTitle = document.querySelector('.DialogTitle');
+      if (modalTitle) {
+        const titleText = modalTitle.textContent || '';
+        console.log('Modal title:', titleText);
+        if (titleText.includes('Odpowiedzi z ankiety')) {
+          // Look for the closest element that might contain the order ID
+          const modalContent = document.querySelector('.DialogContent');
+          if (modalContent) {
+            const contentText = modalContent.textContent || '';
+            const uuidPattern = /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i;
+            const match = contentText.match(uuidPattern);
+            if (match && match[1]) {
+              console.log('Found UUID in modal content:', match[1]);
+              return match[1];
+            }
+          }
+        }
+      }
+      
+      console.warn('Could not extract order ID from any source');
       return null;
     };
     
     const newOrderId = extractOrderId();
     if (newOrderId && newOrderId !== orderId) {
+      console.log('Setting new order ID:', newOrderId);
       setOrderId(newOrderId);
-      // If we just set a new order ID, trigger a refresh
-      if (!responses || responses.length === 0) {
-        console.log('New order ID detected, will trigger refresh');
-        // We'll call refreshResponses in the next useEffect
-      }
+    } else if (!newOrderId) {
+      console.warn('No order ID could be extracted from any source');
     }
   }, [responses, orderId]);
   
@@ -83,7 +117,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
       orderId,
       hasOrderId: !!orderId,
       responsesLength: responses?.length || 0,
-      refreshedResponsesLength: refreshedResponses?.length || 0
+      refreshedResponsesLength: refreshedResponses?.length || 0,
     });
   }, [responses, refreshedResponses, orderId]);
   
@@ -95,7 +129,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
     }
   }, [orderId, responses]);
   
-  // Function to manually refresh responses with improved error handling
+  // Function to manually refresh responses with improved query and error handling
   const refreshResponses = async () => {
     if (!orderId) {
       console.error('No order ID available for refresh');
@@ -110,10 +144,18 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
       // Clear out any previous refreshed responses while loading
       setRefreshedResponses(null);
       
+      // Make sure we're using the exact order_id without any trimming or modification
+      const cleanOrderId = orderId.trim();
+      console.log(`Using cleaned order ID for query: "${cleanOrderId}"`);
+      
+      // Log the exact query we're about to run
+      console.log(`SQL equivalent: SELECT * FROM survey_responses WHERE order_id = '${cleanOrderId}'`);
+      
+      // Try with exact match first
       const { data, error } = await supabase
         .from('survey_responses')
         .select('*')
-        .eq('order_id', orderId);
+        .eq('order_id', cleanOrderId);
         
       if (error) {
         console.error('Error refreshing responses:', error);
@@ -121,18 +163,31 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
         throw error;
       }
       
-      console.log(`Fetched ${data?.length || 0} responses for order ID ${orderId}:`, data);
+      console.log(`Fetched ${data?.length || 0} responses for order ID ${cleanOrderId}:`, data);
       
       if (data && data.length > 0) {
         setRefreshedResponses(data as SurveyResponse[]);
         toast.success(`Odpowiedzi odświeżone (${data.length})`);
       } else {
+        // If no responses found with exact match, try a broader query to debug
+        console.log('No responses found with exact match, trying a broader query to debug');
+        const { data: allResponses, error: allError } = await supabase
+          .from('survey_responses')
+          .select('*')
+          .limit(10);
+          
+        if (allError) {
+          console.error('Error fetching all responses:', allError);
+        } else {
+          console.log('Sample of all responses in the database:', allResponses);
+          if (allResponses && allResponses.length > 0) {
+            console.log('Order IDs in the database:', allResponses.map(r => r.order_id));
+          }
+        }
+        
         // We got a successful response but no data
         setRefreshedResponses([]);
         toast.info('Brak odpowiedzi dla tego zamówienia w bazie danych');
-        
-        // Double-check by logging the SQL query that we would run
-        console.log(`SQL equivalent: SELECT * FROM survey_responses WHERE order_id = '${orderId}'`);
       }
     } catch (error) {
       console.error('Failed to refresh responses:', error);
@@ -162,7 +217,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
           <h3 className="font-medium mb-2">Brak odpowiedzi ankietowych dla tego zamówienia</h3>
           <p className="text-sm text-muted-foreground mb-4">
             {orderId ? 
-              `Nie znaleziono odpowiedzi dla zamówienia ID: ${orderId?.substring(0, 8)}...` : 
+              `Nie znaleziono odpowiedzi dla zamówienia ID: ${orderId}` : 
               'Brak identyfikatora zamówienia'
             }
           </p>

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSurvey } from '@/contexts/SurveyContext';
@@ -97,6 +98,18 @@ const SurveyPage: React.FC = () => {
         setGameLevel(gameLevel as 'discover' | 'explore' | 'exceed');
         
         toast.success('Ankieta załadowana pomyślnie');
+        
+        // Debug: Check if there are already any responses for this order
+        const { data: existingResponses, error: responsesError } = await supabase
+          .from('survey_responses')
+          .select('*')
+          .eq('order_id', orderData.id);
+          
+        if (responsesError) {
+          console.error('Error checking existing responses:', responsesError);
+        } else {
+          console.log(`Found ${existingResponses?.length || 0} existing responses for order:`, existingResponses);
+        }
         
       } catch (err: any) {
         console.error('Error fetching order details:', err);
