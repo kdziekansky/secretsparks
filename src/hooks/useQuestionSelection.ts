@@ -69,16 +69,22 @@ export const useQuestionSelection = (
     if (isPartnerSurvey && selectedQuestionIds.length > 0) {
       console.log('Using predefined question sequence for partner:', selectedQuestionIds);
       
-      // This is critical: return questions in EXACTLY the same order as the selectedQuestionIds array
-      return selectedQuestionIds
+      // Map each ID to its corresponding question object
+      const questionMap = new Map(questions.map(q => [q.id, q]));
+      
+      // Return questions in EXACTLY the same order as the selectedQuestionIds array
+      const mappedQuestions = selectedQuestionIds
         .map(id => {
-          const question = questions.find(q => q.id === id);
+          const question = questionMap.get(id);
           if (!question) {
             console.warn(`Question with ID ${id} not found in questions database`);
           }
           return question;
         })
         .filter((q): q is Question => q !== undefined);
+      
+      console.log(`Successfully mapped ${mappedQuestions.length} questions out of ${selectedQuestionIds.length} IDs`);
+      return mappedQuestions;
     }
     
     // Don't generate questions if config is not complete
