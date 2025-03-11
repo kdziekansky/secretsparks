@@ -69,21 +69,22 @@ export const useQuestionSelection = (
     if (isPartnerSurvey && selectedQuestionIds.length > 0) {
       console.log('Using predefined question sequence for partner:', selectedQuestionIds);
       
-      // Map each ID to its corresponding question object
+      // Create a map of all questions by ID for quick lookup
       const questionMap = new Map(questions.map(q => [q.id, q]));
       
-      // Return questions in EXACTLY the same order as the selectedQuestionIds array
+      // Get questions in EXACTLY the same order as the selectedQuestionIds array
       const mappedQuestions = selectedQuestionIds
         .map(id => {
           const question = questionMap.get(id);
           if (!question) {
             console.warn(`Question with ID ${id} not found in questions database`);
+            return null;
           }
           return question;
         })
-        .filter((q): q is Question => q !== undefined);
+        .filter((q): q is Question => q !== null);
       
-      console.log(`Successfully mapped ${mappedQuestions.length} questions out of ${selectedQuestionIds.length} IDs`);
+      console.log(`Successfully mapped ${mappedQuestions.length} partner questions out of ${selectedQuestionIds.length} IDs`);
       return mappedQuestions;
     }
     
@@ -91,6 +92,8 @@ export const useQuestionSelection = (
     if (!config.isConfigComplete) return [];
     
     // For regular user survey, generate random questions
-    return getRandomizedQuestions(questions, config, 15);
+    const randomizedQuestions = getRandomizedQuestions(questions, config, 15);
+    console.log(`Generated ${randomizedQuestions.length} randomized questions for user`);
+    return randomizedQuestions;
   }, [questions, config, selectedQuestionIds, isPartnerSurvey]);
 };
