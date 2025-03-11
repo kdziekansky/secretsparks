@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
+import { AlertTriangle } from 'lucide-react';
 
 interface SurveyResponse {
   id: string;
@@ -90,7 +90,7 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
   if (!isQuestionsDbLoaded) {
     return (
       <Alert variant="destructive" className="mb-4">
-        <ExclamationTriangleIcon className="h-4 w-4" />
+        <AlertTriangle className="h-4 w-4" />
         <AlertDescription>
           Błąd: Baza pytań jest niedostępna. Nie można wyświetlić treści pytań.
         </AlertDescription>
