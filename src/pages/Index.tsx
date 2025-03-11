@@ -1,9 +1,18 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, Check, ArrowRight } from 'lucide-react';
+import { ChevronDown, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Index = () => {
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
+
   return (
     <div className="bg-white text-gray-800">
       {/* Header/Nawigacja */}
@@ -15,12 +24,25 @@ const Index = () => {
           </Link>
           
           <nav className="hidden md:flex items-center space-x-6">
-            <Link to="#" className="text-sm font-medium text-gray-600 hover:text-purple-800">Idea</Link>
-            <Link to="#" className="text-sm font-medium text-gray-600 hover:text-purple-800">Zasady gry</Link>
-            <Link to="#" className="text-sm font-medium text-gray-600 hover:text-purple-800">PrivéAI™</Link>
-            <Link to="#" className="text-sm font-medium text-gray-600 hover:text-purple-800 flex items-center">
-              Więcej <ChevronDown className="ml-1 h-4 w-4" />
-            </Link>
+            <Link to="/idea" className="text-sm font-medium text-gray-600 hover:text-purple-800">Idea</Link>
+            <Link to="/zasady-gry" className="text-sm font-medium text-gray-600 hover:text-purple-800">Zasady gry</Link>
+            <Link to="/priveai" className="text-sm font-medium text-gray-600 hover:text-purple-800">PrivéAI™</Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger className="text-sm font-medium text-gray-600 hover:text-purple-800 flex items-center">
+                Więcej <ChevronDown className="ml-1 h-4 w-4" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>
+                  <Link to="/o-nas" className="w-full">O nas</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link to="/kontakt" className="w-full">Kontakt</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link to="/regulamin" className="w-full">Regulamin</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </nav>
           
           <Link to="/survey">
