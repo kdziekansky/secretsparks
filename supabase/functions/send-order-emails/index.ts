@@ -120,17 +120,19 @@ Deno.serve(async (req) => {
 
     console.log('Partner email sent:', partnerEmailResult)
 
-    // STEP 4: Mark emails as sent
+    // STEP 4: Mark emails as sent and store the question sequence
+    // CRITICAL: ALWAYS store the question sequence in the orders table
     const { error: markSentError } = await supabase
       .from('orders')
       .update({ 
         emails_sent: true,
-        user_question_sequence: questionIds // Store the question sequence in the order table
+        user_question_sequence: questionIds // Always store the question sequence in the order table
       })
       .eq('id', orderId)
 
     if (markSentError) {
       console.error('Failed to mark emails as sent:', markSentError)
+      // Continue anyway, as we've already sent the emails
     }
 
     // Return success response

@@ -23,10 +23,10 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
       try {
         console.log('Fetching order details for partner token:', partnerToken);
         
-        // Get the order associated with this partner token
+        // First, try to get the order with stored user_question_sequence
         const { data: orderData, error: orderError } = await supabase
           .from('orders')
-          .select('id')
+          .select('id, user_question_sequence')
           .eq('partner_survey_token', partnerToken)
           .single();
         
@@ -39,7 +39,19 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
         setPartnerOrderId(orderData.id);
         setOrderFetched(true);
         
-        // IMPROVED: More specific query for user responses with proper order
+        // FIRST APPROACH: Check if we have stored question sequence in the orders table
+        if (orderData.user_question_sequence && orderData.user_question_sequence.length > 0) {
+          console.log('Using stored question sequence from orders table:', orderData.user_question_sequence);
+          setSelectedQuestionIds(orderData.user_question_sequence);
+          setDataFetched(true);
+          toast.success('Ankieta załadowana pomyślnie');
+          setIsLoading(false);
+          return;
+        }
+        
+        console.log('No stored question sequence in orders table, fetching from survey_responses');
+        
+        // SECOND APPROACH: If not stored in orders table, get from survey_responses
         const { data: userResponses, error: responsesError } = await supabase
           .from('survey_responses')
           .select('question_id, created_at')
@@ -63,6 +75,19 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
         // Extract question IDs in order they were answered by user
         const questionIds = userResponses.map(response => response.question_id);
         console.log(`Found ${questionIds.length} questions from user responses:`, questionIds);
+        
+        // IMPROVEMENT: Also store the sequence in the orders table for future use
+        const { error: updateError } = await supabase
+          .from('orders')
+          .update({ user_question_sequence: questionIds })
+          .eq('id', orderData.id);
+        
+        if (updateError) {
+          console.warn('Could not update order with question sequence:', updateError);
+          // Continue anyway, this is just an optimization
+        } else {
+          console.log('Updated order with question sequence for future use');
+        }
         
         setSelectedQuestionIds(questionIds);
         setDataFetched(true);

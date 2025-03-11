@@ -86,6 +86,10 @@ export const useQuestionSelection = (
       
       console.log(`Successfully mapped ${mappedQuestions.length} partner questions out of ${selectedQuestionIds.length} IDs`);
       
+      if (mappedQuestions.length !== selectedQuestionIds.length) {
+        console.error('Some questions could not be mapped. This could cause inconsistencies between user and partner surveys.');
+      }
+      
       // IMPORTANT: Return the mapped questions without any further filtering or processing
       return mappedQuestions;
     }
