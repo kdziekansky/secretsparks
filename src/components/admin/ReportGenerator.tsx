@@ -76,8 +76,11 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
     setIsGenerating(true);
     
     try {
-      // Create new PDF document
+      // Create new PDF document with Polish language support
       const doc = new jsPDF();
+      
+      // Set font to support Polish characters
+      doc.setFont("helvetica");
       
       // Add title and order info
       doc.setFontSize(18);
@@ -86,7 +89,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
       doc.setFontSize(12);
       doc.text(`Zamówienie: #${order.id.substring(0, 8)}...`, 14, 30);
       doc.text(`Data zamówienia: ${new Date(order.created_at).toLocaleString('pl-PL')}`, 14, 37);
-      doc.text(`Z a m a w i a j ą c y: ${order.user_name} (${order.user_email})`, 14, 44);
+      doc.text(`Zamawiający: ${order.user_name} (${order.user_email})`, 14, 44);
       doc.text(`Partner: ${order.partner_name} (${order.partner_email})`, 14, 51);
       
       // Group responses
@@ -131,11 +134,17 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
       currentY += 10;
       
       if (userResponses.length > 0) {
-        // Add user responses table
+        // Add user responses table with Polish character support
         autoTable(doc, {
           startY: currentY,
           head: [['Pytanie', 'Odpowiedź']],
           body: formatResponsesForTable(userResponses),
+          styles: {
+            font: 'helvetica',
+            fontStyle: 'normal'
+          },
+          tableLineColor: [0, 0, 0],
+          tableLineWidth: 0.1,
         });
         
         // Get the last Y position after the table
@@ -153,11 +162,17 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
       currentY += 10;
       
       if (partnerResponses.length > 0) {
-        // Add partner responses table
+        // Add partner responses table with Polish character support
         autoTable(doc, {
           startY: currentY,
           head: [['Pytanie', 'Odpowiedź']],
           body: formatResponsesForTable(partnerResponses),
+          styles: {
+            font: 'helvetica',
+            fontStyle: 'normal'
+          },
+          tableLineColor: [0, 0, 0],
+          tableLineWidth: 0.1,
         });
       } else {
         doc.setFontSize(12);
