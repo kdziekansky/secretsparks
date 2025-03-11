@@ -5,6 +5,8 @@ import { questionsDatabase } from '@/contexts/questions-data';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 interface SurveyResponse {
   id: string;
@@ -143,18 +145,31 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
         {responses.map(response => {
           const question = questionsDatabase.find(q => q.id === response.question_id);
           return (
-            <div key={response.id} className="border rounded-md p-3">
-              <div className="font-medium">{question?.text || `Pytanie (${response.question_id})`}</div>
-              <div className="flex items-center mt-2">
-                <div className="w-full bg-gray-200 rounded-full h-2.5">
-                  <div 
-                    className="bg-primary h-2.5 rounded-full" 
-                    style={{ width: `${(response.answer / 5) * 100}%` }}
-                  ></div>
+            <Card key={response.id} className="overflow-hidden">
+              <CardHeader className="bg-muted/50 p-4">
+                <CardTitle className="text-base">
+                  {question?.text || `Pytanie (${response.question_id})`}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4">
+                <div className="flex items-center mt-2">
+                  <div className="w-full bg-gray-200 rounded-full h-2.5">
+                    <div 
+                      className="bg-primary h-2.5 rounded-full" 
+                      style={{ width: `${(response.answer / 5) * 100}%` }}
+                    ></div>
+                  </div>
+                  <Badge variant="outline" className="ml-2">
+                    {response.answer}/5
+                  </Badge>
                 </div>
-                <span className="ml-2 text-sm font-medium">{response.answer}/5</span>
-              </div>
-            </div>
+                {question?.description && (
+                  <p className="text-sm text-muted-foreground mt-2">
+                    {question.description}
+                  </p>
+                )}
+              </CardContent>
+            </Card>
           );
         })}
       </div>
@@ -163,7 +178,8 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold">Odpowiedzi ankiety</h2>
         <Button 
           onClick={refreshResponses}
           variant="outline"
@@ -179,14 +195,16 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
         </Button>
       </div>
       
-      <div>
-        <h3 className="text-lg font-medium mb-3">Odpowiedzi zamawiającego</h3>
-        {renderUserResponses(userResponses, 'user')}
-      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium border-b pb-2">Odpowiedzi zamawiającego ({userResponses.length})</h3>
+          {renderUserResponses(userResponses, 'user')}
+        </div>
 
-      <div>
-        <h3 className="text-lg font-medium mb-3">Odpowiedzi partnera</h3>
-        {renderUserResponses(partnerResponses, 'partner')}
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium border-b pb-2">Odpowiedzi partnera ({partnerResponses.length})</h3>
+          {renderUserResponses(partnerResponses, 'partner')}
+        </div>
       </div>
     </div>
   );
