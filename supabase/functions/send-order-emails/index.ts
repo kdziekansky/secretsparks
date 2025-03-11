@@ -1,4 +1,3 @@
-
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from '../_shared/cors.ts'
 import { Resend } from 'https://esm.sh/resend@1.0.0'
@@ -51,28 +50,47 @@ Deno.serve(async (req) => {
       )
     }
 
-    // STEP 1: Get user responses to determine question sequence
-    console.log('STEP 1: Getting user responses from survey_responses table')
-    const { data: userResponses, error: responsesError } = await supabase
-      .from('survey_responses')
-      .select('question_id, created_at')
-      .eq('order_id', orderId)
-      .eq('user_type', 'user')
-      .order('created_at', { ascending: true })
+    // CRITICAL CHANGE: Upewnij się, że mamy sekwencję pytań przed wysłaniem emaili
+    // STEP 1: Pobierz i zapisz sekwencję pytań jeśli jeszcze nie istnieje
+    if (!order.user_question_sequence || order.user_question_sequence.length === 0) {
+      console.log('No question sequence found, fetching and saving it before sending emails')
+      
+      const { data: userResponses, error: responsesError } = await supabase
+        .from('survey_responses')
+        .select('question_id, created_at')
+        .eq('order_id', orderId)
+        .eq('user_type', 'user')
+        .order('created_at', { ascending: true })
 
-    if (responsesError) {
-      console.error('Error fetching user responses:', responsesError)
-      throw new Error(`Failed to fetch user responses: ${responsesError.message}`)
+      if (responsesError) {
+        console.error('Error fetching user responses:', responsesError)
+        throw new Error(`Failed to fetch user responses: ${responsesError.message}`)
+      }
+
+      // CRITICAL VALIDATION: Do not send partner email if user hasn't completed the survey
+      if (!userResponses || userResponses.length === 0) {
+        throw new Error('Zamawiający nie wypełnił jeszcze swojej ankiety. Nie można wysłać ankiety do partnera.')
+      }
+
+      // Extract question IDs in order they were answered by user
+      const questionIds = userResponses.map(response => response.question_id)
+      console.log(`Found ${questionIds.length} questions from user responses:`, questionIds)
+      
+      // CRITICAL: Zapisz sekwencję pytań przed wysłaniem emaili
+      const { error: updateError } = await supabase
+        .from('orders')
+        .update({ user_question_sequence: questionIds })
+        .eq('id', orderId)
+        
+      if (updateError) {
+        console.error('Failed to save question sequence:', updateError)
+        throw new Error(`Failed to save question sequence: ${updateError.message}`)
+      }
+      
+      console.log('Question sequence saved successfully')
+    } else {
+      console.log('Question sequence already exists:', order.user_question_sequence.length, 'questions')
     }
-
-    // CRITICAL VALIDATION: Do not send partner email if user hasn't completed the survey
-    if (!userResponses || userResponses.length === 0) {
-      throw new Error('Zamawiający nie wypełnił jeszcze swojej ankiety. Nie można wysłać ankiety do partnera.')
-    }
-
-    // Extract question IDs in order they were answered by user
-    const questionIds = userResponses.map(response => response.question_id)
-    console.log(`Found ${questionIds.length} questions from user responses:`, questionIds)
 
     // STEP 2: Send thank you email to user
     console.log('STEP 2: Sending thank you email to user')
@@ -120,13 +138,11 @@ Deno.serve(async (req) => {
 
     console.log('Partner email sent:', partnerEmailResult)
 
-    // STEP 4: Mark emails as sent and store the question sequence
-    // CRITICAL: ALWAYS store the question sequence in the orders table
+    // STEP 4: Mark emails as sent
     const { error: markSentError } = await supabase
       .from('orders')
       .update({ 
-        emails_sent: true,
-        user_question_sequence: questionIds // Always store the question sequence in the order table
+        emails_sent: true
       })
       .eq('id', orderId)
 
@@ -142,8 +158,8 @@ Deno.serve(async (req) => {
         message: 'Emails sent successfully',
         userEmail: userEmailResult,
         partnerEmail: partnerEmailResult,
-        questionCount: questionIds.length,
-        questions: questionIds
+        questionCount: order.user_question_sequence?.length || 0,
+        questions: order.user_question_sequence || []
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )

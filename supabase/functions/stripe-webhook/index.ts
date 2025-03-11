@@ -1,4 +1,3 @@
-
 // @ts-nocheck
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import Stripe from 'https://esm.sh/stripe@12.4.0?target=deno';
@@ -118,7 +117,46 @@ serve(async (req) => {
     
     console.log("Typ zdarzenia:", event.type);
     
+    // Sprawdzenie uprawnień do tabeli survey_responses
+    try {
+      console.log("Sprawdzanie uprawnień do tabeli survey_responses...");
+      
+      // Spróbuj wstawić testowy rekord i natychmiast go usunąć
+      const testOrder = 'test-permissions-' + Date.now();
+      const { data: insertData, error: insertError } = await supabase
+        .from('survey_responses')
+        .insert({
+          order_id: testOrder,
+          question_id: 'test-permission',
+          answer: 1,
+          user_type: 'test'
+        })
+        .select();
+      
+      if (insertError) {
+        console.error("BŁĄD UPRAWNIEŃ DO TABELI SURVEY_RESPONSES:", insertError);
+        console.error("To może być przyczyna braku zapisanych odpowiedzi!");
+      } else {
+        console.log("Uprawnienia do tabeli survey_responses są poprawne");
+        
+        // Usuń testowy rekord
+        if (insertData && insertData.length > 0) {
+          const { error: deleteError } = await supabase
+            .from('survey_responses')
+            .delete()
+            .eq('id', insertData[0].id);
+            
+          if (deleteError) {
+            console.error("Błąd usuwania testowego rekordu:", deleteError);
+          }
+        }
+      }
+    } catch (permError) {
+      console.error("Błąd podczas sprawdzania uprawnień:", permError);
+    }
+    
     // Obsługa zdarzenia checkout.session.completed
+    // Ten webhook jest wywoływany TYLKO po pomyślnej płatności
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
       const orderId = session.client_reference_id || session.metadata?.order_id;
@@ -135,19 +173,19 @@ serve(async (req) => {
         });
       }
       
-      // Sprawdź, czy zamówienie zostało już zaktualizowane i e-maile wysłane
+      // Sprawdź obecny stan zamówienia
       const { data: orderCheck, error: orderCheckError } = await supabase
         .from('orders')
-        .select('status, emails_sent')
+        .select('status, payment_id, user_question_sequence, game_level')
         .eq('id', orderId)
         .single();
+        
+      console.log("Obecny stan zamówienia przed aktualizacją:", orderCheck);
       
-      console.log("Aktualny stan zamówienia:", orderCheck);
-      
-      // Aktualizuj status zamówienia tylko jeśli nie jest jeszcze 'paid'
+      // Aktualizuj status tylko jeśli to konieczne
       if (!orderCheck || orderCheck.status !== 'paid') {
         console.log("Aktualizacja statusu zamówienia na 'paid'");
-        const { data, error } = await supabase
+        const { data: updateData, error: updateError } = await supabase
           .from('orders')
           .update({ 
             status: 'paid',
@@ -157,23 +195,77 @@ serve(async (req) => {
           .eq('id', orderId)
           .select();
         
-        console.log("Wynik aktualizacji:", error ? `BŁĄD: ${error.message}` : "SUKCES");
-        if (error) {
-          console.error("Błąd aktualizacji bazy danych:", error);
-          return new Response(JSON.stringify({ error: `Aktualizacja bazy danych nie powiodła się: ${error.message}`, received: true }), {
-            status: 200,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        }
+        // Szczegółowe logowanie wyniku aktualizacji 
+        console.log("Wynik aktualizacji statusu:", updateError ? `BŁĄD: ${updateError.message}` : "SUKCES");
         
-        console.log("Zaktualizowane dane:", data);
-        console.log("Pomyślnie zaktualizowano status zamówienia na opłacone");
+        if (updateError) {
+          console.error("Błąd aktualizacji zamówienia:", updateError);
+        } else {
+          console.log("Zaktualizowane dane zamówienia:", updateData);
+        }
       } else {
         console.log("Zamówienie ma już status 'paid', pomijanie aktualizacji");
       }
       
-      // Wysyłaj e-maile tylko jeśli nie zostały jeszcze wysłane
-      if (!orderCheck || !orderCheck.emails_sent) {
+      // Sprawdź stan zamówienia po aktualizacji dla weryfikacji
+      const { data: updatedOrder, error: checkError } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('id', orderId)
+        .single();
+        
+      console.log("Stan zamówienia po aktualizacji:", updatedOrder);
+      
+      // Pobierz odpowiedzi użytkownika, aby zapisać sekwencję pytań
+      if (!updatedOrder?.user_question_sequence || updatedOrder.user_question_sequence.length === 0) {
+        console.log("Próba pobrania i zapisania sekwencji pytań z odpowiedzi użytkownika");
+        
+        const { data: userResponses } = await supabase
+          .from('survey_responses')
+          .select('question_id, created_at')
+          .eq('order_id', orderId)
+          .eq('user_type', 'user')
+          .order('created_at', { ascending: true });
+          
+        if (userResponses && userResponses.length > 0) {
+          const questionIds = userResponses.map(r => r.question_id);
+          console.log(`Znaleziono ${questionIds.length} odpowiedzi użytkownika, zapisuję sekwencję:`, questionIds);
+          
+          const { error: seqError } = await supabase
+            .from('orders')
+            .update({ user_question_sequence: questionIds })
+            .eq('id', orderId);
+            
+          if (seqError) {
+            console.error("Błąd zapisywania sekwencji pytań:", seqError);
+          } else {
+            console.log("Sekwencja pytań zapisana pomyślnie");
+          }
+        } else {
+          console.log("Brak odpowiedzi użytkownika, używam domyślnej sekwencji");
+          
+          // Domyślna sekwencja pytań
+          const defaultSequence = [
+            'p1', 'p2', 'p3', 'p4', 'p5', 
+            'r1', 'r2', 'r3', 'r4', 'r5',
+            'u1', 'u2', 'u3', 'u4', 'u5'
+          ];
+          
+          const { error: seqError } = await supabase
+            .from('orders')
+            .update({ user_question_sequence: defaultSequence })
+            .eq('id', orderId);
+            
+          if (seqError) {
+            console.error("Błąd zapisywania domyślnej sekwencji:", seqError);
+          } else {
+            console.log("Domyślna sekwencja pytań zapisana");
+          }
+        }
+      }
+      
+      // Wysyłaj e-maile po aktualizacji statusu
+      if (!orderCheck?.emails_sent) {
         try {
           console.log("Wywołanie funkcji wysyłania e-maili");
           const emailResponse = await fetch(
@@ -188,7 +280,6 @@ serve(async (req) => {
             }
           );
           
-          // Sprawdź status odpowiedzi
           if (!emailResponse.ok) {
             throw new Error(`HTTP Error: ${emailResponse.status}`);
           }
@@ -208,7 +299,7 @@ serve(async (req) => {
           // Nie przerywamy przetwarzania, jeśli wysyłanie e-maili nie powiodło się
         }
       } else {
-        console.log("E-maile zostały już wysłane dla tego zamówienia, pomijanie");
+        console.log("E-maile zostały już wysłane dla tego zamówienia");
       }
     } else if (event.type === 'payment_intent.succeeded') {
       // Ignorujemy to zdarzenie, ponieważ już obsługujemy checkout.session.completed
