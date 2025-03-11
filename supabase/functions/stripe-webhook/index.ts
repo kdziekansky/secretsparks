@@ -11,18 +11,6 @@ const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY') || '';
 const endpointSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET') || '';
 // ===== KONIEC KONFIGURACJI =====
 
-// Inicjalizuj klienty
-const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false
-  }
-});
-
-const stripe = new Stripe(stripeSecretKey, {
-  apiVersion: '2023-10-16',
-});
-
 // Ustaw nagłówki CORS
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -33,6 +21,7 @@ serve(async (req) => {
   console.log("========== WEBHOOK INVOKED ==========");
   console.log("Method:", req.method);
   console.log("URL:", req.url);
+  console.log("Headers:", Object.fromEntries([...req.headers.entries()]));
   
   // Obsługa CORS preflight
   if (req.method === 'OPTIONS') {
@@ -40,9 +29,8 @@ serve(async (req) => {
   }
   
   try {
-    // Pobierz body i nagłówki
-    const body = await req.text();
-    const signature = req.headers.get('stripe-signature');
+    // Inicjalizuj klienty - przeniesiono do wnętrza try-catch
+    console.log("Inicjalizacja klientów Supabase i Stripe");
     
     // Sprawdź i wypisz klucze konfiguracyjne (bezpiecznie, bez pokazywania pełnych wartości)
     console.log("Konfiguracja Supabase:");
@@ -51,12 +39,54 @@ serve(async (req) => {
     console.log("- STRIPE_SECRET_KEY:", stripeSecretKey ? `ustawiony (${stripeSecretKey.slice(0, 5)}...)` : "BRAK");
     console.log("- STRIPE_WEBHOOK_SECRET:", endpointSecret ? `ustawiony (${endpointSecret.slice(0, 5)}...)` : "BRAK");
     
+    // Jeśli brakuje kluczy, zwróć błąd wcześniej
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.error("Brak wymaganych kluczy Supabase!");
+      return new Response(JSON.stringify({ error: "Brak wymaganych kluczy Supabase", received: true }), {
+        status: 200, // Zawsze 200 dla Stripe
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    
+    if (!stripeSecretKey) {
+      console.error("Brak wymaganego klucza Stripe!");
+      return new Response(JSON.stringify({ error: "Brak wymaganego klucza Stripe", received: true }), {
+        status: 200, // Zawsze 200 dla Stripe
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    
+    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    });
+    
+    const stripe = new Stripe(stripeSecretKey, {
+      apiVersion: '2023-10-16',
+    });
+    
+    // Pobierz body i nagłówki
+    const body = await req.text();
+    console.log("Raw body length:", body.length);
+    console.log("Body preview:", body.substring(0, 200) + "...");
+    
     // Sparsuj event
     let event;
     
-    // WAŻNA ZMIANA: Zawsze parsuj body jako JSON bez względu na podpis
-    // Weryfikacja podpisu może być włączona później, gdy wszystko inne działa
-    event = JSON.parse(body);
+    try {
+      // Najpierw spróbuj sparsować jako JSON
+      event = JSON.parse(body);
+      console.log("Pomyślnie sparsowano JSON");
+    } catch (parseError) {
+      console.error("Błąd parsowania JSON:", parseError.message);
+      return new Response(JSON.stringify({ error: "Nieprawidłowy format JSON", received: true }), {
+        status: 200, // Zawsze 200 dla Stripe
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    
     console.log("Typ zdarzenia:", event.type);
     
     // Obsługa zdarzenia checkout.session.completed
@@ -69,8 +99,23 @@ serve(async (req) => {
       
       if (!orderId) {
         console.error("Brak ID zamówienia w sesji:", session.id);
-        return new Response(JSON.stringify({ error: "Brak ID zamówienia" }), {
+        return new Response(JSON.stringify({ error: "Brak ID zamówienia", received: true }), {
           status: 200, // Zwracamy 200 aby Stripe nie próbował ponownie
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      
+      // Test połączenia z bazą danych
+      const { data: testData, error: testError } = await supabase
+        .from('orders')
+        .select('id')
+        .limit(1);
+      
+      console.log("Test połączenia z bazą danych:", testError ? `BŁĄD: ${testError.message}` : "SUKCES");
+      if (testError) {
+        console.error("Błąd połączenia z bazą danych:", testError);
+        return new Response(JSON.stringify({ error: `Błąd połączenia z bazą danych: ${testError.message}`, received: true }), {
+          status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
@@ -90,8 +135,7 @@ serve(async (req) => {
       console.log("Wynik aktualizacji:", error ? `BŁĄD: ${error.message}` : "SUKCES");
       if (error) {
         console.error("Błąd aktualizacji bazy danych:", error);
-        // Zwracamy 200 nawet w przypadku błędu, aby Stripe nie ponawiał próby
-        return new Response(JSON.stringify({ error: `Aktualizacja bazy danych nie powiodła się: ${error.message}` }), {
+        return new Response(JSON.stringify({ error: `Aktualizacja bazy danych nie powiodła się: ${error.message}`, received: true }), {
           status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
@@ -145,6 +189,7 @@ serve(async (req) => {
   } catch (error) {
     // Loguj i zwróć błąd, ale zawsze z kodem 200 dla Stripe
     console.error("Ogólny błąd webhooka:", error.message);
+    console.error("Stack trace:", error.stack);
     return new Response(JSON.stringify({ error: error.message, received: true }), {
       status: 200, // Zawsze zwracamy 200 do Stripe
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
