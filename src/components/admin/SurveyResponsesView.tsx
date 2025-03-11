@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Loader2, RefreshCw } from 'lucide-react';
 import { questionsDatabase } from '@/contexts/questions-data';
@@ -46,7 +45,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
   const [refreshedResponses, setRefreshedResponses] = useState<SurveyResponse[] | null>(null);
   const [refreshLoading, setRefreshLoading] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
-  const [viewType, setViewType] = useState<'cards' | 'table'>('table');
+  const [viewType, setViewType<'cards' | 'table'>('table');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
   // More comprehensive order ID extraction
