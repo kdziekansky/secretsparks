@@ -16,7 +16,6 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminOrders from "./pages/admin/AdminOrders";
 import { AdminAuthProvider } from "./contexts/AdminAuthContext";
 
-// Create a client with error handling
 const App = () => {
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
@@ -34,9 +33,9 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <SurveyProvider>
-          <AdminAuthProvider>
-            <BrowserRouter>
+        <BrowserRouter>
+          <SurveyProvider>
+            <AdminAuthProvider>
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/survey" element={<SurveyPage />} />
@@ -47,9 +46,9 @@ const App = () => {
                 <Route path="/spe43al-adm1n-p4nel/orders" element={<AdminOrders />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
-            </BrowserRouter>
-          </AdminAuthProvider>
-        </SurveyProvider>
+            </AdminAuthProvider>
+          </SurveyProvider>
+        </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
   );
