@@ -26,7 +26,7 @@ interface SurveyResponsesViewProps {
   isLoading: boolean;
 }
 
-const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, isLoading }) => {
+const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: initialResponses, isLoading }) => {
   const [refreshedResponses, setRefreshedResponses] = useState<SurveyResponse[] | null>(null);
   const [refreshLoading, setRefreshLoading] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
@@ -36,9 +36,9 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
   useEffect(() => {
     const extractOrderId = () => {
       // Try to get from responses
-      if (responses && responses.length > 0) {
-        console.log('Setting orderId from responses:', responses[0].order_id);
-        return responses[0].order_id;
+      if (initialResponses && initialResponses.length > 0) {
+        console.log('Setting orderId from responses:', initialResponses[0].order_id);
+        return initialResponses[0].order_id;
       }
       
       // Try to get from URL params
@@ -85,21 +85,20 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
     } else if (!newOrderId) {
       console.warn('No order ID could be extracted from any source');
     }
-  }, [responses, orderId]);
+  }, [initialResponses, orderId]);
   
   // Debug logging
   useEffect(() => {
     console.log('SurveyResponsesView state:', {
-      receivedResponses: responses,
+      receivedResponses: initialResponses,
       refreshedResponses,
       orderId,
       hasOrderId: !!orderId,
-      responsesLength: responses?.length || 0,
+      responsesLength: initialResponses?.length || 0,
       refreshedResponsesLength: refreshedResponses?.length || 0,
     });
-  }, [responses, refreshedResponses, orderId]);
+  }, [initialResponses, refreshedResponses, orderId]);
   
-  // Function to manually refresh responses with improved query and error handling
   const refreshResponses = async () => {
     if (!orderId) {
       console.error('No order ID available for refresh');
@@ -114,71 +113,41 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
       // Clear out any previous refreshed responses while loading
       setRefreshedResponses(null);
       
-      // Make sure we're using the exact order_id without any trimming or modification
-      const cleanOrderId = orderId.trim();
-      console.log(`Using cleaned order ID for query: "${cleanOrderId}"`);
+      const { data, error } = await supabase.functions.invoke('get-survey-responses', {
+        body: { orderId }
+      });
       
-      // Use direct API call to bypass any potential client issues
-      try {
-        const directData = await fetchFromSupabase(`survey_responses?order_id=eq.${encodeURIComponent(cleanOrderId)}`);
-        
-        console.log(`Direct API call returned ${directData?.length || 0} responses`);
-        
-        if (directData && directData.length > 0) {
-          setRefreshedResponses(directData);
-          toast.success(`Odpowiedzi odświeżone (${directData.length})`);
-          return;
-        }
-        
-        // If no data from direct call, try standard SDK call
-        const { data, error } = await supabase
-          .from('survey_responses')
-          .select('*')
-          .eq('order_id', cleanOrderId);
-          
-        if (error) {
-          console.error('Error fetching with SDK:', error);
-          throw error;
-        }
-        
-        console.log(`SDK query returned ${data?.length || 0} responses`);
-        
-        if (data && data.length > 0) {
-          setRefreshedResponses(data as SurveyResponse[]);
-          toast.success(`Odpowiedzi odświeżone (${data.length})`);
-        } else {
-          setRefreshedResponses([]);
-          toast.info('Brak odpowiedzi dla tego zamówienia w bazie danych');
-          
-          // Log all survey responses in the database for debugging
-          console.log('Fetching sample of all responses for debugging');
-          const { data: allResponses } = await supabase
-            .from('survey_responses')
-            .select('*')
-            .limit(20);
-            
-          console.log('Sample of all responses in database:', allResponses);
-        }
-      } catch (err) {
-        console.error('Failed to refresh responses:', err);
-        toast.error('Wystąpił błąd podczas odświeżania odpowiedzi');
+      if (error) {
+        throw error;
       }
+      
+      if (data.responses && data.responses.length > 0) {
+        console.log(`Received ${data.responses.length} responses from edge function`);
+        setRefreshedResponses(data.responses);
+        toast.success(`Odpowiedzi odświeżone (${data.responses.length})`);
+      } else {
+        setRefreshedResponses([]);
+        toast.info('Brak odpowiedzi dla tego zamówienia w bazie danych');
+      }
+    } catch (err: any) {
+      console.error('Failed to refresh responses:', err);
+      toast.error('Wystąpił błąd podczas odświeżania odpowiedzi');
     } finally {
       setRefreshLoading(false);
     }
   };
-  
+
   // Use refreshed responses if available, otherwise use the provided responses
-  const displayResponses = refreshedResponses || responses;
+  const responses = refreshedResponses || initialResponses;
   const currentLoading = refreshLoading || isLoading;
   
   // Auto-refresh responses when orderId changes or component mounts
   useEffect(() => {
-    if (orderId && (!responses || responses.length === 0) && !refreshLoading) {
+    if (orderId && (!initialResponses || initialResponses.length === 0) && !refreshLoading) {
       console.log('Auto-refreshing responses for order ID:', orderId);
       refreshResponses();
     }
-  }, [orderId, responses]);
+  }, [orderId, initialResponses]);
   
   if (currentLoading) {
     return (
@@ -189,7 +158,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
   }
 
   // The empty state with a clear message and prominent refresh button
-  if (!displayResponses || displayResponses.length === 0) {
+  if (!responses || responses.length === 0) {
     return (
       <div className="space-y-4">
         <div className="text-center p-6 border rounded-md bg-muted/10">
@@ -216,8 +185,8 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
   }
 
   // Group responses by user type
-  const userResponses = displayResponses.filter(r => r.user_type === 'user');
-  const partnerResponses = displayResponses.filter(r => r.user_type === 'partner');
+  const userResponses = responses.filter(r => r.user_type === 'user');
+  const partnerResponses = responses.filter(r => r.user_type === 'partner');
 
   console.log('User responses:', userResponses.length);
   console.log('Partner responses:', partnerResponses.length);
