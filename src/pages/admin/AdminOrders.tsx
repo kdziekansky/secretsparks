@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
@@ -24,7 +23,7 @@ import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { 
   Dialog, DialogContent, DialogDescription, 
-  DialogHeader, DialogTitle, DialogTabs, DialogTab
+  DialogHeader, DialogTitle
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SurveyResponsesView from '@/components/admin/SurveyResponsesView';
