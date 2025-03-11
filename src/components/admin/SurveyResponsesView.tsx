@@ -27,6 +27,21 @@ interface SurveyResponsesViewProps {
   isLoading: boolean;
 }
 
+const getRatingLabel = (rating: number): string => {
+  switch (rating) {
+    case 1:
+      return 'Nie, to nie dla mnie';
+    case 2:
+      return 'Może warto rozważyć';
+    case 3:
+      return 'Zdecydowanie tak!';
+    case 4:
+      return 'OK, jeśli jemu bardzo zależy';
+    default:
+      return 'Brak odpowiedzi';
+  }
+};
+
 const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: initialResponses, isLoading }) => {
   const [refreshedResponses, setRefreshedResponses] = useState<SurveyResponse[] | null>(null);
   const [refreshLoading, setRefreshLoading] = useState(false);
@@ -234,21 +249,10 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
               </CardHeader>
               <CardContent className="p-4">
                 <div className="flex items-center mt-2">
-                  <div className="w-full bg-gray-200 rounded-full h-2.5">
-                    <div 
-                      className="bg-primary h-2.5 rounded-full" 
-                      style={{ width: `${(response.answer / 5) * 100}%` }}
-                    ></div>
-                  </div>
-                  <Badge variant="outline" className="ml-2">
-                    {response.answer}/5
+                  <Badge variant="outline">
+                    {getRatingLabel(response.answer)}
                   </Badge>
                 </div>
-                {question?.description && (
-                  <p className="text-sm text-muted-foreground mt-2">
-                    {question.description}
-                  </p>
-                )}
               </CardContent>
             </Card>
           );

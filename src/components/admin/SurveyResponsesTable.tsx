@@ -58,6 +58,8 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
     typeof response.answer === 'number'
   ));
 
+  console.log(`Filtered ${safeResponses.length} responses for ${userType}`);
+
   if (safeResponses.length === 0) {
     return (
       <div className="text-center p-2 text-muted-foreground">
@@ -82,14 +84,6 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
               {getRatingLabel(answer)}
             </Badge>
           </TableCell>
-          <TableCell>
-            <div className="w-full bg-gray-200 rounded-full h-2.5">
-              <div 
-                className="bg-primary h-2.5 rounded-full" 
-                style={{ width: `${(answer / 4) * 100}%` }}
-              ></div>
-            </div>
-          </TableCell>
         </TableRow>
       );
     } catch (error) {
@@ -103,9 +97,8 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[60%]">Pytanie</TableHead>
+            <TableHead className="w-[70%]">Pytanie</TableHead>
             <TableHead>Ocena</TableHead>
-            <TableHead>Wizualizacja</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

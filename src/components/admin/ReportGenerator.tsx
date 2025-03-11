@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { FileDown, Loader2, RefreshCw } from 'lucide-react';
@@ -38,15 +39,31 @@ interface ReportGeneratorProps {
   order: Order | null;
 }
 
+// Function to get human-readable rating label
+const getRatingLabel = (rating: number): string => {
+  switch (rating) {
+    case 1:
+      return 'Nie, to nie dla mnie';
+    case 2:
+      return 'Może warto rozważyć';
+    case 3:
+      return 'Zdecydowanie tak!';
+    case 4:
+      return 'OK, jeśli jemu bardzo zależy';
+    default:
+      return 'Brak odpowiedzi';
+  }
+};
+
 const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialResponses, order }) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [hasResponses, setHasResponses] = useState(false);
   const [responses, setResponses] = useState<SurveyResponse[] | null>(initialResponses);
 
-  // Add additional logging to debug responses
-  console.log("ReportGenerator received initial responses:", initialResponses);
-  console.log("ReportGenerator received order:", order);
+  // Log diagnostics
+  console.log("ReportGenerator received initial responses:", initialResponses?.length || 0);
+  console.log("ReportGenerator received order:", order?.id);
 
   // Effect to check for responses on mount and when responses change
   useEffect(() => {
@@ -148,7 +165,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
     }
 
     setIsGenerating(true);
-    console.log("Generating PDF with:", { responses, order });
+    console.log("Generating PDF with responses:", responses.length);
     
     try {
       // Create new PDF document
@@ -168,7 +185,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
       const userResponses = responses.filter(r => r.user_type === 'user');
       const partnerResponses = responses.filter(r => r.user_type === 'partner');
 
-      console.log("Filtered responses for PDF:", { userResponses, partnerResponses });
+      console.log("Filtered responses for PDF:", { userResponses: userResponses.length, partnerResponses: partnerResponses.length });
 
       // Helper to format responses for the PDF table
       const formatResponsesForTable = (responses: SurveyResponse[]) => {
@@ -176,7 +193,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
           const question = questionsDatabase.find(q => q.id === response.question_id);
           return [
             question?.text || 'Pytanie niedostępne',
-            response.answer.toString() + '/5'
+            getRatingLabel(response.answer)
           ];
         });
       };
