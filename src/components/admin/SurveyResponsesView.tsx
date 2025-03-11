@@ -1,6 +1,4 @@
-
 import React, { useEffect, useState } from 'react';
-import { Loader2, RefreshCw, AlertTriangle } from 'lucide-react';
 import { questionsDatabase } from '@/contexts/questions-data';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -10,6 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SurveyResponsesTable from './SurveyResponsesTable';
 import ReportGenerator from './ReportGenerator';
+import { Loader2, RefreshCw, AlertTriangle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface SurveyResponse {
   id: string;
