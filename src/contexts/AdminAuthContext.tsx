@@ -59,6 +59,11 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
             // Is an admin user
             setIsAuthenticated(true);
             setAdminEmail(session.user.email);
+            
+            // If on login page and authenticated, redirect to dashboard
+            if (location.pathname === '/spe43al-adm1n-p4nel') {
+              navigate('/spe43al-adm1n-p4nel/dashboard');
+            }
           }
         } else {
           setIsAuthenticated(false);
@@ -100,6 +105,11 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
         } else {
           setIsAuthenticated(true);
           setAdminEmail(session.user.email);
+          
+          // Redirect to dashboard after sign in
+          if (location.pathname === '/spe43al-adm1n-p4nel') {
+            navigate('/spe43al-adm1n-p4nel/dashboard');
+          }
         }
       } else if (event === 'SIGNED_OUT') {
         setIsAuthenticated(false);

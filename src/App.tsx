@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SurveyProvider } from "./contexts/SurveyContext";
 import { useState } from "react";
 import Index from "./pages/Index";
@@ -15,6 +15,7 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminOrders from "./pages/admin/AdminOrders";
 import { AdminAuthProvider } from "./contexts/AdminAuthContext";
+import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute";
 
 const App = () => {
   const [queryClient] = useState(() => new QueryClient({
@@ -42,8 +43,22 @@ const App = () => {
                 <Route path="/payment" element={<PaymentPage />} />
                 <Route path="/thank-you" element={<ThankYouPage />} />
                 <Route path="/spe43al-adm1n-p4nel" element={<AdminLogin />} />
-                <Route path="/spe43al-adm1n-p4nel/dashboard" element={<AdminDashboard />} />
-                <Route path="/spe43al-adm1n-p4nel/orders" element={<AdminOrders />} />
+                <Route 
+                  path="/spe43al-adm1n-p4nel/dashboard" 
+                  element={
+                    <ProtectedAdminRoute>
+                      <AdminDashboard />
+                    </ProtectedAdminRoute>
+                  } 
+                />
+                <Route 
+                  path="/spe43al-adm1n-p4nel/orders" 
+                  element={
+                    <ProtectedAdminRoute>
+                      <AdminOrders />
+                    </ProtectedAdminRoute>
+                  } 
+                />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </AdminAuthProvider>
