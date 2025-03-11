@@ -117,10 +117,8 @@ const PaymentPage: React.FC = () => {
         order_id: orderId,
         question_id: questionId,
         answer: answer,
-        user_type: 'user',
-        user_gender: surveyConfig.userGender,
-        partner_gender: surveyConfig.partnerGender,
-        game_level: surveyConfig.gameLevel
+        user_type: 'user'
+        // User gender, partner gender and game level are removed as they don't exist in the database schema
       }));
       
       console.log('Saving responses:', responsesToSave);
@@ -161,7 +159,7 @@ const PaymentPage: React.FC = () => {
     setIsProcessing(true);
     
     try {
-      // Create order in database
+      // Create order in database - removing fields that don't exist in the schema
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .insert({
@@ -171,14 +169,16 @@ const PaymentPage: React.FC = () => {
           partner_email: partnerEmail,
           gift_wrap: giftWrap,
           price: PRODUCT_PRICE + (giftWrap ? 20 : 0),
-          user_gender: surveyConfig.userGender,
-          partner_gender: surveyConfig.partnerGender,
-          game_level: surveyConfig.gameLevel
+          // Removed fields that don't exist in your database schema
+          // user_gender: surveyConfig.userGender,
+          // partner_gender: surveyConfig.partnerGender,
+          // game_level: surveyConfig.gameLevel
         })
         .select()
         .single();
       
       if (orderError) {
+        console.error('Order creation error:', orderError);
         throw orderError;
       }
       
