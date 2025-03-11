@@ -9,6 +9,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SurveyResponsesTable from './SurveyResponsesTable';
+import ReportGenerator from './ReportGenerator';
 
 interface SurveyResponse {
   id: string;
@@ -48,6 +49,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
   const [orderId, setOrderId] = useState<string | null>(null);
   const [viewType, setViewType] = useState<'cards' | 'table'>('table');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [order, setOrder] = useState<any | null>(null);
   
   // More comprehensive order ID extraction
   useEffect(() => {
@@ -71,7 +73,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
       if (dialogDescription) {
         const text = dialogDescription.textContent || '';
         console.log('Dialog description text:', text);
-        const idMatch = text.match(/Identyfikator:\s*([a-f0-9-]+)/);
+        const idMatch = text.match(/Identyfikator:\\s*([a-f0-9-]+)/);
         if (idMatch && idMatch[1]) {
           console.log('Found orderId in dialog:', idMatch[1]);
           return idMatch[1];
@@ -99,10 +101,39 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
     if (newOrderId && newOrderId !== orderId) {
       console.log('Setting new order ID:', newOrderId);
       setOrderId(newOrderId);
+      
+      // Fetch order details when we have an order ID
+      if (newOrderId) {
+        fetchOrderDetails(newOrderId);
+      }
     } else if (!newOrderId) {
       console.warn('No order ID could be extracted from any source');
     }
   }, [initialResponses, orderId]);
+  
+  // Fetch order details when we have an ID
+  const fetchOrderDetails = async (id: string) => {
+    try {
+      console.log('Fetching order details for:', id);
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('id', id)
+        .single();
+        
+      if (error) {
+        console.error('Error fetching order details:', error);
+        return;
+      }
+      
+      if (data) {
+        console.log('Found order details:', data);
+        setOrder(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch order details:', err);
+    }
+  };
   
   // Debug logging
   useEffect(() => {
@@ -113,8 +144,9 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
       hasOrderId: !!orderId,
       responsesLength: initialResponses?.length || 0,
       refreshedResponsesLength: refreshedResponses?.length || 0,
+      order
     });
-  }, [initialResponses, refreshedResponses, orderId]);
+  }, [initialResponses, refreshedResponses, orderId, order]);
   
   const refreshResponses = async () => {
     if (!orderId) {
@@ -204,16 +236,25 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
           {errorMessage && (
             <p className="text-sm text-red-500 mb-4">{errorMessage}</p>
           )}
-          {orderId && (
-            <Button 
-              onClick={refreshResponses}
-              variant="default"
-              className="flex items-center gap-2"
-            >
-              <RefreshCw className="h-4 w-4" />
-              Odśwież odpowiedzi
-            </Button>
-          )}
+          
+          <div className="space-y-4">
+            {orderId && (
+              <Button 
+                onClick={refreshResponses}
+                variant="default"
+                className="flex items-center gap-2"
+              >
+                <RefreshCw className="h-4 w-4" />
+                Odśwież odpowiedzi
+              </Button>
+            )}
+            
+            {/* Add Report Generator even in empty state */}
+            <div className="mt-6 pt-4 border-t">
+              <h4 className="font-medium mb-3">Generowanie raportu</h4>
+              <ReportGenerator responses={responses} order={order} />
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -303,6 +344,10 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
           {errorMessage}
         </div>
       )}
+      
+      <div className="mb-6 border-b pb-4">
+        <ReportGenerator responses={responses} order={order} />
+      </div>
       
       {viewType === 'table' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -74,7 +74,11 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
 
   // Update local responses when props change
   useEffect(() => {
-    setResponses(initialResponses);
+    if (initialResponses !== null) {
+      console.log("Updating local responses from props:", initialResponses.length);
+      setResponses(initialResponses);
+      setHasResponses(!!(initialResponses && initialResponses.length > 0));
+    }
   }, [initialResponses]);
 
   // Function to refresh responses directly from the database
@@ -242,9 +246,17 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
     }
   };
 
-  const buttonDisabled = isGenerating || !order || !hasResponses;
+  // Only disable button if we're generating, have no order, or explicitly know there are no responses
+  // This allows clicking the button even when we're not sure if there are responses yet
+  const buttonDisabled = isGenerating || !order || (responses !== null && responses.length === 0);
   
-  console.log("Button disabled status:", buttonDisabled, { hasResponses, isGenerating, hasOrder: !!order });
+  console.log("Button disabled status:", buttonDisabled, { 
+    hasResponses, 
+    isGenerating, 
+    hasOrder: !!order,
+    responsesLength: responses?.length || 0,
+    responsesIsNull: responses === null 
+  });
 
   return (
     <div className="space-y-3">
