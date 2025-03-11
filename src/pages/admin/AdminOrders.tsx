@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { 
   Archive, CheckCircle, ChevronDown, ExternalLink, 
-  Eye, Loader2, Package, RotateCcw 
+  Eye, FileText, Loader2, Package, RotateCcw 
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { pl } from 'date-fns/locale';
@@ -24,8 +24,11 @@ import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { 
   Dialog, DialogContent, DialogDescription, 
-  DialogHeader, DialogTitle 
+  DialogHeader, DialogTitle, DialogTabs, DialogTab
 } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import SurveyResponsesView from '@/components/admin/SurveyResponsesView';
+import ReportGenerator from '@/components/admin/ReportGenerator';
 
 interface Order {
   id: string;
@@ -41,6 +44,15 @@ interface Order {
   archived: boolean;
 }
 
+interface SurveyResponse {
+  id: string;
+  order_id: string;
+  question_id: string;
+  answer: number;
+  user_type: 'user' | 'partner';
+  created_at: string;
+}
+
 const AdminOrders: React.FC = () => {
   const { isAuthenticated, isLoading: authLoading } = useAdminAuth();
   const navigate = useNavigate();
@@ -48,6 +60,7 @@ const AdminOrders: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("details");
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -79,6 +92,29 @@ const AdminOrders: React.FC = () => {
     enabled: isAuthenticated,
   });
 
+  const {
+    data: surveyResponses,
+    isLoading: responsesLoading,
+  } = useQuery({
+    queryKey: ['survey-responses', selectedOrder?.id],
+    queryFn: async () => {
+      if (!selectedOrder?.id) return null;
+      
+      const { data, error } = await supabase
+        .from('survey_responses')
+        .select('*')
+        .eq('order_id', selectedOrder.id);
+
+      if (error) {
+        console.error('Error fetching survey responses:', error);
+        throw error;
+      }
+      
+      return data as SurveyResponse[];
+    },
+    enabled: isAuthenticated && !!selectedOrder?.id,
+  });
+
   const handleToggleArchive = async (order: Order) => {
     try {
       const { error } = await supabase
@@ -100,6 +136,13 @@ const AdminOrders: React.FC = () => {
 
   const viewOrderDetails = (order: Order) => {
     setSelectedOrder(order);
+    setActiveTab("details");
+    setIsDetailsOpen(true);
+  };
+
+  const viewSurveyResponses = (order: Order) => {
+    setSelectedOrder(order);
+    setActiveTab("responses");
     setIsDetailsOpen(true);
   };
 
@@ -217,6 +260,10 @@ const AdminOrders: React.FC = () => {
                             <Eye className="mr-2 h-4 w-4" />
                             Szczegóły zamówienia
                           </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => viewSurveyResponses(order)}>
+                            <FileText className="mr-2 h-4 w-4" />
+                            Odpowiedzi z ankiety
+                          </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleToggleArchive(order)}>
                             {order.archived ? (
                               <>
@@ -262,78 +309,105 @@ const AdminOrders: React.FC = () => {
           </div>
         )}
 
-        {/* Order Details Dialog */}
+        {/* Order Details Dialog with Tabs */}
         <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
           <DialogContent className="max-w-3xl">
             <DialogHeader>
-              <DialogTitle>Szczegóły zamówienia</DialogTitle>
+              <DialogTitle>
+                {activeTab === "details" ? "Szczegóły zamówienia" : "Odpowiedzi z ankiety"}
+              </DialogTitle>
               <DialogDescription>
                 Identyfikator: {selectedOrder?.id}
               </DialogDescription>
             </DialogHeader>
 
-            {selectedOrder && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="font-medium">Zamawiający</h3>
-                    <p>{selectedOrder.user_name}</p>
-                    <p className="text-sm text-muted-foreground">{selectedOrder.user_email}</p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-medium">Partner</h3>
-                    <p>{selectedOrder.partner_name}</p>
-                    <p className="text-sm text-muted-foreground">{selectedOrder.partner_email}</p>
-                  </div>
-                  
-                  {selectedOrder.partner_survey_token && (
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        navigator.clipboard.writeText(
-                          `${window.location.origin}/survey?token=${selectedOrder.partner_survey_token}`
-                        );
-                        toast.success('Link skopiowany do schowka');
-                      }}
-                    >
-                      <ExternalLink className="mr-2 h-4 w-4" />
-                      Kopiuj link do ankiety partnera
-                    </Button>
-                  )}
-                </div>
+            <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="details">Szczegóły</TabsTrigger>
+                <TabsTrigger value="responses">Odpowiedzi</TabsTrigger>
+              </TabsList>
 
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="font-medium">Dane zamówienia</h3>
-                    <p>Status: {selectedOrder.status === 'completed' ? 'Zapłacone' : 'Oczekujące'}</p>
-                    <p>Data: {new Date(selectedOrder.created_at).toLocaleString('pl-PL')}</p>
-                    <p>Wartość: {selectedOrder.price} zł</p>
-                    <p>Pakowanie na prezent: {selectedOrder.gift_wrap ? 'Tak' : 'Nie'}</p>
+              <TabsContent value="details">
+                {selectedOrder && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <div>
+                        <h3 className="font-medium">Zamawiający</h3>
+                        <p>{selectedOrder.user_name}</p>
+                        <p className="text-sm text-muted-foreground">{selectedOrder.user_email}</p>
+                      </div>
+                      
+                      <div>
+                        <h3 className="font-medium">Partner</h3>
+                        <p>{selectedOrder.partner_name}</p>
+                        <p className="text-sm text-muted-foreground">{selectedOrder.partner_email}</p>
+                      </div>
+                      
+                      {selectedOrder.partner_survey_token && (
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            navigator.clipboard.writeText(
+                              `${window.location.origin}/survey?token=${selectedOrder.partner_survey_token}`
+                            );
+                            toast.success('Link skopiowany do schowka');
+                          }}
+                        >
+                          <ExternalLink className="mr-2 h-4 w-4" />
+                          Kopiuj link do ankiety partnera
+                        </Button>
+                      )}
+                    </div>
+
+                    <div className="space-y-4">
+                      <div>
+                        <h3 className="font-medium">Dane zamówienia</h3>
+                        <p>Status: {selectedOrder.status === 'completed' ? 'Zapłacone' : 'Oczekujące'}</p>
+                        <p>Data: {new Date(selectedOrder.created_at).toLocaleString('pl-PL')}</p>
+                        <p>Wartość: {selectedOrder.price} zł</p>
+                        <p>Pakowanie na prezent: {selectedOrder.gift_wrap ? 'Tak' : 'Nie'}</p>
+                      </div>
+                      
+                      <Button
+                        variant={selectedOrder.archived ? "default" : "outline"}
+                        onClick={() => {
+                          handleToggleArchive(selectedOrder);
+                          setIsDetailsOpen(false);
+                        }}
+                      >
+                        {selectedOrder.archived ? (
+                          <>
+                            <RotateCcw className="mr-2 h-4 w-4" />
+                            Przywróć z archiwum
+                          </>
+                        ) : (
+                          <>
+                            <Archive className="mr-2 h-4 w-4" />
+                            Archiwizuj zamówienie
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="responses">
+                <div className="space-y-6">
+                  <SurveyResponsesView 
+                    responses={surveyResponses} 
+                    isLoading={responsesLoading} 
+                  />
                   
-                  <Button
-                    variant={selectedOrder.archived ? "default" : "outline"}
-                    onClick={() => {
-                      handleToggleArchive(selectedOrder);
-                      setIsDetailsOpen(false);
-                    }}
-                  >
-                    {selectedOrder.archived ? (
-                      <>
-                        <RotateCcw className="mr-2 h-4 w-4" />
-                        Przywróć z archiwum
-                      </>
-                    ) : (
-                      <>
-                        <Archive className="mr-2 h-4 w-4" />
-                        Archiwizuj zamówienie
-                      </>
-                    )}
-                  </Button>
+                  <div className="flex justify-end mt-6">
+                    <ReportGenerator 
+                      responses={surveyResponses} 
+                      order={selectedOrder}
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
+              </TabsContent>
+            </Tabs>
           </DialogContent>
         </Dialog>
       </div>
