@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { questionsDatabase } from '@/contexts/questions-data';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -51,7 +51,6 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
   const [refreshedResponses, setRefreshedResponses] = useState<SurveyResponse[]>([]);
   const [refreshLoading, setRefreshLoading] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
-  const [viewType, setViewType] = useState<'table'>('table');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [order, setOrder] = useState<any | null>(null);
   
@@ -139,19 +138,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
     }
   };
   
-  // Debug logging
-  useEffect(() => {
-    console.log('SurveyResponsesView state:', {
-      receivedResponses: safeInitialResponses,
-      refreshedResponses,
-      orderId,
-      hasOrderId: !!orderId,
-      responsesLength: safeInitialResponses.length,
-      refreshedResponsesLength: refreshedResponses.length,
-      order
-    });
-  }, [safeInitialResponses, refreshedResponses, orderId, order]);
-  
+  // Updated refresh function to use the Edge Function directly
   const refreshResponses = async () => {
     if (!orderId) {
       console.error('No order ID available for refresh');
@@ -168,7 +155,40 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
       // Clear out any previous refreshed responses while loading
       setRefreshedResponses([]);
       
-      // Try to get responses directly with SDK first
+      // First attempt: Try the Edge Function with URL parameters
+      try {
+        console.log('Attempting to fetch responses using Edge Function');
+        
+        const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-survey-responses?orderId=${encodeURIComponent(orderId)}`;
+        const response = await fetch(apiUrl, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Edge function returned status ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.responses && result.responses.length > 0) {
+          console.log(`Retrieved ${result.responses.length} responses from Edge Function`);
+          setRefreshedResponses(result.responses);
+          setHasResponses(true);
+          toast.success(`Odpowiedzi odświeżone (${result.responses.length})`);
+          return;
+        } else {
+          console.log('Edge Function returned no responses, trying alternative methods');
+        }
+      } catch (edgeFnError) {
+        console.error('Edge Function error:', edgeFnError);
+        // Continue to fallback methods
+      }
+      
+      // Second attempt: Try to get responses directly with SDK
       const { data, error } = await supabase
         .from('survey_responses')
         .select('*')
@@ -176,29 +196,119 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
       
       if (error) {
         console.error('Error fetching responses with SDK:', error);
-        setErrorMessage(`Błąd: ${error.message}`);
-        throw error;
+        // Don't throw yet, continue to more fallbacks
       }
       
       if (data && data.length > 0) {
         console.log(`Retrieved ${data.length} responses from database`);
         setRefreshedResponses(data);
+        setHasResponses(true);
         toast.success(`Odpowiedzi odświeżone (${data.length})`);
-      } else {
-        console.log('No responses found in database');
-        setRefreshedResponses([]);
-        toast.info('Brak odpowiedzi dla tego zamówienia w bazie danych');
+        return;
       }
+      
+      // Third attempt: Try direct API call
+      try {
+        console.log('Trying direct API call');
+        const directUrl = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/survey_responses?order_id=eq.${encodeURIComponent(orderId)}`;
+        
+        const directResponse = await fetch(directUrl, {
+          headers: {
+            'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+          }
+        });
+        
+        if (!directResponse.ok) {
+          throw new Error(`Direct API call failed with status ${directResponse.status}`);
+        }
+        
+        const directData = await directResponse.json();
+        
+        if (directData && directData.length > 0) {
+          console.log(`Retrieved ${directData.length} responses from direct API call`);
+          setRefreshedResponses(directData);
+          setHasResponses(true);
+          toast.success(`Odpowiedzi odświeżone (${directData.length})`);
+          return;
+        }
+      } catch (directApiError) {
+        console.error('Direct API call error:', directApiError);
+      }
+      
+      // Fourth attempt: Try posting to the Edge Function
+      try {
+        console.log('Trying POST to Edge Function');
+        
+        const postUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-survey-responses`;
+        const postResponse = await fetch(postUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ orderId })
+        });
+        
+        if (!postResponse.ok) {
+          throw new Error(`POST to Edge Function failed with status ${postResponse.status}`);
+        }
+        
+        const postResult = await postResponse.json();
+        
+        if (postResult.responses && postResult.responses.length > 0) {
+          console.log(`Retrieved ${postResult.responses.length} responses from Edge Function POST`);
+          setRefreshedResponses(postResult.responses);
+          setHasResponses(true);
+          toast.success(`Odpowiedzi odświeżone (${postResult.responses.length})`);
+          return;
+        }
+      } catch (postError) {
+        console.error('POST to Edge Function error:', postError);
+      }
+      
+      // If we get here, no responses were found
+      console.log('No responses found in any data source');
+      setRefreshedResponses([]);
+      setHasResponses(false);
+      toast.info('Brak odpowiedzi dla tego zamówienia w bazie danych');
+      
     } catch (err: any) {
       console.error('Failed to refresh responses:', err);
       setErrorMessage(`Błąd: ${err.message}`);
       toast.error('Wystąpił błąd podczas odświeżania odpowiedzi');
       // Ensure we set empty responses array to avoid undefined
       setRefreshedResponses([]);
+      setHasResponses(false);
     } finally {
       setRefreshLoading(false);
     }
   };
+
+  // Debug logging
+  useEffect(() => {
+    console.log('SurveyResponsesView state:', {
+      receivedResponses: safeInitialResponses,
+      refreshedResponses,
+      orderId,
+      hasOrderId: !!orderId,
+      responsesLength: safeInitialResponses.length,
+      refreshedResponsesLength: refreshedResponses.length,
+      order
+    });
+  }, [safeInitialResponses, refreshedResponses, orderId, order]);
+
+  // State to track if we have any responses
+  const [hasResponses, setHasResponses] = useState<boolean>(false);
+
+  // Effect to check for responses on mount and when responses change
+  useEffect(() => {
+    const hasValidResponses = !!(responses && responses.length > 0);
+    console.log("Setting hasResponses to:", hasValidResponses);
+    setHasResponses(hasValidResponses);
+  }, [responses]);
 
   // Use refreshed responses if available, otherwise use the provided responses
   // Ensure we never have undefined responses by defaulting to empty array
@@ -216,7 +326,8 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
   if (currentLoading) {
     return (
       <div className="flex justify-center p-4">
-        <Loader2 className="h-6 w-6 animate-spin" />
+        <Loader2 className="h-6 w-6 animate-spin mr-2" />
+        <span>Ładowanie odpowiedzi...</span>
       </div>
     );
   }
@@ -234,7 +345,12 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
             }
           </p>
           {errorMessage && (
-            <p className="text-sm text-red-500 mb-4">{errorMessage}</p>
+            <Alert variant="destructive" className="mb-4">
+              <AlertTriangle className="h-4 w-4 mr-2" />
+              <AlertDescription>
+                {errorMessage}
+              </AlertDescription>
+            </Alert>
           )}
           
           <div className="space-y-4">
@@ -244,8 +360,17 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
                 variant="default"
                 className="flex items-center gap-2"
               >
-                <RefreshCw className="h-4 w-4" />
-                Odśwież odpowiedzi
+                {refreshLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Odświeżanie...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="h-4 w-4" />
+                    Odśwież odpowiedzi
+                  </>
+                )}
               </Button>
             )}
             
@@ -289,9 +414,12 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
       </div>
       
       {errorMessage && (
-        <div className="p-2 mb-4 bg-red-50 border border-red-200 rounded text-red-600 text-sm">
-          {errorMessage}
-        </div>
+        <Alert variant="destructive" className="mb-4">
+          <AlertTriangle className="h-4 w-4 mr-2" />
+          <AlertDescription>
+            {errorMessage}
+          </AlertDescription>
+        </Alert>
       )}
       
       <div className="mb-6 border-b pb-4">

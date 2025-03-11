@@ -92,7 +92,40 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
     try {
       console.log(`Refreshing responses for order ID: ${order.id}`);
       
-      // Try direct API call first
+      // First attempt: Try the Edge Function with URL parameters
+      try {
+        console.log('Attempting to fetch responses using Edge Function');
+        
+        const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-survey-responses?orderId=${encodeURIComponent(order.id)}`;
+        const response = await fetch(apiUrl, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Edge function returned status ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.responses && result.responses.length > 0) {
+          console.log(`Retrieved ${result.responses.length} responses from Edge Function`);
+          setResponses(result.responses);
+          setHasResponses(true);
+          toast.success(`Odpowiedzi odświeżone (${result.responses.length})`);
+          return;
+        } else {
+          console.log('Edge Function returned no responses, trying alternative methods');
+        }
+      } catch (edgeFnError) {
+        console.error('Edge Function error:', edgeFnError);
+        // Continue to fallback methods
+      }
+      
+      // Try direct API call 
       try {
         const directData = await fetchFromSupabase(`survey_responses?order_id=eq.${encodeURIComponent(order.id.trim())}`);
         
@@ -118,7 +151,6 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
       if (error) {
         console.error('Error refreshing responses:', error);
         toast.error('Błąd podczas odświeżania odpowiedzi: ' + error.message);
-        setResponses([]);
         return;
       }
       
@@ -194,58 +226,63 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
       // Helper to format responses for the PDF table
       const formatResponsesForTable = (responses: SurveyResponse[]) => {
         return responses.map(response => {
-          const question = questionsDatabase.find(q => q.id === response.question_id);
+          const questionObj = questionsDatabase.find(q => q.id === response.question_id);
+          const questionText = questionObj ? questionObj.text : `Pytanie (ID: ${response.question_id})`;
           return [
-            question?.text || 'Pytanie niedostępne',
+            questionText,
             getRatingLabel(response.answer)
           ];
         });
       };
 
+      // Fixed starting position
+      let currentY = 65;
+      
       // Add user responses section header
       doc.setFontSize(14);
-      doc.text("Odpowiedzi zamawiającego", 14, 65);
+      doc.text("Odpowiedzi zamawiającego", 14, currentY);
+      currentY += 10;
       
       if (userResponses.length > 0) {
         // Add user responses table
         doc.autoTable({
-          startY: 70,
+          startY: currentY,
           head: [['Pytanie', 'Odpowiedź']],
           body: formatResponsesForTable(userResponses),
         });
+        
+        // Get the last Y position after the table
+        currentY = (doc as any).lastAutoTable.finalY + 15;
       } else {
         doc.setFontSize(12);
-        doc.text("Brak odpowiedzi od zamawiającego", 14, 75);
+        doc.text("Brak odpowiedzi od zamawiającego", 14, currentY);
+        currentY += 15;
       }
 
-      // Calculate start position for partner section
-      // This is important - need to make sure text doesn't overlap with previous content
-      let partnerStartY;
-      if (userResponses.length > 0) {
-        // If we added a table, get its ending Y position and add some margin
-        partnerStartY = (doc as any).lastAutoTable.finalY + 15;
-      } else {
-        // If we only added the "no responses" text, use a fixed position with margin
-        partnerStartY = 90;
-      }
-      
       // Add partner responses section header
       doc.setFontSize(14);
-      doc.text("Odpowiedzi partnera", 14, partnerStartY);
+      doc.text("Odpowiedzi partnera", 14, currentY);
+      currentY += 10;
       
       if (partnerResponses.length > 0) {
         // Add partner responses table
         doc.autoTable({
-          startY: partnerStartY + 5,
+          startY: currentY,
           head: [['Pytanie', 'Odpowiedź']],
           body: formatResponsesForTable(partnerResponses),
         });
       } else {
         doc.setFontSize(12);
-        doc.text("Brak odpowiedzi od partnera", 14, partnerStartY + 10);
+        doc.text("Brak odpowiedzi od partnera", 14, currentY);
       }
 
-      // Save PDF
+      // Add a note at the bottom if there are no responses at all
+      if (userResponses.length === 0 && partnerResponses.length === 0) {
+        doc.setFontSize(12);
+        doc.text("Uwaga: To zamówienie nie zawiera żadnych odpowiedzi ankietowych.", 14, doc.internal.pageSize.height - 20);
+      }
+
+      // Save PDF with orderId in the name
       doc.save(`secret-sparks-raport-${order.id.substring(0, 8)}.pdf`);
       
       toast.success("Raport został wygenerowany pomyślnie");

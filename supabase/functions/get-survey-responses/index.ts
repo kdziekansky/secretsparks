@@ -23,89 +23,88 @@ Deno.serve(async (req) => {
       }
     )
 
-    const { orderId } = await req.json()
-    if (!orderId) {
-      throw new Error('Missing orderId parameter')
+    // Handle both JSON body and URL parameter formats
+    let orderId = '';
+    const url = new URL(req.url);
+    const urlParamOrderId = url.searchParams.get('orderId');
+    
+    if (urlParamOrderId) {
+      // If orderId is in URL parameters
+      orderId = urlParamOrderId;
+      console.log('Using orderId from URL parameters:', orderId);
+    } else {
+      // If orderId is in request body
+      try {
+        const body = await req.json();
+        orderId = body.orderId;
+        console.log('Using orderId from request body:', orderId);
+      } catch (error) {
+        console.error('Error parsing request body:', error.message);
+        throw new Error('Invalid request format - could not parse body');
+      }
     }
 
-    console.log('Fetching responses for order:', orderId)
+    if (!orderId) {
+      throw new Error('Missing orderId parameter');
+    }
+
+    console.log('Fetching responses for order:', orderId);
     
-    // Try different query approaches to ensure we get the data
+    // Try multiple approaches to ensure we get the data
     let responses = null;
     let queryError = null;
     
-    // Approach 1: Standard query
+    // Approach 1: Direct SQL query for maximum reliability
     try {
-      const { data, error } = await supabaseClient
-        .from('survey_responses')
-        .select('*')
-        .eq('order_id', orderId)
+      console.log('Trying approach 1: Direct SQL query');
+      const { data, error } = await supabaseClient.rpc(
+        'execute_sql',
+        { 
+          query: `SELECT * FROM survey_responses WHERE order_id = '${orderId}'` 
+        }
+      );
       
       if (error) {
-        console.error('Error in approach 1:', error.message)
-        queryError = error
+        console.error('Error in approach 1:', error.message);
+        console.log('Direct SQL not available, falling back to simple query');
       } else if (data && data.length > 0) {
-        console.log(`Approach 1 successful, found ${data.length} responses`)
-        responses = data
+        console.log(`Approach 1 successful, found ${data.length} responses`);
+        responses = data;
       } else {
-        console.log('Approach 1: No data found')
+        console.log('Approach 1: No data found');
       }
     } catch (err) {
-      console.error('Exception in approach 1:', err.message)
+      console.error('Exception in approach 1:', err.message);
     }
     
-    // Approach 2: Direct RPC call if approach 1 failed
+    // Approach 2: Standard query if approach 1 failed
     if (!responses) {
       try {
-        console.log('Trying approach 2: RPC call')
-        const { data, error } = await supabaseClient.rpc(
-          'get_survey_responses_by_order_id',
-          { order_id_param: orderId }
-        )
+        console.log('Trying approach 2: Standard query');
+        const { data, error } = await supabaseClient
+          .from('survey_responses')
+          .select('*')
+          .eq('order_id', orderId);
         
         if (error) {
-          console.error('Error in approach 2:', error.message)
+          console.error('Error in approach 2:', error.message);
+          queryError = error;
         } else if (data && data.length > 0) {
-          console.log(`Approach 2 successful, found ${data.length} responses`)
-          responses = data
+          console.log(`Approach 2 successful, found ${data.length} responses`);
+          responses = data;
         } else {
-          console.log('Approach 2: No data found or RPC function may not exist')
+          console.log('Approach 2: No data found');
         }
       } catch (err) {
-        console.error('Exception in approach 2:', err.message)
+        console.error('Exception in approach 2:', err.message);
       }
     }
     
-    // Approach 3: Raw SQL query if approaches 1 and 2 failed
+    // Approach 3: Direct REST API call
     if (!responses) {
       try {
-        console.log('Trying approach 3: Raw SQL query')
-        const { data, error } = await supabaseClient.rpc(
-          'execute_sql',
-          { 
-            query: `SELECT * FROM survey_responses WHERE order_id = '${orderId}'` 
-          }
-        )
-        
-        if (error) {
-          console.error('Error in approach 3:', error.message)
-          console.log('Raw SQL not available, falling back to simple query')
-        } else if (data && data.length > 0) {
-          console.log(`Approach 3 successful, found ${data.length} responses`)
-          responses = data
-        } else {
-          console.log('Approach 3: No data found or function may not exist')
-        }
-      } catch (err) {
-        console.error('Exception in approach 3:', err.message)
-      }
-    }
-    
-    // Fallback approach: Direct REST API call
-    if (!responses) {
-      try {
-        console.log('Trying fallback approach: Direct API call')
-        const apiUrl = `${Deno.env.get('SUPABASE_URL')}/rest/v1/survey_responses?order_id=eq.${encodeURIComponent(orderId)}`
+        console.log('Trying approach 3: Direct API call');
+        const apiUrl = `${Deno.env.get('SUPABASE_URL')}/rest/v1/survey_responses?order_id=eq.${encodeURIComponent(orderId)}`;
         
         const apiResponse = await fetch(apiUrl, {
           headers: {
@@ -114,21 +113,43 @@ Deno.serve(async (req) => {
             'Content-Type': 'application/json',
             'Prefer': 'return=representation'
           }
-        })
+        });
         
         if (!apiResponse.ok) {
-          throw new Error(`API request failed with status ${apiResponse.status}`)
+          throw new Error(`API request failed with status ${apiResponse.status}`);
         }
         
-        const data = await apiResponse.json()
+        const data = await apiResponse.json();
         if (data && data.length > 0) {
-          console.log(`Fallback approach successful, found ${data.length} responses`)
-          responses = data
+          console.log(`Approach 3 successful, found ${data.length} responses`);
+          responses = data;
         } else {
-          console.log('Fallback approach: No data found')
+          console.log('Approach 3: No data found');
         }
       } catch (err) {
-        console.error('Exception in fallback approach:', err.message)
+        console.error('Exception in approach 3:', err.message);
+      }
+    }
+    
+    // Approach 4: Try using a filter instead of eq
+    if (!responses) {
+      try {
+        console.log('Trying approach 4: Using filter instead of eq');
+        const { data, error } = await supabaseClient
+          .from('survey_responses')
+          .select('*')
+          .filter('order_id', 'eq', orderId);
+          
+        if (error) {
+          console.error('Error in approach 4:', error.message);
+        } else if (data && data.length > 0) {
+          console.log(`Approach 4 successful, found ${data.length} responses`);
+          responses = data;
+        } else {
+          console.log('Approach 4: No data found');
+        }
+      } catch (err) {
+        console.error('Exception in approach 4:', err.message);
       }
     }
     
@@ -138,17 +159,17 @@ Deno.serve(async (req) => {
         .from('orders')
         .select('id')
         .eq('id', orderId)
-        .single()
+        .single();
         
       if (orderError) {
-        console.error('Error verifying order:', orderError.message)
+        console.error('Error verifying order:', orderError.message);
       } else if (orderData) {
-        console.log(`Order verified to exist: ${orderData.id}`)
+        console.log(`Order verified to exist: ${orderData.id}`);
       } else {
-        console.log('Order not found in database')
+        console.log('Order not found in database');
       }
     } catch (err) {
-      console.error('Exception verifying order:', err.message)
+      console.error('Exception verifying order:', err.message);
     }
     
     // Validate response data before returning
@@ -179,6 +200,45 @@ Deno.serve(async (req) => {
       );
     } else {
       console.log('No responses found after all attempts or validation failed');
+      // Create a basic sample response for testing if requested
+      const includeSample = url.searchParams.get('includeSample') === 'true';
+      
+      if (includeSample) {
+        console.log('Including sample data as requested');
+        const sampleResponses = [
+          {
+            id: `sample-1-${Date.now()}`,
+            order_id: orderId,
+            question_id: 'q1',
+            answer: 2,
+            user_type: 'user',
+            created_at: new Date().toISOString(),
+            user_gender: 'male',
+            partner_gender: 'female',
+            game_level: 'discover'
+          },
+          {
+            id: `sample-2-${Date.now()}`,
+            order_id: orderId,
+            question_id: 'q2',
+            answer: 3,
+            user_type: 'partner',
+            created_at: new Date().toISOString(),
+            user_gender: 'female',
+            partner_gender: 'male',
+            game_level: 'discover'
+          }
+        ];
+        
+        return new Response(
+          JSON.stringify({ responses: sampleResponses, isSample: true }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 200,
+          }
+        );
+      }
+      
       // Check if there's a query error to return or return empty array
       if (queryError) {
         throw queryError;
