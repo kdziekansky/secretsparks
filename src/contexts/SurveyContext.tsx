@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -185,6 +186,40 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     isConfigComplete: false
   });
 
+  // Store orderId for partner surveys
+  const [partnerOrderId, setPartnerOrderId] = useState<string | null>(null);
+
+  // If this is a partner survey, get the order ID associated with the token
+  useEffect(() => {
+    const fetchOrderId = async () => {
+      if (!partnerToken) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('orders')
+          .select('id')
+          .eq('partner_survey_token', partnerToken)
+          .single();
+          
+        if (error) {
+          console.error('Error fetching order ID:', error);
+          return;
+        }
+        
+        if (data) {
+          console.log('Partner survey order ID:', data.id);
+          setPartnerOrderId(data.id);
+        }
+      } catch (error) {
+        console.error('Failed to fetch order ID:', error);
+      }
+    };
+    
+    if (partnerToken) {
+      fetchOrderId();
+    }
+  }, [partnerToken]);
+
   const isInConfigurationMode = !surveyConfig.isConfigComplete;
 
   // Używamy losowych pytań, ale tylko jeśli konfiguracja jest kompletna
@@ -217,28 +252,14 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const answerValue = answers[currentQuestion.id];
       if (answerValue === undefined) return;
       
-      if (!isPartnerSurvey) {
-        // For regular user survey, save directly with order_id created during payment
-        console.log("Would save user answer, but needs order_id from payment process");
-        // This will be handled during the payment process
-      } else if (partnerToken) {
-        // For partner survey, get the order_id from the token and save as partner
-        const { data: orderData, error: orderError } = await supabase
-          .from('orders')
-          .select('id')
-          .eq('partner_survey_token', partnerToken)
-          .single();
-          
-        if (orderError || !orderData) {
-          console.error('Error fetching order:', orderError);
-          return;
-        }
+      if (isPartnerSurvey && partnerOrderId) {
+        console.log('Saving partner answer for question', currentQuestion.id, 'with value', answerValue);
         
-        // Save the partner's answer
+        // For partner survey, use the partner order ID and save as partner
         const { error: saveError } = await supabase
           .from('survey_responses')
           .insert({
-            order_id: orderData.id,
+            order_id: partnerOrderId,
             question_id: currentQuestion.id,
             answer: answerValue,
             user_type: 'partner',
@@ -249,12 +270,15 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           
         if (saveError) {
           console.error('Error saving partner response:', saveError);
+        } else {
+          console.log('Successfully saved partner response');
         }
       }
+      // The regular user response saving is handled in the payment process
     } catch (error) {
       console.error('Error in saveAnswer:', error);
     }
-  }, [currentQuestion, answers, partnerToken, surveyConfig]);
+  }, [currentQuestion, answers, partnerOrderId, surveyConfig]);
 
   const nextQuestion = useCallback(() => {
     // Blokujemy przejście, jeśli nie ma odpowiedzi na aktualne pytanie

@@ -63,6 +63,8 @@ const SurveyPage: React.FC = () => {
         if (responsesError) {
           throw new Error('Nie udało się pobrać konfiguracji ankiety');
         }
+
+        console.log('User responses found:', responsesData);
         
         // Use the first response to get the configuration
         const config = responsesData && responsesData.length > 0 
@@ -74,7 +76,39 @@ const SurveyPage: React.FC = () => {
           : null;
         
         if (!config) {
-          throw new Error('Zamawiający nie wypełnił jeszcze swojej ankiety');
+          // Check if there are ANY responses from the user - they may not have config in responses
+          const { count, error: countError } = await supabase
+            .from('survey_responses')
+            .select('*', { count: 'exact', head: true })
+            .eq('order_id', orderData.id)
+            .eq('user_type', 'user');
+            
+          if (countError) {
+            console.error('Error checking user response count:', countError);
+          }
+          
+          // If there are no responses at all, the user hasn't completed their survey
+          if (count === 0) {
+            throw new Error('Zamawiający nie wypełnił jeszcze swojej ankiety');
+          }
+          
+          // Get order configuration if there are responses but no config in them
+          const { data: orderConfigData, error: orderConfigError } = await supabase
+            .from('orders')
+            .select('user_gender, partner_gender, game_level')
+            .eq('id', orderData.id)
+            .single();
+            
+          if (orderConfigError || !orderConfigData.user_gender) {
+            throw new Error('Nie udało się pobrać konfiguracji ankiety');
+          }
+          
+          // Use order config instead
+          config = {
+            userGender: orderConfigData.user_gender,
+            partnerGender: orderConfigData.partner_gender,
+            gameLevel: orderConfigData.game_level
+          };
         }
         
         setOrderDetails({

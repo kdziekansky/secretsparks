@@ -1,4 +1,4 @@
-
+<lov-codelov-code>
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import RatingScale from './RatingScale';
@@ -21,6 +21,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     prevQuestion,
     isFirstQuestion,
     isLastQuestion,
+    saveAnswer
   } = useSurvey();
   
   const [isAnimating, setIsAnimating] = useState(false);
@@ -45,7 +46,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     }
   };
   
-  const handleNext = () => {
+  const handleNext = async () => {
     // Dodatkowe zabezpieczenie
     if (!hasAnswer) {
       alert("Wybierz opcję, aby kontynuować");
@@ -53,6 +54,17 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     }
     
     setIsAnimating(true);
+    
+    // If it's the last question, save the answer before redirecting
+    if (isLastQuestion && isPartnerSurvey) {
+      try {
+        await saveAnswer(true);
+        console.log('Final answer saved successfully');
+      } catch (error) {
+        console.error('Error saving final answer:', error);
+      }
+    }
+    
     setTimeout(() => {
       if (isLastQuestion) {
         // If it's a partner survey, redirect to thank you page
@@ -105,6 +117,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     : 'Zapisz odpowiedź';
   
   return (
+    
     <div className={`glass-panel w-full max-w-4xl transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100 animate-slide-up'}`}>
       <div className="flex flex-col md:flex-row">
         {/* Left side - Illustration */}

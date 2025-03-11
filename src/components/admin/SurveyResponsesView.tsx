@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { questionsDatabase } from '@/contexts/questions-data';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 interface SurveyResponse {
   id: string;
@@ -29,20 +30,28 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
   // Extract order ID from responses
   useEffect(() => {
     if (responses && responses.length > 0) {
+      console.log('Setting orderId from responses:', responses[0].order_id);
       setOrderId(responses[0].order_id);
     } else if (responses && responses.length === 0) {
       const urlParams = new URLSearchParams(window.location.search);
       const id = urlParams.get('id');
-      if (id) setOrderId(id);
+      if (id) {
+        console.log('Setting orderId from URL:', id);
+        setOrderId(id);
+      }
     }
   }, [responses]);
   
   // Function to manually refresh responses
   const refreshResponses = async () => {
-    if (!orderId) return;
+    if (!orderId) {
+      console.error('No order ID available for refresh');
+      return;
+    }
     
     setRefreshLoading(true);
     try {
+      console.log('Refreshing responses for order ID:', orderId);
       const { data, error } = await supabase
         .from('survey_responses')
         .select('*')
@@ -50,10 +59,13 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
         
       if (error) {
         console.error('Error refreshing responses:', error);
+        toast.error('Nie udało się odświeżyć odpowiedzi');
         throw error;
       }
       
+      console.log('Fetched responses:', data);
       setRefreshedResponses(data as SurveyResponse[]);
+      toast.success('Odpowiedzi odświeżone');
     } catch (error) {
       console.error('Failed to refresh responses:', error);
     } finally {
@@ -96,6 +108,9 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
   // Group responses by user type
   const userResponses = displayResponses.filter(r => r.user_type === 'user');
   const partnerResponses = displayResponses.filter(r => r.user_type === 'partner');
+
+  console.log('User responses:', userResponses.length);
+  console.log('Partner responses:', partnerResponses.length);
 
   // Function to render responses for a specific user type
   const renderUserResponses = (responses: SurveyResponse[], userType: string) => {
