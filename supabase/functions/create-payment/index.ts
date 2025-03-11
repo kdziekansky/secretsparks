@@ -1,4 +1,3 @@
-
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import Stripe from 'https://esm.sh/stripe@12.4.0?target=deno';
 
@@ -47,11 +46,11 @@ serve(async (req) => {
   try {
     // Validate Stripe configuration
     if (!STRIPE_SECRET_KEY) {
-      console.error('STRIPE_SECRET_KEY is not set');
+      console.error('Missing STRIPE_SECRET_KEY in environment variables');
       return new Response(
-        JSON.stringify({ error: "Brakuje klucza API Stripe w konfiguracji" }),
+        JSON.stringify({ error: "Missing Stripe configuration" }),
         {
-          status: 200, // Return 200 even for errors to prevent retries
+          status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       );
@@ -213,16 +212,14 @@ serve(async (req) => {
       );
     }
   } catch (error) {
-    console.error('Unexpected error:', error.message);
-    console.error('Stack trace:', error.stack);
-    
+    console.error('Unexpected error:', error);
     return new Response(
       JSON.stringify({ 
-        error: "Nieoczekiwany błąd: " + error.message,
-        stack: error.stack
+        error: "An unexpected error occurred",
+        details: error.message
       }),
       {
-        status: 200, // Return 200 even for unexpected errors
+        status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     );
