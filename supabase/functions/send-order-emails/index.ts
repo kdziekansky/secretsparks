@@ -52,7 +52,7 @@ Deno.serve(async (req) => {
     }
 
     // STEP 1: FIRST - Get actual user responses and create the question sequence
-    console.log('STEP 1: Fetching user responses to build question sequence')
+    console.log('STEP 1: Checking for user responses to build question sequence')
     const { data: userResponses, error: responsesError } = await supabase
       .from('survey_responses')
       .select('question_id, created_at')
@@ -65,14 +65,32 @@ Deno.serve(async (req) => {
       throw new Error(`Failed to fetch user responses: ${responsesError.message}`)
     }
     
-    if (!userResponses || userResponses.length === 0) {
-      console.error('No user responses found')
-      throw new Error('No user responses found. Partner survey cannot be created without user responses.')
+    let questionIds = []
+    
+    // If we have user responses, use them to create the question sequence
+    if (userResponses && userResponses.length > 0) {
+      // Extract question IDs in order they were answered
+      questionIds = userResponses.map(response => response.question_id)
+      console.log(`Found ${questionIds.length} questions from user responses:`, questionIds)
+    } else {
+      // No user responses found, we need to fetch questions database
+      console.log('No user responses found, generating default question sequence')
+      
+      // Fetch some questions from survey_responses of any order to get question IDs
+      // This is a workaround since we can't access the questionsDatabase directly in edge function
+      const { data: sampleResponses, error: sampleError } = await supabase
+        .from('survey_responses')
+        .select('distinct question_id')
+        .limit(15)
+      
+      if (sampleError || !sampleResponses || sampleResponses.length === 0) {
+        console.error('Error fetching sample questions:', sampleError)
+        throw new Error('No questions available to create a sequence')
+      }
+      
+      questionIds = sampleResponses.map(q => q.question_id)
+      console.log(`Generated default set of ${questionIds.length} questions:`, questionIds)
     }
-
-    // Extract question IDs in order they were answered
-    const questionIds = userResponses.map(response => response.question_id)
-    console.log(`Found ${questionIds.length} questions from user responses:`, questionIds)
     
     // STEP 2: Save question sequence to order BEFORE creating the partner survey link
     console.log('STEP 2: Saving question sequence to order')

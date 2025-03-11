@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { questionsDatabase } from '@/contexts/questions-data';
 
 export const usePartnerSurveyData = (partnerToken: string | null) => {
   const [partnerOrderId, setPartnerOrderId] = useState<string | null>(null);
@@ -66,9 +67,51 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
           throw new Error('Nie można pobrać sekwencji pytań zamawiającego');
         }
         
+        // Jeśli nie ma odpowiedzi od zamawiającego, generujemy zestaw pytań na podstawie konfiguracji
         if (!userResponses || userResponses.length === 0) {
-          console.error('No user responses found for this order');
-          throw new Error('Brak odpowiedzi od zamawiającego. Nie można utworzyć ankiety dla partnera.');
+          console.log('No user responses found for this order, generating default question set');
+          
+          // Wygeneruj standardowy zestaw pytań na podstawie konfiguracji zamówienia
+          const config = {
+            userGender: orderData.user_gender || 'male',
+            partnerGender: orderData.partner_gender || 'male',
+            gameLevel: orderData.game_level || 'discover',
+            isConfigComplete: true
+          };
+          
+          // Wybierz 15 randomowych pytań (taka sama logika jak w useQuestionSelection)
+          const filteredQuestions = questionsDatabase.filter(question => {
+            if (!question.forConfig) return true;
+            
+            const { userGender, partnerGender, gameLevel } = question.forConfig;
+            
+            if (userGender && userGender !== config.userGender) return false;
+            if (partnerGender && partnerGender !== config.partnerGender) return false;
+            if (gameLevel && !gameLevel.includes(config.gameLevel as any)) return false;
+            
+            return true;
+          });
+          
+          // Wybierz pierwsze 15 pytań - bez randomizacji, żeby zawsze były takie same
+          const defaultQuestionsIds = filteredQuestions.slice(0, 15).map(q => q.id);
+          console.log(`Generated default set of ${defaultQuestionsIds.length} questions:`, defaultQuestionsIds);
+          
+          // Zapisz te pytania do zamówienia
+          const { error: updateError } = await supabase
+            .from('orders')
+            .update({ user_question_sequence: defaultQuestionsIds })
+            .eq('id', orderData.id);
+            
+          if (updateError) {
+            console.error('Failed to save question sequence to order:', updateError);
+          } else {
+            console.log('Successfully saved default question sequence to order');
+          }
+          
+          setSelectedQuestionIds(defaultQuestionsIds);
+          setDataFetched(true);
+          toast.success('Ankieta załadowana pomyślnie');
+          return;
         }
         
         // Extract question IDs in order they were answered
