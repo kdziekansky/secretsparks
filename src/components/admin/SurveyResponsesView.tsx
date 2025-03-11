@@ -7,6 +7,8 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import SurveyResponsesTable from './SurveyResponsesTable';
 
 interface SurveyResponse {
   id: string;
@@ -29,6 +31,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
   const [refreshedResponses, setRefreshedResponses] = useState<SurveyResponse[] | null>(null);
   const [refreshLoading, setRefreshLoading] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [viewType, setViewType] = useState<'cards' | 'table'>('table');
   
   // Extract order ID from responses or URL
   useEffect(() => {
@@ -130,8 +133,8 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
   console.log('User responses:', userResponses.length);
   console.log('Partner responses:', partnerResponses.length);
 
-  // Function to render responses for a specific user type
-  const renderUserResponses = (responses: SurveyResponse[], userType: string) => {
+  // Function to render responses for a specific user type as cards
+  const renderUserResponsesCards = (responses: SurveyResponse[], userType: string) => {
     if (responses.length === 0) {
       return (
         <div className="text-center p-2 text-muted-foreground">
@@ -179,7 +182,25 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Odpowiedzi ankiety</h2>
+        <div className="flex items-center space-x-2">
+          <h2 className="text-xl font-semibold">Odpowiedzi ankiety</h2>
+          <TabsList className="ml-4">
+            <TabsTrigger 
+              value="table" 
+              className={viewType === 'table' ? 'bg-primary text-primary-foreground' : ''}
+              onClick={() => setViewType('table')}
+            >
+              Tabela
+            </TabsTrigger>
+            <TabsTrigger 
+              value="cards" 
+              className={viewType === 'cards' ? 'bg-primary text-primary-foreground' : ''}
+              onClick={() => setViewType('cards')}
+            >
+              Karty
+            </TabsTrigger>
+          </TabsList>
+        </div>
         <Button 
           onClick={refreshResponses}
           variant="outline"
@@ -195,17 +216,31 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
         </Button>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium border-b pb-2">Odpowiedzi zamawiającego ({userResponses.length})</h3>
-          {renderUserResponses(userResponses, 'user')}
-        </div>
+      {viewType === 'table' ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium border-b pb-2">Odpowiedzi zamawiającego ({userResponses.length})</h3>
+            <SurveyResponsesTable responses={userResponses} userType="user" />
+          </div>
 
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium border-b pb-2">Odpowiedzi partnera ({partnerResponses.length})</h3>
-          {renderUserResponses(partnerResponses, 'partner')}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium border-b pb-2">Odpowiedzi partnera ({partnerResponses.length})</h3>
+            <SurveyResponsesTable responses={partnerResponses} userType="partner" />
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium border-b pb-2">Odpowiedzi zamawiającego ({userResponses.length})</h3>
+            {renderUserResponsesCards(userResponses, 'user')}
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium border-b pb-2">Odpowiedzi partnera ({partnerResponses.length})</h3>
+            {renderUserResponsesCards(partnerResponses, 'partner')}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

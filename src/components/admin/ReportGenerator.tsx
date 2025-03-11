@@ -42,12 +42,19 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses, order }) =
   const [isGenerating, setIsGenerating] = useState(false);
 
   const generatePDF = () => {
-    if (!responses || responses.length === 0 || !order) {
-      toast.error("Brak danych do wygenerowania raportu");
+    if (!order) {
+      toast.error("Brak danych zamówienia do wygenerowania raportu");
+      return;
+    }
+
+    if (!responses || responses.length === 0) {
+      toast.error("Brak odpowiedzi ankietowych do wygenerowania raportu");
+      console.log("Missing responses data:", { responses, order });
       return;
     }
 
     setIsGenerating(true);
+    console.log("Generating PDF with:", { responses, order });
     
     try {
       // Create new PDF document
@@ -67,8 +74,10 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses, order }) =
       const userResponses = responses.filter(r => r.user_type === 'user');
       const partnerResponses = responses.filter(r => r.user_type === 'partner');
 
+      console.log("Filtered responses:", { userResponses, partnerResponses });
+
       // Helper to format responses for the PDF table
-      const formatResponsesForTable = (responses: SurveyResponse[], userType: string) => {
+      const formatResponsesForTable = (responses: SurveyResponse[]) => {
         return responses.map(response => {
           const question = questionsDatabase.find(q => q.id === response.question_id);
           return [
@@ -86,7 +95,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses, order }) =
         doc.autoTable({
           startY: 70,
           head: [['Pytanie', 'Odpowiedź']],
-          body: formatResponsesForTable(userResponses, 'user'),
+          body: formatResponsesForTable(userResponses),
         });
       } else {
         doc.setFontSize(12);
@@ -103,7 +112,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses, order }) =
         doc.autoTable({
           startY: partnerStartY + 5,
           head: [['Pytanie', 'Odpowiedź']],
-          body: formatResponsesForTable(partnerResponses, 'partner'),
+          body: formatResponsesForTable(partnerResponses),
         });
       } else {
         doc.setFontSize(12);
@@ -122,24 +131,36 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses, order }) =
     }
   };
 
+  const hasResponses = responses && responses.length > 0;
+  const buttonDisabled = isGenerating || !order || !hasResponses;
+
   return (
-    <Button 
-      variant="default" 
-      onClick={generatePDF} 
-      disabled={isGenerating || !responses || responses.length === 0 || !order}
-    >
-      {isGenerating ? (
-        <>
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          Generowanie...
-        </>
-      ) : (
-        <>
-          <FileDown className="mr-2 h-4 w-4" />
-          Pobierz raport PDF
-        </>
+    <div>
+      <Button 
+        variant="default" 
+        onClick={generatePDF} 
+        disabled={buttonDisabled}
+        className="w-full md:w-auto"
+      >
+        {isGenerating ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Generowanie...
+          </>
+        ) : (
+          <>
+            <FileDown className="mr-2 h-4 w-4" />
+            Pobierz raport PDF
+          </>
+        )}
+      </Button>
+      
+      {!hasResponses && (
+        <p className="text-sm text-muted-foreground mt-2">
+          Brak odpowiedzi ankietowych dla tego zamówienia.
+        </p>
       )}
-    </Button>
+    </div>
   );
 };
 
