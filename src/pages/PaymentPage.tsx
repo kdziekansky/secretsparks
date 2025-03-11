@@ -8,7 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface FormErrors {
   userName?: string;
@@ -33,7 +34,7 @@ const PaymentPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get('orderId');
 
-  const { answers, surveyConfig } = useSurvey();
+  const { answers } = useSurvey();
   
   // Check if survey is completed when component mounts
   useEffect(() => {
@@ -75,12 +76,8 @@ const PaymentPage: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const isValid = () => {
-    return validateForm();
-  };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     switch (name) {
       case 'userName':
         setUserName(value);
@@ -94,12 +91,13 @@ const PaymentPage: React.FC = () => {
       case 'partnerEmail':
         setPartnerEmail(value);
         break;
-      case 'giftWrap':
-        setGiftWrap(type === 'checkbox' ? checked : false);
-        break;
       default:
         break;
     }
+  };
+
+  const handleCheckboxChange = (checked: boolean) => {
+    setGiftWrap(checked);
   };
   
   // Save survey responses before initiating payment
@@ -143,7 +141,7 @@ const PaymentPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!isValid()) {
+    if (!validateForm()) {
       setShowErrors(true);
       return;
     }
@@ -151,10 +149,6 @@ const PaymentPage: React.FC = () => {
     // Allow for proceeding even if survey is not completed (for testing)
     if (!surveyCompleted && Object.keys(answers).length === 0 && !orderId) {
       console.warn('Survey not completed, but proceeding for testing purposes');
-      // Uncomment this to enforce survey completion:
-      // toast.error('Nie możesz złożyć zamówienia bez wypełnienia ankiety. Proszę wypełnij ankietę.');
-      // navigate('/survey');
-      // return;
     }
     
     setIsProcessing(true);
@@ -211,6 +205,8 @@ const PaymentPage: React.FC = () => {
             }
           }
         });
+        
+        console.log('Payment creation response:', result);
         
         if (result.error) {
           console.error('Payment creation error:', result.error);
@@ -328,15 +324,12 @@ const PaymentPage: React.FC = () => {
                 )}
               </div>
               <div className="flex items-center space-x-2 mt-4 mb-6">
-                <Input
-                  type="checkbox"
+                <Checkbox 
                   id="giftWrap"
-                  name="giftWrap"
                   checked={giftWrap}
-                  onChange={handleChange}
-                  className="w-4 h-4"
+                  onCheckedChange={handleCheckboxChange}
                 />
-                <Label htmlFor="giftWrap">Zapakuj na prezent (+20zł)</Label>
+                <Label htmlFor="giftWrap" className="cursor-pointer">Zapakuj na prezent (+20zł)</Label>
               </div>
               <div>
                 <Button type="submit" disabled={isProcessing} className="w-full">
