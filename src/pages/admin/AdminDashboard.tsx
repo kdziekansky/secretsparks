@@ -8,8 +8,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useQuery } from '@tanstack/react-query';
-import { Loader2, ArrowUpRight, AlertCircle, CheckCircle } from 'lucide-react';
+import { Loader2, ArrowUpRight, AlertCircle, CheckCircle, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { format, startOfDay } from 'date-fns';
 
 interface Order {
   id: string;
@@ -30,7 +31,7 @@ interface SalesStats {
   totalRevenue: number;
   completedOrders: number;
   pendingOrders: number;
-  averageOrderValue: number;
+  todayRevenue: number;
 }
 
 const AdminDashboard: React.FC = () => {
@@ -63,14 +64,22 @@ const AdminDashboard: React.FC = () => {
       if (error) throw error;
       
       const orders = data as Order[];
+      
+      // Calculate today's sales
+      const today = startOfDay(new Date());
+      const todaysOrders = orders.filter(order => {
+        const orderDate = new Date(order.created_at);
+        return orderDate >= today;
+      });
+      
+      const todayRevenue = todaysOrders.reduce((sum, order) => sum + Number(order.price), 0);
+      
       const stats: SalesStats = {
         totalOrders: orders.length,
         totalRevenue: orders.reduce((sum, order) => sum + Number(order.price), 0),
         completedOrders: orders.filter(order => order.status === 'completed').length,
         pendingOrders: orders.filter(order => order.status !== 'completed').length,
-        averageOrderValue: orders.length > 0 
-          ? orders.reduce((sum, order) => sum + Number(order.price), 0) / orders.length 
-          : 0
+        todayRevenue: todayRevenue
       };
       
       return stats;
@@ -144,11 +153,17 @@ const AdminDashboard: React.FC = () => {
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">
-                    Średnia wartość zamówienia
+                    Sprzedaż dziś
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{salesStats.averageOrderValue.toFixed(2)} zł</div>
+                  <div className="flex items-center">
+                    <div className="text-2xl font-bold">{salesStats.todayRevenue.toFixed(2)} zł</div>
+                    <TrendingUp className="h-4 w-4 ml-2 text-emerald-500" />
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {format(new Date(), 'dd.MM.yyyy')}
+                  </p>
                 </CardContent>
               </Card>
               
