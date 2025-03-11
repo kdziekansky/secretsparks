@@ -11,7 +11,7 @@ const ratingLabels = [
   "Nie, to nie dla mnie",
   "Może warto rozważyć",
   "Zdecydowanie tak!",
-  "OK, jeśli jemu bardzo zależy"
+  "OK, jeśli jemu/jej bardzo zależy"
 ];
 
 // Funkcja obliczająca punkt na krzywej Beziera dla danego parametru t (0-1)
