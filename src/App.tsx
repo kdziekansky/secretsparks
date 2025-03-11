@@ -11,6 +11,10 @@ import SurveyPage from "./pages/SurveyPage";
 import NotFound from "./pages/NotFound";
 import PaymentPage from "./pages/PaymentPage";
 import ThankYouPage from "./pages/ThankYouPage";
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminOrders from "./pages/admin/AdminOrders";
+import { AdminAuthProvider } from "./contexts/AdminAuthContext";
 
 // Create a client with error handling
 const App = () => {
@@ -19,12 +23,6 @@ const App = () => {
       queries: {
         retry: 1,
         refetchOnWindowFocus: false,
-        // Using standard error handling for React Query v5+
-        meta: {
-          onError: (error: Error) => {
-            console.error("React Query error:", error);
-          }
-        }
       },
     },
   }));
@@ -37,15 +35,20 @@ const App = () => {
         <Toaster />
         <Sonner />
         <SurveyProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/survey" element={<SurveyPage />} />
-              <Route path="/payment" element={<PaymentPage />} />
-              <Route path="/thank-you" element={<ThankYouPage />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
+          <AdminAuthProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/survey" element={<SurveyPage />} />
+                <Route path="/payment" element={<PaymentPage />} />
+                <Route path="/thank-you" element={<ThankYouPage />} />
+                <Route path="/spe43al-adm1n-p4nel" element={<AdminLogin />} />
+                <Route path="/spe43al-adm1n-p4nel/dashboard" element={<AdminDashboard />} />
+                <Route path="/spe43al-adm1n-p4nel/orders" element={<AdminOrders />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </AdminAuthProvider>
         </SurveyProvider>
       </TooltipProvider>
     </QueryClientProvider>
