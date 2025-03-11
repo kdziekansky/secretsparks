@@ -77,6 +77,14 @@ export const useQuestionSelection = (
         .filter((q): q is Question => q !== undefined);
         
       console.log(`Found ${orderedQuestions.length} matching questions from ${selectedQuestionIds.length} ids`);
+      
+      // Jeśli znaleziono mniej pytań niż potrzeba, wyświetl ostrzeżenie
+      if (orderedQuestions.length < selectedQuestionIds.length) {
+        console.warn(`Some question IDs were not found in the question database: ${
+          selectedQuestionIds.filter(id => !questions.some(q => q.id === id)).join(', ')
+        }`);
+      }
+      
       return orderedQuestions;
     }
     

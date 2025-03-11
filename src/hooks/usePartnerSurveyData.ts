@@ -25,7 +25,7 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
         // Get the order associated with this partner token
         const { data: orderData, error: orderError } = await supabase
           .from('orders')
-          .select('id, user_gender, partner_gender, game_level')
+          .select('id, user_gender, partner_gender, game_level, user_question_sequence')
           .eq('partner_survey_token', partnerToken)
           .single();
         
@@ -36,8 +36,16 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
         console.log('Found order with ID:', orderData.id);
         setPartnerOrderId(orderData.id);
         
-        // After finding the order, fetch the exact sequence of questions that the user answered
-        await fetchOrderQuestionSequence(orderData.id);
+        // WAŻNA ZMIANA: Sprawdź, czy zamówienie ma zapisaną sekwencję pytań z zamówienia oryginału
+        if (orderData.user_question_sequence && Array.isArray(orderData.user_question_sequence) && orderData.user_question_sequence.length > 0) {
+          console.log('Using pre-saved question sequence from order:', orderData.user_question_sequence);
+          setSelectedQuestionIds(orderData.user_question_sequence);
+          toast.success('Ankieta załadowana pomyślnie');
+        } else {
+          // Jeśli nie ma zapisanej sekwencji w zamówieniu, spróbuj pobrać z odpowiedzi użytkownika
+          console.log('No pre-saved question sequence, fetching from user responses');
+          await fetchOrderQuestionSequence(orderData.id);
+        }
         
         // Mark data as fetched to prevent further fetches
         setDataFetched(true);
@@ -79,6 +87,18 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
             });
             
           console.log('Fetched question sequence from user responses:', questionIds);
+          
+          // Zapisz sekwencję pytań z powrotem do zamówienia, aby przyspieszyć przyszłe ładowanie
+          try {
+            await supabase
+              .from('orders')
+              .update({ user_question_sequence: questionIds })
+              .eq('id', orderId);
+            console.log('Saved question sequence back to order for future use');
+          } catch (updateError) {
+            console.error('Failed to update order with question sequence:', updateError);
+          }
+          
           setSelectedQuestionIds(questionIds);
           toast.success('Ankieta załadowana pomyślnie');
         } else {

@@ -1,3 +1,4 @@
+
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.23.0';
 import { Resend } from 'https://esm.sh/resend@2.0.0';
@@ -56,15 +57,51 @@ serve(async (req) => {
 
     console.log("Zamówienie pobrane:", order);
 
-    // Sprawdź, czy zamówienie ma token dla partnera
+    // 1. NOWE: Najpierw pobierz odpowiedzi zamawiającego aby znać sekwencję pytań
+    console.log("Pobieranie odpowiedzi zamawiającego dla ustalenia sekwencji pytań...");
+    const { data: userResponses, error: responsesError } = await supabase
+      .from('survey_responses')
+      .select('question_id, created_at')
+      .eq('order_id', orderId)
+      .eq('user_type', 'user')
+      .order('created_at', { ascending: true });
+      
+    if (responsesError) {
+      console.error("Błąd pobierania odpowiedzi:", responsesError);
+      throw new Error(`Nie można pobrać odpowiedzi zamawiającego: ${responsesError.message}`);
+    }
+    
+    // Uzyskanie unikatowej sekwencji pytań w kolejności odpowiadania
+    const seenIds = new Set<string>();
+    const questionSequence = userResponses
+      ? userResponses
+          .map(response => response.question_id)
+          .filter(id => {
+            if (seenIds.has(id)) return false;
+            seenIds.add(id);
+            return true;
+          })
+      : [];
+      
+    console.log("Sekwencja pytań zamawiającego:", questionSequence);
+    
+    if (questionSequence.length === 0) {
+      console.warn("Nie znaleziono odpowiedzi zamawiającego, ankieta partnera może zawierać inne pytania!");
+    }
+
+    // 2. Sprawdź, czy zamówienie ma token dla partnera
     if (!order.partner_survey_token) {
       console.log("Brak tokenu dla partnera, generowanie...");
       // Generuj token dla partnera jeśli nie istnieje
       const partnerToken = crypto.randomUUID();
       
+      // 3. NOWE: Zapisz sekwencję pytań w metadanych zamówienia
       const { data: updateData, error: updateError } = await supabase
         .from('orders')
-        .update({ partner_survey_token: partnerToken })
+        .update({ 
+          partner_survey_token: partnerToken,
+          user_question_sequence: questionSequence  // Zapisz sekwencję pytań
+        })
         .eq('id', orderId)
         .select();
         
@@ -76,6 +113,7 @@ serve(async (req) => {
       // Zaktualizuj obiekt zamówienia
       order.partner_survey_token = partnerToken;
       console.log("Wygenerowano token:", partnerToken);
+      console.log("Zapisano sekwencję pytań zamawiającego:", questionSequence.length, "pytań");
     }
 
     // Adres URL aplikacji
