@@ -67,9 +67,28 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
           return;
         }
         
-        // If we reach here, there are no user responses yet
-        console.log('No user responses found for this order');
-        throw new Error('Brak odpowiedzi od zamawiającego. Nie można utworzyć ankiety dla partnera.');
+        // FALLBACK - If we reach here and there are no user responses, generate a default sequence
+        // This ensures the partner survey still works even if the user hasn't completed their part
+        console.log('No user responses found for this order, generating default question sequence');
+        
+        // Generate a set of default questions based on the order's configuration
+        const defaultQuestions = generateDefaultQuestions(
+          orderData.user_gender, 
+          orderData.partner_gender, 
+          orderData.game_level
+        );
+        
+        if (defaultQuestions.length > 0) {
+          console.log(`Generated ${defaultQuestions.length} default questions for partner`);
+          setSelectedQuestionIds(defaultQuestions);
+          setDataFetched(true);
+          toast.success('Ankieta załadowana pomyślnie');
+          setIsLoading(false);
+          return;
+        }
+        
+        // If we still can't get questions, throw an error
+        throw new Error('Nie udało się wygenerować pytań. Skontaktuj się z administratorem.');
         
       } catch (err: any) {
         console.error('Error in fetchOrderData:', err);
@@ -84,6 +103,35 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
 
     fetchOrderData();
   }, [partnerToken, dataFetched, orderFetched]);
+
+  // Function to generate a default set of questions based on order configuration
+  const generateDefaultQuestions = (
+    userGender: string | null, 
+    partnerGender: string | null, 
+    gameLevel: string | null
+  ): string[] => {
+    // Use a subset of the questions database based on the order configuration
+    const filteredQuestions = questionsDatabase.filter(question => {
+      // Skip questions with specific configurations that don't match
+      if (question.forConfig) {
+        const { userGender: qUserGender, partnerGender: qPartnerGender, gameLevel: qGameLevel } = question.forConfig;
+        
+        if (qUserGender && userGender && qUserGender !== userGender) return false;
+        if (qPartnerGender && partnerGender && qPartnerGender !== partnerGender) return false;
+        if (qGameLevel && gameLevel && !qGameLevel.includes(gameLevel as any)) return false;
+      }
+      
+      return true;
+    });
+    
+    // Shuffle the filtered questions and take up to 15
+    const shuffled = [...filteredQuestions]
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 15);
+    
+    // Return just the question IDs
+    return shuffled.map(q => q.id);
+  };
 
   return {
     partnerOrderId,
