@@ -19,8 +19,11 @@ const Index = () => {
       <header className="sticky top-0 z-50 w-full border-b bg-white/90 backdrop-blur">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8">
           <Link to="/" className="flex items-center gap-2">
-            <div className="h-10 w-10 rounded-full bg-purple-700"></div>
-            <span className="text-xl font-bold text-purple-700">Secret Sparks</span>
+            <img 
+              src="/lovable-uploads/d54cd97a-3024-4d2f-87fd-23769403237c.png" 
+              alt="Secret Sparks Logo" 
+              className="h-10"
+            />
           </Link>
           
           <nav className="hidden md:flex items-center space-x-8">
