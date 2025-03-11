@@ -1,11 +1,13 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { questionsDatabase } from '@/contexts/questions-data';
 import { 
   Table, TableBody, TableCell, TableHead, 
   TableHeader, TableRow 
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 
 interface SurveyResponse {
   id: string;
@@ -43,12 +45,19 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
   responses, 
   userType 
 }) => {
-  // Sprawdź czy mamy dostęp do bazy pytań na starcie komponentu
+  const [isQuestionsDbLoaded, setIsQuestionsDbLoaded] = useState<boolean>(false);
+  
+  // Check if questions database is properly initialized on component mount
   useEffect(() => {
-    if (!questionsDatabase || !Array.isArray(questionsDatabase) || questionsDatabase.length === 0) {
+    const isValidQuestionsDb = questionsDatabase && 
+                              Array.isArray(questionsDatabase) && 
+                              questionsDatabase.length > 0;
+    
+    if (!isValidQuestionsDb) {
       console.error('Questions database is missing or empty', questionsDatabase);
     } else {
       console.log(`Questions database has ${questionsDatabase.length} questions`);
+      setIsQuestionsDbLoaded(true);
     }
   }, []);
 
@@ -77,15 +86,20 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
     );
   }
 
-  // Pre-check if we have valid questionsDatabase to avoid runtime errors
-  if (!questionsDatabase || !Array.isArray(questionsDatabase) || questionsDatabase.length === 0) {
-    console.error('Questions database is missing or empty');
+  // If questions database isn't loaded properly, show an alert
+  if (!isQuestionsDbLoaded) {
     return (
-      <div className="text-center p-2 text-muted-foreground text-red-500">
-        Błąd: Baza pytań jest niedostępna
-      </div>
+      <Alert variant="destructive" className="mb-4">
+        <ExclamationTriangleIcon className="h-4 w-4" />
+        <AlertDescription>
+          Błąd: Baza pytań jest niedostępna. Nie można wyświetlić treści pytań.
+        </AlertDescription>
+      </Alert>
     );
   }
+
+  // Create a local copy of questions for safety
+  const questions = Array.isArray(questionsDatabase) ? [...questionsDatabase] : [];
 
   return (
     <div className="border rounded-md overflow-hidden">
@@ -98,35 +112,26 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
         </TableHeader>
         <TableBody>
           {safeResponses.map((response, index) => {
+            // Use a unique key that doesn't depend on potentially undefined values
+            const rowKey = `${response.id || ''}${response.question_id || ''}${index}`;
+            
             try {
-              // Try to find the question in the database
-              let question = null;
-              
-              if (questionsDatabase && Array.isArray(questionsDatabase)) {
-                question = questionsDatabase.find(q => q.id === response.question_id);
-              }
-              
-              // If question not found, render a placeholder row
-              if (!question) {
-                console.log(`Question not found for ID: ${response.question_id}`);
-                return (
-                  <TableRow key={response.id || `row-${index}`}>
-                    <TableCell className="font-medium text-muted-foreground">
-                      Pytanie (ID: {response.question_id})
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">
-                        {getRatingLabel(response.answer)}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                );
-              }
+              // Find question by ID, with fallback to display question ID if not found
+              const questionText = (() => {
+                if (!questions || !Array.isArray(questions)) {
+                  return `Pytanie (ID: ${response.question_id})`;
+                }
+                
+                const question = questions.find(q => q && q.id === response.question_id);
+                return question && question.text 
+                  ? question.text 
+                  : `Pytanie (ID: ${response.question_id})`;
+              })();
               
               return (
-                <TableRow key={response.id || `row-${index}`}>
+                <TableRow key={rowKey}>
                   <TableCell className="font-medium">
-                    {question.text}
+                    {questionText}
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline">
