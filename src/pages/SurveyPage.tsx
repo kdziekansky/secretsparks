@@ -41,7 +41,11 @@ const SurveyPage: React.FC = () => {
       if (!partnerToken) return;
       
       setIsLoadingOrder(true);
+      setError(null);
+      
       try {
+        console.log('Fetching order details for partner token:', partnerToken);
+        
         // Get the order associated with this partner token
         const { data: orderData, error: orderError } = await supabase
           .from('orders')
@@ -49,30 +53,21 @@ const SurveyPage: React.FC = () => {
           .eq('partner_survey_token', partnerToken)
           .single();
         
-        if (orderError || !orderData) {
+        if (orderError) {
+          console.error('Error fetching order:', orderError);
           throw new Error('Nie znaleziono ankiety lub link jest nieprawidłowy');
+        }
+        
+        if (!orderData) {
+          console.error('No order found for token:', partnerToken);
+          throw new Error('Nie znaleziono ankiety dla tego linku');
         }
         
         console.log('Found order:', orderData);
         
-        // Check if user has completed their survey - look for ANY user survey responses
-        const { data: responsesData, error: responsesError } = await supabase
-          .from('survey_responses')
-          .select('id')
-          .eq('order_id', orderData.id)
-          .eq('user_type', 'user')
-          .limit(1);
-          
-        if (responsesError) {
-          console.error('Error checking user responses:', responsesError);
-          throw new Error('Wystąpił błąd podczas sprawdzania odpowiedzi zamawiającego');
-        }
-        
-        console.log('User responses check:', responsesData);
-        
-        // If there are no responses at all from the user, show error
-        if (!responsesData || responsesData.length === 0) {
-          throw new Error('Zamawiający nie wypełnił jeszcze swojej ankiety');
+        // Check if the order exists and is valid
+        if (!orderData.id) {
+          throw new Error('Nieprawidłowe dane zamówienia');
         }
         
         // Set default configuration if any values are missing
@@ -80,6 +75,8 @@ const SurveyPage: React.FC = () => {
         const partnerGender = orderData.partner_gender || 'female';
         const gameLevel = orderData.game_level || 'discover';
         
+        // Allow partner survey even if the user hasn't completed their survey yet
+        // We'll just provide the configuration data
         setOrderDetails({
           userName: orderData.user_name,
           partnerName: orderData.partner_name,
