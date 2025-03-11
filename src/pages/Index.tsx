@@ -17,7 +17,7 @@ const Index = () => {
     <div className="bg-[#05050a] text-foreground min-h-screen">
       {/* Header/Navigation */}
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-[#05050a]/80 backdrop-blur">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8">
+        <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8 lg:px-12">
           <Link to="/" className="flex items-center gap-2">
             <img 
               src="/lovable-uploads/d54cd97a-3024-4d2f-87fd-23769403237c.png" 
@@ -27,14 +27,14 @@ const Index = () => {
           </Link>
           
           <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/about" className="text-sm font-medium text-muted-foreground hover:text-primary">
+            <Link to="/about" className="nav-link">
               O nas
             </Link>
-            <Link to="/faq" className="text-sm font-medium text-muted-foreground hover:text-primary">
+            <Link to="/faq" className="nav-link">
               FAQ
             </Link>
             <DropdownMenu>
-              <DropdownMenuTrigger className="text-sm font-medium text-muted-foreground hover:text-primary flex items-center">
+              <DropdownMenuTrigger className="nav-link flex items-center">
                 Więcej <ChevronDown className="ml-1 h-4 w-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent>
@@ -60,7 +60,7 @@ const Index = () => {
           
           <div className="hidden md:block">
             <Link to="/survey">
-              <Button className="rounded-full bg-primary hover:bg-primary/80 px-6">
+              <Button className="btn-primary">
                 Rozpocznij Grę
               </Button>
             </Link>
@@ -71,16 +71,16 @@ const Index = () => {
         {isMenuOpen && (
           <div className="md:hidden p-4 pb-6 border-t border-border/40 bg-[#05050a]">
             <nav className="flex flex-col space-y-4">
-              <Link to="/about" className="text-muted-foreground hover:text-primary py-2">
+              <Link to="/about" className="nav-link-mobile">
                 O nas
               </Link>
-              <Link to="/faq" className="text-muted-foreground hover:text-primary py-2">
+              <Link to="/faq" className="nav-link-mobile">
                 FAQ
               </Link>
-              <Link to="/survey" className="text-muted-foreground hover:text-primary py-2">
+              <Link to="/survey" className="nav-link-mobile">
                 Ankieta
               </Link>
-              <Link to="/blog" className="text-muted-foreground hover:text-primary py-2">
+              <Link to="/blog" className="nav-link-mobile">
                 Blog
               </Link>
               <Link to="/survey">
@@ -94,21 +94,21 @@ const Index = () => {
       </header>
 
       {/* Hero Section - Bento Grid Style */}
-      <section className="py-16 md:py-20">
-        <div className="container mx-auto px-4 md:px-8">
+      <section className="section-padding pt-20 md:pt-28">
+        <div className="section-container">
           {/* Main hero bento grid */}
           <div className="bento-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             
             {/* Featured main card - spans 2 columns on larger screens */}
             <div className="lg:col-span-2 bento-cell p-8 md:p-10 flex flex-col justify-between">
               <div>
-                <div className="inline-block px-4 py-2 rounded-full bg-accent/20 text-primary text-sm font-medium mb-6">
+                <div className="hero-badge">
                   GRA DLA PAR
                 </div>
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+                <h1 className="hero-title">
                   Przenieście <span className="block">Wasze <span className="text-primary">życie seksualne</span></span> na wyższy poziom
                 </h1>
-                <p className="text-muted-foreground text-lg max-w-2xl mb-8">
+                <p className="hero-subtitle">
                   Dzięki tej grze odkryjecie swoje skryte pragnienia w bezpieczny sposób, 
                   bez konieczności mówienia o nich wprost.
                 </p>
@@ -116,11 +116,11 @@ const Index = () => {
               
               <div className="flex flex-wrap gap-4">
                 <Link to="/survey">
-                  <Button className="rounded-full bg-primary hover:bg-primary/80 px-8 py-6 text-base">
+                  <Button className="btn-primary btn-large">
                     Rozpocznij Grę
                   </Button>
                 </Link>
-                <Button variant="outline" className="rounded-full border-accent/50 text-primary hover:bg-accent/20 px-8 py-6">
+                <Button variant="outline" className="btn-secondary btn-large">
                   Dowiedz się więcej
                 </Button>
               </div>
@@ -140,7 +140,7 @@ const Index = () => {
           </div>
           
           {/* Feature cards in grid */}
-          <div className="bento-grid grid-cols-1 md:grid-cols-3 mt-8">
+          <div className="bento-grid grid-cols-1 md:grid-cols-3 mt-12">
             <div className="bento-cell">
               <div className="bento-icon-container">
                 <Sparkles className="h-6 w-6 text-primary" />
@@ -179,8 +179,8 @@ const Index = () => {
       </section>
 
       {/* Statistics Bento Grid */}
-      <section className="py-12 md:py-16">
-        <div className="container mx-auto px-4 md:px-8">
+      <section className="section-padding py-16 md:py-20">
+        <div className="section-container">
           <div className="feature-grid">
             <div className="bento-cell text-center py-10">
               <h3 className="text-4xl font-bold text-primary mb-3">250+</h3>
@@ -201,8 +201,8 @@ const Index = () => {
       </section>
 
       {/* Scientific Section - Bento Grid */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4 md:px-8">
+      <section className="section-padding">
+        <div className="section-container">
           <h2 className="section-title">
             Naukowy punkt widzenia
           </h2>
@@ -266,8 +266,8 @@ const Index = () => {
       </section>
 
       {/* How It Works - Bento Timeline */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4 md:px-8">
+      <section className="section-padding">
+        <div className="section-container">
           <h2 className="section-title">
             Krok po kroku
           </h2>
@@ -319,7 +319,7 @@ const Index = () => {
           
           <div className="mt-16 text-center">
             <Link to="/survey">
-              <Button className="rounded-full bg-primary hover:bg-primary/80 px-10 py-6 text-lg">
+              <Button className="btn-primary btn-large text-lg px-10 py-6">
                 Rozpocznij Grę
               </Button>
             </Link>
@@ -328,8 +328,8 @@ const Index = () => {
       </section>
       
       {/* Security Section - Bento Grid */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4 md:px-8">
+      <section className="section-padding">
+        <div className="section-container">
           <div className="bento-grid grid-cols-1 md:grid-cols-3">
             {/* Main security card */}
             <div className="md:col-span-2 bento-cell p-8 md:p-10">
@@ -387,10 +387,10 @@ const Index = () => {
       </section>
       
       {/* Final CTA Section */}
-      <section className="py-20 md:py-32 text-center">
-        <div className="container mx-auto px-4 md:px-8">
-          <div className="max-w-3xl mx-auto p-12 rounded-3xl glass-panel">
-            <div className="inline-block px-4 py-2 rounded-full bg-accent/30 text-primary text-sm font-medium mb-6">
+      <section className="section-padding py-24 md:py-32 text-center">
+        <div className="section-container">
+          <div className="max-w-3xl mx-auto p-12 rounded-3xl glass-panel animate-fade-in">
+            <div className="hero-badge">
               NAJBARDZIEJ EKSCYTUJĄCA GRA DLA PAR
             </div>
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
@@ -402,7 +402,7 @@ const Index = () => {
             </p>
             
             <Link to="/survey">
-              <Button className="rounded-full bg-primary hover:bg-primary/80 px-10 py-6 text-lg">
+              <Button className="btn-primary btn-large text-lg px-10 py-6">
                 Rozpocznij Grę
               </Button>
             </Link>
@@ -412,7 +412,7 @@ const Index = () => {
       
       {/* Footer */}
       <footer className="py-16 border-t border-border/40">
-        <div className="container mx-auto px-4 md:px-8">
+        <div className="section-container">
           <div className="grid md:grid-cols-3 gap-12">
             <div>
               <Link to="/" className="flex items-center gap-2 mb-6">

@@ -167,6 +167,7 @@
     100% { opacity: 1; transform: translateY(0); }
   }
   
+  /* Bento Grid System */
   .bento-grid {
     @apply grid gap-6 md:gap-8;
   }
@@ -187,19 +188,69 @@
     @apply text-muted-foreground text-sm leading-relaxed;
   }
   
-  .feature-grid {
-    @apply grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 my-16;
+  /* Sekcje strony */
+  .section-padding {
+    @apply py-16 md:py-24 lg:py-28;
+  }
+  
+  .section-container {
+    @apply container mx-auto px-4 md:px-8 lg:px-12;
   }
   
   .section-title {
-    @apply text-3xl md:text-4xl font-bold mb-12 text-center;
+    @apply text-3xl md:text-4xl font-bold mb-6 md:mb-12 text-center;
   }
   
+  .section-subtitle {
+    @apply text-xl md:text-2xl font-semibold mb-4 text-center text-muted-foreground;
+  }
+  
+  /* Siatki i układy */
+  .feature-grid {
+    @apply grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 my-10 md:my-16;
+  }
+  
+  /* Elementy UI */
   .green-check {
     @apply h-5 w-5 text-green-500;
   }
   
   .check-container {
     @apply h-8 w-8 rounded-full bg-green-500/10 flex items-center justify-center mr-4;
+  }
+  
+  /* Nawigacja */
+  .nav-link {
+    @apply text-sm font-medium text-muted-foreground hover:text-primary transition-colors;
+  }
+  
+  .nav-link-mobile {
+    @apply text-muted-foreground hover:text-primary py-2 transition-colors;
+  }
+  
+  /* Przyciski */
+  .btn-primary {
+    @apply rounded-full bg-primary hover:bg-primary/80 px-6 py-2.5 text-primary-foreground transition-all;
+  }
+  
+  .btn-secondary {
+    @apply rounded-full border-accent/50 text-primary hover:bg-accent/20 px-6 py-2.5 transition-all;
+  }
+  
+  .btn-large {
+    @apply px-8 py-3 text-base;
+  }
+  
+  /* Hero Section */
+  .hero-badge {
+    @apply inline-block px-4 py-2 rounded-full bg-accent/20 text-primary text-sm font-medium mb-6;
+  }
+  
+  .hero-title {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight;
+  }
+  
+  .hero-subtitle {
+    @apply text-muted-foreground text-lg max-w-2xl mb-8;
   }
 }
