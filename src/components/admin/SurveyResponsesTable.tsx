@@ -79,7 +79,9 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
         </TableHeader>
         <TableBody>
           {safeResponses.map((response, index) => {
-            const question = questionsDatabase.find(q => q.question_id === response.question_id);
+            // Looking at the questionsDatabase structure, we need to use 'id' not 'question_id'
+            // And 'text' property instead of 'title'
+            const question = questionsDatabase.find(q => q.id === response.question_id);
             
             if (!question) {
               console.log(`Question not found for ID: ${response.question_id}`);
@@ -89,7 +91,7 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
             return (
               <TableRow key={response.id || `row-${index}`}>
                 <TableCell className="font-medium">
-                  {question.title}
+                  {question.text}
                 </TableCell>
                 <TableCell>
                   <Badge variant="outline">
