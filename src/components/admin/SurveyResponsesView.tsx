@@ -1,9 +1,10 @@
 
 import React, { useEffect, useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, RefreshCw } from 'lucide-react';
 import { questionsDatabase } from '@/contexts/questions-data';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
 
 interface SurveyResponse {
   id: string;
@@ -27,12 +28,12 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
   const [refreshLoading, setRefreshLoading] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
   
-  // Extract order ID from responses
+  // Extract order ID from responses or URL
   useEffect(() => {
     if (responses && responses.length > 0) {
       console.log('Setting orderId from responses:', responses[0].order_id);
       setOrderId(responses[0].order_id);
-    } else if (responses && responses.length === 0) {
+    } else {
       const urlParams = new URLSearchParams(window.location.search);
       const id = urlParams.get('id');
       if (id) {
@@ -105,12 +106,14 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
         </div>
         {orderId && (
           <div className="flex justify-center">
-            <button 
+            <Button 
               onClick={refreshResponses}
-              className="px-4 py-2 text-sm bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+              variant="outline"
+              className="flex items-center gap-2"
             >
+              <RefreshCw className="h-4 w-4" />
               Odśwież odpowiedzi
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -140,7 +143,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
           const question = questionsDatabase.find(q => q.id === response.question_id);
           return (
             <div key={response.id} className="border rounded-md p-3">
-              <div className="font-medium">{question?.text || 'Pytanie niedostępne'}</div>
+              <div className="font-medium">{question?.text || `Pytanie (${response.question_id})`}</div>
               <div className="flex items-center mt-2">
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
                   <div 
@@ -160,12 +163,19 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
   return (
     <div className="space-y-6">
       <div className="flex justify-end mb-4">
-        <button 
+        <Button 
           onClick={refreshResponses}
-          className="px-4 py-2 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
+          variant="outline"
+          className="flex items-center gap-2"
+          disabled={refreshLoading}
         >
+          {refreshLoading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <RefreshCw className="h-4 w-4" />
+          )}
           Odśwież odpowiedzi
-        </button>
+        </Button>
       </div>
       
       <div>
