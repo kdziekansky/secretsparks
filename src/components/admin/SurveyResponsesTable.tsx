@@ -31,7 +31,7 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
   // Add console log to debug responses data
   console.log(`Rendering ${userType} responses table with:`, responses);
   
-  // Check if responses is null, undefined, or empty
+  // First, check if responses is null, undefined, or empty
   if (!responses || !Array.isArray(responses) || responses.length === 0) {
     return (
       <div className="text-center p-2 text-muted-foreground">
@@ -40,92 +40,108 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
     );
   }
 
-  // Create a deep copy of responses to avoid direct mutation
-  // and provide safe default values for any missing properties
-  const safeResponses = responses.map(response => {
-    if (!response) {
-      console.error('Null or undefined response item found');
-      return null;
+  try {
+    // Create a safe copy of the responses data with guaranteed valid properties
+    const safeResponses = [];
+    
+    // Process each response individually and only add valid ones to our array
+    for (let i = 0; i < responses.length; i++) {
+      const response = responses[i];
+      
+      // Skip if the response is null or not an object
+      if (!response || typeof response !== 'object') {
+        console.warn(`Skipping invalid response at index ${i}:`, response);
+        continue;
+      }
+      
+      // Create a safe entry with fallbacks for every property
+      const safeResponse = {
+        id: response.id || `temp-id-${i}-${Date.now()}`,
+        order_id: response.order_id || '',
+        question_id: response.question_id || '',
+        answer: typeof response.answer === 'number' ? response.answer : 0,
+        user_type: response.user_type || userType,
+        created_at: response.created_at || new Date().toISOString()
+      };
+      
+      // Only add if question_id exists (needed for table rendering)
+      if (safeResponse.question_id) {
+        safeResponses.push(safeResponse);
+      } else {
+        console.warn(`Skipping response at index ${i} due to missing question_id:`, response);
+      }
     }
     
-    // Ensure we have an object with all required properties
-    return {
-      id: response.id || `temp-${Math.random().toString(36).substring(2, 9)}`,
-      order_id: response.order_id || '',
-      question_id: response.question_id || '',
-      answer: typeof response.answer === 'number' ? response.answer : 0,
-      user_type: response.user_type || userType,
-      created_at: response.created_at || new Date().toISOString()
-    };
-  });
-  
-  // Filter out any null items that resulted from invalid responses
-  const validResponses = safeResponses.filter(response => response !== null);
-
-  if (validResponses.length === 0) {
-    console.error('No valid responses found in data:', responses);
+    console.log(`Processed ${safeResponses.length} valid responses out of ${responses.length} total`);
+    
+    // If no valid responses are found after filtering
+    if (safeResponses.length === 0) {
+      return (
+        <div className="text-center p-2 text-muted-foreground">
+          Brak poprawnych odpowiedzi od {userType === 'user' ? 'zamawiającego' : 'partnera'}.
+        </div>
+      );
+    }
+    
+    // Render table with safe responses
     return (
-      <div className="text-center p-2 text-muted-foreground">
-        Dane odpowiedzi są nieprawidłowe. Spróbuj odświeżyć.
+      <div className="border rounded-md overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[60%]">Pytanie</TableHead>
+              <TableHead>Ocena</TableHead>
+              <TableHead>Wizualizacja</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {safeResponses.map((response) => {
+              // Get the question, provide fallback if not found
+              const question = questionsDatabase.find(q => q.id === response.question_id);
+              
+              return (
+                <TableRow key={response.id}>
+                  <TableCell className="align-top">
+                    <div>
+                      <span className="font-medium">
+                        {question?.text || `Pytanie (${response.question_id})`}
+                      </span>
+                      {question?.description && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {question.description}
+                        </p>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline">
+                      {response.answer}/5
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="w-full bg-gray-200 rounded-full h-2.5">
+                      <div 
+                        className="bg-primary h-2.5 rounded-full" 
+                        style={{ width: `${(response.answer / 5) * 100}%` }}
+                      ></div>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </div>
+    );
+  } catch (error) {
+    // Catch any unexpected errors during rendering
+    console.error('Error rendering survey responses table:', error);
+    return (
+      <div className="text-center p-2 text-red-500 border border-red-200 rounded">
+        Wystąpił błąd podczas wyświetlania odpowiedzi. Spróbuj odświeżyć stronę.
       </div>
     );
   }
-
-  console.log(`Found ${validResponses.length} valid responses out of ${responses.length} total`);
-
-  return (
-    <div className="border rounded-md overflow-hidden">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[60%]">Pytanie</TableHead>
-            <TableHead>Ocena</TableHead>
-            <TableHead>Wizualizacja</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {validResponses.map(response => {
-            // Double check that response is valid before accessing properties
-            if (!response || !response.question_id) {
-              console.error('Invalid response item found during rendering:', response);
-              return null;
-            }
-            
-            const question = questionsDatabase.find(q => q.id === response.question_id);
-            return (
-              <TableRow key={response.id}>
-                <TableCell className="align-top">
-                  <div>
-                    <span className="font-medium">
-                      {question?.text || `Pytanie (${response.question_id})`}
-                    </span>
-                    {question?.description && (
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {question.description}
-                      </p>
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Badge variant="outline">
-                    {response.answer}/5
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <div className="w-full bg-gray-200 rounded-full h-2.5">
-                    <div 
-                      className="bg-primary h-2.5 rounded-full" 
-                      style={{ width: `${(response.answer / 5) * 100}%` }}
-                    ></div>
-                  </div>
-                </TableCell>
-              </TableRow>
-            );
-          }).filter(Boolean)}
-        </TableBody>
-      </Table>
-    </div>
-  );
 };
 
 export default SurveyResponsesTable;
