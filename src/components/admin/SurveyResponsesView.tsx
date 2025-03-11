@@ -138,7 +138,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
     }
   };
   
-  // Updated refresh function to use the Edge Function directly
+  // Updated refresh function with deduplication logic
   const refreshResponses = async () => {
     if (!orderId) {
       console.error('No order ID available for refresh');
@@ -172,9 +172,14 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
       
       if (edgeFunctionData && edgeFunctionData.responses && edgeFunctionData.responses.length > 0) {
         console.log(`Retrieved ${edgeFunctionData.responses.length} responses from Edge Function`);
-        setRefreshedResponses(edgeFunctionData.responses);
+        
+        // Process and deduplicate the responses
+        const processedResponses = processAndDeduplicateResponses(edgeFunctionData.responses);
+        console.log(`After deduplication: ${processedResponses.length} responses`);
+        
+        setRefreshedResponses(processedResponses);
         setHasResponses(true);
-        toast.success(`Odpowiedzi odświeżone (${edgeFunctionData.responses.length})`);
+        toast.success(`Odpowiedzi odświeżone (${processedResponses.length})`);
         return;
       }
       
@@ -192,9 +197,14 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
       
       if (data && data.length > 0) {
         console.log(`Retrieved ${data.length} responses from database`);
-        setRefreshedResponses(data);
+        
+        // Process and deduplicate the responses
+        const processedResponses = processAndDeduplicateResponses(data);
+        console.log(`After deduplication: ${processedResponses.length} responses`);
+        
+        setRefreshedResponses(processedResponses);
         setHasResponses(true);
-        toast.success(`Odpowiedzi odświeżone (${data.length})`);
+        toast.success(`Odpowiedzi odświeżone (${processedResponses.length})`);
         return;
       }
       
@@ -214,6 +224,28 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
     } finally {
       setRefreshLoading(false);
     }
+  };
+
+  // Helper function to process and deduplicate responses
+  const processAndDeduplicateResponses = (responses: SurveyResponse[]): SurveyResponse[] => {
+    if (!responses || !Array.isArray(responses)) return [];
+    
+    // Group responses by user_type and question_id
+    const responseMap: Record<string, SurveyResponse> = {};
+    
+    // Process each response, keeping the most recent one for each question_id and user_type
+    responses.forEach(response => {
+      const key = `${response.user_type}_${response.question_id}`;
+      
+      // If this is the first response of this type or it's newer than the existing one, keep it
+      if (!responseMap[key] || 
+          new Date(response.created_at) > new Date(responseMap[key].created_at)) {
+        responseMap[key] = response;
+      }
+    });
+    
+    // Convert back to array
+    return Object.values(responseMap);
   };
 
   // Effect to check for responses based on refreshedResponses or initialResponses
@@ -307,7 +339,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
     );
   }
 
-  // Ensure userResponses and partnerResponses are safe to use (never undefined)
+  // Ensure userResponses and partnerResponses are safe to use and deduplicated
   const userResponses = currentResponses.filter(r => r.user_type === 'user') || [];
   const partnerResponses = currentResponses.filter(r => r.user_type === 'partner') || [];
 
@@ -343,8 +375,6 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
           </AlertDescription>
         </Alert>
       )}
-      
-      
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-4">

@@ -1,9 +1,7 @@
-
 import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, fetchFromSupabase } from '@/integrations/supabase/client';
 import { questionsDatabase } from './questions-data';
-import { fetchFromSupabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export type Gender = 'male' | 'female' | null;
@@ -196,10 +194,13 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   // Store orderId for partner surveys
   const [partnerOrderId, setPartnerOrderId] = useState<string | null>(null);
   
-  // Add missing state variables for loading and error handling
+  // Add state variables for loading and error handling
   const [isLoadingOrder, setIsLoadingOrder] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [orderDetails, setOrderDetails] = useState<any | null>(null);
+  
+  // Store selected questions sequence for partner surveys
+  const [selectedQuestionIds, setSelectedQuestionIds] = useState<string[]>([]);
 
   // If this is a partner survey, get the order ID associated with the token
   useEffect(() => {
@@ -221,6 +222,9 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         if (data) {
           console.log('Partner survey order ID:', data.id);
           setPartnerOrderId(data.id);
+          
+          // Fetch question sequence for this order
+          fetchOrderQuestionSequence(data.id);
         }
       } catch (error) {
         console.error('Failed to fetch order ID:', error);
@@ -234,12 +238,61 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const isInConfigurationMode = !surveyConfig.isConfigComplete;
 
-  // Używamy losowych pytań, ale tylko jeśli konfiguracja jest kompletna
+  // Load question sequence for partner survey
+  const fetchOrderQuestionSequence = async (orderId: string) => {
+    try {
+      console.log('Fetching question sequence for order:', orderId);
+      
+      // Fetch responses to get the sequence
+      const { data, error } = await supabase
+        .from('survey_responses')
+        .select('question_id')
+        .eq('order_id', orderId)
+        .eq('user_type', 'user')  // Only user's responses to get the sequence
+        .order('created_at', { ascending: true });
+      
+      if (error) {
+        console.error('Error fetching question sequence:', error);
+        return;
+      }
+      
+      if (data && data.length > 0) {
+        // Extract question IDs in the same order
+        const questionIds = data.map(response => response.question_id);
+        console.log('Fetched question sequence:', questionIds);
+        setSelectedQuestionIds(questionIds);
+      } else {
+        console.log('No existing question sequence found for this order');
+      }
+    } catch (err) {
+      console.error('Failed to fetch question sequence:', err);
+    }
+  };
+
+  // Generate or load questions based on partner status
   const filteredQuestions = useMemo(() => {
     if (!surveyConfig.isConfigComplete) return [];
     
-    return getRandomizedQuestions(questions, surveyConfig, 15);
-  }, [questions, surveyConfig]);
+    // For partner survey with existing questions
+    if (partnerToken && selectedQuestionIds.length > 0) {
+      console.log('Using predefined question sequence for partner:', selectedQuestionIds);
+      // Map question IDs to actual questions in the same order
+      return selectedQuestionIds
+        .map(id => questions.find(q => q.id === id))
+        .filter(q => q !== undefined) as Question[];
+    }
+    
+    // For regular user survey, generate random questions
+    const randomQuestions = getRandomizedQuestions(questions, surveyConfig, 15);
+    
+    // If this is the initial selection for a user (not partner), store the question IDs
+    if (!partnerToken && !selectedQuestionIds.length) {
+      const ids = randomQuestions.map(q => q.id);
+      setSelectedQuestionIds(ids);
+    }
+    
+    return randomQuestions;
+  }, [questions, surveyConfig, partnerToken, selectedQuestionIds]);
 
   const totalQuestions = filteredQuestions.length;
   const isFirstQuestion = currentQuestionIndex === 0;
@@ -260,22 +313,50 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         try {
           console.log('Auto-saving partner answer for question', questionId, 'with value', value);
           
-          const { error } = await supabase
+          // First check if this answer already exists to prevent duplicates
+          const { data: existingData, error: checkError } = await supabase
             .from('survey_responses')
-            .insert({
-              order_id: partnerOrderId,
-              question_id: questionId,
-              answer: value,
-              user_type: 'partner',
-              user_gender: surveyConfig.userGender,
-              partner_gender: surveyConfig.partnerGender,
-              game_level: surveyConfig.gameLevel
-            });
+            .select('id')
+            .eq('order_id', partnerOrderId)
+            .eq('question_id', questionId)
+            .eq('user_type', 'partner');
             
-          if (error) {
-            console.error('Error auto-saving partner response:', error);
+          if (checkError) {
+            console.error('Error checking for existing responses:', checkError);
+          }
+          
+          // If answer already exists, update it instead of inserting
+          if (existingData && existingData.length > 0) {
+            console.log('Updating existing answer for question', questionId);
+            const { error: updateError } = await supabase
+              .from('survey_responses')
+              .update({ answer: value })
+              .eq('id', existingData[0].id);
+              
+            if (updateError) {
+              console.error('Error updating partner response:', updateError);
+            } else {
+              console.log('Successfully updated partner response');
+            }
           } else {
-            console.log('Successfully auto-saved partner response');
+            // Insert new answer
+            const { error } = await supabase
+              .from('survey_responses')
+              .insert({
+                order_id: partnerOrderId,
+                question_id: questionId,
+                answer: value,
+                user_type: 'partner',
+                user_gender: surveyConfig.userGender,
+                partner_gender: surveyConfig.partnerGender,
+                game_level: surveyConfig.gameLevel
+              });
+              
+            if (error) {
+              console.error('Error auto-saving partner response:', error);
+            } else {
+              console.log('Successfully auto-saved partner response');
+            }
           }
         } catch (err) {
           console.error('Failed to auto-save partner response:', err);
@@ -298,23 +379,50 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       if (isPartnerSurvey && partnerOrderId) {
         console.log('Saving partner answer for question', currentQuestion.id, 'with value', answerValue);
         
-        // For partner survey, use the partner order ID and save as partner
-        const { error: saveError } = await supabase
+        // First check if this answer already exists to prevent duplicates
+        const { data: existingData, error: checkError } = await supabase
           .from('survey_responses')
-          .insert({
-            order_id: partnerOrderId,
-            question_id: currentQuestion.id,
-            answer: answerValue,
-            user_type: 'partner',
-            user_gender: surveyConfig.userGender,
-            partner_gender: surveyConfig.partnerGender,
-            game_level: surveyConfig.gameLevel
-          });
+          .select('id')
+          .eq('order_id', partnerOrderId)
+          .eq('question_id', currentQuestion.id)
+          .eq('user_type', 'partner');
           
-        if (saveError) {
-          console.error('Error saving partner response:', saveError);
+        if (checkError) {
+          console.error('Error checking for existing responses:', checkError);
+        }
+        
+        // If answer already exists, update it instead of inserting
+        if (existingData && existingData.length > 0) {
+          console.log('Updating existing answer for question', currentQuestion.id);
+          const { error: updateError } = await supabase
+            .from('survey_responses')
+            .update({ answer: answerValue })
+            .eq('id', existingData[0].id);
+            
+          if (updateError) {
+            console.error('Error updating partner response:', updateError);
+          } else {
+            console.log('Successfully updated partner response');
+          }
         } else {
-          console.log('Successfully saved partner response');
+          // Insert new answer
+          const { error: saveError } = await supabase
+            .from('survey_responses')
+            .insert({
+              order_id: partnerOrderId,
+              question_id: currentQuestion.id,
+              answer: answerValue,
+              user_type: 'partner',
+              user_gender: surveyConfig.userGender,
+              partner_gender: surveyConfig.partnerGender,
+              game_level: surveyConfig.gameLevel
+            });
+            
+          if (saveError) {
+            console.error('Error saving partner response:', saveError);
+          } else {
+            console.log('Successfully saved partner response');
+          }
         }
       }
       // The regular user response saving is handled in the payment process
@@ -374,7 +482,12 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const completeConfig = useCallback(() => {    
     setSurveyConfig(prev => ({ ...prev, isConfigComplete: true }));
     setCurrentQuestionIndex(0);
-  }, []);
+    
+    // Clear any previously cached question sequence
+    if (!partnerToken) {
+      setSelectedQuestionIds([]);
+    }
+  }, [partnerToken]);
 
   // Add the setOrderId method to update the orderId
   const setOrderId = useCallback((orderId: string) => {
@@ -388,30 +501,6 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }, [partnerOrderId]);
 
   // Fetch order details if this is a partner survey
-  const fetchOrderDetails = async (orderId: string) => {
-    try {
-      console.log('Fetching order details for:', orderId);
-      const { data, error } = await supabase
-        .from('orders')
-        .select('*')
-        .eq('id', orderId)
-        .single();
-        
-      if (error) {
-        console.error('Error fetching order details:', error);
-        return;
-      }
-      
-      if (data) {
-        console.log('Found order details:', data);
-        setOrderDetails(data);
-      }
-    } catch (err) {
-      console.error('Failed to fetch order details:', err);
-    }
-  };
-
-  // Use the same configuration settings for partner survey
   useEffect(() => {
     // Fetch order details if this is a partner survey
     const fetchOrderDetails = async () => {
@@ -471,7 +560,7 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
       
       // Store the order ID in the survey context
-      setOrderId(orderData.id);
+      setPartnerOrderId(orderData.id);
       
       // Set default configuration if any values are missing
       const userGender = orderData.user_gender || 'male';
@@ -495,13 +584,16 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setPartnerGender(partnerGender as 'male' | 'female');
       setGameLevel(gameLevel as 'discover' | 'explore' | 'exceed');
       
+      // Fetch questions sequence for this order
+      fetchOrderQuestionSequence(orderData.id);
+      
       toast.success('Ankieta załadowana pomyślnie');
     };
     
     if (partnerToken) {
       fetchOrderDetails();
     }
-  }, [partnerToken, setUserGender, setPartnerGender, setGameLevel, setOrderId]);
+  }, [partnerToken, setUserGender, setPartnerGender, setGameLevel]);
 
   const value = {
     currentQuestionIndex,

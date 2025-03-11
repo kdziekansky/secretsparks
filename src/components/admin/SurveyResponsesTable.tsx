@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { questionsDatabase } from '@/contexts/questions-data';
 import { 
@@ -72,16 +71,45 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
     );
   }
 
-  const filteredResponses = safeResponses.filter(response => (
-    response && 
-    typeof response === 'object' && 
-    response.question_id &&
-    typeof response.answer === 'number'
-  ));
+  // Filter and deduplicate responses
+  const uniqueResponses = (() => {
+    // Keep track of seen question IDs
+    const seen = new Set<string>();
+    // Filter responses and keep only the latest one for each question
+    return safeResponses
+      .filter(response => (
+        response && 
+        typeof response === 'object' && 
+        response.question_id &&
+        typeof response.answer === 'number'
+      ))
+      // Sort by creation date (newest first) to ensure we get the latest answer for each question
+      .sort((a, b) => {
+        const dateA = new Date(a.created_at || 0).getTime();
+        const dateB = new Date(b.created_at || 0).getTime();
+        return dateB - dateA; // Descending order (newest first)
+      })
+      // Keep only one response per question_id (the first one after sorting, which is the newest)
+      .filter(response => {
+        const questionId = response.question_id;
+        if (seen.has(questionId)) {
+          console.log(`Filtering out duplicate response for question ${questionId}`);
+          return false;
+        }
+        seen.add(questionId);
+        return true;
+      })
+      // Now sort by created_at ascending for display order
+      .sort((a, b) => {
+        const dateA = new Date(a.created_at || 0).getTime();
+        const dateB = new Date(b.created_at || 0).getTime();
+        return dateA - dateB; // Ascending order by creation date
+      });
+  })();
 
-  console.log(`Filtered ${filteredResponses.length} responses for ${userType}`);
+  console.log(`Filtered ${uniqueResponses.length} unique responses for ${userType} from ${safeResponses.length} total`);
 
-  if (filteredResponses.length === 0) {
+  if (uniqueResponses.length === 0) {
     return (
       <div className="text-center p-2 text-muted-foreground">
         Brak poprawnych odpowiedzi od {userType === 'user' ? 'zamawiającego' : 'partnera'}.
@@ -114,7 +142,7 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredResponses.map((response, index) => {
+          {uniqueResponses.map((response, index) => {
             // Use a unique key that doesn't depend on potentially undefined values
             const rowKey = `${response.id || ''}${response.question_id || ''}${index}`;
             
