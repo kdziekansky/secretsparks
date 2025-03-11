@@ -139,7 +139,7 @@ const Index = () => {
             </div>
           </div>
           
-          {/* Feature cards in grid - Now part of the hero section with reduced margin */}
+          {/* Feature cards in grid - teraz z identycznymi odstępami */}
           <div className="bento-grid grid-cols-1 md:grid-cols-3 mt-8">
             <div className="bento-cell">
               <div className="bento-icon-container">
@@ -175,23 +175,21 @@ const Index = () => {
             </div>
           </div>
           
-          {/* Statistics section - part of hero with reduced spacing */}
-          <div className="mt-8">
-            <div className="feature-grid">
-              <div className="bento-cell text-center py-8">
-                <h3 className="text-4xl font-bold text-primary mb-3">250+</h3>
-                <p className="text-muted-foreground">Unikalnych scenariuszy i pomysłów na wzbogacenie Waszej intymnej relacji</p>
-              </div>
-              
-              <div className="bento-cell text-center py-8">
-                <h3 className="text-4xl font-bold text-primary mb-3">100%</h3>
-                <p className="text-muted-foreground">Gwarancja bezpieczeństwa danych i pełnej anonimowości każdej ankiety</p>
-              </div>
-              
-              <div className="bento-cell text-center py-8">
-                <h3 className="text-4xl font-bold text-primary mb-3">5min</h3>
-                <p className="text-muted-foreground">Szybka ankieta, której rezultaty zmienią Waszą relację na zawsze</p>
-              </div>
+          {/* Statistics section - identyczny odstęp jak poprzednie sekcje */}
+          <div className="bento-grid grid-cols-1 md:grid-cols-3 mt-8">
+            <div className="bento-cell text-center py-8">
+              <h3 className="text-4xl font-bold text-primary mb-3">250+</h3>
+              <p className="text-muted-foreground">Unikalnych scenariuszy i pomysłów na wzbogacenie Waszej intymnej relacji</p>
+            </div>
+            
+            <div className="bento-cell text-center py-8">
+              <h3 className="text-4xl font-bold text-primary mb-3">100%</h3>
+              <p className="text-muted-foreground">Gwarancja bezpieczeństwa danych i pełnej anonimowości każdej ankiety</p>
+            </div>
+            
+            <div className="bento-cell text-center py-8">
+              <h3 className="text-4xl font-bold text-primary mb-3">5min</h3>
+              <p className="text-muted-foreground">Szybka ankieta, której rezultaty zmienią Waszą relację na zawsze</p>
             </div>
           </div>
         </div>
