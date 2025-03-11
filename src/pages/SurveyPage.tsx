@@ -66,8 +66,7 @@ const SurveyPage: React.FC = () => {
 
         console.log('User responses found:', responsesData);
         
-        // Use the first response to get the configuration
-        // IMPORTANT: Changed from const to let to allow reassignment
+        // IMPORTANT: Use let instead of const to allow reassignment
         let config = responsesData && responsesData.length > 0 
           ? {
               userGender: responsesData[0].user_gender,

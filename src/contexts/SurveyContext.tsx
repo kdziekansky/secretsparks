@@ -241,7 +241,38 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const setAnswer = useCallback((questionId: string, value: number) => {
     setAnswers(prev => ({ ...prev, [questionId]: value }));
-  }, []);
+    
+    // Immediately save answer for partner surveys
+    if (partnerToken && partnerOrderId) {
+      const saveToDatabase = async () => {
+        try {
+          console.log('Auto-saving partner answer for question', questionId, 'with value', value);
+          
+          const { error } = await supabase
+            .from('survey_responses')
+            .insert({
+              order_id: partnerOrderId,
+              question_id: questionId,
+              answer: value,
+              user_type: 'partner',
+              user_gender: surveyConfig.userGender,
+              partner_gender: surveyConfig.partnerGender,
+              game_level: surveyConfig.gameLevel
+            });
+            
+          if (error) {
+            console.error('Error auto-saving partner response:', error);
+          } else {
+            console.log('Successfully auto-saved partner response');
+          }
+        } catch (err) {
+          console.error('Failed to auto-save partner response:', err);
+        }
+      };
+      
+      saveToDatabase();
+    }
+  }, [partnerToken, partnerOrderId, surveyConfig]);
 
   // Save answer to database
   const saveAnswer = useCallback(async (isPartnerSurvey = false) => {

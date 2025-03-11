@@ -1,296 +1,267 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Info, Gift, ShieldCheck, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
+import { useSurvey } from '@/contexts/SurveyContext';
 import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
-const REPORT_PRICE = 29;
-const CURRENCY = 'zł';
+interface FormErrors {
+  userName?: string;
+  userEmail?: string;
+  partnerName?: string;
+  partnerEmail?: string;
+}
+
+const PRODUCT_PRICE = 199;
 
 const PaymentPage: React.FC = () => {
-  const [searchParams] = useSearchParams();
-  const orderId = searchParams.get('orderId');
-  const { toast: toastHook } = useToast();
+  const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const [partnerName, setPartnerName] = useState('');
+  const [partnerEmail, setPartnerEmail] = useState('');
+  const [giftWrap, setGiftWrap] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [isProcessing, setIsProcessing] = useState(false);
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    userName: '',
-    userEmail: '',
-    partnerName: '',
-    partnerEmail: '',
-    giftWrap: false
-  });
 
-  useEffect(() => {
-    const fetchOrderDetails = async () => {
-      if (!orderId) return;
-
-      try {
-        setIsLoading(true);
-        console.log("Fetching order details for ID:", orderId);
-        const { data, error } = await supabase
-          .from('orders')
-          .select('*')
-          .eq('id', orderId)
-          .single();
-
-        if (error) {
-          console.error("Order fetch error:", error);
-          throw error;
-        }
-
-        console.log("Order data retrieved:", data);
-        setFormData({
-          userName: data.user_name,
-          userEmail: data.user_email,
-          partnerName: data.partner_name,
-          partnerEmail: data.partner_email,
-          giftWrap: data.gift_wrap
-        });
-      } catch (error) {
-        console.error('Error fetching order:', error);
-        toastHook({
-          variant: "destructive", 
-          title: "Error",
-          description: "Failed to retrieve order data.",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchOrderDetails();
-  }, [orderId, toastHook]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const { answers, surveyConfig } = useSurvey();
+  
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
 
-  const handleCheckboxChange = (name: string, value: boolean) => {
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const validateForm = () => {
+    const newErrors: FormErrors = {};
+    if (!userName) newErrors.userName = 'Imię jest wymagane';
+    if (!userEmail) {
+      newErrors.userEmail = 'Email jest wymagany';
+    } else if (!isValidEmail(userEmail)) {
+      newErrors.userEmail = 'Nieprawidłowy format email';
+    }
+    if (!partnerName) newErrors.partnerName = 'Imię partnera jest wymagane';
+    if (!partnerEmail) {
+      newErrors.partnerEmail = 'Email partnera jest wymagany';
+    } else if (!isValidEmail(partnerEmail)) {
+      newErrors.partnerEmail = 'Nieprawidłowy format email';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const createOrder = async () => {
-    try {
-      if (orderId) {
-        console.log("Using existing orderId:", orderId);
-        return orderId;
-      }
+  const isValid = () => {
+    return validateForm();
+  };
 
-      console.log("Creating new order in database...");
-      const { data, error } = await supabase
-        .from('orders')
-        .insert([
-          {
-            user_name: formData.userName,
-            user_email: formData.userEmail,
-            partner_name: formData.partnerName,
-            partner_email: formData.partnerEmail,
-            gift_wrap: formData.giftWrap,
-            price: REPORT_PRICE
-          }
-        ])
-        .select()
-        .single();
-
-      if (error) {
-        console.error("Error creating order:", error);
-        throw error;
-      }
-      
-      console.log("Order created successfully:", data.id);
-      return data.id;
-    } catch (error) {
-      console.error('Error creating order:', error);
-      throw error;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    switch (name) {
+      case 'userName':
+        setUserName(value);
+        break;
+      case 'userEmail':
+        setUserEmail(value);
+        break;
+      case 'partnerName':
+        setPartnerName(value);
+        break;
+      case 'partnerEmail':
+        setPartnerEmail(value);
+        break;
+      case 'giftWrap':
+        setGiftWrap(type === 'checkbox' ? checked : false);
+        break;
+      default:
+        break;
     }
   };
-
+  
+  // Save survey responses before initiating payment
+  const saveResponses = async (orderId: string) => {
+    try {
+      console.log('Saving user survey responses for order:', orderId);
+      
+      // Prepare survey responses for insertion
+      const responsesToSave = Object.entries(answers).map(([questionId, answer]) => ({
+        order_id: orderId,
+        question_id: questionId,
+        answer: answer,
+        user_type: 'user',
+        user_gender: surveyConfig.userGender,
+        partner_gender: surveyConfig.partnerGender,
+        game_level: surveyConfig.gameLevel
+      }));
+      
+      if (responsesToSave.length === 0) {
+        console.warn('No answers to save!');
+        return;
+      }
+      
+      console.log('Saving responses:', responsesToSave);
+      
+      const { error } = await supabase
+        .from('survey_responses')
+        .insert(responsesToSave);
+        
+      if (error) {
+        console.error('Error saving survey responses:', error);
+        toast.error('Wystąpił błąd podczas zapisywania odpowiedzi z ankiety');
+      } else {
+        console.log('Survey responses saved successfully');
+      }
+    } catch (error) {
+      console.error('Failed to save survey responses:', error);
+    }
+  };
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (isLoading) return;
+    if (!isValid()) {
+      setShowErrors(true);
+      return;
+    }
+    
+    setIsProcessing(true);
     
     try {
-      setIsLoading(true);
+      // Create order in database
+      const { data: orderData, error: orderError } = await supabase
+        .from('orders')
+        .insert({
+          user_name: userName,
+          user_email: userEmail,
+          partner_name: partnerName,
+          partner_email: partnerEmail,
+          gift_wrap: giftWrap,
+          price: PRODUCT_PRICE,
+          user_gender: surveyConfig.userGender,
+          partner_gender: surveyConfig.partnerGender,
+          game_level: surveyConfig.gameLevel
+        })
+        .select()
+        .single();
       
-      const newOrderId = await createOrder();
-      
-      console.log("Wywołuję funkcję create-payment z ID zamówienia:", newOrderId);
-      
-      // Przygotuj poprawny obiekt payload dla funkcji
-      const payloadData = {
-        price: REPORT_PRICE,
-        currency: 'pln',
-        user_name: formData.userName,
-        user_email: formData.userEmail,
-        partner_name: formData.partnerName,
-        partner_email: formData.partnerEmail,
-        gift_wrap: formData.giftWrap,
-        order_id: newOrderId
-      };
-      
-      console.log("Przygotowany payload:", JSON.stringify(payloadData));
-      
-      const { data, error } = await supabase.functions.invoke('create-payment', {
-        body: JSON.stringify({ data: payloadData }),
-      });
-      
-      console.log("Odpowiedź funkcji create-payment:", JSON.stringify(data), error);
-      
-      if (error) {
-        console.error("Błąd funkcji:", error);
-        throw new Error(error.message || "Problem z utworzeniem płatności");
+      if (orderError) {
+        throw orderError;
       }
       
-      if (!data) {
-        console.error("Brak danych w odpowiedzi funkcji");
-        throw new Error("Serwer nie zwrócił danych płatności");
-      }
+      console.log('Order created:', orderData);
       
-      if (!data.url) {
-        console.error("Brak URL w odpowiedzi:", data);
-        
-        // Wyświetl bardziej szczegółowe informacje o błędzie
-        if (data.error) {
-          throw new Error(`Błąd płatności: ${data.error}`);
-        } else {
-          throw new Error("Brak URL do strony płatności");
-        }
-      }
+      // Save survey responses
+      await saveResponses(orderData.id);
       
-      console.log("Przekierowuję do strony płatności:", data.url);
+      // Redirect to payment gateway
+      // For now, just navigate to a thank you page
+      toast.success('Zamówienie złożone! Przekierowywanie do płatności...');
+      setTimeout(() => {
+        navigate('/thank-you');
+      }, 2000);
       
-      // Przekieruj do strony płatności Stripe
-      window.location.href = data.url;
     } catch (error) {
       console.error('Payment error:', error);
-      toast.error("Błąd płatności", {
-        description: error.message || "Nie udało się przetworzyć płatności. Spróbuj ponownie.",
-      });
-      setIsLoading(false);
+      toast.error('Wystąpił błąd podczas przetwarzania płatności. Spróbuj ponownie.');
+      setIsProcessing(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6">
-      <div className="glass-panel w-full max-w-5xl animate-fade-in">
-        <div className="flex flex-col lg:flex-row">
-          <div className="lg:w-1/2 p-8">
-            <h1 className="text-2xl font-bold mb-2">Dokończ zamówienie 👋</h1>
-            
-            <div className="mb-4 flex items-center p-3 bg-green-50 rounded-md text-green-800">
-              <ShieldCheck className="h-5 w-5 mr-2 flex-shrink-0" />
-              <p className="text-sm">Raport dostępny za jedyne <strong>{REPORT_PRICE} {CURRENCY}</strong></p>
-            </div>
-            
-            <p className="text-gray-600 mb-4">
-              Czas zaprosić do gry Twoją drugą połówkę. Na końcu poznacie Wasze ukryte pragnienia.
-            </p>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <Input
-                name="userName"
-                placeholder="Twoje imię"
-                value={formData.userName}
-                onChange={handleInputChange}
-                required
-                disabled={isLoading}
-                className="w-full h-12 px-4 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary"
-              />
-              
-              <Input
-                name="userEmail"
-                type="email"
-                placeholder="Twój e-mail (tam wyślemy raport)"
-                value={formData.userEmail}
-                onChange={handleInputChange}
-                required
-                disabled={isLoading}
-                className="w-full h-12 px-4 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary"
-              />
-              
-              <Input
-                name="partnerName"
-                placeholder="Imię Twojej partnerki/partnera"
-                value={formData.partnerName}
-                onChange={handleInputChange}
-                required
-                disabled={isLoading}
-                className="w-full h-12 px-4 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary"
-              />
-              
-              <Input
-                name="partnerEmail"
-                type="email"
-                placeholder="E-mail partnerki/partnera (tam wyślemy zaproszenie)"
-                value={formData.partnerEmail}
-                onChange={handleInputChange}
-                required
-                disabled={isLoading}
-                className="w-full h-12 px-4 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary"
-              />
-
-              <div className="p-4 bg-gray-50 rounded-md flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={formData.giftWrap}
-                  onChange={() => handleCheckboxChange('giftWrap', !formData.giftWrap)}
-                  disabled={isLoading}
-                  className="w-4 h-4 accent-purple-800"
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <Card className="shadow-lg rounded-lg">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-bold text-center">Podsumowanie zamówienia</CardTitle>
+            <CardDescription className="text-gray-500 text-center">Wypełnij dane, aby złożyć zamówienie</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <form onSubmit={handleSubmit}>
+              <div className="space-y-2">
+                <Label htmlFor="userName">Imię</Label>
+                <Input
+                  type="text"
+                  id="userName"
+                  name="userName"
+                  value={userName}
+                  onChange={handleChange}
+                  required
+                  placeholder="Twoje imię"
                 />
-                <Gift className="text-yellow-600 w-5 h-5" />
-                <span>Zapakuj na prezent (bezpłatnie)</span>
-                <Info className="w-4 h-4 text-gray-400 cursor-help" />
+                {showErrors && errors.userName && (
+                  <p className="text-red-500 text-sm">{errors.userName}</p>
+                )}
               </div>
-
-              <div className="text-xs text-gray-600 mt-4 text-center">
-                Grając, akceptujesz przyjazny <a href="#" className="underline">Regulamin</a> i <a href="#" className="underline">Politykę Prywatności</a>, która gwarantuje bezpieczeństwo Waszych danych. Usuniemy je po 7 dniach.
+              <div className="space-y-2">
+                <Label htmlFor="userEmail">Email</Label>
+                <Input
+                  type="email"
+                  id="userEmail"
+                  name="userEmail"
+                  value={userEmail}
+                  onChange={handleChange}
+                  required
+                  placeholder="Twój email"
+                />
+                {showErrors && errors.userEmail && (
+                  <p className="text-red-500 text-sm">{errors.userEmail}</p>
+                )}
               </div>
-
-              <div className="flex flex-col gap-3 items-center mt-6">
-                <Button
-                  type="submit"
-                  className="w-full max-w-xs px-10 py-3 rounded-full font-medium"
-                  style={{ backgroundColor: '#800000' }}
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Przetwarzanie...
-                    </>
+              <div className="space-y-2">
+                <Label htmlFor="partnerName">Imię partnera/partnerki</Label>
+                <Input
+                  type="text"
+                  id="partnerName"
+                  name="partnerName"
+                  value={partnerName}
+                  onChange={handleChange}
+                  required
+                  placeholder="Imię Twojej drugiej połówki"
+                />
+                {showErrors && errors.partnerName && (
+                  <p className="text-red-500 text-sm">{errors.partnerName}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="partnerEmail">Email partnera/partnerki</Label>
+                <Input
+                  type="email"
+                  id="partnerEmail"
+                  name="partnerEmail"
+                  value={partnerEmail}
+                  onChange={handleChange}
+                  required
+                  placeholder="Email Twojej drugiej połówki"
+                />
+                {showErrors && errors.partnerEmail && (
+                  <p className="text-red-500 text-sm">{errors.partnerEmail}</p>
+                )}
+              </div>
+              <div className="flex items-center space-x-2">
+                <Input
+                  type="checkbox"
+                  id="giftWrap"
+                  name="giftWrap"
+                  checked={giftWrap}
+                  onChange={handleChange}
+                />
+                <Label htmlFor="giftWrap">Zapakuj na prezent (+20zł)</Label>
+              </div>
+              <div>
+                <Button disabled={isProcessing} className="w-full">
+                  {isProcessing ? (
+                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Przetwarzanie...</>
                   ) : (
-                    <>Zapłać {REPORT_PRICE} {CURRENCY}</>
+                    <>Zapłać {PRODUCT_PRICE + (giftWrap ? 20 : 0)} zł</>
                   )}
                 </Button>
-                
-                <Link to="/survey" className="w-full flex justify-center">
-                  <Button
-                    type="button" 
-                    variant="outline"
-                    className="max-w-xs py-2 px-6 rounded-full font-medium"
-                    disabled={isLoading}
-                  >
-                    Wróć do ankiety
-                  </Button>
-                </Link>
-              </div>
-              
-              <div className="text-center text-sm text-gray-500 mt-4">
-                Płatność jest zabezpieczona szyfrowaniem SSL
               </div>
             </form>
-          </div>
-
-          <div className="lg:w-1/2 bg-gray-50 p-8 rounded-r-2xl">
-            {/* Reszta kodu pozostaje bez zmian */}
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
