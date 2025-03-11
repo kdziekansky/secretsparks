@@ -31,13 +31,34 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
   // Add console log to debug responses data
   console.log(`Rendering ${userType} responses table with:`, responses);
   
-  if (!responses || responses.length === 0) {
+  // Check if responses is null, undefined, or empty
+  if (!responses || !Array.isArray(responses) || responses.length === 0) {
     return (
       <div className="text-center p-2 text-muted-foreground">
         Brak odpowiedzi od {userType === 'user' ? 'zamawiającego' : 'partnera'}.
       </div>
     );
   }
+
+  // Verify each response has required properties
+  const validResponses = responses.filter(response => 
+    response && 
+    typeof response === 'object' && 
+    'id' in response && 
+    'question_id' in response && 
+    'answer' in response
+  );
+
+  if (validResponses.length === 0) {
+    console.error('No valid responses found in data:', responses);
+    return (
+      <div className="text-center p-2 text-muted-foreground">
+        Dane odpowiedzi są nieprawidłowe. Spróbuj odświeżyć.
+      </div>
+    );
+  }
+
+  console.log(`Found ${validResponses.length} valid responses out of ${responses.length} total`);
 
   return (
     <div className="border rounded-md overflow-hidden">
@@ -50,7 +71,7 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {responses.map(response => {
+          {validResponses.map(response => {
             const question = questionsDatabase.find(q => q.id === response.question_id);
             return (
               <TableRow key={response.id}>

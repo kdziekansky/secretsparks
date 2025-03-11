@@ -151,21 +151,37 @@ Deno.serve(async (req) => {
       console.error('Exception verifying order:', err.message)
     }
     
-    // Final check
-    if (responses && responses.length > 0) {
-      console.log(`Found ${responses.length} responses`)
+    // Validate response data before returning
+    if (responses && Array.isArray(responses) && responses.length > 0) {
+      // Validate each response has the required fields
+      const validatedResponses = responses.map(response => {
+        // Ensure required fields have values or defaults
+        return {
+          id: response.id || `temp-${Math.random().toString(36).substring(2, 9)}`,
+          order_id: response.order_id || orderId,
+          question_id: response.question_id || '',
+          answer: typeof response.answer === 'number' ? response.answer : 0,
+          user_type: response.user_type || 'user',
+          created_at: response.created_at || new Date().toISOString(),
+          user_gender: response.user_gender || null,
+          partner_gender: response.partner_gender || null,
+          game_level: response.game_level || null
+        };
+      });
+      
+      console.log(`Found and validated ${validatedResponses.length} responses`);
       return new Response(
-        JSON.stringify({ responses }),
+        JSON.stringify({ responses: validatedResponses }),
         {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 200,
         }
-      )
+      );
     } else {
-      console.log('No responses found after all attempts')
+      console.log('No responses found after all attempts or validation failed');
       // Check if there's a query error to return or return empty array
       if (queryError) {
-        throw queryError
+        throw queryError;
       } else {
         return new Response(
           JSON.stringify({ responses: [] }),
@@ -173,17 +189,17 @@ Deno.serve(async (req) => {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             status: 200,
           }
-        )
+        );
       }
     }
   } catch (error) {
-    console.error('Error:', error.message)
+    console.error('Error:', error.message);
     return new Response(
       JSON.stringify({ error: error.message }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400,
       }
-    )
+    );
   }
-})
+});
