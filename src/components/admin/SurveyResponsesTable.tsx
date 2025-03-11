@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { questionsDatabase } from '@/contexts/questions-data';
 import { 
   Table, TableBody, TableCell, TableHead, 
@@ -43,6 +43,15 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
   responses, 
   userType 
 }) => {
+  // Sprawdź czy mamy dostęp do bazy pytań na starcie komponentu
+  useEffect(() => {
+    if (!questionsDatabase || !Array.isArray(questionsDatabase) || questionsDatabase.length === 0) {
+      console.error('Questions database is missing or empty', questionsDatabase);
+    } else {
+      console.log(`Questions database has ${questionsDatabase.length} questions`);
+    }
+  }, []);
+
   if (!responses || !Array.isArray(responses) || responses.length === 0) {
     return (
       <div className="text-center p-2 text-muted-foreground">
@@ -89,16 +98,35 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
         </TableHeader>
         <TableBody>
           {safeResponses.map((response, index) => {
-            // Try to find the question in the database
-            const question = questionsDatabase.find(q => q.id === response.question_id);
-            
-            // If question not found, render a placeholder row
-            if (!question) {
-              console.log(`Question not found for ID: ${response.question_id}`);
+            try {
+              // Try to find the question in the database
+              let question = null;
+              
+              if (questionsDatabase && Array.isArray(questionsDatabase)) {
+                question = questionsDatabase.find(q => q.id === response.question_id);
+              }
+              
+              // If question not found, render a placeholder row
+              if (!question) {
+                console.log(`Question not found for ID: ${response.question_id}`);
+                return (
+                  <TableRow key={response.id || `row-${index}`}>
+                    <TableCell className="font-medium text-muted-foreground">
+                      Pytanie (ID: {response.question_id})
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">
+                        {getRatingLabel(response.answer)}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                );
+              }
+              
               return (
                 <TableRow key={response.id || `row-${index}`}>
-                  <TableCell className="font-medium text-muted-foreground">
-                    Pytanie (ID: {response.question_id})
+                  <TableCell className="font-medium">
+                    {question.text}
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline">
@@ -107,20 +135,22 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
                   </TableCell>
                 </TableRow>
               );
+            } catch (error) {
+              console.error(`Error rendering response row at index ${index}:`, error);
+              // Fallback rendering in case of an error
+              return (
+                <TableRow key={`error-${index}`}>
+                  <TableCell className="font-medium text-muted-foreground">
+                    Błąd wyświetlania pytania
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className="text-red-500">
+                      Błąd
+                    </Badge>
+                  </TableCell>
+                </TableRow>
+              );
             }
-            
-            return (
-              <TableRow key={response.id || `row-${index}`}>
-                <TableCell className="font-medium">
-                  {question.text}
-                </TableCell>
-                <TableCell>
-                  <Badge variant="outline">
-                    {getRatingLabel(response.answer)}
-                  </Badge>
-                </TableCell>
-              </TableRow>
-            );
           })}
         </TableBody>
       </Table>
