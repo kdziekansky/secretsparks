@@ -175,20 +175,20 @@ const Index = () => {
             </div>
           </div>
           
-          {/* Statistics section - moved inside hero section to appear connected */}
-          <div className="mt-10 md:mt-12">
+          {/* Statistics section - part of hero with reduced spacing */}
+          <div className="mt-8">
             <div className="feature-grid">
-              <div className="bento-cell text-center py-10">
+              <div className="bento-cell text-center py-8">
                 <h3 className="text-4xl font-bold text-primary mb-3">250+</h3>
                 <p className="text-muted-foreground">Pytań które pomagają odkryć wspólne pragnienia</p>
               </div>
               
-              <div className="bento-cell text-center py-10">
+              <div className="bento-cell text-center py-8">
                 <h3 className="text-4xl font-bold text-primary mb-3">97%</h3>
                 <p className="text-muted-foreground">Par raportuje wzrost satysfakcji w relacji</p>
               </div>
               
-              <div className="bento-cell text-center py-10">
+              <div className="bento-cell text-center py-8">
                 <h3 className="text-4xl font-bold text-primary mb-3">5min</h3>
                 <p className="text-muted-foreground">Tyle zajmuje wypełnienie ankiety. Efekty - długoterminowe</p>
               </div>
@@ -197,8 +197,8 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Scientific Section - Bento Grid - Added additional card */}
-      <section className="section-padding pt-20 md:pt-28">
+      {/* Scientific Section - Bento Grid - Consistent spacing */}
+      <section className="section-padding pt-16 md:pt-24">
         <div className="section-container">
           <h2 className="section-title">
             Naukowy punkt widzenia
@@ -274,8 +274,8 @@ const Index = () => {
         </div>
       </section>
 
-      {/* How It Works - Bento Timeline */}
-      <section className="section-padding">
+      {/* How It Works - Bento Timeline - Consistent spacing */}
+      <section className="section-padding pt-16 md:pt-24">
         <div className="section-container">
           <h2 className="section-title">
             Krok po kroku
@@ -336,8 +336,8 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Security Section - Bento Grid */}
-      <section className="section-padding">
+      {/* Security Section - Bento Grid - Consistent spacing */}
+      <section className="section-padding pt-16 md:pt-24">
         <div className="section-container">
           <div className="bento-grid grid-cols-1 md:grid-cols-3">
             {/* Main security card */}
@@ -395,8 +395,8 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Final CTA Section - Fixed width to match other sections */}
-      <section className="section-padding py-24 md:py-32 text-center">
+      {/* Final CTA Section - Consistent width with other sections */}
+      <section className="section-padding pt-16 md:pt-24 pb-24 md:pb-32 text-center">
         <div className="section-container">
           <div className="mx-auto p-12 rounded-3xl glass-panel animate-fade-in">
             <div className="hero-badge">
