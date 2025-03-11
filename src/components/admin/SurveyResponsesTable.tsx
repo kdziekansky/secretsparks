@@ -40,14 +40,27 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
     );
   }
 
-  // Verify each response has required properties
-  const validResponses = responses.filter(response => 
-    response && 
-    typeof response === 'object' && 
-    'id' in response && 
-    'question_id' in response && 
-    'answer' in response
-  );
+  // Create a deep copy of responses to avoid direct mutation
+  // and provide safe default values for any missing properties
+  const safeResponses = responses.map(response => {
+    if (!response) {
+      console.error('Null or undefined response item found');
+      return null;
+    }
+    
+    // Ensure we have an object with all required properties
+    return {
+      id: response.id || `temp-${Math.random().toString(36).substring(2, 9)}`,
+      order_id: response.order_id || '',
+      question_id: response.question_id || '',
+      answer: typeof response.answer === 'number' ? response.answer : 0,
+      user_type: response.user_type || userType,
+      created_at: response.created_at || new Date().toISOString()
+    };
+  });
+  
+  // Filter out any null items that resulted from invalid responses
+  const validResponses = safeResponses.filter(response => response !== null);
 
   if (validResponses.length === 0) {
     console.error('No valid responses found in data:', responses);
@@ -72,6 +85,12 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
         </TableHeader>
         <TableBody>
           {validResponses.map(response => {
+            // Double check that response is valid before accessing properties
+            if (!response || !response.question_id) {
+              console.error('Invalid response item found during rendering:', response);
+              return null;
+            }
+            
             const question = questionsDatabase.find(q => q.id === response.question_id);
             return (
               <TableRow key={response.id}>
@@ -102,7 +121,7 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
                 </TableCell>
               </TableRow>
             );
-          })}
+          }).filter(Boolean)}
         </TableBody>
       </Table>
     </div>
