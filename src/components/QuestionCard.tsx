@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import RatingScale from './RatingScale';
@@ -37,7 +38,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     setImageError(false);
   }, [currentQuestion?.id]);
   
-  // Bezpośrednio sprawdzamy undefined, nie null
+  // Directly check for undefined, not null
   const hasAnswer = currentQuestion && 
                     answers[currentQuestion.id] !== undefined;
   
@@ -49,7 +50,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
   };
   
   const handleNext = async () => {
-    // Dodatkowe zabezpieczenie
+    // Additional protection
     if (!hasAnswer) {
       toast.error("Wybierz opcję, aby kontynuować");
       return;

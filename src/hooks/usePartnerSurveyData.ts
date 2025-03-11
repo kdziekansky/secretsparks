@@ -78,9 +78,9 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
         }
         
         if (data && data.length > 0) {
-          // Extract unique question IDs in the exact order they were answered
+          // Extract question IDs in the exact order they were answered
           const questionIds = data.map(response => response.question_id);
-            
+          
           console.log('Fetched question sequence from user responses:', questionIds);
           
           // Save sequence back to order for future use if it's not already there

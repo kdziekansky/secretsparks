@@ -69,9 +69,15 @@ export const useQuestionSelection = (
     if (isPartnerSurvey && selectedQuestionIds.length > 0) {
       console.log('Using predefined question sequence for partner:', selectedQuestionIds);
       
-      // This is the critical fix: get questions in EXACTLY the same order as the IDs
+      // This is critical: return questions in EXACTLY the same order as the selectedQuestionIds array
       return selectedQuestionIds
-        .map(id => questions.find(q => q.id === id))
+        .map(id => {
+          const question = questions.find(q => q.id === id);
+          if (!question) {
+            console.warn(`Question with ID ${id} not found in questions database`);
+          }
+          return question;
+        })
         .filter((q): q is Question => q !== undefined);
     }
     
