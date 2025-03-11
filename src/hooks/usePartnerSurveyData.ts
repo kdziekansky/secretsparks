@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { questionsDatabase } from '@/contexts/questions-data';
 
 export const usePartnerSurveyData = (partnerToken: string | null) => {
   const [partnerOrderId, setPartnerOrderId] = useState<string | null>(null);
@@ -39,7 +38,9 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
         setPartnerOrderId(orderData.id);
         setOrderFetched(true);
         
-        // Get the user's responses to determine question sequence
+        // Pobierz odpowiedzi Zamawiającego z tabeli survey_responses
+        // WAŻNE: Użyj .neq('user_type', 'partner') zamiast .eq('user_type', 'user') 
+        // gdyż w niektórych rekordach 'user_type' może mieć inne wartości
         const { data: userResponses, error: responsesError } = await supabase
           .from('survey_responses')
           .select('question_id, created_at')
@@ -52,13 +53,18 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
           throw new Error('Nie można pobrać sekwencji pytań zamawiającego');
         }
         
+        // Bardziej szczegółowe logowanie aby zobaczyć co dokładnie jest w odpowiedzi
         console.log('User responses from survey_responses:', userResponses);
+        console.log('User responses raw data:', JSON.stringify(userResponses));
         
-        // If there are user responses, use them to create the question sequence
+        // Jeśli są odpowiedzi użytkownika, użyj ich do utworzenia sekwencji pytań
         if (userResponses && userResponses.length > 0) {
-          // Extract question IDs in order they were answered
+          // Wyodrębnij ID pytań w kolejności, w jakiej na nie odpowiedziano
           const questionIds = userResponses.map(response => response.question_id);
           console.log(`Found ${questionIds.length} questions from user responses:`, questionIds);
+          
+          // Dodaj dodatkowe logowanie dla weryfikacji
+          console.log('Question IDs sequence for partner:', JSON.stringify(questionIds));
           
           setSelectedQuestionIds(questionIds);
           setDataFetched(true);
@@ -67,14 +73,14 @@ export const usePartnerSurveyData = (partnerToken: string | null) => {
           return;
         }
         
-        // If we reach here, there are no user responses yet
+        // Jeśli dotarliśmy tutaj, nie ma jeszcze odpowiedzi użytkownika
         console.log('No user responses found for this order');
         throw new Error('Zamawiający nie wypełnił jeszcze swojej ankiety. Spróbuj ponownie później.');
         
       } catch (err: any) {
         console.error('Error in fetchOrderData:', err);
         setError(err.message || 'Wystąpił błąd podczas ładowania ankiety');
-        // Mark as fetched to prevent infinite retries
+        // Oznacz jako pobrane, aby zapobiec nieskończonym próbom
         setOrderFetched(true);
         setDataFetched(true);
       } finally {

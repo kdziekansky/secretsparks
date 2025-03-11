@@ -1,3 +1,4 @@
+
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from '../_shared/cors.ts'
 import { Resend } from 'https://esm.sh/resend@1.0.0'
@@ -64,15 +65,13 @@ Deno.serve(async (req) => {
       throw new Error(`Failed to fetch user responses: ${responsesError.message}`)
     }
 
-    let questionIds = []
-    
-    // We MUST have user responses to send emails - no fallbacks!
+    // ISTOTNA WALIDACJA: Nie wysyłaj maila do partnera, jeśli zamawiający nie wypełnił ankiety
     if (!userResponses || userResponses.length === 0) {
-      throw new Error('Zamawiający nie wypełnił jeszcze swojej ankiety')
+      throw new Error('Zamawiający nie wypełnił jeszcze swojej ankiety. Nie można wysłać ankiety do partnera.')
     }
 
     // Extract question IDs in order they were answered by user
-    questionIds = userResponses.map(response => response.question_id)
+    const questionIds = userResponses.map(response => response.question_id)
     console.log(`Found ${questionIds.length} questions from user responses:`, questionIds)
 
     // STEP 2: Send thank you email to user
