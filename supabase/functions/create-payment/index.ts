@@ -128,58 +128,72 @@ Deno.serve(async (req) => {
       console.log(`Saved ${responsesWithOrderId.length} survey responses`)
     }
 
-    // Create Stripe checkout session
-    const origin = new URL(req.url).origin
+    // Get the origin from the request
+    const requestUrl = new URL(req.url)
+    const origin = `${requestUrl.protocol}//${requestUrl.host}`
     
     console.log(`Creating Stripe checkout session with origin: ${origin}`)
     
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card', 'blik'],
-      line_items: [
-        {
-          price_data: {
-            currency,
-            product_data: {
-              name: 'Ankieta Seksualna',
-              description: 'Porównanie preferencji seksualnych dla par'
+    // Create Stripe checkout session
+    try {
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card', 'blik'],
+        line_items: [
+          {
+            price_data: {
+              currency,
+              product_data: {
+                name: 'Ankieta Seksualna',
+                description: 'Porównanie preferencji seksualnych dla par'
+              },
+              unit_amount: amount,
             },
-            unit_amount: amount,
+            quantity: 1,
           },
-          quantity: 1,
+        ],
+        mode: 'payment',
+        success_url: `${origin}/thank-you?orderId=${order.id}`,
+        cancel_url: `${origin}/payment?canceled=true`,
+        metadata: {
+          order_id: order.id,
         },
-      ],
-      mode: 'payment',
-      success_url: `${origin}/thank-you?orderId=${order.id}`,
-      cancel_url: `${origin}/payment?canceled=true`,
-      metadata: {
-        order_id: order.id,
-      },
-      customer_email: user_email,
-    })
-
-    console.log(`Created Stripe session: ${session.id}`)
-
-    // Update order with Stripe session ID
-    await supabase
-      .from('orders')
-      .update({
-        stripe_session_id: session.id,
+        customer_email: user_email,
       })
-      .eq('id', order.id)
 
-    // Return success response with the session ID
-    return new Response(
-      JSON.stringify({
-        success: true,
-        sessionId: session.id,
-        orderId: order.id,
-        partnerSurveyToken,
-      }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
+      console.log(`Created Stripe session: ${session.id}`)
+
+      // Verify session was created successfully
+      if (!session || !session.id) {
+        console.error('Failed to create Stripe session - no session ID returned')
+        throw new Error('Failed to create payment session')
       }
-    )
+
+      // Update order with Stripe session ID
+      await supabase
+        .from('orders')
+        .update({
+          stripe_session_id: session.id,
+        })
+        .eq('id', order.id)
+
+      // Return success response with the session ID and URL
+      return new Response(
+        JSON.stringify({
+          success: true,
+          sessionId: session.id,
+          orderId: order.id,
+          partnerSurveyToken,
+          checkoutUrl: session.url,
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200,
+        }
+      )
+    } catch (stripeError) {
+      console.error('Stripe session creation error:', stripeError)
+      throw new Error(`Failed to create Stripe session: ${stripeError.message}`)
+    }
   } catch (error) {
     console.error('Payment processing error:', error)
     

@@ -37,7 +37,10 @@ const PaymentPage: React.FC = () => {
   const [paymentError, setPaymentError] = useState<string | null>(null);
   
   // Ensure we have a Stripe instance
-  const [stripePromise] = useState(() => loadStripe(STRIPE_PUBLISHABLE_KEY));
+  const [stripePromise] = useState(() => {
+    console.log('Initializing Stripe with key:', STRIPE_PUBLISHABLE_KEY);
+    return loadStripe(STRIPE_PUBLISHABLE_KEY);
+  });
   
   // Initialize the form
   const form = useForm<FormData>({
@@ -92,11 +95,17 @@ const PaymentPage: React.FC = () => {
         },
       });
 
+      console.log('Payment response:', paymentData, paymentError);
+
       if (paymentError) {
         throw new Error(paymentError.message || 'Payment failed');
       }
 
-      if (!paymentData || !paymentData.sessionId) {
+      if (!paymentData) {
+        throw new Error('No response data returned from server');
+      }
+
+      if (!paymentData.sessionId) {
         throw new Error('No session ID returned from server');
       }
 
@@ -107,7 +116,14 @@ const PaymentPage: React.FC = () => {
 
       console.log('Redirecting to Stripe checkout with sessionId:', paymentData.sessionId);
 
-      // Redirect to Stripe payment page
+      // First try to use the direct checkout URL if available
+      if (paymentData.checkoutUrl) {
+        console.log('Using direct checkout URL:', paymentData.checkoutUrl);
+        window.location.href = paymentData.checkoutUrl;
+        return;
+      }
+
+      // Fall back to redirectToCheckout method
       const stripe = await stripePromise;
       
       if (!stripe) {
