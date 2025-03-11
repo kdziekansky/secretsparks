@@ -28,7 +28,10 @@ const SurveyResponsesTable: React.FC<SurveyResponsesTableProps> = ({
   responses, 
   userType 
 }) => {
-  if (responses.length === 0) {
+  // Add console log to debug responses data
+  console.log(`Rendering ${userType} responses table with:`, responses);
+  
+  if (!responses || responses.length === 0) {
     return (
       <div className="text-center p-2 text-muted-foreground">
         Brak odpowiedzi od {userType === 'user' ? 'zamawiającego' : 'partnera'}.

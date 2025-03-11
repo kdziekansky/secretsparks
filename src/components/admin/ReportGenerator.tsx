@@ -41,6 +41,10 @@ interface ReportGeneratorProps {
 const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses, order }) => {
   const [isGenerating, setIsGenerating] = useState(false);
 
+  // Add additional logging to debug responses
+  console.log("ReportGenerator received responses:", responses);
+  console.log("ReportGenerator received order:", order);
+
   const generatePDF = () => {
     if (!order) {
       toast.error("Brak danych zamówienia do wygenerowania raportu");
@@ -133,6 +137,8 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses, order }) =
 
   const hasResponses = responses && responses.length > 0;
   const buttonDisabled = isGenerating || !order || !hasResponses;
+  
+  console.log("Button disabled status:", buttonDisabled, { hasResponses, isGenerating, hasOrder: !!order });
 
   return (
     <div>

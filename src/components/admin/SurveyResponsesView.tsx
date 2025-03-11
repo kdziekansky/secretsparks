@@ -48,6 +48,13 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses, is
     }
   }, [responses]);
   
+  // Add verbose logging to help debug
+  useEffect(() => {
+    console.log('SurveyResponsesView received responses:', responses);
+    console.log('SurveyResponsesView refreshedResponses:', refreshedResponses);
+    console.log('Current orderId:', orderId);
+  }, [responses, refreshedResponses, orderId]);
+  
   // Function to manually refresh responses
   const refreshResponses = async () => {
     if (!orderId) {
