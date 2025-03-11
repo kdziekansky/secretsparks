@@ -49,6 +49,8 @@ const getRatingLabel = (rating: number): string => {
 
 // Function to normalize Polish characters
 const normalizePolishChars = (text: string): string => {
+  if (!text) return '';
+  
   return text
     .replace(/ą/g, 'a').replace(/Ą/g, 'A')
     .replace(/ć/g, 'c').replace(/Ć/g, 'C')
@@ -137,7 +139,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ responses: initialRes
           
           return [
             questionText,
-            getRatingLabel(response.answer)
+            normalizePolishChars(getRatingLabel(response.answer))
           ];
         });
       };
