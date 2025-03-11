@@ -14,6 +14,8 @@ Deno.serve(async (req) => {
   }
 
   try {
+    console.log('Starting payment creation process')
+    
     // Validate environment variables
     if (!supabaseUrl || !supabaseServiceKey) {
       throw new Error('Missing Supabase configuration')
@@ -34,6 +36,8 @@ Deno.serve(async (req) => {
 
     // Get request body
     const requestData = await req.json()
+    console.log('Received request data:', requestData)
+    
     const {
       amount,
       currency = 'pln',
@@ -114,11 +118,30 @@ Deno.serve(async (req) => {
 
     if (responsesError) {
       console.error('Error saving survey responses:', responsesError)
+      throw new Error('Failed to save survey responses')
     }
 
     // Get the request origin for success/cancel URLs
     const requestUrl = new URL(req.url)
-    const origin = `${requestUrl.protocol}//${requestUrl.host}`
+    const origin = requestUrl.protocol + '//' + requestUrl.host
+
+    console.log('Creating Stripe session with params:', {
+      mode: 'payment',
+      success_url: `${origin}/thank-you?orderId=${order.id}`,
+      cancel_url: `${origin}/payment?canceled=true`,
+      customer_email: user_email,
+      line_items: [{
+        price_data: {
+          currency,
+          product_data: {
+            name: 'Ankieta Seksualna',
+            description: 'Porównanie preferencji seksualnych dla par'
+          },
+          unit_amount: amount,
+        },
+        quantity: 1,
+      }]
+    })
 
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
@@ -145,15 +168,24 @@ Deno.serve(async (req) => {
       customer_email: user_email,
     })
 
-    if (!session?.id) {
+    console.log('Stripe session created:', {
+      sessionId: session.id,
+      url: session.url
+    })
+
+    if (!session?.id || !session?.url) {
       throw new Error('Failed to create Stripe session')
     }
 
     // Update order with Stripe session ID
-    await supabase
+    const { error: updateError } = await supabase
       .from('orders')
       .update({ stripe_session_id: session.id })
       .eq('id', order.id)
+
+    if (updateError) {
+      console.error('Error updating order with session ID:', updateError)
+    }
 
     // Return success response with session data
     return new Response(

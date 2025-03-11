@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
@@ -72,7 +73,7 @@ const PaymentPage: React.FC = () => {
         game_level: surveyConfig.gameLevel,
       }));
       
-      console.log(`Submitting payment with ${userResponses.length} responses`);
+      console.log('Submitting payment with responses:', userResponses.length);
       
       // Create payment session
       const { data: paymentData, error } = await supabase.functions.invoke('create-payment', {
@@ -101,32 +102,33 @@ const PaymentPage: React.FC = () => {
         throw new Error('No response data returned from server');
       }
 
-      if (!paymentData.sessionId && !paymentData.checkoutUrl) {
-        throw new Error('No session ID or checkout URL returned from server');
-      }
-
-      // Store the order ID
+      // Store the order ID if available
       if (paymentData.orderId) {
         setOrderId(paymentData.orderId);
       }
 
-      // Redirect to Stripe checkout
+      // If we have a checkout URL, use it directly
       if (paymentData.checkoutUrl) {
         window.location.href = paymentData.checkoutUrl;
         return;
       }
 
-      const stripe = await stripePromise;
-      if (!stripe) {
-        throw new Error('Stripe failed to load');
-      }
+      // Fallback to manual redirect if no checkout URL but we have a session ID
+      if (paymentData.sessionId) {
+        const stripe = await stripePromise;
+        if (!stripe) {
+          throw new Error('Stripe failed to load');
+        }
 
-      const { error: stripeError } = await stripe.redirectToCheckout({
-        sessionId: paymentData.sessionId,
-      });
+        const { error: stripeError } = await stripe.redirectToCheckout({
+          sessionId: paymentData.sessionId,
+        });
 
-      if (stripeError) {
-        throw stripeError;
+        if (stripeError) {
+          throw stripeError;
+        }
+      } else {
+        throw new Error('No checkout URL or session ID returned from server');
       }
     } catch (error: any) {
       console.error('Payment submission error:', error);
@@ -210,8 +212,6 @@ const PaymentPage: React.FC = () => {
                 )}
               />
             </div>
-            
-            {/* Display payment error */}
             
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Przetwarzanie...' : 'Zapłać 49 PLN'}
