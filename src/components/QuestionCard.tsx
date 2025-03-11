@@ -1,10 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import RatingScale from './RatingScale';
 import { useSurvey } from '@/contexts/SurveyContext';
 import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, Image as ImageIcon } from 'lucide-react';
-import { toast } from 'sonner';
 
 interface QuestionCardProps {
   isPartnerSurvey?: boolean;
@@ -13,7 +12,6 @@ interface QuestionCardProps {
 const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) => {
   const [searchParams] = useSearchParams();
   const partnerToken = searchParams.get('token');
-  const navigate = useNavigate();
   
   const {
     currentQuestion,
@@ -23,15 +21,13 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     prevQuestion,
     isFirstQuestion,
     isLastQuestion,
-    saveAnswer,
-    saveAllAnswers
+    saveAnswer
   } = useSurvey();
   
   const [isAnimating, setIsAnimating] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
   
   // Reset image state when question changes
   useEffect(() => {
@@ -39,7 +35,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     setImageError(false);
   }, [currentQuestion?.id]);
   
-  // Check if current question has an answer
+  // Bezpośrednio sprawdzamy undefined, nie null
   const hasAnswer = currentQuestion && 
                     answers[currentQuestion.id] !== undefined;
   
@@ -51,57 +47,38 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
   };
   
   const handleNext = async () => {
-    // Safety check
+    // Dodatkowe zabezpieczenie
     if (!hasAnswer) {
-      toast.error("Wybierz opcję, aby kontynuować");
+      alert("Wybierz opcję, aby kontynuować");
       return;
     }
     
     setIsAnimating(true);
     
-    // If it's the last question
-    if (isLastQuestion) {
-      setIsSaving(true);
-      
-      if (isPartnerSurvey) {
-        // For partner survey, save answer and redirect to thank you
-        try {
-          await saveAnswer(true);
-          console.log('Final partner answer saved successfully');
-          setTimeout(() => {
-            window.location.href = '/thank-you';
-            setIsSaving(false);
-          }, 500);
-        } catch (error) {
-          console.error('Error saving final partner answer:', error);
-          toast.error('Wystąpił błąd podczas zapisywania odpowiedzi');
-          setIsSaving(false);
-          setIsAnimating(false);
+    // If it's the last question, save the answer before redirecting
+    if (isLastQuestion && isPartnerSurvey) {
+      try {
+        await saveAnswer(true);
+        console.log('Final answer saved successfully');
+      } catch (error) {
+        console.error('Error saving final answer:', error);
+      }
+    }
+    
+    setTimeout(() => {
+      if (isLastQuestion) {
+        // If it's a partner survey, redirect to thank you page
+        if (isPartnerSurvey) {
+          window.location.href = '/thank-you';
+        } else {
+          window.location.href = '/payment';
         }
       } else {
-        // For user survey, save the current answer and proceed to payment screen
-        try {
-          await saveAnswer(false);
-          console.log('Final user answer saved locally');
-          setTimeout(() => {
-            navigate('/payment');
-            setIsSaving(false);
-          }, 500);
-        } catch (error) {
-          console.error('Error saving final user answer:', error);
-          toast.error('Wystąpił błąd podczas zapisywania odpowiedzi');
-          setIsSaving(false);
-          setIsAnimating(false);
-        }
-      }
-    } else {
-      // Not the last question, just proceed to next
-      setTimeout(() => {
         nextQuestion();
         setShowFullDescription(false);
-        setIsAnimating(false);
-      }, 300);
-    }
+      }
+      setIsAnimating(false);
+    }, 300);
   };
   
   const handlePrev = () => {
@@ -140,6 +117,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     : 'Zapisz odpowiedź';
   
   return (
+    
     <div className={`glass-panel w-full max-w-4xl transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100 animate-slide-up'}`}>
       <div className="flex flex-col md:flex-row">
         {/* Left side - Illustration */}
@@ -251,13 +229,25 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
                 <span className="text-sm">Wstecz</span>
               </button>
               
+              {/* Super uproszczona wersja przycisku */}
               <button
                 onClick={handleNext}
-                disabled={!hasAnswer || isSaving}
-                className="flex items-center gap-2 px-8 py-3 rounded-full bg-red-900 text-white hover:bg-red-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                type="button"
+                style={{
+                  backgroundColor: hasAnswer ? (isLastQuestion ? '#800000' : '#000') : '#ccc',
+                  color: 'white',
+                  padding: '12px 32px',
+                  borderRadius: '9999px',
+                  cursor: hasAnswer ? 'pointer' : 'not-allowed',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  transition: 'all 0.2s',
+                  opacity: hasAnswer ? 1 : 0.5
+                }}
               >
-                <span className="text-sm font-medium">{isSaving ? 'Zapisywanie...' : nextButtonText}</span>
-                <ArrowRight className="h-4 w-4" />
+                <span style={{fontSize: '14px'}}>{nextButtonText}</span>
+                <ArrowRight style={{width: '16px', height: '16px'}} />
               </button>
             </div>
           </div>

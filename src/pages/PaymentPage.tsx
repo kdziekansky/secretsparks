@@ -5,10 +5,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Loader2, CheckCircle, Info } from 'lucide-react';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Link } from 'react-router-dom';
+import { Loader2 } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 interface FormErrors {
   userName?: string;
@@ -17,7 +17,7 @@ interface FormErrors {
   partnerEmail?: string;
 }
 
-const PRODUCT_PRICE = 29;
+const PRODUCT_PRICE = 199;
 
 const PaymentPage: React.FC = () => {
   const [userName, setUserName] = useState('');
@@ -30,7 +30,7 @@ const PaymentPage: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const navigate = useNavigate();
 
-  const { answers, saveAllAnswers, surveyConfig } = useSurvey();
+  const { answers, surveyConfig } = useSurvey();
   
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -82,6 +82,47 @@ const PaymentPage: React.FC = () => {
     }
   };
   
+  // Save survey responses before initiating payment
+  const saveResponses = async (orderId: string) => {
+    try {
+      console.log('Saving user survey responses for order:', orderId);
+      
+      if (Object.keys(answers).length === 0) {
+        console.warn('No answers to save! Skipping survey response saving.');
+        return false;
+      }
+      
+      // Prepare survey responses for insertion
+      const responsesToSave = Object.entries(answers).map(([questionId, answer]) => ({
+        order_id: orderId,
+        question_id: questionId,
+        answer: answer,
+        user_type: 'user',
+        user_gender: surveyConfig.userGender,
+        partner_gender: surveyConfig.partnerGender,
+        game_level: surveyConfig.gameLevel
+      }));
+      
+      console.log('Saving responses:', responsesToSave);
+      
+      const { error } = await supabase
+        .from('survey_responses')
+        .insert(responsesToSave);
+        
+      if (error) {
+        console.error('Error saving survey responses:', error);
+        toast.error('Wystąpił błąd podczas zapisywania odpowiedzi z ankiety');
+        return false;
+      } else {
+        console.log('Survey responses saved successfully');
+        return true;
+      }
+    } catch (error) {
+      console.error('Failed to save survey responses:', error);
+      return false;
+    }
+  };
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -108,7 +149,7 @@ const PaymentPage: React.FC = () => {
           partner_name: partnerName,
           partner_email: partnerEmail,
           gift_wrap: giftWrap,
-          price: PRODUCT_PRICE,
+          price: PRODUCT_PRICE + (giftWrap ? 20 : 0),
           user_gender: surveyConfig.userGender,
           partner_gender: surveyConfig.partnerGender,
           game_level: surveyConfig.gameLevel
@@ -122,8 +163,8 @@ const PaymentPage: React.FC = () => {
       
       console.log('Order created:', orderData);
       
-      // Save survey responses
-      const responsesSaved = await saveAllAnswers(orderData.id, 'user');
+      // Save survey responses and wait for completion
+      const responsesSaved = await saveResponses(orderData.id);
       
       if (!responsesSaved) {
         console.error('Failed to save survey responses');
@@ -132,166 +173,113 @@ const PaymentPage: React.FC = () => {
         return;
       }
       
-      // Call the create-payment function to initiate payment
-      try {
-        const { data, error } = await supabase.functions.invoke('create-payment', {
-          body: {
-            data: {
-              price: PRODUCT_PRICE,
-              currency: 'pln',
-              user_name: userName,
-              user_email: userEmail,
-              partner_name: partnerName,
-              partner_email: partnerEmail,
-              gift_wrap: giftWrap,
-              order_id: orderData.id
-            }
-          }
-        });
-        
-        if (error) {
-          throw new Error(`Payment function error: ${error.message}`);
-        }
-        
-        if (data && data.url) {
-          // Redirect to Stripe checkout page
-          window.location.href = data.url;
-        } else {
-          throw new Error('No payment URL returned');
-        }
-      } catch (paymentError: any) {
-        console.error('Payment error:', paymentError);
-        toast.error('Wystąpił błąd podczas przetwarzania płatności. Spróbuj ponownie.');
-        setIsProcessing(false);
-      }
-    } catch (error: any) {
-      console.error('Order creation error:', error);
-      toast.error('Wystąpił błąd podczas przetwarzania zamówienia. Spróbuj ponownie.');
+      // Redirect to payment gateway
+      // For now, just navigate to a thank you page
+      toast.success('Zamówienie złożone! Przekierowywanie do płatności...');
+      setTimeout(() => {
+        navigate('/thank-you');
+      }, 2000);
+      
+    } catch (error) {
+      console.error('Payment error:', error);
+      toast.error('Wystąpił błąd podczas przetwarzania płatności. Spróbuj ponownie.');
       setIsProcessing(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-sm p-8">
-        <div className="space-y-6">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold">Dokończ zamówienie 👋</h1>
-            <div className="mt-4 bg-green-50 text-green-800 rounded-md py-2 px-4 flex items-center justify-center gap-2">
-              <CheckCircle className="h-5 w-5" />
-              <p>Raport dostępny za jedyne {PRODUCT_PRICE} zł</p>
-            </div>
-            <p className="mt-4 text-gray-600">
-              Czas zaprosić do gry Twoją drugą połówkę. Na końcu poznacie Wasze ukryte pragnienia.
-            </p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              type="text"
-              id="userName"
-              name="userName"
-              value={userName}
-              onChange={handleChange}
-              required
-              placeholder="Twoje imię"
-              className="w-full"
-            />
-            {showErrors && errors.userName && (
-              <p className="text-red-500 text-sm mt-1">{errors.userName}</p>
-            )}
-            
-            <Input
-              type="email"
-              id="userEmail"
-              name="userEmail"
-              value={userEmail}
-              onChange={handleChange}
-              required
-              placeholder="Twój e-mail (tam wyślemy raport)"
-              className="w-full"
-            />
-            {showErrors && errors.userEmail && (
-              <p className="text-red-500 text-sm mt-1">{errors.userEmail}</p>
-            )}
-            
-            <Input
-              type="text"
-              id="partnerName"
-              name="partnerName"
-              value={partnerName}
-              onChange={handleChange}
-              required
-              placeholder="Imię Twojej partnerki/partnera"
-              className="w-full"
-            />
-            {showErrors && errors.partnerName && (
-              <p className="text-red-500 text-sm mt-1">{errors.partnerName}</p>
-            )}
-            
-            <Input
-              type="email"
-              id="partnerEmail"
-              name="partnerEmail"
-              value={partnerEmail}
-              onChange={handleChange}
-              required
-              placeholder="E-mail partnerki/partnera (tam wyślemy zaproszenie)"
-              className="w-full"
-            />
-            {showErrors && errors.partnerEmail && (
-              <p className="text-red-500 text-sm mt-1">{errors.partnerEmail}</p>
-            )}
-            
-            <div className="flex items-start mt-4">
-              <div className="flex items-center h-5">
-                <Checkbox
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <Card className="shadow-lg rounded-lg">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-bold text-center">Podsumowanie zamówienia</CardTitle>
+            <CardDescription className="text-gray-500 text-center">Wypełnij dane, aby złożyć zamówienie</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <form onSubmit={handleSubmit}>
+              <div className="space-y-2">
+                <Label htmlFor="userName">Imię</Label>
+                <Input
+                  type="text"
+                  id="userName"
+                  name="userName"
+                  value={userName}
+                  onChange={handleChange}
+                  required
+                  placeholder="Twoje imię"
+                />
+                {showErrors && errors.userName && (
+                  <p className="text-red-500 text-sm">{errors.userName}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="userEmail">Email</Label>
+                <Input
+                  type="email"
+                  id="userEmail"
+                  name="userEmail"
+                  value={userEmail}
+                  onChange={handleChange}
+                  required
+                  placeholder="Twój email"
+                />
+                {showErrors && errors.userEmail && (
+                  <p className="text-red-500 text-sm">{errors.userEmail}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="partnerName">Imię partnera/partnerki</Label>
+                <Input
+                  type="text"
+                  id="partnerName"
+                  name="partnerName"
+                  value={partnerName}
+                  onChange={handleChange}
+                  required
+                  placeholder="Imię Twojej drugiej połówki"
+                />
+                {showErrors && errors.partnerName && (
+                  <p className="text-red-500 text-sm">{errors.partnerName}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="partnerEmail">Email partnera/partnerki</Label>
+                <Input
+                  type="email"
+                  id="partnerEmail"
+                  name="partnerEmail"
+                  value={partnerEmail}
+                  onChange={handleChange}
+                  required
+                  placeholder="Email Twojej drugiej połówki"
+                />
+                {showErrors && errors.partnerEmail && (
+                  <p className="text-red-500 text-sm">{errors.partnerEmail}</p>
+                )}
+              </div>
+              <div className="flex items-center space-x-2 mt-4 mb-6">
+                <Input
+                  type="checkbox"
                   id="giftWrap"
                   name="giftWrap"
                   checked={giftWrap}
-                  onCheckedChange={(checked) => setGiftWrap(checked === true)}
+                  onChange={handleChange}
+                  className="w-4 h-4"
                 />
+                <Label htmlFor="giftWrap">Zapakuj na prezent (+20zł)</Label>
               </div>
-              <div className="ml-3 text-sm">
-                <label htmlFor="giftWrap" className="font-medium text-gray-700 cursor-pointer flex items-center">
-                  Zapakuj na prezent (bezpłatnie)
-                  <Info className="h-4 w-4 ml-1 text-gray-400" />
-                </label>
+              <div>
+                <Button type="submit" disabled={isProcessing} className="w-full">
+                  {isProcessing ? (
+                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Przetwarzanie...</>
+                  ) : (
+                    <>Zapłać {PRODUCT_PRICE + (giftWrap ? 20 : 0)} zł</>
+                  )}
+                </Button>
               </div>
-            </div>
-            
-            <div className="text-xs text-gray-500 mt-2">
-              Grając, akceptujesz przyjazny <a href="#" className="text-primary">Regulamin</a> i <a href="#" className="text-primary">Politykę Prywatności</a>, która gwarantuje bezpieczeństwo Waszych danych. Usuniemy je po 7 dniach.
-            </div>
-            
-            <div className="pt-4">
-              <Button 
-                type="submit" 
-                disabled={isProcessing} 
-                className="w-full py-6 bg-red-900 hover:bg-red-800 text-white font-medium text-base"
-              >
-                {isProcessing ? (
-                  <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Przetwarzanie...</>
-                ) : (
-                  <>Zapłać {PRODUCT_PRICE} zł</>
-                )}
-              </Button>
-            </div>
-            
-            <div className="flex justify-center pt-2">
-              <Link 
-                to="/survey" 
-                className="text-gray-500 text-sm hover:text-gray-700"
-              >
-                Wróć do ankiety
-              </Link>
-            </div>
-            
-            <div className="text-center text-xs text-gray-500 pt-4">
-              Płatność jest zabezpieczona szyfrowaniem SSL
-            </div>
-          </form>
-        </div>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
