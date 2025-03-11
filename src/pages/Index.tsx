@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, ArrowRight, Check, Menu, X, Sparkles, Heart, ExternalLink, Clock, Zap, Shield } from 'lucide-react';
@@ -94,7 +93,7 @@ const Index = () => {
       </header>
 
       {/* Hero Section - Bento Grid Style */}
-      <section className="section-padding pt-20 md:pt-28">
+      <section className="section-padding pt-12 md:pt-16">
         <div className="section-container">
           {/* Main hero bento grid */}
           <div className="bento-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
@@ -139,8 +138,8 @@ const Index = () => {
             </div>
           </div>
           
-          {/* Feature cards in grid */}
-          <div className="bento-grid grid-cols-1 md:grid-cols-3 mt-12">
+          {/* Feature cards in grid - Now part of the hero section with reduced margin */}
+          <div className="bento-grid grid-cols-1 md:grid-cols-3 mt-8">
             <div className="bento-cell">
               <div className="bento-icon-container">
                 <Sparkles className="h-6 w-6 text-primary" />
@@ -178,8 +177,8 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Statistics Bento Grid */}
-      <section className="section-padding py-16 md:py-20">
+      {/* Statistics Bento Grid - Moved closer to hero section */}
+      <section className="section-padding py-10 md:py-14">
         <div className="section-container">
           <div className="feature-grid">
             <div className="bento-cell text-center py-10">
@@ -200,7 +199,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Scientific Section - Bento Grid */}
+      {/* Scientific Section - Bento Grid - Added additional card */}
       <section className="section-padding">
         <div className="section-container">
           <h2 className="section-title">
@@ -259,6 +258,18 @@ const Index = () => {
               <p className="text-muted-foreground">
                 Pogłębianie namiętności powoduje zmiany w mózgu: wytwarza się oksytocyna - hormon 
                 bliskości oraz wzrasta poziom dopaminy.
+              </p>
+            </div>
+            
+            {/* Added new scientific point to fill space */}
+            <div className="bento-cell">
+              <div className="h-12 w-12 rounded-full bg-accent/20 flex items-center justify-center mb-6">
+                <Shield className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold mb-4">Fizjologia namiętności</h3>
+              <p className="text-muted-foreground">
+                Fizjologia uczuć seksualnych jest zakorzeniona w układzie limbicznym mózgu.
+                To tam powstają sygnały prowadzące do wzbudzenia pożądania.
               </p>
             </div>
           </div>
@@ -386,17 +397,17 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Final CTA Section */}
+      {/* Final CTA Section - Full width */}
       <section className="section-padding py-24 md:py-32 text-center">
-        <div className="section-container">
-          <div className="max-w-3xl mx-auto p-12 rounded-3xl glass-panel animate-fade-in">
+        <div className="container mx-auto px-0 sm:px-4">
+          <div className="mx-auto p-12 rounded-3xl glass-panel animate-fade-in">
             <div className="hero-badge">
               NAJBARDZIEJ EKSCYTUJĄCA GRA DLA PAR
             </div>
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
               Odkrycie siebie na nowo
             </h2>
-            <p className="text-muted-foreground mb-10 text-lg">
+            <p className="text-muted-foreground mb-10 text-lg max-w-3xl mx-auto">
               Poznajcie swoje ukryte pragnienia i potrzeby.
               Już dziś możecie sprawdzić, co Was łączy, czego dotąd jeszcze nie odkryliście.
             </p>
