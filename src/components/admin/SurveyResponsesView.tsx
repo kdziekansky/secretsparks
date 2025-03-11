@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Loader2, RefreshCw } from 'lucide-react';
+import { Loader2, RefreshCw, AlertTriangle } from 'lucide-react';
 import { questionsDatabase } from '@/contexts/questions-data';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -237,7 +237,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
     }
 
     return (
-      <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+      <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2">
         {responses.map(response => {
           const question = questionsDatabase.find(q => q.id === response.question_id);
           return (
@@ -308,14 +308,14 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <h3 className="text-lg font-medium border-b pb-2">Odpowiedzi zamawiającego ({userResponses.length})</h3>
-            <div className="max-h-[60vh] overflow-y-auto pr-2">
+            <div className="max-h-[50vh] overflow-y-auto pr-2">
               <SurveyResponsesTable responses={userResponses} userType="user" />
             </div>
           </div>
 
           <div className="space-y-4">
             <h3 className="text-lg font-medium border-b pb-2">Odpowiedzi partnera ({partnerResponses.length})</h3>
-            <div className="max-h-[60vh] overflow-y-auto pr-2">
+            <div className="max-h-[50vh] overflow-y-auto pr-2">
               <SurveyResponsesTable responses={partnerResponses} userType="partner" />
             </div>
           </div>
