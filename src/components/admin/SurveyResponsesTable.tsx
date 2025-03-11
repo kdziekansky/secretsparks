@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { questionsDatabase } from '@/contexts/questions-data';
 import { 
@@ -34,7 +35,7 @@ const getRatingLabel = (rating: number): string => {
     case 3:
       return 'Zdecydowanie tak!';
     case 4:
-      return 'OK, jeśli jemu bardzo zależy';
+      return 'OK, jeśli jemu/jej bardzo zależy';
     default:
       return 'Brak odpowiedzi';
   }

@@ -40,7 +40,7 @@ const getRatingLabel = (rating: number): string => {
     case 3:
       return 'Zdecydowanie tak!';
     case 4:
-      return 'OK, jesli jemu bardzo zalezy';
+      return 'OK, jesli jemu/jej bardzo zalezy';
     default:
       return 'Brak odpowiedzi';
   }
