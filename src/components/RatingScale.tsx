@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -84,12 +85,12 @@ const RatingScale: React.FC<RatingScaleProps> = ({
       <div className="relative h-52 w-full mb-12">
         {/* Oś Y - Label */}
         <div className="absolute -left-10 top-1/2 -translate-y-1/2 -rotate-90 transform origin-center">
-          <span className="text-xs font-medium whitespace-nowrap">TWOJA EKSCYTACJA</span>
+          <span className="text-xs font-medium whitespace-nowrap">EKSCYTACJA</span>
         </div>
         
-        {/* Oś X - Label */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-xs font-medium">
-          TWOJA SKŁONNOŚĆ DO KOMPROMISU
+        {/* Oś X - Label - poprawione wyrównanie */}
+        <div className="absolute bottom-0 right-0 text-xs font-medium">
+          <span className="whitespace-nowrap">KOMPROMIS Z PARTNEREM</span>
         </div>
         
         {/* Wykres - krzywa */}
