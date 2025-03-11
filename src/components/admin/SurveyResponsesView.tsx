@@ -53,6 +53,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
   const [orderId, setOrderId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [order, setOrder] = useState<any | null>(null);
+  const [hasResponses, setHasResponses] = useState<boolean>(false);
   
   // More comprehensive order ID extraction
   useEffect(() => {
@@ -300,19 +301,18 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
     });
   }, [safeInitialResponses, refreshedResponses, orderId, order]);
 
-  // State to track if we have any responses
-  const [hasResponses, setHasResponses] = useState<boolean>(false);
-
   // Effect to check for responses on mount and when responses change
   useEffect(() => {
-    const hasValidResponses = !!(responses && responses.length > 0);
+    // Define currentResponses here, before using it
+    const currentResponses = refreshedResponses.length > 0 ? refreshedResponses : safeInitialResponses;
+    const hasValidResponses = !!(currentResponses && currentResponses.length > 0);
     console.log("Setting hasResponses to:", hasValidResponses);
     setHasResponses(hasValidResponses);
-  }, [responses]);
+  }, [refreshedResponses, safeInitialResponses]);
 
   // Use refreshed responses if available, otherwise use the provided responses
   // Ensure we never have undefined responses by defaulting to empty array
-  const responses = refreshedResponses.length > 0 ? refreshedResponses : safeInitialResponses;
+  const currentResponses = refreshedResponses.length > 0 ? refreshedResponses : safeInitialResponses;
   const currentLoading = refreshLoading || isLoading;
   
   // Auto-refresh responses when orderId changes or component mounts
@@ -333,7 +333,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
   }
 
   // The empty state with a clear message and prominent refresh button
-  if (responses.length === 0) {
+  if (currentResponses.length === 0) {
     return (
       <div className="space-y-4">
         <div className="text-center p-6 border rounded-md bg-muted/10">
@@ -377,7 +377,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
             {/* Add Report Generator even in empty state */}
             <div className="mt-6 pt-4 border-t">
               <h4 className="font-medium mb-3">Generowanie raportu</h4>
-              <ReportGenerator responses={responses} order={order} />
+              <ReportGenerator responses={currentResponses} order={order} />
             </div>
           </div>
         </div>
@@ -386,8 +386,8 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
   }
 
   // Ensure userResponses and partnerResponses are safe to use (never undefined)
-  const userResponses = responses.filter(r => r.user_type === 'user') || [];
-  const partnerResponses = responses.filter(r => r.user_type === 'partner') || [];
+  const userResponses = currentResponses.filter(r => r.user_type === 'user') || [];
+  const partnerResponses = currentResponses.filter(r => r.user_type === 'partner') || [];
 
   console.log('User responses:', userResponses.length);
   console.log('Partner responses:', partnerResponses.length);
@@ -423,7 +423,7 @@ const SurveyResponsesView: React.FC<SurveyResponsesViewProps> = ({ responses: in
       )}
       
       <div className="mb-6 border-b pb-4">
-        <ReportGenerator responses={responses} order={order} />
+        <ReportGenerator responses={currentResponses} order={order} />
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
