@@ -1,6 +1,6 @@
 
 export type Gender = 'male' | 'female' | null;
-export type GameLevel = 'discover' | 'explore' | 'fantasy' | null;
+export type GameLevel = 'discover' | 'explore' | 'fantasy' | 'exceed' | null;
 
 export interface SurveyConfig {
   userGender: Gender;

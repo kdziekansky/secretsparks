@@ -9,13 +9,14 @@ import PartnerWelcome from '@/components/PartnerWelcome';
 import { Loader2, AlertTriangle, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { GameLevel } from '@/types/survey';
 
 interface OrderDetails {
   userName: string;
   partnerName: string;
   userGender: 'male' | 'female';
   partnerGender: 'male' | 'female';
-  gameLevel: 'discover' | 'explore' | 'exceed';
+  gameLevel: GameLevel;
   orderId?: string;
 }
 
@@ -124,14 +125,14 @@ const SurveyPage: React.FC = () => {
         partnerName: orderData.partner_name,
         userGender: userGender as 'male' | 'female',
         partnerGender: partnerGender as 'male' | 'female',
-        gameLevel: gameLevel as 'discover' | 'explore' | 'exceed',
+        gameLevel: gameLevel as GameLevel,
         orderId: orderData.id
       });
       
       // Pre-configure the survey with the SAME settings as the user's survey
       setUserGender(userGender as 'male' | 'female');
       setPartnerGender(partnerGender as 'male' | 'female');
-      setGameLevel(gameLevel as 'discover' | 'explore' | 'exceed');
+      setGameLevel(gameLevel as GameLevel);
       
       // Mark as fetched to prevent repeated fetches
       setOrderFetched(true);
@@ -151,6 +152,7 @@ const SurveyPage: React.FC = () => {
       setWaitingForQuestions(false);
     }
   }, [isPartnerSurvey, waitingForQuestions, filteredQuestions]);
+  
   
   if (isLoadingOrder) {
     return (
