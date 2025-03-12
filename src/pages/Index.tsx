@@ -14,10 +14,8 @@ const Index = () => {
       
       <main>
         <HeroSection />
-        <div className="py-16">
-          <div className="container mx-auto px-4">
-            <StepsSection />
-          </div>
+        <div className="py-16 bg-[#0B0B0E]">
+          <StepsSection />
         </div>
         
         <ResearchSection />
