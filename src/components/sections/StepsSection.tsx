@@ -3,7 +3,7 @@ import React from 'react';
 
 const StepsSection = () => {
   return (
-    <div className="py-12">
+    <div className="py-12 bg-[#0B0B0E] rounded-3xl">
       <h2 className="text-3xl md:text-4xl font-bold mb-10 text-left">Krok po kroku</h2>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         <div className="glass-card p-8 text-left">
