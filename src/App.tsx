@@ -23,6 +23,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminOrders from "./pages/admin/AdminOrders";
 import { AdminAuthProvider } from "./contexts/AdminAuthContext";
 import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute";
+import ScrollToTop from "./components/ScrollToTop";
 
 const App = () => {
   const [queryClient] = useState(() => new QueryClient({
@@ -42,6 +43,7 @@ const App = () => {
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ScrollToTop />
           <SurveyProvider>
             <AdminAuthProvider>
               <div className="dark">
