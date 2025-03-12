@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSurvey } from '@/contexts/SurveyContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -15,6 +16,7 @@ interface FormErrors {
   userEmail?: string;
   partnerName?: string;
   partnerEmail?: string;
+  ageConfirmation?: string;
 }
 
 const PRODUCT_PRICE = 29;
@@ -25,6 +27,7 @@ const PaymentPage: React.FC = () => {
   const [partnerName, setPartnerName] = useState('');
   const [partnerEmail, setPartnerEmail] = useState('');
   const [giftWrap, setGiftWrap] = useState(false);
+  const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [showErrors, setShowErrors] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isProcessing, setIsProcessing] = useState(false);
@@ -89,6 +92,10 @@ const PaymentPage: React.FC = () => {
       newErrors.partnerEmail = 'Nieprawidłowy format email partnera';
     } else if (partnerEmail.length > 150) {
       newErrors.partnerEmail = 'Email partnera jest za długi (maksymalnie 150 znaków)';
+    }
+    
+    if (!ageConfirmed) {
+      newErrors.ageConfirmation = 'Musisz potwierdzić, że ukończyłeś/-aś 18 lat';
     }
     
     setErrors(newErrors);
@@ -462,7 +469,7 @@ const PaymentPage: React.FC = () => {
                   <p className="text-red-500 text-sm">{errors.partnerEmail}</p>
                 )}
               </div>
-              <div className="flex items-center space-x-2 mt-4 mb-6">
+              <div className="flex items-center space-x-2 mt-4">
                 <Checkbox 
                   id="giftWrap"
                   checked={giftWrap}
@@ -470,7 +477,18 @@ const PaymentPage: React.FC = () => {
                 />
                 <Label htmlFor="giftWrap" className="cursor-pointer text-foreground">Zapakuj na prezent (+20zł)</Label>
               </div>
-              <div>
+              <div className="flex items-center space-x-2 mt-4 p-3 rounded-md border border-border">
+                <Checkbox 
+                  id="ageConfirmation"
+                  checked={ageConfirmed}
+                  onCheckedChange={(checked) => setAgeConfirmed(checked as boolean)}
+                />
+                <Label htmlFor="ageConfirmation" className="cursor-pointer text-foreground font-medium">Oświadczam, że ukończyłem/-am 18 rok życia</Label>
+              </div>
+              {showErrors && errors.ageConfirmation && (
+                <p className="text-red-500 text-sm mt-1">{errors.ageConfirmation}</p>
+              )}
+              <div className="mt-6">
                 <Button type="submit" disabled={isProcessing} className="w-full">
                   {isProcessing ? (
                     <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Przetwarzanie...</>

@@ -1,8 +1,10 @@
 
-import React from 'react';
-import { useSurvey, Gender, GameLevel } from '@/contexts/SurveyContext';
+import React, { useState } from 'react';
+import { useSurvey } from '@/contexts/SurveyContext';
 import { Button } from '@/components/ui/button';
 import { User, UserCircle, Smile, Zap, SmilePlus } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 
 const SurveyConfig: React.FC = () => {
   const { 
@@ -14,8 +16,9 @@ const SurveyConfig: React.FC = () => {
   } = useSurvey();
 
   const { userGender, partnerGender, gameLevel } = surveyConfig;
+  const [ageConfirmed, setAgeConfirmed] = useState(false);
 
-  const canContinue = userGender !== null && partnerGender !== null && gameLevel !== null;
+  const canContinue = userGender !== null && partnerGender !== null && gameLevel !== null && ageConfirmed;
 
   return (
     <div className="glass-panel w-full max-w-4xl p-8 animate-slide-up">
@@ -146,6 +149,22 @@ const SurveyConfig: React.FC = () => {
             </button>
           </div>
         </div>
+        
+        {/* Age Confirmation */}
+        <div className="flex items-center space-x-2 border border-border rounded-lg p-4">
+          <Checkbox 
+            id="ageConfirmation" 
+            checked={ageConfirmed}
+            onCheckedChange={(checked) => setAgeConfirmed(checked as boolean)}
+            className="data-[state=checked]:bg-primary"
+          />
+          <Label 
+            htmlFor="ageConfirmation" 
+            className="text-foreground font-medium cursor-pointer"
+          >
+            Oświadczam, że ukończyłem/-am 18 rok życia
+          </Label>
+        </div>
       </div>
 
       <div className="mt-10 flex justify-center">
@@ -156,6 +175,11 @@ const SurveyConfig: React.FC = () => {
         >
           Rozpocznij ankietę
         </Button>
+        {!ageConfirmed && userGender !== null && partnerGender !== null && gameLevel !== null && (
+          <p className="text-red-500 text-sm mt-2 text-center">
+            Aby kontynuować, musisz potwierdzić że ukończyłeś/-aś 18 lat
+          </p>
+        )}
       </div>
     </div>
   );
