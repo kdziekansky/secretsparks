@@ -46,6 +46,26 @@ const ReportSection = () => {
                   <p className="text-muted-foreground text-lg">Gotowe pomysły na wykorzystanie wspólnych pragnień.</p>
                 </div>
               </div>
+              
+              <div className="flex items-start">
+                <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center mr-5 mt-1 flex-shrink-0">
+                  <Check className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h4 className="text-xl font-semibold mb-3">Poziomy komfortu</h4>
+                  <p className="text-muted-foreground text-lg">Analiza obszarów, w których komfort obu partnerów jest zbieżny.</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center mr-5 mt-1 flex-shrink-0">
+                  <Check className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h4 className="text-xl font-semibold mb-3">Wskazówki komunikacyjne</h4>
+                  <p className="text-muted-foreground text-lg">Jak rozmawiać o waszych pragnieniach w bezpieczny i otwarty sposób.</p>
+                </div>
+              </div>
             </div>
           </div>
           
