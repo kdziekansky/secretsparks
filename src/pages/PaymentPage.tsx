@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSurvey } from '@/contexts/SurveyContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -308,47 +307,72 @@ const PaymentPage: React.FC = () => {
       
       // Proceed to create payment using Supabase edge function with walidacją danych
       try {
-        console.log('Creating payment for order:', orderData.id);
-        
-        // Sanityzacja i walidacja danych przed wysłaniem do funkcji edge
-        if (!orderData.id || typeof orderData.id !== 'string') {
-          throw new Error('Nieprawidłowe ID zamówienia');
-        }
-        
+        // Prepare the payment data
         const price = PRODUCT_PRICE + (giftWrap ? 20 : 0);
-        if (isNaN(price) || price <= 0) {
-          throw new Error('Nieprawidłowa kwota zamówienia');
+        
+        const paymentData = {
+          price: price,
+          currency: 'pln',
+          user_name: sanitizedUserName,
+          user_email: sanitizedUserEmail,
+          partner_name: sanitizedPartnerName,
+          partner_email: sanitizedPartnerEmail,
+          gift_wrap: giftWrap,
+          order_id: orderData.id
+        };
+
+        console.log('Attempting to create payment with data:', {
+          ...paymentData,
+          user_email: '***@***.com', // Mask emails in logs for privacy
+          partner_email: '***@***.com'
+        });
+
+        let result;
+        
+        // First attempt - Using the standard SDK method
+        try {
+          console.log('Trying standard Edge Function invocation...');
+          result = await supabase.functions.invoke('create-payment', {
+            body: { data: paymentData }
+          });
+          
+          console.log('Edge Function response:', result);
+        } catch (invokeError) {
+          console.error('Standard invoke failed:', invokeError);
+          
+          // The invoke method failed, let's try a fallback approach with direct fetch
+          console.log('Falling back to direct fetch method...');
+          
+          // Get the base URL from the environment or use the default
+          const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://bqbgrjpxufblrgcoxpfk.supabase.co';
+          const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxYmdyanB4dWZibHJnY294cGZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE1Mzk4NzUsImV4cCI6MjA1NzExNTg3NX0.kSryhe5Z4BILp_ss5LpSxanGSvx4HZzZtVzYia4bgik";
+          
+          const response = await fetch(`${supabaseUrl}/functions/v1/create-payment`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${supabaseKey}`
+            },
+            body: JSON.stringify({ data: paymentData })
+          });
+          
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Direct fetch failed:', response.status, errorText);
+            throw new Error(`Edge Function returned status ${response.status}: ${errorText}`);
+          }
+          
+          result = { data: await response.json() };
+          console.log('Edge Function direct fetch response:', result);
         }
         
-        const result = await supabase.functions.invoke('create-payment', {
-          body: {
-            data: {
-              price: price,
-              currency: 'pln',
-              user_name: sanitizedUserName,
-              user_email: sanitizedUserEmail,
-              partner_name: sanitizedPartnerName,
-              partner_email: sanitizedPartnerEmail,
-              gift_wrap: giftWrap,
-              order_id: orderData.id
-            }
-          }
-        });
-        
-        console.log('Payment creation response:', result);
-        
-        // Lepsza obsługa błędów
-        if (result.error) {
-          console.error('Payment creation error:', result.error);
-          throw new Error('Nie udało się utworzyć płatności: ' + (result.error.message || 'Nieznany błąd'));
+        // Check if we have result data
+        if (!result || !result.data) {
+          console.error('No data received from Edge Function');
+          throw new Error('No data received from Edge Function');
         }
         
         const data = result.data;
-        
-        if (!data) {
-          console.error('Payment API returned no data');
-          throw new Error('Brak danych w odpowiedzi z API płatności');
-        }
         
         if (data.error) {
           console.error('Payment API error:', data.error);
