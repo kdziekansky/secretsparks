@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import RatingScale from './RatingScale';
@@ -133,7 +132,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
         {/* Left side - Illustration - z gradientowym tłem */}
         <div className="md:w-2/5 p-0 flex items-center justify-center bg-gradient-to-br from-accent/30 to-accent/10 rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none overflow-hidden">
           {currentQuestion.illustration && !imageError ? (
-            <div className="w-full h-full rounded-lg overflow-hidden" style={{ aspectRatio: '4/3' }}>
+            <div className="w-full h-full rounded-lg overflow-hidden" style={{ aspectRatio: '2/3' }}>
               {/* Placeholder while image loads */}
               {!imageLoaded && (
                 <div className="w-full h-full bg-accent/20 flex flex-col items-center justify-center text-muted-foreground">
