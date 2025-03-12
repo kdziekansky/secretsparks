@@ -1,13 +1,14 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="py-16 border-t border-border/40" style={{ backgroundColor: "rgb(33, 33, 44)" }}>
+    <footer className="py-16 border-t border-border/40" style={{ backgroundColor: "#08080C" }}>
       <div className="section-container">
         <div className="grid md:grid-cols-3 gap-12">
-          <div>
+          <div className="border-r border-border/10 pr-8">
             <Link to="/" className="flex items-center gap-2 mb-6">
               <img 
                 src="/lovable-uploads/0537e49e-f4b0-49a8-bedb-41f3876d6f50.png" 
@@ -20,7 +21,7 @@ const Footer = () => {
             </p>
           </div>
           
-          <div className="text-left">
+          <div className="text-left border-r border-border/10 pr-8">
             <h3 className="text-sm font-semibold uppercase text-muted-foreground mb-6">Nasza misja</h3>
             <p className="text-2xl font-serif mb-6">
               Sprawimy, że odkryjecie się na nowo
