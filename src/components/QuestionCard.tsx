@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import RatingScale from './RatingScale';
@@ -112,8 +113,18 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     // Jeśli URL zawiera już zakodowane znaki (%), nie koduj ponownie
     if (url.includes('%')) return url;
     
-    // Jeśli URL zaczyna się od /lovable-uploads/, nie koduj, już działa poprawnie
-    if (url.startsWith('/lovable-uploads/')) return url;
+    // Jeśli URL zaczyna się od /lovable-uploads/ i zawiera spacje lub znaki specjalne, zakoduj nazwę pliku
+    if (url.startsWith('/lovable-uploads/')) {
+      const basePath = '/lovable-uploads/';
+      const fileName = url.substring(basePath.length);
+      
+      // Sprawdź, czy nazwa pliku zawiera spacje lub znaki specjalne
+      if (fileName.includes(' ') || /[^a-zA-Z0-9._-]/.test(fileName)) {
+        return basePath + encodeURIComponent(fileName);
+      }
+      
+      return url;
+    }
     
     // Rozdziel ścieżkę na części
     const lastSlashIndex = url.lastIndexOf('/');

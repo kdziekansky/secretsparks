@@ -13,7 +13,21 @@ const encodeImagePaths = (questions: Question[]): Question[] => {
     if (question.illustration.startsWith('http')) return question;
     
     // Nie modyfikuj ścieżek do lovable-uploads, które są już poprawnie ładowane
-    if (question.illustration.startsWith('/lovable-uploads/')) return question;
+    // ALE! Jeśli ścieżka zawiera spacje lub znaki specjalne, zakoduj cały URL
+    if (question.illustration.startsWith('/lovable-uploads/')) {
+      // Sprawdź, czy nazwa pliku zawiera spacje lub znaki specjalne
+      const fileName = question.illustration.split('/').pop() || '';
+      if (fileName.includes(' ') || /[^a-zA-Z0-9._-]/.test(fileName)) {
+        // Rozdziel ścieżkę na bazową ścieżkę i nazwę pliku
+        const basePath = '/lovable-uploads/';
+        // Zakoduj tylko nazwę pliku
+        return {
+          ...question,
+          illustration: basePath + encodeURIComponent(fileName)
+        };
+      }
+      return question;
+    }
     
     // Jeśli URL zawiera już zakodowane znaki (%), nie koduj ponownie
     if (question.illustration.includes('%')) return question;
@@ -23,7 +37,7 @@ const encodeImagePaths = (questions: Question[]): Question[] => {
       const filename = question.illustration.split('/').pop() || '';
       return {
         ...question,
-        illustration: `/lovable-uploads/${filename}`
+        illustration: `/lovable-uploads/${encodeURIComponent(filename)}`
       };
     }
     

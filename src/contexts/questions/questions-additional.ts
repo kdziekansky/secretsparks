@@ -1,4 +1,3 @@
-
 import type { Question } from '@/types/survey';
 
 export const questionsAdditional: Question[] = [
@@ -263,6 +262,51 @@ export const questionsAdditional: Question[] = [
     text: 'Seks oralny dla niej',
     description: "Partner dostarcza partnercie przyjemności oralnej",
     illustration: '/lovable-uploads/syrena.svg',
+    forConfig: { 
+      userGender: 'female',
+      partnerGender: 'male',
+      gameLevel: ['discover'] 
+    }
+  },
+  // Dodajemy nowe pytania z poprawionymi ścieżkami
+  { 
+    id: 'edg-f1', 
+    text: 'Jego edging',
+    description: "Kontrolowana stymulacja partnera z opóźnianiem orgazmu",
+    illustration: '/lovable-uploads/eding-him.svg',
+    forConfig: { 
+      userGender: 'female',
+      partnerGender: 'male',
+      gameLevel: ['discover', 'explore'] 
+    }
+  },
+  { 
+    id: 'edg-f2', 
+    text: 'Jej edging',
+    description: "Kontrolowana stymulacja partnerki z opóźnianiem orgazmu",
+    illustration: '/lovable-uploads/edging-her.svg',
+    forConfig: { 
+      userGender: 'female',
+      partnerGender: 'male',
+      gameLevel: ['discover', 'explore'] 
+    }
+  },
+  { 
+    id: 'striptiz-f1', 
+    text: 'Striptiz dla niej',
+    description: "Partner wykonuje striptiz dla partnerki",
+    illustration: '/lovable-uploads/striptease-for-her.svg',
+    forConfig: { 
+      userGender: 'female',
+      partnerGender: 'male',
+      gameLevel: ['discover'] 
+    }
+  },
+  { 
+    id: 'striptiz-f2', 
+    text: 'Striptiz dla niego',
+    description: "Partnerka wykonuje striptiz dla partnera",
+    illustration: '/lovable-uploads/striptease-for-him.svg',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
