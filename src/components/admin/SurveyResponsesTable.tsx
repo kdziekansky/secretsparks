@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { questionsDatabase } from '@/contexts/questions-data';
+import { questions as questionsDatabase } from '@/contexts/questions-data';
 import { 
   Table, TableBody, TableCell, TableHead, 
   TableHeader, TableRow 
