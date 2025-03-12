@@ -97,18 +97,18 @@ const Index = () => {
       {/* Hero Section */}
       <section className="section-padding">
         <div className="section-container">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
             {/* Main content - spans 2 columns */}
-            <div className="md:col-span-2 glass-card p-8 md:p-10 flex flex-col justify-center items-center text-center">
-              <h1 className="text-3xl md:text-4xl font-bold mb-4">
+            <div className="md:col-span-2 glass-card p-10 md:p-12 flex flex-col justify-center items-start text-left">
+              <h1 className="text-4xl md:text-5xl font-bold mb-6">
                 Rozumienie bez słów.<br />
                 Życie seksualne na wyższym poziomie
               </h1>
-              <p className="text-muted-foreground mb-8 max-w-2xl">
+              <p className="text-muted-foreground mb-8 text-lg max-w-2xl">
                 W każdym związku istnieją pragnienia, które trudno wyrazić na głos. Secret Sparks to przestrzeń, 
                 gdzie Twoje niewypowiedziane myśli spotykają się z pragnieniami partnera.
               </p>
-              <div className="flex flex-wrap gap-4 justify-center">
+              <div className="flex flex-wrap gap-4">
                 <Link to="/survey">
                   <Button className="btn-primary btn-large">
                     Rozpocznij Grę
@@ -118,8 +118,8 @@ const Index = () => {
             </div>
             
             {/* Side card */}
-            <div className="glass-card flex items-center justify-center p-6">
-              <div className="w-full max-w-[280px] h-[300px] mx-auto rounded-2xl flex items-center justify-center">
+            <div className="glass-card flex items-center justify-center p-8">
+              <div className="w-full h-[340px] rounded-2xl flex items-center justify-center">
                 <img 
                   src="/lovable-uploads/516d860c-2c12-44c6-b85c-5ad4d8016e9c.png" 
                   alt="Aplikacja mobilna" 
@@ -129,85 +129,124 @@ const Index = () => {
             </div>
           </div>
           
-          {/* 3 Feature boxes */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mt-6">
-            <div className="glass-card p-6 md:p-8 flex flex-col items-center justify-center text-center">
-              <h3 className="text-xl font-bold mb-2">Odkryjcie siebie</h3>
-              <p className="text-muted-foreground text-sm">
-                Poznajcie siebie w zupełnie nowym świetle. Secret Sparks ujawnia pragnienia, 
-                które łączą Was oboje.
-              </p>
-            </div>
-            
-            <div className="glass-card p-6 md:p-8 flex flex-col items-center justify-center text-center">
-              <h3 className="text-xl font-bold mb-2">Rozwijcie relację intymną</h3>
-              <p className="text-muted-foreground text-sm">
-                Wprowadźcie element ekscytacji do swojego związku. Nasza aplikacja pomoże Wam 
-                przełamać rutynę.
-              </p>
-            </div>
-            
-            <div className="glass-card p-6 md:p-8 flex flex-col items-center justify-center text-center">
-              <h3 className="text-xl font-bold mb-2">Eksplorujcie pragnienia</h3>
-              <p className="text-muted-foreground text-sm">
-                Twórzcie nowe wspomnienia w bezpiecznej przestrzeni wzajemnego zaufania. Od subtelnych sugestii 
-                po odważne propozycje.
-              </p>
+          {/* Krok po kroku */}
+          <div className="mt-16 mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-10 text-left">Krok po kroku</h2>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+              <div className="glass-card p-8 text-left">
+                <div className="text-4xl font-bold text-primary mb-4">1</div>
+                <h3 className="text-xl font-bold mb-3">Wypełnij ankietę</h3>
+                <p className="text-muted-foreground">
+                  Odpowiedz na pytania dotyczące Twoich preferencji i pragnień seksualnych.
+                </p>
+              </div>
+              
+              <div className="glass-card p-8 text-left">
+                <div className="text-4xl font-bold text-primary mb-4">2</div>
+                <h3 className="text-xl font-bold mb-3">Zaproś partnera</h3>
+                <p className="text-muted-foreground">
+                  Wyślij link do ankiety swojemu partnerowi, aby również mógł ją wypełnić.
+                </p>
+              </div>
+              
+              <div className="glass-card p-8 text-left">
+                <div className="text-4xl font-bold text-primary mb-4">3</div>
+                <h3 className="text-xl font-bold mb-3">Otrzymaj raport</h3>
+                <p className="text-muted-foreground">
+                  Po wypełnieniu przez Was obu ankiety, otrzymacie spersonalizowany raport.
+                </p>
+              </div>
+              
+              <div className="glass-card p-8 text-left">
+                <div className="text-4xl font-bold text-primary mb-4">4</div>
+                <h3 className="text-xl font-bold mb-3">Odkryjcie siebie</h3>
+                <p className="text-muted-foreground">
+                  Poznajcie swoje wspólne pragnienia i wprowadźcie je do waszego związku.
+                </p>
+              </div>
             </div>
           </div>
           
-          {/* Statistics section */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mt-6">
-            <div className="glass-card text-center p-6 flex flex-col items-center justify-center">
-              <h3 className="text-4xl font-bold text-primary mb-2">250+</h3>
-              <p className="text-muted-foreground text-sm">Unikalnych scenariuszy i pomysłów</p>
+          {/* Statystyki */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8 mb-16">
+            <div className="glass-card text-center p-8 flex flex-col items-center justify-center">
+              <h3 className="text-5xl font-bold text-primary mb-4">250+</h3>
+              <p className="text-muted-foreground text-lg">Unikalnych scenariuszy i pomysłów</p>
             </div>
             
-            <div className="glass-card text-center p-6 flex flex-col items-center justify-center">
-              <h3 className="text-4xl font-bold text-primary mb-2">100%</h3>
-              <p className="text-muted-foreground text-sm">Gwarancja bezpieczeństwa danych</p>
+            <div className="glass-card text-center p-8 flex flex-col items-center justify-center">
+              <h3 className="text-5xl font-bold text-primary mb-4">100%</h3>
+              <p className="text-muted-foreground text-lg">Gwarancja bezpieczeństwa danych</p>
             </div>
             
-            <div className="glass-card text-center p-6 flex flex-col items-center justify-center">
-              <h3 className="text-4xl font-bold text-primary mb-2">5min</h3>
-              <p className="text-muted-foreground text-sm">Szybka ankieta, duże rezultaty</p>
+            <div className="glass-card text-center p-8 flex flex-col items-center justify-center">
+              <h3 className="text-5xl font-bold text-primary mb-4">5min</h3>
+              <p className="text-muted-foreground text-lg">Szybka ankieta, duże rezultaty</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Section 2 */}
-      <section className="section-padding">
+      {/* Badania */}
+      <section className="section-padding bg-[#070711]">
         <div className="section-container">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold mb-2">Tytuł sekcji</h2>
-            <p className="text-muted-foreground">opis sekcji</p>
-          </div>
+          <h2 className="text-3xl md:text-4xl font-bold mb-10 text-left">Co mówią badania</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
             {/* Main content - spans 2 columns */}
-            <div className="md:col-span-2 glass-card p-8 flex items-center justify-center">
-              <p className="text-center">Długoterminowe badania wykazują</p>
+            <div className="md:col-span-2 glass-card p-10 flex flex-col items-start text-left">
+              <h3 className="text-2xl font-bold mb-6">Długoterminowe badania wykazują</h3>
+              <p className="text-lg mb-6">
+                Pary, które regularnie komunikują swoje potrzeby i pragnienia seksualne, doświadczają 
+                wyższego poziomu satysfakcji ze związku oraz lepszego samopoczucia psychicznego. Jednak 
+                wiele osób ma trudności z rozpoczęciem takich rozmów.
+              </p>
+              <p className="text-lg">
+                Secret Sparks pomaga przełamać tę barierę, umożliwiając bezpieczne i prywatne 
+                wyrażenie swoich pragnień, a następnie połączenie ich z pragnieniami partnera.
+              </p>
             </div>
             
             {/* Side card */}
-            <div className="glass-card flex items-center justify-center p-6">
-              <p className="text-center">Satysfakcja seksualna</p>
+            <div className="glass-card p-10 flex flex-col items-start text-left">
+              <h3 className="text-2xl font-bold mb-6">Satysfakcja seksualna</h3>
+              <p className="text-lg">
+                Badania pokazują, że pary dzielące się swoimi pragnieniami seksualnymi 
+                doświadczają o 78% wyższego poziomu satysfakcji seksualnej niż pary, 
+                które unikają tego tematu.
+              </p>
+              <div className="mt-auto pt-6">
+                <p className="text-primary text-lg font-medium">78% wyższa satysfakcja seksualna</p>
+              </div>
             </div>
           </div>
           
           {/* 3 Feature boxes */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mt-6">
-            <div className="glass-card p-6 flex items-center justify-center">
-              <p className="text-center">Nie tylko orgazm</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-10">
+            <div className="glass-card p-10 flex flex-col items-start text-left">
+              <h3 className="text-2xl font-bold mb-6">Nie tylko orgazm</h3>
+              <p className="text-lg">
+                Intymność to nie tylko orgazm. Badania wskazują, że eksperymentowanie i 
+                wypróbowywanie nowych doznań seksualnych prowadzi do głębszego 
+                połączenia emocjonalnego.
+              </p>
             </div>
             
-            <div className="glass-card p-6 flex items-center justify-center">
-              <p className="text-center">Zmiany w mózgu</p>
+            <div className="glass-card p-10 flex flex-col items-start text-left">
+              <h3 className="text-2xl font-bold mb-6">Zmiany w mózgu</h3>
+              <p className="text-lg">
+                Neuronauka wykazała, że dzielenie się intymnymi pragnieniami aktywuje 
+                obszary mózgu związane z przyjemnością i zaufaniem, wzmacniając więź 
+                między partnerami.
+              </p>
             </div>
             
-            <div className="glass-card p-6 flex items-center justify-center">
-              <p className="text-center">Fizjologia namiętności</p>
+            <div className="glass-card p-10 flex flex-col items-start text-left">
+              <h3 className="text-2xl font-bold mb-6">Fizjologia namiętności</h3>
+              <p className="text-lg">
+                Regularna, satysfakcjonująca aktywność seksualna prowadzi do wzrostu 
+                poziomu oxytocyny i endorfin, zwanych hormonami szczęścia i miłości.
+              </p>
             </div>
           </div>
         </div>
@@ -216,25 +255,76 @@ const Index = () => {
       {/* Raport Section */}
       <section className="section-padding">
         <div className="section-container">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold mb-2">Nasz raport</h2>
-            <p className="text-muted-foreground">opis sekcji</p>
-          </div>
+          <h2 className="text-3xl md:text-4xl font-bold mb-10 text-left">Nasz raport</h2>
           
           {/* Full-width card */}
-          <div className="glass-card p-8 mb-6 flex items-center justify-center">
-            <p className="text-center">Co zawiera raport</p>
+          <div className="glass-card p-10 mb-10 text-left">
+            <h3 className="text-2xl font-bold mb-6">Co zawiera raport</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="flex items-start">
+                <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center mr-4 mt-1">
+                  <Check className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold mb-2">Wspólne pragnienia</h4>
+                  <p className="text-muted-foreground">Lista aktywności, które oboje chcecie wypróbować.</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center mr-4 mt-1">
+                  <Check className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold mb-2">Obszary do poznania</h4>
+                  <p className="text-muted-foreground">Tematy, które warto omówić, aby zbliżyć się do siebie.</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center mr-4 mt-1">
+                  <Check className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold mb-2">Propozycje i scenariusze</h4>
+                  <p className="text-muted-foreground">Gotowe pomysły na wykorzystanie wspólnych pragnień.</p>
+                </div>
+              </div>
+            </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Main content - spans 2 columns */}
-            <div className="md:col-span-2 glass-card p-8 flex items-center justify-center">
-              <p className="text-center">Konfidencjalność</p>
+            <div className="md:col-span-2 glass-card p-10 flex flex-col items-start text-left">
+              <h3 className="text-2xl font-bold mb-6">Konfidencjalność</h3>
+              <p className="text-lg mb-6">
+                Wasze odpowiedzi są całkowicie anonimowe i bezpieczne. Nasz system łączy 
+                je tylko wtedy, gdy oboje wyrazicie na to zgodę.
+              </p>
+              <p className="text-lg mb-6">
+                Nigdy nie pokazujemy partnerowi Twoich indywidualnych odpowiedzi - tylko 
+                te obszary, w których się zgadzacie.
+              </p>
+              <div className="flex items-center gap-4 mt-4">
+                <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
+                  <Shield className="h-6 w-6 text-primary" />
+                </div>
+                <p className="text-lg font-medium">100% bezpieczeństwa i prywatności</p>
+              </div>
             </div>
             
             {/* Side card */}
-            <div className="glass-card flex items-center justify-center p-6">
-              <p className="text-center">NAJBARDZIEJ EKSCYTUJĄCA GRA DLA PAR!</p>
+            <div className="glass-card p-10 flex flex-col items-center justify-center text-center bg-gradient-to-br from-primary/20 to-accent/30">
+              <h3 className="text-2xl font-bold mb-6">NAJBARDZIEJ EKSCYTUJĄCA GRA DLA PAR!</h3>
+              <p className="text-lg mb-8">
+                Odkryjcie swoje wspólne pragnienia i wprowadźcie je do waszego związku. 
+                Rozpocznijcie przygodę już teraz!
+              </p>
+              <Link to="/survey" className="w-full">
+                <Button className="btn-primary btn-large w-full">
+                  Rozpocznij Grę
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -252,19 +342,19 @@ const Index = () => {
                   className="h-12"
                 />
               </Link>
-              <p className="text-muted-foreground max-w-xs">
+              <p className="text-muted-foreground max-w-xs text-left">
                 Gra dla par, która pomoże Wam odkryć wspólne pragnienia i fantazje.
               </p>
             </div>
             
-            <div>
+            <div className="text-left">
               <h3 className="text-sm font-semibold uppercase text-muted-foreground mb-6">Nasza misja</h3>
               <p className="text-2xl font-serif mb-6">
                 Sprawimy, że odkryjecie się na nowo
               </p>
             </div>
             
-            <div>
+            <div className="text-left">
               <h3 className="text-sm font-semibold uppercase text-muted-foreground mb-6">Promo alert</h3>
               <p className="text-muted-foreground mb-6">
                 Odkryjcie nowe wymiary bliskości z grą Secret Sparks! Zapisz się do powiadomień 
