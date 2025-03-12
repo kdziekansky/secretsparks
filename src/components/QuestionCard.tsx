@@ -102,6 +102,24 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
       setIsAnimating(false);
     }, 300);
   };
+
+  // Zakoduj URL obrazka dla poprawnego ładowania zdjęć z nazwami zawierającymi spacje
+  const getEncodedImageUrl = (url: string) => {
+    if (!url) return '';
+    
+    // Jeśli URL już zawiera protokół (http/https), zwróć go bez zmian
+    if (url.startsWith('http')) return url;
+    
+    // Rozdziel ścieżkę na części
+    const lastSlashIndex = url.lastIndexOf('/');
+    if (lastSlashIndex === -1) return encodeURI(url);
+    
+    const path = url.substring(0, lastSlashIndex + 1);
+    const filename = url.substring(lastSlashIndex + 1);
+    
+    // Zakoduj tylko nazwę pliku, zostawiając ścieżkę bez zmian
+    return path + encodeURIComponent(filename);
+  };
   
   const handleImageLoad = () => {
     setImageLoaded(true);
@@ -133,6 +151,9 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     ? (isPartnerSurvey ? 'Zakończ ankietę' : 'Przejdź do płatności') 
     : 'Zapisz odpowiedź';
   
+  // Zakodowany URL obrazka
+  const encodedImageUrl = currentQuestion.illustration ? getEncodedImageUrl(currentQuestion.illustration) : '';
+  
   return (
     <div className={`glass-panel w-full max-w-4xl transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100 animate-slide-up'}`}>
       <div className="flex flex-col md:flex-row">
@@ -156,7 +177,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
               {currentQuestion.illustration.toLowerCase().endsWith('.svg') ? (
                 <>
                   <object 
-                    data={currentQuestion.illustration} 
+                    data={encodedImageUrl} 
                     type="image/svg+xml"
                     className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                     onLoad={handleImageLoad}
@@ -187,7 +208,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
                 /* Normal image for non-SVG */
                 <>
                   <img 
-                    src={currentQuestion.illustration} 
+                    src={encodedImageUrl} 
                     alt={currentQuestion.text} 
                     className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                     onLoad={handleImageLoad}
