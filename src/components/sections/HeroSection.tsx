@@ -6,19 +6,20 @@ import { Sparkles, Heart, Zap } from 'lucide-react';
 
 const HeroSection = () => {
   return (
-    <section className="section-padding">
-      <div className="section-container">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-          {/* Main content - spans 2 columns */}
-          <div className="md:col-span-2 glass-card p-10 md:p-12 flex flex-col justify-center items-start text-left">
-            <div className="px-4 py-2 rounded-full bg-accent/20 inline-block mb-4">
+    <section className="py-16">
+      <div className="container mx-auto px-4">
+        {/* Główna sekcja hero z obrazkiem */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Lewa kolumna - treść główna (szerokość 2/3) */}
+          <div className="md:col-span-2 glass-card p-10 flex flex-col justify-center items-start text-left">
+            <div className="px-6 py-2 rounded-full bg-[#0D0E18] inline-block mb-6">
               <p className="text-red-500 font-semibold uppercase">NOWY WYMIAR INTYMNEJ KOMUNIKACJI</p>
             </div>
             
             <h1 className="text-4xl md:text-5xl font-bold mb-2">
               Porozumienie bez słów.
             </h1>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold mb-8">
               <span className="text-red-500">Życie seksualne</span> na wyższym poziomie
             </h2>
             
@@ -28,7 +29,7 @@ const HeroSection = () => {
               pragnieniami partnera, tworząc mapę wspólnych uniesień.
             </p>
             
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-4 mb-2">
               <Link to="/survey">
                 <Button className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 h-auto rounded-md text-base">
                   Rozpocznij Grę
@@ -43,7 +44,7 @@ const HeroSection = () => {
             </div>
           </div>
           
-          {/* Right column - aplikacja mobilna */}
+          {/* Prawa kolumna - aplikacja mobilna */}
           <div className="glass-card flex items-center justify-center p-8">
             <div className="w-full rounded-2xl overflow-hidden">
               <img 
@@ -55,8 +56,8 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* Stats section - 3 columns */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 mb-16">
+        {/* Liczniki - 3 kolumny */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
           <div className="bg-[#0D0E18] text-center p-8 flex flex-col items-center justify-center rounded-2xl border border-accent/10">
             <h3 className="text-5xl font-bold text-red-500 mb-4">250+</h3>
             <p className="text-muted-foreground text-lg">Unikalnych scenariuszy i pomysłów na wzbogacenie Waszej intymnej relacji</p>
@@ -73,9 +74,9 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* Features section - 3 columns */}
+        {/* Sekcja funkcji - 3 kolumny */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-          <div className="glass-card p-8 flex flex-col">
+          <div className="bg-[#0D0E18] p-8 flex flex-col rounded-2xl border border-accent/10">
             <div className="text-red-500 mb-6">
               <Sparkles className="h-10 w-10" />
             </div>
@@ -85,7 +86,7 @@ const HeroSection = () => {
             </p>
           </div>
           
-          <div className="glass-card p-8 flex flex-col">
+          <div className="bg-[#0D0E18] p-8 flex flex-col rounded-2xl border border-accent/10">
             <div className="text-red-500 mb-6">
               <Heart className="h-10 w-10" />
             </div>
@@ -95,7 +96,7 @@ const HeroSection = () => {
             </p>
           </div>
           
-          <div className="glass-card p-8 flex flex-col">
+          <div className="bg-[#0D0E18] p-8 flex flex-col rounded-2xl border border-accent/10">
             <div className="text-red-500 mb-6">
               <Zap className="h-10 w-10" />
             </div>
