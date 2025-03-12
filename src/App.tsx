@@ -11,6 +11,7 @@ import SurveyPage from "./pages/SurveyPage";
 import NotFound from "./pages/NotFound";
 import PaymentPage from "./pages/PaymentPage";
 import ThankYouPage from "./pages/ThankYouPage";
+import FAQPage from "./pages/FAQPage";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminOrders from "./pages/admin/AdminOrders";
@@ -46,6 +47,7 @@ const App = () => {
                   <Route path="/o-nas" element={<Index />} />
                   <Route path="/kontakt" element={<Index />} />
                   <Route path="/regulamin" element={<Index />} />
+                  <Route path="/faq" element={<FAQPage />} />
                   <Route path="/survey" element={<SurveyPage />} />
                   <Route path="/payment" element={<PaymentPage />} />
                   <Route path="/thank-you" element={<ThankYouPage />} />
