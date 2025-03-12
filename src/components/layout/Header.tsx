@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { X, Menu, Shield, Bot } from 'lucide-react';
+import { X, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Header = () => {
@@ -32,11 +32,11 @@ const Header = () => {
           <Link to="/faq" className="nav-link">
             FAQ
           </Link>
-          <Link to="/bezpieczenstwo" className="nav-link flex items-center">
-            <Shield className="h-4 w-4 mr-1" /> Bezpieczeństwo
+          <Link to="/bezpieczenstwo" className="nav-link">
+            Bezpieczeństwo
           </Link>
-          <Link to="/secretai" className="nav-link flex items-center">
-            <Bot className="h-4 w-4 mr-1" /> Secret AI
+          <Link to="/secretai" className="nav-link">
+            Secret AI
           </Link>
         </nav>
         
@@ -72,11 +72,11 @@ const Header = () => {
             <Link to="/faq" className="nav-link-mobile">
               FAQ
             </Link>
-            <Link to="/bezpieczenstwo" className="nav-link-mobile flex items-center">
-              <Shield className="h-4 w-4 mr-2" /> Bezpieczeństwo
+            <Link to="/bezpieczenstwo" className="nav-link-mobile">
+              Bezpieczeństwo
             </Link>
-            <Link to="/secretai" className="nav-link-mobile flex items-center">
-              <Bot className="h-4 w-4 mr-2" /> Secret AI
+            <Link to="/secretai" className="nav-link-mobile">
+              Secret AI
             </Link>
             <Link to="/regulamin" className="nav-link-mobile">
               Regulamin
