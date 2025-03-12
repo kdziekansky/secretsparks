@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, X, Menu } from 'lucide-react';
@@ -63,7 +62,7 @@ const Header = () => {
         <div className="hidden md:block">
           <Link to="/survey">
             <Button className="btn-primary">
-              Rozpocznij Grę
+              Wypełnij ankietę
             </Button>
           </Link>
         </div>
@@ -87,7 +86,7 @@ const Header = () => {
             </Link>
             <Link to="/survey">
               <Button className="w-full rounded-full bg-primary hover:bg-primary/80 mt-2">
-                Rozpocznij Grę
+                Wypełnij ankietę
               </Button>
             </Link>
           </nav>

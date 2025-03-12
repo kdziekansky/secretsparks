@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useSurvey } from '@/contexts/SurveyContext';
 import { Button } from '@/components/ui/button';
@@ -175,7 +174,7 @@ const SurveyConfig: React.FC = () => {
           disabled={!canContinue}
           className="px-8 py-6 text-lg"
         >
-          Rozpocznij ankietę
+          Wypełnij ankietę
         </Button>
         
         {!ageConfirmed && userGender !== null && partnerGender !== null && gameLevel !== null && (

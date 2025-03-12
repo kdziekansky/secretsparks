@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Check, Users, Sparkles } from 'lucide-react';
@@ -110,7 +109,7 @@ const ReportSection = () => {
                       </div>
                     </div>
                     <div className="p-4 bg-white text-black">
-                      <p className="text-gray-600 text-sm italic">Naciśnij "Rozpocznij grę", aby otrzymać swój spersonalizowany raport...</p>
+                      <p className="text-gray-600 text-sm italic">Naciśnij "Wypełnij ankietę", aby otrzymać swój spersonalizowany raport...</p>
                     </div>
                   </div>
                 </div>
@@ -122,11 +121,11 @@ const ReportSection = () => {
         <div className="glass-card p-10 flex flex-col items-center justify-center text-center bg-gradient-to-br from-primary/20 to-accent/30 mt-10 md:mt-0">
           <h3 className="text-2xl font-bold mb-6">ODKRYJ WSPÓLNE PRAGNIENIA JUŻ DZIŚ!</h3>
           <p className="text-lg mb-8 max-w-2xl">
-            Rozpocznij grę i otrzymaj szczegółowy raport, który pomoże Wam lepiej się zrozumieć i zbliżyć do siebie.
+            Wypełnij ankietę i otrzymaj szczegółowy raport, który pomoże Wam lepiej się zrozumieć i zbliżyć do siebie.
           </p>
           <Link to="/survey" className="w-full max-w-sm">
             <Button className="btn-primary btn-large w-full text-lg py-6">
-              Rozpocznij Grę
+              Wypełnij ankietę
             </Button>
           </Link>
         </div>
