@@ -193,11 +193,11 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
           </div>
           
           {currentQuestion.description && (
-            <div className="mb-6 text-gray-700">
+            <div className="mb-6">
               {showFullDescription ? (
-                <p className="text-sm">{currentQuestion.description}</p>
+                <p className="text-sm text-muted-foreground">{currentQuestion.description}</p>
               ) : (
-                <p className="text-sm">{truncateDescription(currentQuestion.description)}</p>
+                <p className="text-sm text-muted-foreground">{truncateDescription(currentQuestion.description)}</p>
               )}
               
               {currentQuestion.description.length > 150 && (
