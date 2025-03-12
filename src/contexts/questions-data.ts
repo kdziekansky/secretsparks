@@ -955,4 +955,4 @@ export const questionsDatabase: Question[] = [
     illustration: '/placeholder.svg',
     forConfig: { 
       userGender: 'male',
-      partnerGender
+      partnerGender: 'female
