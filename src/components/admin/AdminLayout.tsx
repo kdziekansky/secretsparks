@@ -39,10 +39,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <div 
         className={cn(
-          "fixed inset-0 bg-gray-900/80 z-30 lg:hidden",
+          "fixed inset-0 bg-background/80 z-30 lg:hidden backdrop-blur-sm",
           sidebarOpen ? "block" : "hidden"
         )}
         onClick={() => setSidebarOpen(false)}
@@ -51,22 +51,22 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       {/* Sidebar */}
       <div 
         className={cn(
-          "fixed inset-y-0 left-0 z-40 w-64 transition-transform duration-300 ease-in-out transform bg-white",
+          "fixed inset-y-0 left-0 z-40 w-64 transition-transform duration-300 ease-in-out transform bg-sidebar",
           sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
-        <div className="flex h-16 items-center justify-between px-4 border-b">
+        <div className="flex h-16 items-center justify-between px-4 border-b border-sidebar-border">
           <div className="flex items-center">
             <img 
               src="/lovable-uploads/d54cd97a-3024-4d2f-87fd-23769403237c.png" 
               alt="Secret Sparks Logo" 
               className="h-8"
             />
-            <span className="ml-2 font-semibold text-lg">Admin Panel</span>
+            <span className="ml-2 font-semibold text-lg text-sidebar-foreground">Admin Panel</span>
           </div>
           <button
             type="button"
-            className="lg:hidden"
+            className="lg:hidden text-sidebar-foreground"
             onClick={() => setSidebarOpen(false)}
           >
             <X className="h-6 w-6" />
@@ -82,31 +82,32 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                 className={cn(
                   "flex items-center px-3 py-2 text-sm font-medium rounded-md",
                   item.current 
-                    ? "bg-gray-100 text-primary" 
-                    : "text-gray-700 hover:bg-gray-50"
+                    ? "bg-sidebar-accent text-sidebar-primary" 
+                    : "text-sidebar-foreground hover:bg-sidebar-accent/50"
                 )}
               >
                 <item.icon className={cn(
                   "mr-3 h-5 w-5",
-                  item.current ? "text-primary" : "text-gray-500"
+                  item.current ? "text-sidebar-primary" : "text-sidebar-foreground"
                 )} />
                 {item.name}
               </Link>
             ))}
           </nav>
 
-          <div className="p-4 border-t">
-            <div className="mb-2 text-xs text-gray-500">
+          <div className="p-4 border-t border-sidebar-border">
+            <div className="mb-2 text-xs text-sidebar-foreground/70">
               Zalogowany jako:
             </div>
             <div className="flex items-center justify-between">
-              <div className="truncate text-sm font-medium">
+              <div className="truncate text-sm font-medium text-sidebar-foreground">
                 {adminEmail}
               </div>
               <Button 
                 variant="ghost" 
                 size="sm" 
                 onClick={handleLogout}
+                className="text-sidebar-foreground hover:text-sidebar-primary hover:bg-sidebar-accent/50"
               >
                 <LogOut className="h-4 w-4" />
               </Button>
@@ -117,11 +118,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
       {/* Main content */}
       <div className="lg:pl-64">
-        <div className="flex h-16 items-center px-4 border-b bg-white lg:hidden">
+        <div className="flex h-16 items-center px-4 border-b border-border bg-card lg:hidden">
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
-            className="mr-4"
+            className="mr-4 text-foreground"
           >
             <Menu className="h-6 w-6" />
             <span className="sr-only">Otwórz menu</span>
@@ -132,10 +133,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             alt="Secret Sparks Logo" 
             className="h-8"
           />
-          <span className="ml-2 font-semibold text-lg">Admin Panel</span>
+          <span className="ml-2 font-semibold text-lg text-foreground">Admin Panel</span>
         </div>
 
-        <main>
+        <main className="p-4">
           {children}
         </main>
       </div>
