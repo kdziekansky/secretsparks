@@ -1,8 +1,8 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ArrowRight, Check, Menu, X, Sparkles, Heart, ExternalLink, Clock, Zap, Shield } from 'lucide-react';
+import { ChevronDown, ArrowRight, Check, Menu, X, Sparkles, Heart, ExternalLink, Clock, Zap, Shield, Users, Mail, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +13,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 
 const Index = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
   
   return (
     <div className="bg-[#05050a] text-foreground min-h-screen">
@@ -253,79 +257,150 @@ const Index = () => {
       </section>
 
       {/* Raport Section */}
-      <section className="section-padding">
+      <section className="section-padding bg-[#070711]">
         <div className="section-container">
-          <h2 className="text-3xl md:text-4xl font-bold mb-10 text-left">Nasz raport</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-16 text-left">Nasz raport</h2>
           
-          {/* Full-width card */}
-          <div className="glass-card p-10 mb-10 text-left">
-            <h3 className="text-2xl font-bold mb-6">Co zawiera raport</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="flex items-start">
-                <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center mr-4 mt-1">
-                  <Check className="h-5 w-5 text-primary" />
+          {/* Two-column layout */}
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-10 mb-16">
+            {/* Left column - 2 columns wide */}
+            <div className="md:col-span-2">
+              <h3 className="text-3xl font-bold mb-8 text-left">Co zawiera raport</h3>
+              
+              <div className="space-y-8">
+                <div className="flex items-start">
+                  <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center mr-5 mt-1">
+                    <Check className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-semibold mb-3">Wspólne pragnienia</h4>
+                    <p className="text-muted-foreground text-lg">Lista aktywności, które oboje chcecie wypróbować.</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-lg font-semibold mb-2">Wspólne pragnienia</h4>
-                  <p className="text-muted-foreground">Lista aktywności, które oboje chcecie wypróbować.</p>
+                
+                <div className="flex items-start">
+                  <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center mr-5 mt-1">
+                    <Check className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-semibold mb-3">Obszary do poznania</h4>
+                    <p className="text-muted-foreground text-lg">Tematy, które warto omówić, aby zbliżyć się do siebie.</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start">
+                  <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center mr-5 mt-1">
+                    <Check className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-semibold mb-3">Propozycje i scenariusze</h4>
+                    <p className="text-muted-foreground text-lg">Gotowe pomysły na wykorzystanie wspólnych pragnień.</p>
+                  </div>
                 </div>
               </div>
               
-              <div className="flex items-start">
-                <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center mr-4 mt-1">
-                  <Check className="h-5 w-5 text-primary" />
+              <div className="mt-10">
+                <h3 className="text-2xl font-bold mb-5 text-left">Otrzymasz wyjątkowy dokument</h3>
+                <p className="text-lg mb-6">
+                  Nasz raport to nie tylko suche fakty, ale praktyczny przewodnik, który pomoże Wam 
+                  zbliżyć się do siebie i odkryć nowe wymiary Waszej relacji.
+                </p>
+              </div>
+            </div>
+            
+            {/* Right column - Email editor mockup - 3 columns wide */}
+            <div className="md:col-span-3">
+              <div className="flex flex-col items-center text-center mb-10">
+                <div className="bg-black rounded-2xl overflow-hidden p-6 mb-5 max-w-[120px]">
+                  <img 
+                    src="/lovable-uploads/c158ccc4-03a6-42ae-bae1-4816c182518a.png" 
+                    alt="Raport icon" 
+                    className="w-full"
+                  />
                 </div>
-                <div>
-                  <h4 className="text-lg font-semibold mb-2">Obszary do poznania</h4>
-                  <p className="text-muted-foreground">Tematy, które warto omówić, aby zbliżyć się do siebie.</p>
-                </div>
+                <h3 className="text-3xl font-bold mb-4">Otrzymaj spersonalizowany raport</h3>
+                <p className="text-lg text-muted-foreground max-w-xl">
+                  Raport zostanie przygotowany specjalnie dla Was, na podstawie Waszych odpowiedzi.
+                  Otrzymasz go na podany adres e-mail.
+                </p>
               </div>
               
-              <div className="flex items-start">
-                <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center mr-4 mt-1">
-                  <Check className="h-5 w-5 text-primary" />
+              {/* Email editor interface */}
+              <div className="bg-[#0c0c14] border border-gray-800 rounded-xl overflow-hidden shadow-xl">
+                {/* Email editor header */}
+                <div className="flex justify-between items-center p-4 border-b border-gray-800">
+                  <div className="flex items-center space-x-3">
+                    <div className="bg-gray-800 px-4 py-1.5 rounded-md text-sm">
+                      Styles
+                    </div>
+                  </div>
+                  <div className="text-gray-400">Raport Secret Sparks</div>
+                  <div className="flex items-center space-x-2">
+                    <div className="text-sm text-gray-400 flex items-center">
+                      <Clock className="h-4 w-4 mr-1" />
+                      <span>Po ankiecie</span>
+                    </div>
+                    <Button variant="outline" size="sm" className="rounded-md text-sm mx-2">
+                      Test
+                    </Button>
+                    <Button size="sm" className="rounded-md text-sm">
+                      <Send className="h-4 w-4 mr-1" />
+                      Wyślij
+                    </Button>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-lg font-semibold mb-2">Propozycje i scenariusze</h4>
-                  <p className="text-muted-foreground">Gotowe pomysły na wykorzystanie wspólnych pragnień.</p>
+                
+                {/* Email content area */}
+                <div className="p-5 bg-[#0f0f17]">
+                  <div className="bg-[#161622] rounded-lg p-5 shadow-sm">
+                    {/* From field */}
+                    <div className="mb-4 flex items-center border-b border-gray-700 pb-3">
+                      <div className="w-24 text-gray-400 text-sm">Od:</div>
+                      <div className="text-gray-300">team@secretsparks.pl</div>
+                    </div>
+                    
+                    {/* To field */}
+                    <div className="mb-4 flex items-center border-b border-gray-700 pb-3">
+                      <div className="w-24 text-gray-400 text-sm">Do:</div>
+                      <div className="flex items-center bg-gray-700/30 rounded-full px-3 py-1 text-sm">
+                        <Users className="h-3.5 w-3.5 mr-1.5" />
+                        <span>Ty i Twój partner</span>
+                      </div>
+                    </div>
+                    
+                    {/* Subject field */}
+                    <div className="mb-4 flex items-center border-b border-gray-700 pb-3">
+                      <div className="w-24 text-gray-400 text-sm">Temat:</div>
+                      <div className="text-gray-300">Wasz raport Secret Sparks</div>
+                    </div>
+                    
+                    {/* Email content preview */}
+                    <div className="min-h-[250px] rounded-md overflow-hidden">
+                      <div className="h-40 bg-gradient-to-b from-gray-800 to-gray-900 flex items-center justify-center">
+                        <div className="bg-gray-700/40 h-20 w-20 rounded-full flex items-center justify-center">
+                          <Sparkles className="h-10 w-10 text-white/70" />
+                        </div>
+                      </div>
+                      <div className="p-4 bg-white text-black">
+                        <p className="text-gray-600 text-sm italic">Naciśnij "Rozpocznij grę", aby otrzymać swój spersonalizowany raport...</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Main content - spans 2 columns */}
-            <div className="md:col-span-2 glass-card p-10 flex flex-col items-start text-left">
-              <h3 className="text-2xl font-bold mb-6">Konfidencjalność</h3>
-              <p className="text-lg mb-6">
-                Wasze odpowiedzi są całkowicie anonimowe i bezpieczne. Nasz system łączy 
-                je tylko wtedy, gdy oboje wyrazicie na to zgodę.
-              </p>
-              <p className="text-lg mb-6">
-                Nigdy nie pokazujemy partnerowi Twoich indywidualnych odpowiedzi - tylko 
-                te obszary, w których się zgadzacie.
-              </p>
-              <div className="flex items-center gap-4 mt-4">
-                <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
-                  <Shield className="h-6 w-6 text-primary" />
-                </div>
-                <p className="text-lg font-medium">100% bezpieczeństwa i prywatności</p>
-              </div>
-            </div>
-            
-            {/* Side card */}
-            <div className="glass-card p-10 flex flex-col items-center justify-center text-center bg-gradient-to-br from-primary/20 to-accent/30">
-              <h3 className="text-2xl font-bold mb-6">NAJBARDZIEJ EKSCYTUJĄCA GRA DLA PAR!</h3>
-              <p className="text-lg mb-8">
-                Odkryjcie swoje wspólne pragnienia i wprowadźcie je do waszego związku. 
-                Rozpocznijcie przygodę już teraz!
-              </p>
-              <Link to="/survey" className="w-full">
-                <Button className="btn-primary btn-large w-full">
-                  Rozpocznij Grę
-                </Button>
-              </Link>
-            </div>
+          <div className="glass-card p-10 flex flex-col items-center justify-center text-center bg-gradient-to-br from-primary/20 to-accent/30 mt-10 md:mt-0">
+            <h3 className="text-2xl font-bold mb-6">ODKRYJ WSPÓLNE PRAGNIENIA JUŻ DZIŚ!</h3>
+            <p className="text-lg mb-8 max-w-2xl">
+              Rozpocznij grę i otrzymaj szczegółowy raport, który pomoże Wam lepiej się zrozumieć i zbliżyć do siebie.
+            </p>
+            <Link to="/survey" className="w-full max-w-sm">
+              <Button className="btn-primary btn-large w-full text-lg py-6">
+                Rozpocznij Grę
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
