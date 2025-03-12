@@ -262,7 +262,7 @@ const Index = () => {
           <h2 className="text-4xl md:text-5xl font-bold mb-16 text-left">Nasz raport</h2>
           
           {/* Two-column layout */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-10 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-16 mb-16">
             {/* Left column - 2 columns wide */}
             <div className="md:col-span-2">
               <h3 className="text-3xl font-bold mb-8 text-left">Co zawiera raport</h3>
@@ -309,15 +309,8 @@ const Index = () => {
             </div>
             
             {/* Right column - Email editor mockup - 3 columns wide */}
-            <div className="md:col-span-3">
+            <div className="md:col-span-3 flex flex-col justify-center">
               <div className="flex flex-col items-center text-center mb-10">
-                <div className="bg-black rounded-2xl overflow-hidden p-6 mb-5 max-w-[120px]">
-                  <img 
-                    src="/lovable-uploads/c158ccc4-03a6-42ae-bae1-4816c182518a.png" 
-                    alt="Raport icon" 
-                    className="w-full"
-                  />
-                </div>
                 <h3 className="text-3xl font-bold mb-4">Otrzymaj spersonalizowany raport</h3>
                 <p className="text-lg text-muted-foreground max-w-xl">
                   Raport zostanie przygotowany specjalnie dla Was, na podstawie Waszych odpowiedzi.
@@ -327,29 +320,6 @@ const Index = () => {
               
               {/* Email editor interface */}
               <div className="bg-[#0c0c14] border border-gray-800 rounded-xl overflow-hidden shadow-xl">
-                {/* Email editor header */}
-                <div className="flex justify-between items-center p-4 border-b border-gray-800">
-                  <div className="flex items-center space-x-3">
-                    <div className="bg-gray-800 px-4 py-1.5 rounded-md text-sm">
-                      Styles
-                    </div>
-                  </div>
-                  <div className="text-gray-400">Raport Secret Sparks</div>
-                  <div className="flex items-center space-x-2">
-                    <div className="text-sm text-gray-400 flex items-center">
-                      <Clock className="h-4 w-4 mr-1" />
-                      <span>Po ankiecie</span>
-                    </div>
-                    <Button variant="outline" size="sm" className="rounded-md text-sm mx-2">
-                      Test
-                    </Button>
-                    <Button size="sm" className="rounded-md text-sm">
-                      <Send className="h-4 w-4 mr-1" />
-                      Wyślij
-                    </Button>
-                  </div>
-                </div>
-                
                 {/* Email content area */}
                 <div className="p-5 bg-[#0f0f17]">
                   <div className="bg-[#161622] rounded-lg p-5 shadow-sm">
