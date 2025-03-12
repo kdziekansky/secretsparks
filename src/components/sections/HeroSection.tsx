@@ -56,8 +56,8 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* Liczniki - 3 kolumny */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+        {/* Liczniki - 3 kolumny - zmniejszony odstęp mt-8 zamiast mt-12 */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
           <div className="bg-[#0D0E18] text-center p-8 flex flex-col items-center justify-center rounded-2xl border border-accent/10">
             <h3 className="text-5xl font-bold text-red-600 mb-4">250+</h3>
             <p className="text-muted-foreground text-lg">Unikalnych scenariuszy i pomysłów na wzbogacenie Waszej intymnej relacji</p>
@@ -74,8 +74,8 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* Sekcja funkcji - 3 kolumny */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+        {/* Sekcja funkcji - 3 kolumny - zmniejszony odstęp mt-8 zamiast mt-12 */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
           <div className="bg-[#0D0E18] p-8 flex flex-col rounded-2xl border border-accent/10">
             <div className="text-red-600 mb-6">
               <Sparkles className="h-10 w-10" />
