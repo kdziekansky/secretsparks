@@ -1,6 +1,7 @@
+
 import { questionsHeteroMale } from './questions/questions-hetero-male';
 import { questionsHeteroFemale } from './questions/questions-hetero-female';
-import { questionsAdditional } from './questions-additional';
+import { questionsAdditional } from './questions/questions-additional';
 import type { Question } from '@/types/survey';
 
 // Helper do enkodowania ścieżek URL obrazów
