@@ -14,7 +14,7 @@ const Index = () => {
       
       <main>
         <HeroSection />
-        <div className="section-container">
+        <div className="container mx-auto px-4 mb-12">
           <StepsSection />
         </div>
         
