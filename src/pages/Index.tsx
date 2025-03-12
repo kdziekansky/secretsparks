@@ -23,7 +23,7 @@ const Index = () => {
         <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8 lg:px-12">
           <Link to="/" className="flex items-center gap-2">
             <img 
-              src="/lovable-uploads/d54cd97a-3024-4d2f-87fd-23769403237c.png" 
+              src="/lovable-uploads/25599b28-a9cd-4147-b81d-a11f3f31e9e0.png" 
               alt="Secret Sparks Logo" 
               className="h-10"
             />
@@ -259,15 +259,15 @@ const Index = () => {
         <div className="section-container">
           <h2 className="text-4xl md:text-5xl font-bold mb-16 text-left">Nasz raport</h2>
           
-          {/* Two-column layout without separator */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-16">
+          {/* Two-column layout with consistent height */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
             {/* Left column */}
-            <div>
+            <div className="flex flex-col">
               <h3 className="text-3xl font-bold mb-8 text-left">Co zawiera raport</h3>
               
-              <div className="space-y-8">
+              <div className="space-y-8 flex-grow">
                 <div className="flex items-start">
-                  <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center mr-5 mt-1">
+                  <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center mr-5 mt-1 flex-shrink-0">
                     <Check className="h-6 w-6 text-primary" />
                   </div>
                   <div>
@@ -277,7 +277,7 @@ const Index = () => {
                 </div>
                 
                 <div className="flex items-start">
-                  <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center mr-5 mt-1">
+                  <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center mr-5 mt-1 flex-shrink-0">
                     <Check className="h-6 w-6 text-primary" />
                   </div>
                   <div>
@@ -287,7 +287,7 @@ const Index = () => {
                 </div>
                 
                 <div className="flex items-start">
-                  <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center mr-5 mt-1">
+                  <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center mr-5 mt-1 flex-shrink-0">
                     <Check className="h-6 w-6 text-primary" />
                   </div>
                   <div>
@@ -299,20 +299,18 @@ const Index = () => {
             </div>
             
             {/* Right column - Email editor mockup */}
-            <div className="flex flex-col justify-center">
-              <div className="flex flex-col items-center text-center mb-10">
-                <h3 className="text-3xl font-bold mb-4">Otrzymaj spersonalizowany raport</h3>
-                <p className="text-lg text-muted-foreground max-w-xl">
-                  Raport zostanie przygotowany specjalnie dla Was, na podstawie Waszych odpowiedzi.
-                  Otrzymasz go na podany adres e-mail.
-                </p>
-              </div>
+            <div className="flex flex-col">
+              <h3 className="text-3xl font-bold mb-8 text-center">Otrzymaj spersonalizowany raport</h3>
+              <p className="text-lg text-muted-foreground text-center mb-8">
+                Raport zostanie przygotowany specjalnie dla Was, na podstawie Waszych odpowiedzi.
+                Otrzymasz go na podany adres e-mail.
+              </p>
               
-              {/* Email editor interface - zmniejszone wymiary */}
-              <div className="bg-[#0c0c14] border border-gray-800 rounded-xl overflow-hidden shadow-xl max-w-[90%] mx-auto">
+              {/* Email editor interface - dostosowane wymiary */}
+              <div className="bg-[#0c0c14] border border-gray-800 rounded-xl overflow-hidden shadow-xl mx-auto w-full flex-grow flex flex-col">
                 {/* Email content area */}
-                <div className="p-4 bg-[#0f0f17]">
-                  <div className="bg-[#161622] rounded-lg p-4 shadow-sm">
+                <div className="p-4 bg-[#0f0f17] flex-grow flex flex-col">
+                  <div className="bg-[#161622] rounded-lg p-4 shadow-sm flex-grow flex flex-col">
                     {/* From field */}
                     <div className="mb-4 flex items-center border-b border-gray-700 pb-3">
                       <div className="w-24 text-gray-400 text-sm">Od:</div>
@@ -335,8 +333,8 @@ const Index = () => {
                     </div>
                     
                     {/* Email content preview */}
-                    <div className="min-h-[200px] rounded-md overflow-hidden">
-                      <div className="h-32 bg-gradient-to-b from-gray-800 to-gray-900 flex items-center justify-center">
+                    <div className="flex-grow rounded-md overflow-hidden flex flex-col">
+                      <div className="flex-grow bg-gradient-to-b from-gray-800 to-gray-900 flex items-center justify-center min-h-[120px]">
                         <div className="bg-gray-700/40 h-16 w-16 rounded-full flex items-center justify-center">
                           <Sparkles className="h-8 w-8 text-white/70" />
                         </div>
@@ -372,7 +370,7 @@ const Index = () => {
             <div>
               <Link to="/" className="flex items-center gap-2 mb-6">
                 <img 
-                  src="/lovable-uploads/d54cd97a-3024-4d2f-87fd-23769403237c.png" 
+                  src="/lovable-uploads/25599b28-a9cd-4147-b81d-a11f3f31e9e0.png" 
                   alt="Secret Sparks Logo" 
                   className="h-12"
                 />
