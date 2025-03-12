@@ -36,11 +36,12 @@ const RatingScale: React.FC<RatingScaleProps> = ({
   onChange,
 }) => {
   // Punkty kontrolne dla krzywej Beziera
+  // Zmodyfikowane punkty, aby ostatni segment opadał w dół
   const controlPoints = {
     p0: { x: 20, y: 170 },   // Początek
     p1: { x: 100, y: 120 },  // Kontrolny 1
-    p2: { x: 200, y: 50 },   // Kontrolny 2
-    p3: { x: 380, y: 60 }    // Koniec
+    p2: { x: 200, y: 50 },   // Kontrolny 2 
+    p3: { x: 380, y: 120 }   // Koniec - zmieniony, aby był niżej (wartość y zwiększona)
   };
   
   // Obliczanie dokładnych punktów na krzywej dla każdej wartości
