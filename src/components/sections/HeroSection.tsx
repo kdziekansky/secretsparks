@@ -2,15 +2,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Sparkles, Heart, Zap } from 'lucide-react';
 
 const HeroSection = () => {
   return (
     <section className="section-padding">
       <div className="section-container">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
-          {/* Main content - lewa kolumna */}
-          <div className="glass-card p-10 md:p-12 flex flex-col justify-center items-start text-left">
-            <p className="text-red-500 font-semibold uppercase mb-4">NOWY WYMIAR INTYMNEJ KOMUNIKACJI</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+          {/* Main content - spans 2 columns */}
+          <div className="md:col-span-2 glass-card p-10 md:p-12 flex flex-col justify-center items-start text-left">
+            <div className="px-4 py-2 rounded-full bg-accent/20 inline-block mb-4">
+              <p className="text-red-500 font-semibold uppercase">NOWY WYMIAR INTYMNEJ KOMUNIKACJI</p>
+            </div>
             
             <h1 className="text-4xl md:text-5xl font-bold mb-2">
               Porozumienie bez słów.
@@ -49,6 +52,39 @@ const HeroSection = () => {
                 className="w-full h-auto object-cover rounded-2xl"
               />
             </div>
+          </div>
+        </div>
+
+        {/* Features section - 3 columns */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+          <div className="glass-card p-8 flex flex-col">
+            <div className="text-red-500 mb-6">
+              <Sparkles className="h-10 w-10" />
+            </div>
+            <h3 className="text-2xl font-bold mb-4">Odkryjcie siebie</h3>
+            <p className="text-muted-foreground">
+              Poznajcie siebie w zupełnie nowym świetle. Secret Sparks ujawnia te pragnienia, które łączą Was oboje, tworząc mapę wspólnych fascynacji i otwierając drzwi do głębszej bliskości.
+            </p>
+          </div>
+          
+          <div className="glass-card p-8 flex flex-col">
+            <div className="text-red-500 mb-6">
+              <Heart className="h-10 w-10" />
+            </div>
+            <h3 className="text-2xl font-bold mb-4">Rozpalcie siebie nawzajem</h3>
+            <p className="text-muted-foreground">
+              Wprowadźcie element ekscytacji do swojego związku. Nasza aplikacja pomoże Wam przełamać rutynę i zbudować głębszą intymność opartą na wzajemnym zrozumieniu i autentycznym pożądaniu.
+            </p>
+          </div>
+          
+          <div className="glass-card p-8 flex flex-col">
+            <div className="text-red-500 mb-6">
+              <Zap className="h-10 w-10" />
+            </div>
+            <h3 className="text-2xl font-bold mb-4">Eksplorujcie pragnienia</h3>
+            <p className="text-muted-foreground">
+              Twórzcie nowe wspomnienia w bezpiecznej przestrzeni wzajemnego zaufania. Od subtelnych sugestii po odważne propozycje – odkryjcie, jak ekscytująca może być wspólna eksploracja pragnień.
+            </p>
           </div>
         </div>
       </div>

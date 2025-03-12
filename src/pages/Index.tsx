@@ -15,10 +15,9 @@ const Index = () => {
       
       <main>
         <HeroSection />
-        
         <div className="section-container">
-          <StepsSection />
           <StatsSection />
+          <StepsSection />
         </div>
         
         <ResearchSection />
