@@ -389,17 +389,17 @@ const PaymentPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <Card className="shadow-lg rounded-lg">
+        <Card className="shadow-lg rounded-lg border-border bg-card">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">Podsumowanie zamówienia</CardTitle>
-            <CardDescription className="text-gray-500 text-center">Wypełnij dane, aby złożyć zamówienie</CardDescription>
+            <CardTitle className="text-2xl font-bold text-center text-foreground">Podsumowanie zamówienia</CardTitle>
+            <CardDescription className="text-muted-foreground text-center">Wypełnij dane, aby złożyć zamówienie</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <form onSubmit={handleSubmit}>
               <div className="space-y-2">
-                <Label htmlFor="userName">Imię</Label>
+                <Label htmlFor="userName" className="text-foreground">Imię</Label>
                 <Input
                   type="text"
                   id="userName"
@@ -408,13 +408,14 @@ const PaymentPage: React.FC = () => {
                   onChange={handleChange}
                   required
                   placeholder="Twoje imię"
+                  className="bg-input text-foreground"
                 />
                 {showErrors && errors.userName && (
                   <p className="text-red-500 text-sm">{errors.userName}</p>
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="userEmail">Email</Label>
+                <Label htmlFor="userEmail" className="text-foreground">Email</Label>
                 <Input
                   type="email"
                   id="userEmail"
@@ -423,13 +424,14 @@ const PaymentPage: React.FC = () => {
                   onChange={handleChange}
                   required
                   placeholder="Twój email"
+                  className="bg-input text-foreground"
                 />
                 {showErrors && errors.userEmail && (
                   <p className="text-red-500 text-sm">{errors.userEmail}</p>
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="partnerName">Imię partnera/partnerki</Label>
+                <Label htmlFor="partnerName" className="text-foreground">Imię partnera/partnerki</Label>
                 <Input
                   type="text"
                   id="partnerName"
@@ -438,13 +440,14 @@ const PaymentPage: React.FC = () => {
                   onChange={handleChange}
                   required
                   placeholder="Imię Twojej drugiej połówki"
+                  className="bg-input text-foreground"
                 />
                 {showErrors && errors.partnerName && (
                   <p className="text-red-500 text-sm">{errors.partnerName}</p>
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="partnerEmail">Email partnera/partnerki</Label>
+                <Label htmlFor="partnerEmail" className="text-foreground">Email partnera/partnerki</Label>
                 <Input
                   type="email"
                   id="partnerEmail"
@@ -453,6 +456,7 @@ const PaymentPage: React.FC = () => {
                   onChange={handleChange}
                   required
                   placeholder="Email Twojej drugiej połówki"
+                  className="bg-input text-foreground"
                 />
                 {showErrors && errors.partnerEmail && (
                   <p className="text-red-500 text-sm">{errors.partnerEmail}</p>
@@ -464,7 +468,7 @@ const PaymentPage: React.FC = () => {
                   checked={giftWrap}
                   onCheckedChange={handleCheckboxChange}
                 />
-                <Label htmlFor="giftWrap" className="cursor-pointer">Zapakuj na prezent (+20zł)</Label>
+                <Label htmlFor="giftWrap" className="cursor-pointer text-foreground">Zapakuj na prezent (+20zł)</Label>
               </div>
               <div>
                 <Button type="submit" disabled={isProcessing} className="w-full">
