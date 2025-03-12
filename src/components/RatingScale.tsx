@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -36,12 +35,12 @@ const RatingScale: React.FC<RatingScaleProps> = ({
   onChange,
 }) => {
   // Punkty kontrolne dla krzywej Beziera
-  // Zmodyfikowane punkty, aby ostatni segment opadał w dół
+  // Zmodyfikowane punkty, aby punkt "Zdecydowanie tak!" był najwyżej
   const controlPoints = {
-    p0: { x: 20, y: 170 },   // Początek
-    p1: { x: 100, y: 120 },  // Kontrolny 1
-    p2: { x: 200, y: 50 },   // Kontrolny 2 
-    p3: { x: 380, y: 120 }   // Koniec - zmieniony, aby był niżej (wartość y zwiększona)
+    p0: { x: 20, y: 170 },    // Początek
+    p1: { x: 100, y: 120 },   // Kontrolny 1
+    p2: { x: 200, y: 30 },    // Kontrolny 2 - obniżony dla lepszego wzniesienia
+    p3: { x: 380, y: 120 }    // Koniec - na poziomie "Może warto rozważyć"
   };
   
   // Obliczanie dokładnych punktów na krzywej dla każdej wartości
@@ -210,4 +209,4 @@ const RatingScale: React.FC<RatingScaleProps> = ({
   );
 };
 
-export default RatingScale; 
+export default RatingScale;
