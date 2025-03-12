@@ -259,10 +259,10 @@ const Index = () => {
         <div className="section-container">
           <h2 className="text-4xl md:text-5xl font-bold mb-16 text-left">Nasz raport</h2>
           
-          {/* Two-column layout with separator */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-20 mb-16 relative">
-            {/* Left column - 2 columns wide */}
-            <div className="md:col-span-2">
+          {/* Two-column layout without separator */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-16">
+            {/* Left column */}
+            <div>
               <h3 className="text-3xl font-bold mb-8 text-left">Co zawiera raport</h3>
               
               <div className="space-y-8">
@@ -298,11 +298,8 @@ const Index = () => {
               </div>
             </div>
             
-            {/* Separator - pokazuje się tylko na większych ekranach */}
-            <div className="hidden md:block absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#9F9EA1]/30 to-transparent z-10" aria-hidden="true"></div>
-            
-            {/* Right column - Email editor mockup - 3 columns wide */}
-            <div className="md:col-span-3 flex flex-col justify-center">
+            {/* Right column - Email editor mockup */}
+            <div className="flex flex-col justify-center">
               <div className="flex flex-col items-center text-center mb-10">
                 <h3 className="text-3xl font-bold mb-4">Otrzymaj spersonalizowany raport</h3>
                 <p className="text-lg text-muted-foreground max-w-xl">
@@ -311,11 +308,11 @@ const Index = () => {
                 </p>
               </div>
               
-              {/* Email editor interface */}
-              <div className="bg-[#0c0c14] border border-gray-800 rounded-xl overflow-hidden shadow-xl">
+              {/* Email editor interface - zmniejszone wymiary */}
+              <div className="bg-[#0c0c14] border border-gray-800 rounded-xl overflow-hidden shadow-xl max-w-[90%] mx-auto">
                 {/* Email content area */}
-                <div className="p-5 bg-[#0f0f17]">
-                  <div className="bg-[#161622] rounded-lg p-5 shadow-sm">
+                <div className="p-4 bg-[#0f0f17]">
+                  <div className="bg-[#161622] rounded-lg p-4 shadow-sm">
                     {/* From field */}
                     <div className="mb-4 flex items-center border-b border-gray-700 pb-3">
                       <div className="w-24 text-gray-400 text-sm">Od:</div>
@@ -338,10 +335,10 @@ const Index = () => {
                     </div>
                     
                     {/* Email content preview */}
-                    <div className="min-h-[250px] rounded-md overflow-hidden">
-                      <div className="h-40 bg-gradient-to-b from-gray-800 to-gray-900 flex items-center justify-center">
-                        <div className="bg-gray-700/40 h-20 w-20 rounded-full flex items-center justify-center">
-                          <Sparkles className="h-10 w-10 text-white/70" />
+                    <div className="min-h-[200px] rounded-md overflow-hidden">
+                      <div className="h-32 bg-gradient-to-b from-gray-800 to-gray-900 flex items-center justify-center">
+                        <div className="bg-gray-700/40 h-16 w-16 rounded-full flex items-center justify-center">
+                          <Sparkles className="h-8 w-8 text-white/70" />
                         </div>
                       </div>
                       <div className="p-4 bg-white text-black">
