@@ -1,7 +1,6 @@
-
 import { questionsHeteroMale } from './questions/questions-hetero-male';
 import { questionsHeteroFemale } from './questions/questions-hetero-female';
-import { questionsAdditional } from './questions/questions-additional';
+import { questionsAdditional } from './questions-additional';
 import type { Question } from '@/types/survey';
 
 // Helper do enkodowania ścieżek URL obrazów
@@ -11,6 +10,9 @@ const encodeImagePaths = (questions: Question[]): Question[] => {
     
     // Nie modyfikuj URL-i, które już mają protokół (np. http, https)
     if (question.illustration.startsWith('http')) return question;
+    
+    // Jeśli URL zawiera już zakodowane znaki (%), nie koduj ponownie
+    if (question.illustration.includes('%')) return question;
     
     // Rozdziel ścieżkę na części
     const lastSlashIndex = question.illustration.lastIndexOf('/');

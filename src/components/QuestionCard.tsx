@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import RatingScale from './RatingScale';
@@ -109,6 +108,9 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     
     // Jeśli URL już zawiera protokół (http/https), zwróć go bez zmian
     if (url.startsWith('http')) return url;
+    
+    // Jeśli URL zawiera już zakodowane znaki (%), nie koduj ponownie
+    if (url.includes('%')) return url;
     
     // Rozdziel ścieżkę na części
     const lastSlashIndex = url.lastIndexOf('/');
