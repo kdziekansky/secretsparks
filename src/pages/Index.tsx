@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ArrowRight, Check, Menu, X, Sparkles, Heart, ExternalLink, Clock, Zap, Shield, Users, Mail, Send } from 'lucide-react';
+import { ChevronDown, ArrowRight, Check, Menu, X, Sparkles, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Index = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -261,8 +259,8 @@ const Index = () => {
         <div className="section-container">
           <h2 className="text-4xl md:text-5xl font-bold mb-16 text-left">Nasz raport</h2>
           
-          {/* Two-column layout */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-16 mb-16">
+          {/* Two-column layout with separator */}
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-16 mb-16 relative">
             {/* Left column - 2 columns wide */}
             <div className="md:col-span-2">
               <h3 className="text-3xl font-bold mb-8 text-left">Co zawiera raport</h3>
@@ -307,6 +305,9 @@ const Index = () => {
                 </p>
               </div>
             </div>
+            
+            {/* Separator - pokazuje się tylko na większych ekranach */}
+            <div className="hidden md:block absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#9F9EA1]/30 to-transparent" aria-hidden="true"></div>
             
             {/* Right column - Email editor mockup - 3 columns wide */}
             <div className="md:col-span-3 flex flex-col justify-center">
