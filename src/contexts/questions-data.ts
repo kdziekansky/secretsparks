@@ -1,3 +1,4 @@
+
 import { Question } from '@/types/survey';
 
 export const questionsDatabase: Question[] = [
@@ -8,6 +9,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -17,6 +20,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover', 'explore', 'exceed'] 
     }
   },
@@ -26,6 +31,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -35,6 +42,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -44,6 +53,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -53,6 +64,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -62,6 +75,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -71,6 +86,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -80,6 +97,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -89,6 +108,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['explore'] 
     }
   },
@@ -98,6 +119,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['explore', 'exceed'] 
     }
   },
@@ -107,6 +130,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['explore'] 
     }
   },
@@ -116,6 +141,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover', 'explore'] 
     }
   },
@@ -125,6 +152,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['explore'] 
     }
   },
@@ -134,6 +163,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['explore'] 
     }
   },
@@ -143,6 +174,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover', 'explore'] 
     }
   },
@@ -152,6 +185,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover', 'explore'] 
     }
   },
@@ -161,6 +196,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['explore'] 
     }
   },
@@ -170,6 +207,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
@@ -179,6 +218,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
@@ -188,6 +229,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
@@ -197,6 +240,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
@@ -206,6 +251,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
@@ -215,6 +262,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
@@ -224,6 +273,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
@@ -235,6 +286,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -244,6 +297,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -253,6 +308,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -262,6 +319,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -271,6 +330,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -280,6 +341,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -289,6 +352,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -298,6 +363,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -307,6 +374,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['explore'] 
     }
   },
@@ -316,6 +385,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['explore'] 
     }
   },
@@ -325,6 +396,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['explore'] 
     }
   },
@@ -334,6 +407,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['explore'] 
     }
   },
@@ -343,6 +418,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['explore'] 
     }
   },
@@ -352,6 +429,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
@@ -361,6 +440,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
@@ -370,6 +451,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
@@ -379,6 +462,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
@@ -388,6 +473,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
@@ -399,6 +486,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -408,6 +497,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover', 'explore'] 
     }
   },
@@ -417,6 +508,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -426,6 +519,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -435,6 +530,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -444,6 +541,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -453,6 +552,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -462,6 +563,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover', 'explore'] 
     }
   },
@@ -471,6 +574,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
@@ -480,6 +585,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['explore'] 
     }
   },
@@ -489,6 +596,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['explore'] 
     }
   },
@@ -498,6 +607,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['explore', 'exceed'] 
     }
   },
@@ -507,6 +618,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['explore'] 
     }
   },
@@ -516,6 +629,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['explore', 'exceed'] 
     }
   },
@@ -525,6 +640,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
@@ -534,6 +651,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
@@ -543,6 +662,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
@@ -552,6 +673,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
@@ -563,6 +686,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -572,6 +697,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
@@ -581,6 +708,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['explore'] 
     }
   },
@@ -590,6 +719,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['explore'] 
     }
   },
@@ -599,6 +730,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover', 'explore'] 
     }
   },
@@ -608,6 +741,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['explore'] 
     }
   },
@@ -617,6 +752,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
@@ -626,6 +763,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
@@ -637,6 +776,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['discover', 'explore'] 
     }
   },
@@ -646,6 +787,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['explore'] 
     }
   },
@@ -655,6 +798,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['explore', 'exceed'] 
     }
   },
@@ -664,6 +809,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['explore', 'exceed'] 
     }
   },
@@ -675,6 +822,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
@@ -684,6 +833,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
@@ -693,6 +844,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
@@ -702,6 +855,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
@@ -711,6 +866,8 @@ export const questionsDatabase: Question[] = [
     description: "Tutaj będzie przykładowy opis",
     illustration: '/placeholder.svg',
     forConfig: { 
+      userGender: 'male',
+      partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   }

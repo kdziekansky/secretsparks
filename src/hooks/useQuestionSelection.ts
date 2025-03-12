@@ -4,24 +4,45 @@ import { Question, SurveyConfig } from '@/types/survey';
 
 const getRandomizedQuestions = (questions: Question[], config: SurveyConfig, maxQuestions: number = 15) => {
   // Filtruj pytania na podstawie konfiguracji
+  console.log('Filtrowanie pytań dla konfiguracji:', config);
+  
   const filteredByConfig = questions.filter(question => {
-    if (!question.forConfig) return true;
+    // Jeśli pytanie nie ma konfiguracji, jest uniwersalne
+    if (!question.forConfig) {
+      console.log(`Pytanie ${question.id} jest uniwersalne (brak forConfig)`);
+      return true;
+    }
     
     const { userGender, partnerGender, gameLevel } = question.forConfig;
     
-    // Sprawdź dokładne warunki płci - jeśli warunek płci jest określony, musi dokładnie pasować
-    if (userGender && userGender !== config.userGender) return false;
-    if (partnerGender && partnerGender !== config.partnerGender) return false;
+    // Szczegółowe logowanie dla debugowania
+    let isPassing = true;
     
-    // Walidacja specyficzna dla kombinacji płci (np. pytania męsko-męskie tylko dla par męsko-męskich)
-    if (userGender === 'male' && partnerGender === 'male' && 
-        (config.userGender !== 'male' || config.partnerGender !== 'male')) {
-      return false;
+    // Sprawdź dokładne warunki płci
+    if (userGender && userGender !== config.userGender) {
+      console.log(`Pytanie ${question.id} odrzucone: userGender ${userGender} ≠ ${config.userGender}`);
+      isPassing = false;
     }
     
-    if (userGender === 'female' && partnerGender === 'female' && 
-        (config.userGender !== 'female' || config.partnerGender !== 'female')) {
-      return false;
+    if (partnerGender && partnerGender !== config.partnerGender) {
+      console.log(`Pytanie ${question.id} odrzucone: partnerGender ${partnerGender} ≠ ${config.partnerGender}`);
+      isPassing = false;
+    }
+    
+    // Specjalna walidacja dla pytań męsko-męskich
+    if (userGender === 'male' && partnerGender === 'male') {
+      if (config.userGender !== 'male' || config.partnerGender !== 'male') {
+        console.log(`Pytanie ${question.id} odrzucone: dedykowane dla par M-M, aktualna konfiguracja: ${config.userGender}-${config.partnerGender}`);
+        isPassing = false;
+      }
+    }
+    
+    // Specjalna walidacja dla pytań damsko-damskich
+    if (userGender === 'female' && partnerGender === 'female') {
+      if (config.userGender !== 'female' || config.partnerGender !== 'female') {
+        console.log(`Pytanie ${question.id} odrzucone: dedykowane dla par K-K, aktualna konfiguracja: ${config.userGender}-${config.partnerGender}`);
+        isPassing = false;
+      }
     }
     
     // Dodatkowa walidacja dla pytań heteroseksualnych
@@ -29,14 +50,26 @@ const getRandomizedQuestions = (questions: Question[], config: SurveyConfig, max
       const isQuestionHetero = userGender !== partnerGender;
       const isConfigHetero = config.userGender !== config.partnerGender;
       
-      if (isQuestionHetero !== isConfigHetero) return false;
+      if (isQuestionHetero !== isConfigHetero) {
+        console.log(`Pytanie ${question.id} odrzucone: niezgodność heteroseksualności, pytanie: ${isQuestionHetero ? 'hetero' : 'homo'}, konfiguracja: ${isConfigHetero ? 'hetero' : 'homo'}`);
+        isPassing = false;
+      }
     }
     
     // Sprawdź poziom gry
-    if (gameLevel && !gameLevel.includes(config.gameLevel as any)) return false;
+    if (gameLevel && !gameLevel.includes(config.gameLevel as any)) {
+      console.log(`Pytanie ${question.id} odrzucone: poziom gry ${gameLevel} nie zawiera ${config.gameLevel}`);
+      isPassing = false;
+    }
     
-    return true;
+    if (isPassing) {
+      console.log(`Pytanie ${question.id} zaakceptowane dla konfiguracji ${config.userGender}-${config.partnerGender} (${config.gameLevel})`);
+    }
+    
+    return isPassing;
   });
+
+  console.log(`Po filtrowaniu zostało ${filteredByConfig.length} pytań z ${questions.length}`);
 
   // Grupuj pytania według pairGroup
   const groupedQuestions: Record<string, Question[]> = {};
