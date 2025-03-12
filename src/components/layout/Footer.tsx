@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
@@ -17,22 +16,21 @@ const Footer = () => {
               />
             </Link>
             <p className="text-muted-foreground max-w-xs text-left">
-              Gra dla par, która pomoże Wam odkryć wspólne pragnienia i fantazje.
+              Mapa waszego życia seksualnego, która wniesie nową energię
             </p>
           </div>
           
           <div className="text-left border-r border-border/10 pr-8">
             <h3 className="text-sm font-semibold uppercase text-muted-foreground mb-6">Nasza misja</h3>
             <p className="text-2xl font-serif mb-6">
-              Sprawimy, że odkryjecie się na nowo
+              Naszym celem jest zwiększenie Waszej satysfakcji
             </p>
           </div>
           
           <div className="text-left">
-            <h3 className="text-sm font-semibold uppercase text-muted-foreground mb-6">Promo alert</h3>
+            <h3 className="text-sm font-semibold uppercase text-muted-foreground mb-6">Zapisz się</h3>
             <p className="text-muted-foreground mb-6">
-              Odkryjcie nowe wymiary bliskości z grą Secret Sparks! Zapisz się do powiadomień 
-              o naszych wyjątkowych promocjach.
+              Zapisz się, otrzymuj porady za darmo oraz dowiedz się o naszych promocjach jako pierwszy.
             </p>
             
             <div className="flex">
@@ -53,13 +51,13 @@ const Footer = () => {
             © 2025 Secret Sparks. Wszelkie prawa zastrzeżone.
           </div>
           <div className="flex gap-6">
-            <Link to="/privacy" className="text-sm text-muted-foreground hover:text-primary">
+            <Link to="/polityka-prywatnosci" className="text-sm text-muted-foreground hover:text-primary">
               Polityka prywatności
             </Link>
-            <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary">
-              Warunki korzystania
+            <Link to="/regulamin" className="text-sm text-muted-foreground hover:text-primary">
+              Regulamin
             </Link>
-            <Link to="/contact" className="text-sm text-muted-foreground hover:text-primary">
+            <Link to="/kontakt" className="text-sm text-muted-foreground hover:text-primary">
               Kontakt
             </Link>
           </div>

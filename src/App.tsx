@@ -48,6 +48,8 @@ const App = () => {
                   <Route path="/idea" element={<Index />} />
                   <Route path="/zasady" element={<RulesPage />} />
                   <Route path="/regulamin" element={<TermsPage />} />
+                  <Route path="/polityka-prywatnosci" element={<PrivacyPage />} />
+                  <Route path="/kontakt" element={<ContactPage />} />
                   <Route path="/o-nas" element={<Index />} />
                   <Route path="/faq" element={<FAQPage />} />
                   <Route path="/bezpieczenstwo" element={<SecurityPage />} />
