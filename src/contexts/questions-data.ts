@@ -12,8 +12,20 @@ const encodeImagePaths = (questions: Question[]): Question[] => {
     // Nie modyfikuj URL-i, które już mają protokół (np. http, https)
     if (question.illustration.startsWith('http')) return question;
     
+    // Nie modyfikuj ścieżek do lovable-uploads, które są już poprawnie ładowane
+    if (question.illustration.startsWith('/lovable-uploads/')) return question;
+    
     // Jeśli URL zawiera już zakodowane znaki (%), nie koduj ponownie
     if (question.illustration.includes('%')) return question;
+    
+    // Modyfikuj ścieżki do images/illustrations na lovable-uploads
+    if (question.illustration.includes('/images/illustrations/')) {
+      const filename = question.illustration.split('/').pop() || '';
+      return {
+        ...question,
+        illustration: `/lovable-uploads/${filename}`
+      };
+    }
     
     // Rozdziel ścieżkę na części
     const lastSlashIndex = question.illustration.lastIndexOf('/');

@@ -1,3 +1,4 @@
+
 import type { Question } from '@/types/survey';
 
 export const questionsAdditional: Question[] = [
@@ -210,6 +211,62 @@ export const questionsAdditional: Question[] = [
       userGender: 'male',
       partnerGender: 'male',
       gameLevel: ['exceed'] 
+    }
+  },
+  // Dodane poprawione ścieżki do obrazów, które powodowały błędy
+  { 
+    id: 'dom-f2', 
+    text: 'On dominuje nad nią',
+    description: "Partner przejmuje kontrolę i dominuje w relacji seksualnej",
+    illustration: '/lovable-uploads/domination.svg',
+    forConfig: { 
+      userGender: 'female',
+      partnerGender: 'male',
+      gameLevel: ['discover', 'explore'] 
+    }
+  },
+  { 
+    id: 'dom-f3', 
+    text: 'Ona dominuje nad nim',
+    description: "Partnerka przejmuje kontrolę i dominuje w relacji seksualnej",
+    illustration: '/lovable-uploads/domination.svg',
+    forConfig: { 
+      userGender: 'female',
+      partnerGender: 'male',
+      gameLevel: ['discover', 'explore'] 
+    }
+  },
+  { 
+    id: 'toys-f1', 
+    text: 'Zabawki dla niej',
+    description: "Wykorzystanie zabawek erotycznych dla kobiet",
+    illustration: '/lovable-uploads/toys-for-her.png',
+    forConfig: { 
+      userGender: 'female',
+      partnerGender: 'male',
+      gameLevel: ['discover'] 
+    }
+  },
+  { 
+    id: 'toys-f2', 
+    text: 'Zabawki dla niego',
+    description: "Wykorzystanie zabawek erotycznych dla mężczyzn",
+    illustration: '/lovable-uploads/toys-for-him.png',
+    forConfig: { 
+      userGender: 'female',
+      partnerGender: 'male',
+      gameLevel: ['discover'] 
+    }
+  },
+  { 
+    id: 'oral-f1', 
+    text: 'Seks oralny dla niej',
+    description: "Partner dostarcza partnercie przyjemności oralnej",
+    illustration: '/lovable-uploads/syrena.svg',
+    forConfig: { 
+      userGender: 'female',
+      partnerGender: 'male',
+      gameLevel: ['discover'] 
     }
   }
 ];

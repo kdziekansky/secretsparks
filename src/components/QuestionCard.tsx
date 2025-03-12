@@ -112,6 +112,9 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     // Jeśli URL zawiera już zakodowane znaki (%), nie koduj ponownie
     if (url.includes('%')) return url;
     
+    // Jeśli URL zaczyna się od /lovable-uploads/, nie koduj, już działa poprawnie
+    if (url.startsWith('/lovable-uploads/')) return url;
+    
     // Rozdziel ścieżkę na części
     const lastSlashIndex = url.lastIndexOf('/');
     if (lastSlashIndex === -1) return encodeURI(url);
