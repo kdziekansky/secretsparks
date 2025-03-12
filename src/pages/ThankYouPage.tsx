@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Confetti } from '@/components/Confetti';
 import { Button } from '@/components/ui/button';
-import { Heart, AlertCircle } from 'lucide-react'; // Zmiana z CheckCircle na Heart
+import { Heart, AlertCircle, Mail, User, Users, Gift, CheckCircle, Calendar } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { toast } from 'sonner';
+import { formatDistance } from 'date-fns';
+import { pl } from 'date-fns/locale';
 
 const ThankYouPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -79,6 +81,12 @@ const ThankYouPage: React.FC = () => {
             } else {
               console.log('Question sequence saved successfully');
               toast.success('Sekwencja pytań zapisana dla partnera');
+              
+              // Update local state to reflect the change
+              setOrderDetails({
+                ...data,
+                user_question_sequence: questionIds
+              });
             }
           }
         } else {
@@ -104,15 +112,15 @@ const ThankYouPage: React.FC = () => {
       <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6">
         <div className="glass-panel p-8 w-full max-w-xl text-center animate-fade-in">
           <div className="flex justify-center mb-6">
-            <Heart className="text-pink-500 h-16 w-16" /> {/* Ikona serca zamiast CheckCircle */}
+            <Heart className="text-pink-500 h-16 w-16" />
           </div>
           
           <h1 className="text-2xl sm:text-3xl font-medium mb-4">
-            Dziękujemy, odkryjecie siebie na nowo {/* Zmieniony nagłówek */}
+            Dziękujemy, odkryjecie siebie na nowo
           </h1>
           
           <p className="text-lg text-muted-foreground mb-8">
-            Twoja ankieta została wysłana, już wkrótce otrzymacie swój raport i odkryjecie się na nowo. Naszą misją jest ulepszać życie seksualne. {/* Zmieniony tekst */}
+            Twoja ankieta została wysłana, już wkrótce otrzymacie swój raport i odkryjecie się na nowo. Naszą misją jest ulepszać życie seksualne.
           </p>
           
           <Link to="/">
@@ -163,7 +171,7 @@ const ThankYouPage: React.FC = () => {
       <Confetti />
       <div className="glass-panel p-8 w-full max-w-xl text-center animate-fade-in">
         <div className="flex justify-center mb-6">
-          <Heart className="text-pink-500 h-16 w-16" /> {/* Ikona serca zamiast CheckCircle */}
+          <Heart className="text-pink-500 h-16 w-16" />
         </div>
         
         <h1 className="text-2xl sm:text-3xl font-medium mb-4">
@@ -175,26 +183,99 @@ const ThankYouPage: React.FC = () => {
         </p>
 
         {orderDetails && (
-          <div className="bg-white p-6 rounded-lg shadow-sm mb-8 text-left">
-            <h2 className="text-xl font-semibold mb-4">Szczegóły zamówienia</h2>
-            <div className="space-y-2">
-              <p><strong>Zamówienie:</strong> #{orderDetails.id.substring(0, 8)}</p>
-              <p><strong>Email:</strong> {orderDetails.user_email}</p>
-              <p><strong>Partner:</strong> {orderDetails.partner_name}</p>
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm mb-8 text-left">
+            <h2 className="text-xl font-semibold mb-4 text-center">Szczegóły zamówienia</h2>
+            
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="bg-primary/10 p-2 rounded-full">
+                  <CheckCircle className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="font-medium">Numer zamówienia</p>
+                  <p className="text-muted-foreground text-sm">#{orderDetails.id.substring(0, 8)}...</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <div className="bg-primary/10 p-2 rounded-full">
+                  <User className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="font-medium">Dane zamawiającego</p>
+                  <p className="text-muted-foreground text-sm">{orderDetails.user_name}</p>
+                  <p className="text-muted-foreground text-sm">{orderDetails.user_email}</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <div className="bg-primary/10 p-2 rounded-full">
+                  <Users className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="font-medium">Dane partnera</p>
+                  <p className="text-muted-foreground text-sm">{orderDetails.partner_name}</p>
+                  <p className="text-muted-foreground text-sm">{orderDetails.partner_email}</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <div className="bg-primary/10 p-2 rounded-full">
+                  <Calendar className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="font-medium">Data zamówienia</p>
+                  <p className="text-muted-foreground text-sm">
+                    {new Date(orderDetails.created_at).toLocaleDateString('pl-PL')}
+                    {' '}
+                    ({formatDistance(new Date(orderDetails.created_at), new Date(), { 
+                      addSuffix: true,
+                      locale: pl
+                    })})
+                  </p>
+                </div>
+              </div>
+              
+              {orderDetails.gift_wrap && (
+                <div className="flex items-start gap-3">
+                  <div className="bg-primary/10 p-2 rounded-full">
+                    <Gift className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium">Pakowanie na prezent</p>
+                    <p className="text-muted-foreground text-sm">Tak</p>
+                  </div>
+                </div>
+              )}
+              
               {orderDetails.user_question_sequence && (
-                <p className="text-green-600">Sekwencja pytań została zapisana dla partnera</p>
+                <div className="flex items-start gap-3">
+                  <div className="bg-green-500/10 p-2 rounded-full">
+                    <CheckCircle className="h-5 w-5 text-green-500" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-green-600">Sekwencja pytań została zapisana dla partnera</p>
+                    <p className="text-muted-foreground text-sm">
+                      {orderDetails.user_question_sequence.length} pytań przygotowanych
+                    </p>
+                  </div>
+                </div>
               )}
             </div>
           </div>
         )}
         
-        <p className="text-muted-foreground mb-8">
-          Wysłaliśmy potwierdzenie na Twój adres email. Twój partner otrzyma wkrótce zaproszenie do ankiety z identycznymi pytaniami.
-        </p>
-        
-        <Link to="/">
-          <Button>Powrót na stronę główną</Button>
-        </Link>
+        <div className="space-y-4">
+          <p className="text-muted-foreground">
+            Wysłaliśmy potwierdzenie na Twój adres email. Twój partner otrzyma wkrótce zaproszenie do ankiety z identycznymi pytaniami.
+          </p>
+          
+          <div className="flex justify-center">
+            <Link to="/">
+              <Button>Powrót na stronę główną</Button>
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );
