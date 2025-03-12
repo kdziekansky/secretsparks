@@ -5,7 +5,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-m1', 
     text: 'Pozycja Amazonki',
     description: "Czy lubisz gdy Twoja partnerka jest na górze i kontroluje rytm? Ta pozycja daje kobiecie pełną kontrolę nad tempem i głębokością, a Tobie wspaniały widok.",
-    illustration: '/lovable-uploads/pozycja-amazonki.png',
+    illustration: '/images/illustrations/techniques/Pozycja Amazonki (discover, explore).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -16,7 +16,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-m2', 
     text: 'Pozycja misjonarska',
     description: "Pozycja klasyczna, z mężczyzną na górze - ceniona za bliskość i intymność. Umożliwia głęboki kontakt wzrokowy i pocałunki, budując więź podczas stosunku.",
-    illustration: '/lovable-uploads/missionary.png',
+    illustration: '/images/illustrations/techniques/Pozycja misjonarska (discover).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -27,7 +27,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-m3', 
     text: 'Pozycja "na pieska"',
     description: "Pozycja od tyłu, która pozwala na głębszą penetrację. Daje dostęp do punktu G partnerki i umożliwia swobodne ruchy biodrami, zwiększając intensywność doznań.",
-    illustration: '/lovable-uploads/doggy.png',
+    illustration: '/images/illustrations/techniques/Pozycja na pieska (discover, explore, exceed).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -38,7 +38,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-m6', 
     text: 'Pozycja "na królową"',
     description: "Kobieta leży na plecach z uniesionymi biodrami, a Ty klęczysz. Ta pozycja pozwala na głęboką penetrację przy jednoczesnym kontakcie wzrokowym i pieszczeniu ciała partnerki.",
-    illustration: '/lovable-uploads/krolowa.png',
+    illustration: '/images/illustrations/techniques/Pozycja na królową (discover).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -49,7 +49,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-m7', 
     text: 'Pozycja "jeździec"',
     description: "Kobieta siedzi na Tobie twarzą do Twojej twarzy. Daje to możliwość przytulania się i całowania przy jednoczesnym stymulowaniu łechtaczki partnerki przez tarcie.",
-    illustration: '/lovable-uploads/riding.png',
+    illustration: '/images/illustrations/techniques/Pozycja jeździec (discover).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -60,7 +60,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-m8', 
     text: 'Pozycja "odwrócona amazońska"',
     description: "Kobieta siedzi na Tobie tyłem do Twojej twarzy. Ta pozycja oferuje wyjątkowe widoki i dostęp do pieszczenia pleców, pośladków i innych części ciała partnerki.",
-    illustration: '/lovable-uploads/odwrocona.png',
+    illustration: '/images/illustrations/techniques/Pozycja odwrócona amazonka (discover, explore).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -71,7 +71,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-m9', 
     text: 'Pozycja "leniwego pieska"',
     description: "Kobieta leży płasko na brzuchu, a Ty wchodzisz od tyłu. Idealny wybór, gdy chcecie połączyć odpoczynek z przyjemnością, oferując głęboką penetrację przy minimalnym wysiłku.",
-    illustration: '/lovable-uploads/leniwa.png',
+    illustration: '/images/illustrations/techniques/Pozycja leniwego pieska (discover).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -82,7 +82,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-m12', 
     text: 'Pozycja "kruka" (69)',
     description: "Pozycja, w której oboje jednocześnie sprawiacie sobie przyjemność oralnie. Fantastyczny sposób, by dawać i otrzymywać przyjemność w tym samym czasie.",
-    illustration: '/lovable-uploads/69.png',
+    illustration: '/images/illustrations/techniques/Pozycja kruka (explore).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -126,7 +126,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'rol-m1', 
     text: 'Nauczycielka i student',
     description: "Odgrywanie ról nauczycielki i ucznia - kto będzie prowadził lekcje? Fantazja o władzy i wiedzy, gdzie jeden z was staje się przewodnikiem, a drugi chętnym do nauki uczniem.",
-    illustration: '/lovable-uploads/nauczycielka.png',
+    illustration: '/images/illustrations/techniques/Nauczycielka (discover).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -148,7 +148,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'rol-m3', 
     text: '"Złota rączka" i samotna żona',
     description: "Odgrywanie fantazji o hydrauliku/majsterkowiczu i samotnej kobiecie. Klasyczny scenariusz pełen napięcia seksualnego i spontaniczności, gdy przychodzisz naprawić coś w jej domu.",
-    illustration: '/lovable-uploads/handyman.png',
+    illustration: '/images/illustrations/techniques/Złota rączka (explore).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -264,7 +264,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'oral-m2', 
     text: 'Seks oralny dla niego',
     description: "Czy lubisz gdy partnerka pieści Cię ustami? Pieszczenie penisa ustami to wspaniałe doznanie, które może być zarówno preludium jak i głównym punktem erotycznego spotkania.",
-    illustration: '/lovable-uploads/seks-oralny-dla-niego.png',
+    illustration: '/images/illustrations/techniques/Seks oralny dla niego (discover).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -442,7 +442,7 @@ export const questionsHeteroMale: Question[] = [
   { 
     id: 'sensual-m3', 
     text: 'Sexting',
-    description: "Czy lubisz wymieniać się z partnerką pikantymi wiadomościami i zdjęciami? Budowanie napięcia przez cały dzień może prowadzić do niezwykle namiętnego spotkania wieczorem.",
+    description: "Czy lubisz wymieniać się z partnerką pikantnymi wiadomościami i zdjęciami? Budowanie napięcia przez cały dzień może prowadzić do niezwykle namiętnego spotkania wieczorem.",
     illustration: '/placeholder.svg',
     forConfig: { 
       userGender: 'male',
@@ -513,7 +513,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'dom-m4', 
     text: 'Pełna dominacja i uległość',
     description: "Czy pociąga Cię pełna dominacja lub uległość w relacji seksualnej? Głębsze eksplorowanie dynamiki władzy może prowadzić do intensywnych, transformujących doświadczeń.",
-    illustration: '/lovable-uploads/domination.png',
+    illustration: '/images/illustrations/techniques/Domination (exceed).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -693,166 +693,3 @@ export const questionsHeteroMale: Question[] = [
       gameLevel: ['exceed'] 
     }
   },
-  { 
-    id: 'ext-m4', 
-    text: 'Wieczór z wybraną parą',
-    description: "Intymne spotkanie z inną parą bez pełnego swingowania. Może obejmować rozmowy o seksie, flirt, pokazywanie się lub częściową wymianę partnerów według ustalonych granic.",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      userGender: 'male',
-      partnerGender: 'female',
-      gameLevel: ['exceed'] 
-    }
-  },
-  { 
-    id: 'ext-m5', 
-    text: 'Pegging him',
-    description: "Penetracja Twojego odbytu przez partnerkę używającą strap-ona. Ta praktyka może prowadzić do intensywnej stymulacji prostaty i niezwykle silnych orgazmów dla mężczyzny.",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      userGender: 'male',
-      partnerGender: 'female',
-      gameLevel: ['exceed'] 
-    }
-  },
-  { 
-    id: 'ext-m6', 
-    text: 'Pissing – jego złoty deszcz',
-    description: "Oddawanie moczu na ciało partnera lub partnerki. Ta kontrowersyjna praktyka jest formą BDSM, która dla niektórych par stanowi akt oddania i symbol głębokiego zaufania.",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      userGender: 'male',
-      partnerGender: 'female',
-      gameLevel: ['exceed'] 
-    }
-  },
-  { 
-    id: 'ext-m7', 
-    text: 'Bukkake',
-    description: "Praktyka, gdzie wiele osób ejakuluje na ciało kobiety. W wariancie dla par może być symulowana przy użyciu zabawek i sztucznej spermy dla podobnych wrażeń.",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      userGender: 'male',
-      partnerGender: 'female',
-      gameLevel: ['exceed'] 
-    }
-  },
-  { 
-    id: 'ext-m8', 
-    text: 'Elektrostymulacja',
-    description: "Używanie delikatnych impulsów elektrycznych do stymulacji erotycznej. Specjalistyczne zabawki mogą wywołać unikalne doznania niemożliwe do osiągnięcia w inny sposób.",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      userGender: 'male',
-      partnerGender: 'female',
-      gameLevel: ['explore', 'exceed'] 
-    }
-  },
-  { 
-    id: 'ext-m9', 
-    text: 'Fisting',
-    description: "Penetracja pochwy całą dłonią. Ta zaawansowana praktyka wymaga dużego zaufania, komunikacji i przygotowania, ale może prowadzić do intensywnych doznań.",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      userGender: 'male',
-      partnerGender: 'female',
-      gameLevel: ['explore', 'exceed'] 
-    }
-  },
-  { 
-    id: 'gru-m1', 
-    text: 'Trójkąt z kobietą',
-    description: "Seks z udziałem Ciebie, Twojej partnerki i innej kobiety. Ta fantazja wymaga dojrzałej rozmowy o granicach i uczuciach, aby stała się pozytywnym doświadczeniem dla wszystkich.",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      userGender: 'male',
-      partnerGender: 'female',
-      gameLevel: ['exceed'] 
-    },
-    pairGroup: "trojkat",
-    pairPriority: 1
-  },
-  { 
-    id: 'gru-m2', 
-    text: 'Trójkąt z mężczyzną',
-    description: "Seks z udziałem Ciebie, Twojej partnerki i innego mężczyzny. Ta sytuacja daje możliwość obserwowania partnerki z innej perspektywy i może wzbogacić wasze doświadczenia.",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      userGender: 'male',
-      partnerGender: 'female',
-      gameLevel: ['exceed'] 
-    },
-    pairGroup: "trojkat",
-    pairPriority: 2
-  },
-  { 
-    id: 'gru-m3', 
-    text: 'Orgia',
-    description: "Seks grupowy z udziałem wielu partnerów. Ta bardzo zaawansowana aktywność wymaga jasno ustalonych granic, bezpieczeństwa i całkowitego zaufania między partnerami.",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      userGender: 'male',
-      partnerGender: 'female',
-      gameLevel: ['exceed'] 
-    }
-  },
-  { 
-    id: 'gru-m4', 
-    text: 'Jej randka z nieznajomym',
-    description: "Twoja partnerka spotyka się z obcym mężczyzną, podczas gdy Ty obserwujesz z daleka. Fantazja o podglądaniu własnej partnerki, która dla niektórych par jest niezwykle ekscytująca.",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      userGender: 'male',
-      partnerGender: 'female',
-      gameLevel: ['explore', 'exceed'] 
-    }
-  },
-  { 
-    id: 'gru-m5', 
-    text: 'Sterowanie wibratorem w miejscu publicznym',
-    description: "Kontrolowanie zdalnie zabawki umieszczonej w ciele partnerki podczas wyjścia. Ta zabawa daje Ci dyskretną władzę nad jej przyjemnością w najmniej oczekiwanych momentach.",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      userGender: 'male',
-      partnerGender: 'female',
-      gameLevel: ['explore', 'exceed'] 
-    }
-  },
-  { 
-    id: 'gru-m6', 
-    text: 'Zdrada kontrolowana – ona zdradza',
-    description: "Partnerka uprawia seks z innym mężczyzną za Twoją wiedzą i zgodą. Ta fantazja, znana jako cuckold, dla niektórych mężczyzn stanowi źródło intensywnego podniecenia.",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      userGender: 'male',
-      partnerGender: 'female',
-      gameLevel: ['exceed'] 
-    },
-    pairGroup: "zdrada",
-    pairPriority: 1
-  },
-  { 
-    id: 'gru-m7', 
-    text: 'Zdrada kontrolowana – on zdradza',
-    description: "Uprawiasz seks z inną kobietą za wiedzą i zgodą swojej partnerki. Ta praktyka wymaga ogromnego zaufania i jasnych zasad, aby nie zagrażała związkowi.",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      userGender: 'male',
-      partnerGender: 'female',
-      gameLevel: ['exceed'] 
-    },
-    pairGroup: "zdrada",
-    pairPriority: 2
-  },
-  { 
-    id: 'gru-m8', 
-    text: 'Symulowanie „pierwszego razu"',
-    description: "Odgrywanie scenariusza, jakbyście byli ze sobą po raz pierwszy. Ta zabawa pozwala odkryć partnerkę na nowo, odświeżyć relację i poczuć ekscytację pierwszego zbliżenia.",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      userGender: 'male',
-      partnerGender: 'female',
-      gameLevel: ['explore'] 
-    }
-  }
-];
