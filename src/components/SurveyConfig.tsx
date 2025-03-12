@@ -151,19 +151,21 @@ const SurveyConfig: React.FC = () => {
         </div>
         
         {/* Age Confirmation */}
-        <div className="flex items-center space-x-2 border border-primary/30 bg-primary/5 rounded-lg p-5 hover:border-primary/50 transition-all">
-          <Checkbox 
-            id="ageConfirmation" 
-            checked={ageConfirmed}
-            onCheckedChange={(checked) => setAgeConfirmed(checked as boolean)}
-            className="h-5 w-5 data-[state=checked]:bg-primary"
-          />
-          <Label 
-            htmlFor="ageConfirmation" 
-            className="text-foreground font-medium cursor-pointer"
-          >
-            Oświadczam, że ukończyłem/-am 18 rok życia
-          </Label>
+        <div className="flex justify-center">
+          <div className="flex items-center space-x-3 border border-accent/40 bg-accent/10 rounded-lg p-5 hover:border-accent/60 transition-all max-w-md">
+            <Checkbox 
+              id="ageConfirmation" 
+              checked={ageConfirmed}
+              onCheckedChange={(checked) => setAgeConfirmed(checked as boolean)}
+              className="h-5 w-5 data-[state=checked]:bg-accent"
+            />
+            <Label 
+              htmlFor="ageConfirmation" 
+              className="text-foreground font-medium cursor-pointer"
+            >
+              Oświadczam, że ukończyłem/-am 18 rok życia
+            </Label>
+          </div>
         </div>
       </div>
 
@@ -177,7 +179,7 @@ const SurveyConfig: React.FC = () => {
         </Button>
         
         {!ageConfirmed && userGender !== null && partnerGender !== null && gameLevel !== null && (
-          <p className="text-red-500 text-sm mt-4 text-center">
+          <p className="text-muted-foreground text-sm mt-4 text-center">
             Aby kontynuować, musisz potwierdzić że ukończyłeś/-aś 18 lat
           </p>
         )}
