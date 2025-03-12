@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import RatingScale from './RatingScale';
@@ -146,7 +147,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
                 <object 
                   data={currentQuestion.illustration} 
                   type="image/svg+xml"
-                  className={`w-full h-full object-contain transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                  className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                   onLoad={handleImageLoad}
                   onError={handleImageError}
                   aria-label={currentQuestion.text}
@@ -162,7 +163,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
                 <img 
                   src={currentQuestion.illustration} 
                   alt={currentQuestion.text} 
-                  className={`w-full h-full object-contain transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                  className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                   onLoad={handleImageLoad}
                   onError={handleImageError}
                   style={{ width: '100%', height: '100%', minHeight: '300px' }}
