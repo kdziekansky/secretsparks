@@ -1,10 +1,11 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="py-16 border-t border-border/40" style={{ backgroundColor: "rgb(33, 33, 44)" }}>
+    <footer className="py-16 border-t border-border/40" style={{ backgroundColor: "#08080C" }}>
       <div className="section-container">
         <div className="grid md:grid-cols-3 gap-12">
           <div>
