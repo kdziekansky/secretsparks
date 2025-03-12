@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 
 const ReportSection = () => {
   return (
-    <section className="py-16 bg-[#0c0c14]">
+    <section className="py-16 bg-[#121214]">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl md:text-5xl font-bold mb-16 text-left">Nasz raport</h2>
         
@@ -78,9 +78,9 @@ const ReportSection = () => {
             </p>
             
             {/* Email editor interface - dostosowane wymiary */}
-            <div className="bg-[#0c0c14] border border-gray-800 rounded-xl overflow-hidden shadow-xl mx-auto w-full max-w-md flex-grow flex flex-col">
+            <div className="bg-[#121214] border border-gray-800 rounded-xl overflow-hidden shadow-xl mx-auto w-full max-w-md flex-grow flex flex-col">
               {/* Email content area */}
-              <div className="p-4 bg-[#0f0f17] flex-grow flex flex-col">
+              <div className="p-4 bg-[#141418] flex-grow flex flex-col">
                 <div className="bg-[#161622] rounded-lg p-4 shadow-sm flex-grow flex flex-col">
                   {/* From field */}
                   <div className="mb-4 flex items-center border-b border-gray-700 pb-3">
