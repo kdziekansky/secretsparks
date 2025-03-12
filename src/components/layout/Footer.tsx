@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
@@ -55,7 +56,7 @@ const Footer = () => {
               Polityka prywatności
             </Link>
             <Link to="/regulamin" className="text-sm text-muted-foreground hover:text-primary">
-              Regulamin
+              Warunki korzystania
             </Link>
             <Link to="/kontakt" className="text-sm text-muted-foreground hover:text-primary">
               Kontakt

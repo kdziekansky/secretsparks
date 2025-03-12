@@ -16,6 +16,8 @@ import SecurityPage from "./pages/SecurityPage";
 import SecretAIPage from "./pages/SecretAIPage";
 import RulesPage from "./pages/RulesPage";
 import TermsPage from "./pages/TermsPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import ContactPage from "./pages/ContactPage";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminOrders from "./pages/admin/AdminOrders";
