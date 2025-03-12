@@ -130,9 +130,9 @@ const SurveyConfig: React.FC = () => {
             </button>
             <button
               type="button"
-              onClick={() => setGameLevel('fantasy')}
+              onClick={() => setGameLevel('exceed')}
               className={`flex items-center p-4 rounded-lg border transition-all ${
-                gameLevel === 'fantasy' 
+                gameLevel === 'exceed' 
                   ? 'border-primary bg-primary/10 font-medium' 
                   : 'border-border hover:bg-secondary'
               }`}

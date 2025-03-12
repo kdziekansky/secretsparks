@@ -3,223 +3,290 @@ import type { Question } from '@/types/survey';
 
 export const questionsHeteroMale: Question[] = [
   { 
-    id: 'a-p1m', 
-    text: 'Ona w lateksie',
-    description: "Czy lubisz widzieć swoją partnerkę w lateksowych ubraniach?",
-    illustration: '/lovable-uploads/01-ona-w-lateksie.png',
+    id: 'pos-m1', 
+    text: 'Pozycja Amazonki',
+    description: "Czy lubisz gdy Twoja partnerka jest na górze i kontroluje rytm?",
+    illustration: '/lovable-uploads/pozycja-amazonki.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
-      gameLevel: ['discover', 'explore', 'fantasy'] 
+      gameLevel: ['discover', 'explore'] 
     }
   },
   { 
-    id: 'b-p2m', 
-    text: 'Masaż erotyczny',
-    description: "Czy lubisz dawać lub otrzymywać masaż erotyczny?",
-    illustration: '/lovable-uploads/02-masaz-erotyczny.png',
+    id: 'pos-m2', 
+    text: 'Pozycja misjonarska',
+    description: "Pozycja klasyczna, z mężczyzną na górze - ceniona za bliskość i intymność",
+    illustration: '/lovable-uploads/missionary.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
-      gameLevel: ['discover', 'explore', 'fantasy'] 
+      gameLevel: ['discover'] 
     }
   },
   { 
-    id: 'c-p3m', 
-    text: 'Zabawa w przebieranki',
-    description: "Czy lubisz przebierać się w różne stroje i odgrywać role?",
-    illustration: '/lovable-uploads/03-zabawa-w-przebieranki.png',
+    id: 'pos-m3', 
+    text: 'Pozycja "na pieska"',
+    description: "Pozycja od tyłu, która pozwala na głębszą penetrację",
+    illustration: '/lovable-uploads/doggy.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
-      gameLevel: ['explore', 'fantasy'] 
+      gameLevel: ['discover', 'explore', 'exceed'] 
     }
   },
   { 
-    id: 'd-p4m', 
-    text: 'Seks na plaży',
-    description: "Czy marzysz o seksie na plaży?",
-    illustration: '/lovable-uploads/04-seks-na-plazy.png',
+    id: 'pos-m4', 
+    text: 'Pozycja "wodnik"',
+    description: "Pozycja w której partnerka siedzi na tobie twarzą do ciebie, a wy oboje siedzicie",
+    illustration: '/placeholder.svg',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
-      gameLevel: ['fantasy'] 
+      gameLevel: ['discover', 'explore'] 
     }
   },
   { 
-    id: 'i-p1m', 
-    text: 'Ona w bieliźnie',
-    description: "Czy lubisz widzieć swoją partnerkę w seksownej bieliźnie?",
-    illustration: '/lovable-uploads/09-ona-w-bieliznie.png',
+    id: 'pos-m5', 
+    text: 'Pozycja "syreny"',
+    description: "Kobieta leży na boku, a ty klęczysz między jej nogami",
+    illustration: '/lovable-uploads/syrena.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
-      gameLevel: ['discover', 'explore', 'fantasy'] 
+      gameLevel: ['discover', 'explore', 'exceed'] 
     }
   },
   { 
-    id: 'j-p2m', 
-    text: 'Pocałunki w deszczu',
-    description: "Czy marzysz o pocałunkach w deszczu?",
-    illustration: '/lovable-uploads/10-pocalunki-w-deszczu.png',
+    id: 'pos-m6', 
+    text: 'Pozycja "na królową"',
+    description: "Kobieta leży na plecach z uniesionymi biodrami, mężczyzna klęczy",
+    illustration: '/lovable-uploads/krolowa.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
-      gameLevel: ['discover', 'explore', 'fantasy'] 
+      gameLevel: ['discover'] 
     }
   },
   { 
-    id: 'k-p3m', 
-    text: 'Seks w windzie',
-    description: "Czy marzysz o seksie w windzie?",
-    illustration: '/lovable-uploads/11-seks-w-windzie.png',
+    id: 'pos-m7', 
+    text: 'Pozycja "jeździec"',
+    description: "Kobieta siedzi na tobie twarzą do twojej twarzy",
+    illustration: '/lovable-uploads/riding.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
-      gameLevel: ['explore', 'fantasy'] 
+      gameLevel: ['discover'] 
     }
   },
   { 
-    id: 'l-p4m', 
-    text: 'Ona w roli dominującej',
-    description: "Czy lubisz, gdy Twoja partnerka dominuje?",
-    illustration: '/lovable-uploads/12-ona-w-roli-dominujacej.png',
+    id: 'pos-m8', 
+    text: 'Pozycja "odwrócona amazońska"',
+    description: "Kobieta siedzi na tobie tyłem do twojej twarzy",
+    illustration: '/lovable-uploads/odwrocona.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
-      gameLevel: ['fantasy'] 
+      gameLevel: ['discover', 'explore'] 
     }
   },
   { 
-    id: 'q-p1m', 
-    text: 'Ona w pończochach',
-    description: "Czy lubisz widzieć swoją partnerkę w pończochach?",
-    illustration: '/lovable-uploads/17-ona-w-ponczochach.png',
+    id: 'pos-m9', 
+    text: 'Pozycja "leniwego pieska"',
+    description: "Kobieta leży płasko na brzuchu, a ty wchodzisz od tyłu",
+    illustration: '/lovable-uploads/leniwa.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
-      gameLevel: ['discover', 'explore', 'fantasy'] 
+      gameLevel: ['discover'] 
     }
   },
   { 
-    id: 'r-p2m', 
-    text: 'Seks w lesie',
-    description: "Czy marzysz o seksie w lesie?",
-    illustration: '/lovable-uploads/18-seks-w-lesie.png',
+    id: 'pos-m10', 
+    text: 'Pozycja "katapulta"',
+    description: "Kobieta leży na plecach z nogami uniesionymi na twoich ramionach",
+    illustration: '/placeholder.svg',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
-      gameLevel: ['discover', 'explore', 'fantasy'] 
+      gameLevel: ['explore'] 
     }
   },
   { 
-    id: 's-p3m', 
-    text: 'Ona w roli uczennicy',
-    description: "Czy lubisz, gdy Twoja partnerka odgrywa rolę uczennicy?",
-    illustration: '/lovable-uploads/19-ona-w-roli-uczennicy.png',
+    id: 'pos-m11', 
+    text: 'Pozycja "misjonarska odwrócona"',
+    description: "Ty leżysz na plecach, a kobieta jest na górze, ale oparta na rękach i kolanach",
+    illustration: '/placeholder.svg',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
-      gameLevel: ['explore', 'fantasy'] 
+      gameLevel: ['explore', 'exceed'] 
     }
   },
   { 
-    id: 't-p4m', 
-    text: 'Seks w jacuzzi',
-    description: "Czy marzysz o seksie w jacuzzi?",
-    illustration: '/lovable-uploads/20-seks-w-jacuzzi.png',
+    id: 'pos-m12', 
+    text: 'Pozycja "kruka" (69)',
+    description: "Pozycja, w której oboje jednocześnie sprawiacie sobie przyjemność oralnie",
+    illustration: '/lovable-uploads/69.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
-      gameLevel: ['fantasy'] 
+      gameLevel: ['explore'] 
     }
   },
   { 
-    id: 'y-p1m', 
-    text: 'Ona w roli pielęgniarki',
-    description: "Czy lubisz, gdy Twoja partnerka odgrywa rolę pielęgniarki?",
-    illustration: '/lovable-uploads/25-ona-w-roli-pielegniarki.png',
+    id: 'rol-m1', 
+    text: 'Nauczycielka i student',
+    description: "Odgrywanie ról nauczycielki i ucznia - kto będzie prowadził lekcje?",
+    illustration: '/lovable-uploads/nauczycielka.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
-      gameLevel: ['discover', 'explore', 'fantasy'] 
+      gameLevel: ['discover'] 
     }
   },
   { 
-    id: 'z-p2m', 
-    text: 'Seks w samolocie',
-    description: "Czy marzysz o seksie w samolocie?",
-    illustration: '/lovable-uploads/26-seks-w-samolocie.png',
+    id: 'rol-m2', 
+    text: 'Randka z Tindera',
+    description: "Odgrywanie ról osób, które właśnie poznały się przez aplikację randkową",
+    illustration: '/placeholder.svg',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
-      gameLevel: ['discover', 'explore', 'fantasy'] 
+      gameLevel: ['discover', 'explore'] 
     }
   },
   { 
-    id: 'aa-p3m', 
-    text: 'Ona w roli pokojówki',
-    description: "Czy lubisz, gdy Twoja partnerka odgrywa rolę pokojówki?",
-    illustration: '/lovable-uploads/27-ona-w-roli-pokojowki.png',
+    id: 'rol-m3', 
+    text: '"Złota rączka" i samotna żona',
+    description: "Odgrywanie fantazji o hydrauliku/majsterkowiczu i samotnej kobiecie",
+    illustration: '/lovable-uploads/handyman.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
-      gameLevel: ['explore', 'fantasy'] 
+      gameLevel: ['explore'] 
     }
   },
   { 
-    id: 'bb-p4m', 
-    text: 'Seks w namiocie',
-    description: "Czy marzysz o seksie w namiocie?",
-    illustration: '/lovable-uploads/28-seks-w-namiocie.png',
+    id: 'toys-m1', 
+    text: 'Zabawki dla niej',
+    description: "Czy chciałbyś użyć wibratorów, masażerów i innych zabawek dla przyjemności partnerki?",
+    illustration: '/placeholder.svg',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
-      gameLevel: ['fantasy'] 
+      gameLevel: ['discover'] 
+    },
+    pairGroup: "toys",
+    pairPriority: 1
+  },
+  { 
+    id: 'toys-m2', 
+    text: 'Zabawki dla niego',
+    description: "Czy chciałbyś eksperymentować z zabawkami dla twojej przyjemności?",
+    illustration: '/placeholder.svg',
+    forConfig: { 
+      userGender: 'male',
+      partnerGender: 'female',
+      gameLevel: ['discover'] 
+    },
+    pairGroup: "toys",
+    pairPriority: 2
+  },
+  { 
+    id: 'oral-m1', 
+    text: 'Seks oralny dla niej',
+    description: "Czy lubisz sprawiać przyjemność partnerce ustami?",
+    illustration: '/placeholder.svg',
+    forConfig: { 
+      userGender: 'male',
+      partnerGender: 'female',
+      gameLevel: ['discover'] 
+    },
+    pairGroup: "oral",
+    pairPriority: 1
+  },
+  { 
+    id: 'oral-m2', 
+    text: 'Seks oralny dla niego',
+    description: "Czy lubisz gdy partnerka pieści cię ustami?",
+    illustration: '/lovable-uploads/seks-oralny-dla-niego.png',
+    forConfig: { 
+      userGender: 'male',
+      partnerGender: 'female',
+      gameLevel: ['discover'] 
+    },
+    pairGroup: "oral",
+    pairPriority: 2
+  },
+  { 
+    id: 'striptiz-m1', 
+    text: 'Striptiz dla niej',
+    description: "Czy chciałbyś zatańczyć dla partnerki zmysłowy taniec rozbierany?",
+    illustration: '/placeholder.svg',
+    forConfig: { 
+      userGender: 'male',
+      partnerGender: 'female',
+      gameLevel: ['discover'] 
+    },
+    pairGroup: "striptiz",
+    pairPriority: 1
+  },
+  { 
+    id: 'striptiz-m2', 
+    text: 'Striptiz dla niego',
+    description: "Czy chciałbyś, żeby partnerka wykonała dla ciebie taniec rozbierany?",
+    illustration: '/placeholder.svg',
+    forConfig: { 
+      userGender: 'male',
+      partnerGender: 'female',
+      gameLevel: ['discover'] 
+    },
+    pairGroup: "striptiz",
+    pairPriority: 2
+  },
+  { 
+    id: 'sensual-m1', 
+    text: 'Seksowna bielizna',
+    description: "Czy podnieca cię widok partnerki w koronkowej lub jedwabnej bieliźnie?",
+    illustration: '/placeholder.svg',
+    forConfig: { 
+      userGender: 'male',
+      partnerGender: 'female',
+      gameLevel: ['discover'] 
     }
   },
   { 
-    id: 'gg-p1m', 
-    text: 'Ona w roli uczennicy',
-    description: "Czy lubisz, gdy Twoja partnerka odgrywa rolę uczennicy?",
-    illustration: '/lovable-uploads/33-ona-w-roli-uczennicy.png',
+    id: 'sensual-m2', 
+    text: 'Sexting',
+    description: "Czy lubisz wymieniać się z partnerką pikantymi wiadomościami i zdjęciami?",
+    illustration: '/placeholder.svg',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
-      gameLevel: ['discover', 'explore', 'fantasy'] 
+      gameLevel: ['discover', 'explore'] 
     }
   },
   { 
-    id: 'hh-p2m', 
-    text: 'Seks w muzeum',
-    description: "Czy marzysz o seksie w muzeum?",
-    illustration: '/lovable-uploads/34-seks-w-muzeum.png',
+    id: 'adv-m1', 
+    text: 'Seks w miejscu publicznym',
+    description: "Czy pociąga cię myśl o seksie w miejscu, gdzie ktoś mógłby was zobaczyć?",
+    illustration: '/placeholder.svg',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
-      gameLevel: ['discover', 'explore', 'fantasy'] 
+      gameLevel: ['explore', 'exceed'] 
     }
   },
   { 
-    id: 'ii-p3m', 
-    text: 'Ona w roli kucharki',
-    description: "Czy lubisz, gdy Twoja partnerka odgrywa rolę kucharki?",
-    illustration: '/lovable-uploads/35-ona-w-roli-kucharki.png',
+    id: 'adv-m2', 
+    text: 'Pełna dominacja i uległość',
+    description: "Czy pociąga cię pełna dominacja lub uległość w relacji seksualnej?",
+    illustration: '/lovable-uploads/domination.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
-      gameLevel: ['explore', 'fantasy'] 
-    }
-  },
-  { 
-    id: 'jj-p4m', 
-    text: 'Seks w górach',
-    description: "Czy marzysz o seksie w górach?",
-    illustration: '/lovable-uploads/36-seks-w-gorach.png',
-    forConfig: { 
-      userGender: 'male',
-      partnerGender: 'female',
-      gameLevel: ['fantasy'] 
+      gameLevel: ['exceed'] 
     }
   }
 ];
