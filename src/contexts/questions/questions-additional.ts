@@ -211,5 +211,27 @@ export const questionsAdditional: Question[] = [
       partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
+  },
+  { 
+    id: 'toys-f1', 
+    text: 'Zabawki dla niej',
+    description: "Użycie zabawek erotycznych dla przyjemności kobiety",
+    illustration: '/lovable-uploads/toys-f1.png',
+    forConfig: { 
+      userGender: 'female',
+      partnerGender: 'male',
+      gameLevel: ['discover'] 
+    }
+  },
+  { 
+    id: 'toys-f2', 
+    text: 'Zabawki dla niego',
+    description: "Użycie zabawek erotycznych dla przyjemności mężczyzny",
+    illustration: '/lovable-uploads/toys-f2.png',
+    forConfig: { 
+      userGender: 'female',
+      partnerGender: 'male',
+      gameLevel: ['discover'] 
+    }
   }
 ];

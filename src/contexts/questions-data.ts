@@ -1,4 +1,3 @@
-
 import { questionsHeteroMale } from './questions/questions-hetero-male';
 import { questionsHeteroFemale } from './questions/questions-hetero-female';
 import { questionsAdditional } from './questions/questions-additional';
@@ -12,20 +11,13 @@ const encodeImagePaths = (questions: Question[]): Question[] => {
     // Nie modyfikuj URL-i, które już mają protokół (np. http, https)
     if (question.illustration.startsWith('http')) return question;
     
-    // Jeśli URL zawiera już zakodowane znaki (%), nie koduj ponownie
-    if (question.illustration.includes('%')) return question;
+    // Jeśli ścieżka zaczyna się od /lovable-uploads/, nie koduj jej
+    if (question.illustration.startsWith('/lovable-uploads/')) return question;
     
-    // Rozdziel ścieżkę na części
-    const lastSlashIndex = question.illustration.lastIndexOf('/');
-    if (lastSlashIndex === -1) return question;
-    
-    const path = question.illustration.substring(0, lastSlashIndex + 1);
-    const filename = question.illustration.substring(lastSlashIndex + 1);
-    
-    // Utwórz nowy obiekt pytania z zakodowaną ścieżką do ilustracji
+    // Dla pozostałych przypadków, zakoduj całą ścieżkę
     return {
       ...question,
-      illustration: path + encodeURIComponent(filename)
+      illustration: encodeURI(question.illustration)
     };
   });
 };
