@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSurvey } from '@/contexts/SurveyContext';
 import { Button } from '@/components/ui/button';
 import { User, UserCircle, Smile, Zap, SmilePlus } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
+import type { Gender } from '@/types/survey';
 
 const SurveyConfig: React.FC = () => {
   const { 
@@ -19,6 +21,32 @@ const SurveyConfig: React.FC = () => {
 
   const canContinue = userGender !== null && partnerGender !== null && gameLevel !== null && ageConfirmed;
 
+  // Dodajemy funkcję sprawdzającą dostępność kombinacji płci
+  const checkGenderCombination = (userGender: Gender | null, partnerGender: Gender | null) => {
+    if (userGender === 'female' && partnerGender === 'female') {
+      toast.error('Ankieta dla par kobiet nie jest jeszcze aktywna');
+      return false;
+    }
+    if (userGender === 'male' && partnerGender === 'male') {
+      toast.error('Ankieta dla par mężczyzn nie jest jeszcze aktywna');
+      return false;
+    }
+    return true;
+  };
+
+  // Modyfikujemy funkcje ustawiające płeć
+  const handleSetPartnerGender = (gender: Gender) => {
+    if (checkGenderCombination(userGender, gender)) {
+      setPartnerGender(gender);
+    }
+  };
+
+  const handleSetUserGender = (gender: Gender) => {
+    if (checkGenderCombination(gender, partnerGender)) {
+      setUserGender(gender);
+    }
+  };
+
   return (
     <div className="glass-panel w-full max-w-4xl p-8 animate-slide-up">
       <h1 className="text-3xl font-bold mb-8 text-center">Kim jesteście?</h1>
@@ -30,12 +58,13 @@ const SurveyConfig: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <button
               type="button"
-              onClick={() => setUserGender('female')}
+              onClick={() => handleSetUserGender('female')}
               className={`flex items-center p-4 rounded-lg border transition-all ${
                 userGender === 'female' 
                   ? 'border-primary bg-primary/10 font-medium' 
                   : 'border-border hover:bg-secondary'
-              }`}
+              } ${partnerGender === 'female' ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={partnerGender === 'female'}
             >
               <div className="flex items-center justify-center w-12 h-12 bg-pink-100 rounded-full mr-4">
                 <User className="w-6 h-6 text-pink-500" />
@@ -44,12 +73,13 @@ const SurveyConfig: React.FC = () => {
             </button>
             <button
               type="button"
-              onClick={() => setUserGender('male')}
+              onClick={() => handleSetUserGender('male')}
               className={`flex items-center p-4 rounded-lg border transition-all ${
                 userGender === 'male' 
                   ? 'border-primary bg-primary/10 font-medium' 
                   : 'border-border hover:bg-secondary'
-              }`}
+              } ${partnerGender === 'male' ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={partnerGender === 'male'}
             >
               <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mr-4">
                 <UserCircle className="w-6 h-6 text-blue-500" />
@@ -65,12 +95,13 @@ const SurveyConfig: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <button
               type="button"
-              onClick={() => setPartnerGender('female')}
+              onClick={() => handleSetPartnerGender('female')}
               className={`flex items-center p-4 rounded-lg border transition-all ${
                 partnerGender === 'female' 
                   ? 'border-primary bg-primary/10 font-medium' 
                   : 'border-border hover:bg-secondary'
-              }`}
+              } ${userGender === 'female' ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={userGender === 'female'}
             >
               <div className="flex items-center justify-center w-12 h-12 bg-pink-100 rounded-full mr-4">
                 <User className="w-6 h-6 text-pink-500" />
@@ -79,12 +110,13 @@ const SurveyConfig: React.FC = () => {
             </button>
             <button
               type="button"
-              onClick={() => setPartnerGender('male')}
+              onClick={() => handleSetPartnerGender('male')}
               className={`flex items-center p-4 rounded-lg border transition-all ${
                 partnerGender === 'male' 
                   ? 'border-primary bg-primary/10 font-medium' 
                   : 'border-border hover:bg-secondary'
-              }`}
+              } ${userGender === 'male' ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={userGender === 'male'}
             >
               <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mr-4">
                 <UserCircle className="w-6 h-6 text-blue-500" />
