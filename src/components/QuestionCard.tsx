@@ -133,7 +133,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
         {/* Left side - Illustration - z gradientowym tłem */}
         <div className="md:w-2/5 p-0 flex items-center justify-center bg-gradient-to-br from-accent/30 to-accent/10 rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none overflow-hidden">
           {currentQuestion.illustration && !imageError ? (
-            <div className="w-full h-full rounded-lg overflow-hidden" style={{ aspectRatio: '1/1' }}>
+            <div className="w-full h-full rounded-lg overflow-hidden" style={{ aspectRatio: '4/3' }}>
               {/* Placeholder while image loads */}
               {!imageLoaded && (
                 <div className="w-full h-full bg-accent/20 flex flex-col items-center justify-center text-muted-foreground">
@@ -147,11 +147,11 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
                 <object 
                   data={currentQuestion.illustration} 
                   type="image/svg+xml"
-                  className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                  className={`w-full h-full object-contain transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                   onLoad={handleImageLoad}
                   onError={handleImageError}
                   aria-label={currentQuestion.text}
-                  style={{ width: '100%', height: '100%', minHeight: '400px' }}
+                  style={{ width: '100%', height: '100%', minHeight: '300px' }}
                 >
                   <div className="w-full h-full bg-accent/20 flex flex-col items-center justify-center text-muted-foreground">
                     <ImageIcon className="h-12 w-12 mb-2 opacity-50" />
@@ -163,17 +163,17 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
                 <img 
                   src={currentQuestion.illustration} 
                   alt={currentQuestion.text} 
-                  className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                  className={`w-full h-full object-contain transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                   onLoad={handleImageLoad}
                   onError={handleImageError}
-                  style={{ width: '100%', height: '100%', minHeight: '400px' }}
+                  style={{ width: '100%', height: '100%', minHeight: '300px' }}
                 />
               )}
             </div>
           ) : (
             <div 
               className="w-full h-full bg-accent/20 flex flex-col items-center justify-center text-muted-foreground" 
-              style={{ minHeight: '400px' }}
+              style={{ minHeight: '300px' }}
             >
               <ImageIcon className="h-12 w-12 mb-2 opacity-50" />
               <span>Ilustracja {questionNumber || currentQuestion.id}</span>
