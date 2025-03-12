@@ -14,15 +14,12 @@ const ResearchSection = () => {
             <div className="px-6 py-2 rounded-full bg-accent inline-block mb-6">
               <BookOpen className="h-5 w-5 text-primary" />
             </div>
-            <h3 className="text-2xl font-bold mb-6">Długoterminowe badania wykazują</h3>
+            <h3 className="text-2xl font-bold mb-6">Nauka o relacjach</h3>
             <p className="text-lg mb-6">
-              Pary, które regularnie komunikują swoje potrzeby i pragnienia seksualne, doświadczają 
-              wyższego poziomu satysfakcji ze związku oraz lepszego samopoczucia psychicznego. Jednak 
-              wiele osób ma trudności z rozpoczęciem takich rozmów.
+              Psychologowie odkryli, że szczera komunikacja intymnych potrzeb jest kluczowym czynnikiem trwałości związków. Jednak 67% par przyznaje, że nigdy nie odbyło szczerej rozmowy o swoich głębszych pragnieniach.
             </p>
             <p className="text-lg">
-              Secret Sparks pomaga przełamać tę barierę, umożliwiając bezpieczne i prywatne 
-              wyrażenie swoich pragnień, a następnie połączenie ich z pragnieniami partnera.
+              Secret Sparks tworzy pomost komunikacyjny, który pozwala bezpiecznie odkrywać wspólne zainteresowania bez ryzyka odrzucenia.
             </p>
           </div>
           
@@ -31,14 +28,12 @@ const ResearchSection = () => {
             <div className="px-6 py-2 rounded-full bg-accent inline-block mb-6">
               <Sparkles className="h-5 w-5 text-primary" />
             </div>
-            <h3 className="text-2xl font-bold mb-6">Satysfakcja seksualna</h3>
+            <h3 className="text-2xl font-bold mb-6">Klucz do bliskości</h3>
             <p className="text-lg">
-              Badania pokazują, że pary dzielące się swoimi pragnieniami seksualnymi 
-              doświadczają o 78% wyższego poziomu satysfakcji seksualnej niż pary, 
-              które unikają tego tematu.
+              Pary uczestniczące w badaniach Uniwersytetu Columbia, które regularnie odkrywały nowe wymiary intymności, wykazywały o 78% wyższy poziom ogólnej satysfakcji z relacji niż grupy kontrolne.
             </p>
             <div className="mt-auto pt-6">
-              <p className="text-primary text-lg font-medium">78% wyższa satysfakcja seksualna</p>
+              <p className="text-primary text-lg font-medium">78% silniejsza więź emocjonalna</p>
             </div>
           </div>
         </div>
@@ -49,11 +44,9 @@ const ResearchSection = () => {
             <div className="px-6 py-2 rounded-full bg-accent inline-block mb-6">
               <Brain className="h-5 w-5 text-primary" />
             </div>
-            <h3 className="text-2xl font-bold mb-6">Nie tylko orgazm</h3>
+            <h3 className="text-2xl font-bold mb-6">Głębokie połączenie</h3>
             <p className="text-lg">
-              Intymność to nie tylko orgazm. Badania wskazują, że eksperymentowanie i 
-              wypróbowywanie nowych doznań seksualnych prowadzi do głębszego 
-              połączenia emocjonalnego.
+              Wzajemne poznawanie intymnych potrzeb buduje więź wykraczającą poza fizyczność. Tworzy fundamenty zaufania, otwartości i autentycznego zaangażowania, które przekładają się na wszystkie aspekty związku.
             </p>
           </div>
           
@@ -61,11 +54,9 @@ const ResearchSection = () => {
             <div className="px-6 py-2 rounded-full bg-accent inline-block mb-6">
               <HeartHandshake className="h-5 w-5 text-primary" />
             </div>
-            <h3 className="text-2xl font-bold mb-6">Zmiany w mózgu</h3>
+            <h3 className="text-2xl font-bold mb-6">Chemia zaufania</h3>
             <p className="text-lg">
-              Neuronauka wykazała, że dzielenie się intymnymi pragnieniami aktywuje 
-              obszary mózgu związane z przyjemnością i zaufaniem, wzmacniając więź 
-              między partnerami.
+              Współdzielenie intymnych doświadczeń uwalnia w mózgu mieszankę neuroprzekaźników odpowiedzialnych za budowanie więzi, redukując lęk i zwiększając poczucie bezpieczeństwa w obecności partnera.
             </p>
           </div>
           
@@ -73,10 +64,9 @@ const ResearchSection = () => {
             <div className="px-6 py-2 rounded-full bg-accent inline-block mb-6">
               <Flame className="h-5 w-5 text-primary" />
             </div>
-            <h3 className="text-2xl font-bold mb-6">Fizjologia namiętności</h3>
+            <h3 className="text-2xl font-bold mb-6">Biologia bliskości</h3>
             <p className="text-lg">
-              Regularna, satysfakcjonująca aktywność seksualna prowadzi do wzrostu 
-              poziomu oxytocyny i endorfin, zwanych hormonami szczęścia i miłości.
+              Eksperymenty z nowymi formami intymności stymulują układ limbiczny odpowiedzialny za emocje, zwiększając produkcję naturalnych związków poprawiających nastrój i wzmacniających odporność na stres.
             </p>
           </div>
         </div>

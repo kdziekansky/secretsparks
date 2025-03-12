@@ -9,33 +9,33 @@ const StepsSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="glass-card p-8 text-left">
             <div className="text-4xl font-bold text-primary mb-4">1</div>
-            <h3 className="text-xl font-bold mb-3">Wypełnij ankietę</h3>
+            <h3 className="text-xl font-bold mb-3">Odkryj siebie</h3>
             <p className="text-muted-foreground">
-              Odpowiedz na pytania dotyczące Twoich preferencji i pragnień seksualnych.
+              Odpowiedz szczerze na pytania ankiety w całkowitej prywatności, bez obaw o ocenę czy presję.
             </p>
           </div>
           
           <div className="glass-card p-8 text-left">
             <div className="text-4xl font-bold text-primary mb-4">2</div>
-            <h3 className="text-xl font-bold mb-3">Zaproś partnera</h3>
+            <h3 className="text-xl font-bold mb-3">Zaproś partnera/-kę</h3>
             <p className="text-muted-foreground">
-              Wyślij link do ankiety swojemu partnerowi, aby również mógł ją wypełnić.
+              Prześlemy zaproszenie do wskazanej osoby, która wypełni ankietę, również z gwarancją poufności.
             </p>
           </div>
           
           <div className="glass-card p-8 text-left">
             <div className="text-4xl font-bold text-primary mb-4">3</div>
-            <h3 className="text-xl font-bold mb-3">Otrzymaj raport</h3>
+            <h3 className="text-xl font-bold mb-3">Otrzymajcie raport</h3>
             <p className="text-muted-foreground">
-              Po wypełnieniu przez Was obu ankiety, otrzymacie spersonalizowany raport.
+              Otrzymaj unikalny raport i mapę do wspólnych uniesień, których nie zapomnicie na długo.
             </p>
           </div>
           
           <div className="glass-card p-8 text-left">
             <div className="text-4xl font-bold text-primary mb-4">4</div>
-            <h3 className="text-xl font-bold mb-3">Odkryjcie siebie</h3>
+            <h3 className="text-xl font-bold mb-3">Rozpocznij przygodę</h3>
             <p className="text-muted-foreground">
-              Poznajcie swoje wspólne pragnienia i wprowadźcie je do waszego związku.
+              Wykorzystaj otrzymane wskazówki, by wprowadzić nowy wymiar przyjemności do Waszej relacji.
             </p>
           </div>
         </div>

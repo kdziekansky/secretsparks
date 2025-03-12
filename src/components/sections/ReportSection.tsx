@@ -22,8 +22,8 @@ const ReportSection = () => {
                   <Check className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h4 className="text-xl font-semibold mb-3">Wspólne pragnienia</h4>
-                  <p className="text-muted-foreground text-lg">Lista aktywności, które oboje chcecie wypróbować.</p>
+                  <h4 className="text-xl font-semibold mb-3">Wspólne fascynacje</h4>
+                  <p className="text-muted-foreground text-lg">Odkryj aktywności i fantazje, które oboje uznaliście za intrygujące i warte wypróbowania.</p>
                 </div>
               </div>
               
@@ -32,8 +32,8 @@ const ReportSection = () => {
                   <Check className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h4 className="text-xl font-semibold mb-3">Obszary do poznania</h4>
-                  <p className="text-muted-foreground text-lg">Tematy, które warto omówić, aby zbliżyć się do siebie.</p>
+                  <h4 className="text-xl font-semibold mb-3">Strefy odkrywania</h4>
+                  <p className="text-muted-foreground text-lg">Obszary, w których Wasze zainteresowania się pokrywają i które warto wspólnie eksplorować.</p>
                 </div>
               </div>
               
@@ -42,8 +42,8 @@ const ReportSection = () => {
                   <Check className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h4 className="text-xl font-semibold mb-3">Propozycje i scenariusze</h4>
-                  <p className="text-muted-foreground text-lg">Gotowe pomysły na wykorzystanie wspólnych pragnień.</p>
+                  <h4 className="text-xl font-semibold mb-3">Inspiracje i scenariusze</h4>
+                  <p className="text-muted-foreground text-lg">Praktyczne podpowiedzi i gotowe scenariusze oparte na Waszych wspólnych preferencjach.</p>
                 </div>
               </div>
               
@@ -52,8 +52,8 @@ const ReportSection = () => {
                   <Check className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h4 className="text-xl font-semibold mb-3">Poziomy komfortu</h4>
-                  <p className="text-muted-foreground text-lg">Analiza obszarów, w których komfort obu partnerów jest zbieżny.</p>
+                  <h4 className="text-xl font-semibold mb-3">Mapa komfortu</h4>
+                  <p className="text-muted-foreground text-lg">Wizualizacja Waszych stref komfortu z oznaczeniem obszarów idealnego dopasowania.</p>
                 </div>
               </div>
               
@@ -62,8 +62,8 @@ const ReportSection = () => {
                   <Check className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h4 className="text-xl font-semibold mb-3">Wskazówki komunikacyjne</h4>
-                  <p className="text-muted-foreground text-lg">Jak rozmawiać o waszych pragnieniach w bezpieczny i otwarty sposób.</p>
+                  <h4 className="text-xl font-semibold mb-3">Przewodnik rozmowy</h4>
+                  <p className="text-muted-foreground text-lg">Sugestie jak rozpocząć szczerą rozmowę o Waszych pragnieniach bez skrępowania.</p>
                 </div>
               </div>
             </div>
@@ -73,8 +73,7 @@ const ReportSection = () => {
           <div className="flex flex-col h-full">
             <h3 className="text-3xl font-bold mb-8 text-center">Otrzymaj spersonalizowany raport</h3>
             <p className="text-lg text-muted-foreground text-center mb-8">
-              Raport zostanie przygotowany specjalnie dla Was, na podstawie Waszych odpowiedzi.
-              Otrzymasz go na podany adres e-mail.
+              Unikalny raport tworzony jest tylko dla Was, na podstawie Waszych ankiet. Nie poznacie swoich odpowiedzi nawzajem.
             </p>
             
             {/* Email editor interface - dostosowane wymiary */}
