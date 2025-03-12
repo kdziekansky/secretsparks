@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Check, Users, Sparkles } from 'lucide-react';
@@ -101,15 +102,13 @@ const ReportSection = () => {
                     <div className="text-gray-300">Wasz raport Secret Sparks</div>
                   </div>
                   
-                  {/* Email content preview */}
+                  {/* Email content preview - teraz z gradientem na całej wysokości */}
                   <div className="flex-grow rounded-md overflow-hidden flex flex-col">
-                    <div className="flex-grow bg-gradient-to-b from-gray-800 to-gray-900 flex items-center justify-center min-h-[100px]">
-                      <div className="bg-gray-700/40 h-14 w-14 rounded-full flex items-center justify-center">
+                    <div className="flex-grow bg-gradient-to-b from-gray-800 to-gray-900 flex items-center justify-center p-6 text-center">
+                      <div className="bg-gray-700/40 h-14 w-14 rounded-full flex items-center justify-center mb-4">
                         <Sparkles className="h-7 w-7 text-white/70" />
                       </div>
-                    </div>
-                    <div className="p-4 bg-white text-black">
-                      <p className="text-gray-600 text-sm italic">Naciśnij "Wypełnij ankietę", aby otrzymać swój spersonalizowany raport...</p>
+                      <p className="text-gray-400 text-sm italic mt-4">Naciśnij "Wypełnij ankietę", aby otrzymać swój spersonalizowany raport...</p>
                     </div>
                   </div>
                 </div>
