@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSurvey } from '@/contexts/SurveyContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -483,7 +482,7 @@ const PaymentPage: React.FC = () => {
                   checked={ageConfirmed}
                   onCheckedChange={(checked) => setAgeConfirmed(checked as boolean)}
                 />
-                <Label htmlFor="ageConfirmation" className="cursor-pointer text-foreground font-medium">Oświadczam, że ukończyłem/-am 18 rok życia</Label>
+                <Label htmlFor="ageConfirmation" className="cursor-pointer text-foreground font-medium">Oświadczam, że ukończyłem/-am 18 rok życia i wyrażam zgodę na oglądanie treści o charakterze jednoznacznie seksualnym</Label>
               </div>
               {showErrors && errors.ageConfirmation && (
                 <p className="text-red-500 text-sm mt-1">{errors.ageConfirmation}</p>
