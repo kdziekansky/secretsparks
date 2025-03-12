@@ -20,6 +20,73 @@ interface FormErrors {
 
 const PRODUCT_PRICE = 29;
 
+// Funkcja diagnostyczna do testowania połączenia z Edge Function
+const testEdgeFunction = async () => {
+  try {
+    console.log("Testowanie połączenia z Edge Function...");
+    
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://bqbgrjpxufblrgcoxpfk.supabase.co';
+    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxYmdyanB4dWZibHJnY294cGZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE1Mzk4NzUsImV4cCI6MjA1NzExNTg3NX0.kSryhe5Z4BILp_ss5LpSxanGSvx4HZzZtVzYia4bgik";
+    
+    // Sprawdź dostępność CORS - najpierw OPTIONS
+    const corsCheck = await fetch(`${supabaseUrl}/functions/v1/create-payment`, {
+      method: 'OPTIONS',
+      headers: {
+        'Origin': window.location.origin
+      }
+    });
+    
+    console.log("Test CORS:", {
+      status: corsCheck.status,
+      ok: corsCheck.ok,
+      headers: Object.fromEntries([...corsCheck.headers.entries()])
+    });
+    
+    // Teraz sprawdź prostym żądaniem
+    const response = await fetch(`${supabaseUrl}/functions/v1/create-payment`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${supabaseKey}`,
+        'apikey': supabaseKey
+      },
+      body: JSON.stringify({
+        data: {
+          price: 29,
+          currency: 'pln',
+          user_name: 'Test User',
+          user_email: 'test@example.com',
+          partner_name: 'Test Partner',
+          partner_email: 'partner@example.com',
+          gift_wrap: false,
+          order_id: 'test-' + Date.now()
+        }
+      })
+    });
+    
+    console.log("Test Edge Function:", {
+      status: response.status,
+      ok: response.ok,
+      headers: Object.fromEntries([...response.headers.entries()])
+    });
+    
+    const text = await response.text();
+    console.log("Odpowiedź jako tekst:", text);
+    
+    try {
+      const json = JSON.parse(text);
+      console.log("Odpowiedź jako JSON:", json);
+      return json;
+    } catch (e) {
+      console.error("Nie można sparsować odpowiedzi jako JSON:", e);
+      return null;
+    }
+  } catch (error) {
+    console.error("Błąd testowania Edge Function:", error);
+    return null;
+  }
+};
+
 const PaymentPage: React.FC = () => {
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
@@ -305,9 +372,9 @@ const PaymentPage: React.FC = () => {
         return;
       }
       
-      // Proceed to create payment using Supabase edge function with walidacją danych
+      // Proceed to create payment
       try {
-        // Prepare the payment data
+        // Informacje o zamówieniu
         const price = PRODUCT_PRICE + (giftWrap ? 20 : 0);
         
         const paymentData = {
@@ -321,95 +388,101 @@ const PaymentPage: React.FC = () => {
           order_id: orderData.id
         };
 
-        console.log('Attempting to create payment with data:', {
+        console.log('Przygotowuję dane płatności:', {
           ...paymentData,
-          user_email: '***@***.com', // Mask emails in logs for privacy
+          user_email: '***@***.com',
           partner_email: '***@***.com'
         });
 
-        let result;
+        // TYMCZASOWE ROZWIĄZANIE: Dla testów, możemy użyć statycznego URL Stripe
+        // Odkomentuj poniższy kod, aby ominąć Edge Function i przetestować pozostałą część procesu
+        /*
+        const mockStripeUrl = 'https://checkout.stripe.com/c/pay/cs_test_123456789';
+        console.log('TRYB TESTOWY: Używam mocka URL Stripe:', mockStripeUrl);
+        window.location.href = mockStripeUrl;
+        return;
+        */
+
+        // Wywołanie Edge Function przy użyciu standardowego fetch API
+        console.log('Wywołuję Edge Function za pomocą fetch...');
         
-        // First attempt - Using the standard SDK method
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://bqbgrjpxufblrgcoxpfk.supabase.co';
+        const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxYmdyanB4dWZibHJnY294cGZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE1Mzk4NzUsImV4cCI6MjA1NzExNTg3NX0.kSryhe5Z4BILp_ss5LpSxanGSvx4HZzZtVzYia4bgik";
+        
+        // Uproszczony format danych dla Edge Function
+        const requestPayload = {
+          data: paymentData
+        };
+        
+        console.log('Wysyłam żądanie do:', `${supabaseUrl}/functions/v1/create-payment`);
+        console.log('Z ładunkiem:', JSON.stringify(requestPayload));
+        
+        const response = await fetch(`${supabaseUrl}/functions/v1/create-payment`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${supabaseKey}`,
+            'apikey': supabaseKey
+          },
+          body: JSON.stringify(requestPayload)
+        });
+        
+        // Sprawdź status odpowiedzi
+        console.log('Status odpowiedzi:', response.status);
+        console.log('Nagłówki odpowiedzi:', Object.fromEntries([...response.headers.entries()]));
+        
+        // Pobierz surowy tekst odpowiedzi, dla lepszej diagnostyki
+        const responseText = await response.text();
+        console.log('Odpowiedź jako tekst (pierwsze 100 znaków):', responseText.substring(0, 100));
+        
+        // Próba parsowania JSON
+        let data;
         try {
-          console.log('Trying standard Edge Function invocation...');
-          result = await supabase.functions.invoke('create-payment', {
-            body: { data: paymentData }
-          });
-          
-          console.log('Edge Function response:', result);
-        } catch (invokeError) {
-          console.error('Standard invoke failed:', invokeError);
-          
-          // The invoke method failed, let's try a fallback approach with direct fetch
-          console.log('Falling back to direct fetch method...');
-          
-          // Get the base URL from the environment or use the default
-          const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://bqbgrjpxufblrgcoxpfk.supabase.co';
-          const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxYmdyanB4dWZibHJnY294cGZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE1Mzk4NzUsImV4cCI6MjA1NzExNTg3NX0.kSryhe5Z4BILp_ss5LpSxanGSvx4HZzZtVzYia4bgik";
-          
-          const response = await fetch(`${supabaseUrl}/functions/v1/create-payment`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${supabaseKey}`
-            },
-            body: JSON.stringify({ data: paymentData })
-          });
-          
-          if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Direct fetch failed:', response.status, errorText);
-            throw new Error(`Edge Function returned status ${response.status}: ${errorText}`);
-          }
-          
-          result = { data: await response.json() };
-          console.log('Edge Function direct fetch response:', result);
+          data = JSON.parse(responseText);
+          console.log('Odpowiedź jako obiekt:', data);
+        } catch (jsonError) {
+          console.error('Błąd parsowania JSON:', jsonError.message);
+          throw new Error(`Nieprawidłowy format odpowiedzi: ${responseText.substring(0, 200)}...`);
         }
         
-        // Check if we have result data
-        if (!result || !result.data) {
-          console.error('No data received from Edge Function');
-          throw new Error('No data received from Edge Function');
+        // Sprawdź zawartość odpowiedzi
+        if (!data) {
+          throw new Error('Brak danych w odpowiedzi');
         }
-        
-        const data = result.data;
         
         if (data.error) {
-          console.error('Payment API error:', data.error);
           throw new Error(data.error);
         }
         
         if (!data.url) {
-          console.error('Payment URL missing:', data);
-          throw new Error('Nie otrzymano URL do płatności');
+          throw new Error('Brak URL do płatności w odpowiedzi: ' + JSON.stringify(data));
         }
         
-        console.log('Payment session created, redirecting to:', data.url);
-        
-        // Update order with payment session ID
+        // Aktualizuj zamówienie z identyfikatorem sesji płatności
         if (data.sessionId) {
-          const { error: updateError } = await supabase
-            .from('orders')
-            .update({ payment_id: data.sessionId })
-            .eq('id', orderData.id);
-            
-          if (updateError) {
-            console.error('Failed to update order with payment ID:', updateError);
-            // Kontynuujemy pomimo błędu, ponieważ nie jest to krytyczne
+          try {
+            const { error: updateError } = await supabase
+              .from('orders')
+              .update({ payment_id: data.sessionId })
+              .eq('id', orderData.id);
+              
+            if (updateError) {
+              console.error('Błąd aktualizacji zamówienia z ID płatności:', updateError);
+            } else {
+              console.log('Zaktualizowano zamówienie z ID sesji płatności:', data.sessionId);
+            }
+          } catch (updateError) {
+            console.error('Wyjątek podczas aktualizacji zamówienia:', updateError);
           }
         }
         
-        // Bezpieczniejsze przekierowanie
-        if (data.url.startsWith('https://checkout.stripe.com/')) {
-          // Redirect to Stripe tylko gdy URL jest poprawny
-          window.location.href = data.url;
-        } else {
-          console.error('Invalid Stripe URL:', data.url);
-          throw new Error('Otrzymano nieprawidłowy URL płatności');
-        }
-      } catch (paymentError: any) {
-        console.error('Payment creation failed:', paymentError);
-        toast.error(paymentError.message || 'Wystąpił błąd podczas tworzenia płatności. Spróbuj ponownie.');
+        // Przekieruj do Stripe
+        console.log('Przekierowuję do URL płatności:', data.url);
+        window.location.href = data.url;
+        
+      } catch (paymentError) {
+        console.error('Błąd tworzenia płatności:', paymentError);
+        toast.error(`Błąd płatności: ${paymentError.message || 'Nieznany błąd'}`);
         setIsProcessing(false);
       }
     } catch (error: any) {
@@ -521,6 +594,13 @@ const PaymentPage: React.FC = () => {
                   )}
                 </Button>
               </div>
+              
+              {/* Ukryty przycisk testowy - można odkometować do diagnostyki */}
+              {/* <div className="mt-2">
+                <Button type="button" variant="outline" size="sm" onClick={testEdgeFunction} className="w-full text-xs">
+                  Test Edge Function (Debug)
+                </Button>
+              </div> */}
             </form>
           </CardContent>
         </Card>
