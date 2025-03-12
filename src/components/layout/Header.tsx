@@ -22,7 +22,7 @@ const Header = () => {
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8 lg:px-12">
         <Link to="/" className="flex items-center gap-2">
           <img 
-            src="/lovable-uploads/a4798506-21aa-4666-805f-130a6259f84f.png" 
+            src="/lovable-uploads/0537e49e-f4b0-49a8-bedb-41f3876d6f50.png" 
             alt="Secret Sparks Logo" 
             className="h-10"
           />

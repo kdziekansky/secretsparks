@@ -5,13 +5,13 @@ import { ArrowRight } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="py-16 border-t border-border/40 bg-card">
+    <footer className="py-16 border-t border-border/40" style={{ backgroundColor: "rgb(33, 33, 44)" }}>
       <div className="section-container">
         <div className="grid md:grid-cols-3 gap-12">
           <div>
             <Link to="/" className="flex items-center gap-2 mb-6">
               <img 
-                src="/lovable-uploads/a4798506-21aa-4666-805f-130a6259f84f.png" 
+                src="/lovable-uploads/0537e49e-f4b0-49a8-bedb-41f3876d6f50.png" 
                 alt="Secret Sparks Logo" 
                 className="h-12"
               />
