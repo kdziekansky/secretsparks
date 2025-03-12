@@ -13,6 +13,7 @@ import PaymentPage from "./pages/PaymentPage";
 import ThankYouPage from "./pages/ThankYouPage";
 import FAQPage from "./pages/FAQPage";
 import SecurityPage from "./pages/SecurityPage";
+import SecretAIPage from "./pages/SecretAIPage";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminOrders from "./pages/admin/AdminOrders";
@@ -50,6 +51,7 @@ const App = () => {
                   <Route path="/regulamin" element={<Index />} />
                   <Route path="/faq" element={<FAQPage />} />
                   <Route path="/bezpieczenstwo" element={<SecurityPage />} />
+                  <Route path="/secretai" element={<SecretAIPage />} />
                   <Route path="/survey" element={<SurveyPage />} />
                   <Route path="/payment" element={<PaymentPage />} />
                   <Route path="/thank-you" element={<ThankYouPage />} />

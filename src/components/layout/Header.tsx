@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, X, Menu, Shield } from 'lucide-react';
+import { ChevronDown, X, Menu, Shield, Bot } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -37,6 +37,9 @@ const Header = () => {
           </Link>
           <Link to="/bezpieczenstwo" className="nav-link flex items-center">
             <Shield className="h-4 w-4 mr-1" /> Bezpieczeństwo
+          </Link>
+          <Link to="/secretai" className="nav-link flex items-center">
+            <Bot className="h-4 w-4 mr-1" /> Secret AI
           </Link>
           <DropdownMenu>
             <DropdownMenuTrigger className="nav-link flex items-center">
@@ -84,6 +87,9 @@ const Header = () => {
             </Link>
             <Link to="/bezpieczenstwo" className="nav-link-mobile flex items-center">
               <Shield className="h-4 w-4 mr-2" /> Bezpieczeństwo
+            </Link>
+            <Link to="/secretai" className="nav-link-mobile flex items-center">
+              <Bot className="h-4 w-4 mr-2" /> Secret AI
             </Link>
             <Link to="/survey" className="nav-link-mobile">
               Ankieta
