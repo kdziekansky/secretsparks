@@ -12,15 +12,15 @@ const HeroSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Lewa kolumna - treść główna (szerokość 2/3) */}
           <div className="md:col-span-2 glass-card p-10 flex flex-col justify-center items-start text-left">
-            <div className="px-6 py-2 rounded-full bg-[#0D0E18] inline-block mb-6">
-              <p className="text-red-600 font-semibold uppercase">NOWY WYMIAR INTYMNEJ KOMUNIKACJI</p>
+            <div className="px-6 py-2 rounded-full bg-accent inline-block mb-6">
+              <p className="text-primary font-semibold uppercase">NOWY WYMIAR INTYMNEJ KOMUNIKACJI</p>
             </div>
             
             <h1 className="text-4xl md:text-5xl font-bold mb-2">
               Porozumienie bez słów.
             </h1>
             <h2 className="text-4xl md:text-5xl font-bold mb-8">
-              <span className="text-red-600">Życie seksualne</span> na wyższym poziomie
+              <span className="text-primary">Życie seksualne</span> na wyższym poziomie
             </h2>
             
             <p className="text-muted-foreground mb-8 text-lg max-w-2xl">
@@ -31,7 +31,7 @@ const HeroSection = () => {
             
             <div className="flex flex-wrap gap-4 mb-2">
               <Link to="/survey">
-                <Button className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 h-auto rounded-md text-base">
+                <Button className="bg-primary hover:bg-primary/90 text-white px-6 py-2 h-auto rounded-md text-base">
                   Rozpocznij Grę
                 </Button>
               </Link>
@@ -58,26 +58,26 @@ const HeroSection = () => {
 
         {/* Liczniki - 3 kolumny - zmniejszony odstęp mt-8 zamiast mt-12 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-          <div className="bg-black text-center p-8 flex flex-col items-center justify-center rounded-2xl border border-accent/10">
-            <h3 className="text-5xl font-bold text-red-600 mb-4">250+</h3>
+          <div className="bg-card text-center p-8 flex flex-col items-center justify-center rounded-2xl border border-accent/10">
+            <h3 className="text-5xl font-bold text-primary mb-4">250+</h3>
             <p className="text-muted-foreground text-lg">Unikalnych scenariuszy i pomysłów na wzbogacenie Waszej intymnej relacji</p>
           </div>
           
-          <div className="bg-black text-center p-8 flex flex-col items-center justify-center rounded-2xl border border-accent/10">
-            <h3 className="text-5xl font-bold text-red-600 mb-4">100%</h3>
+          <div className="bg-card text-center p-8 flex flex-col items-center justify-center rounded-2xl border border-accent/10">
+            <h3 className="text-5xl font-bold text-primary mb-4">100%</h3>
             <p className="text-muted-foreground text-lg">Gwarancja bezpieczeństwa danych i pełnej anonimowości każdej ankiety</p>
           </div>
           
-          <div className="bg-black text-center p-8 flex flex-col items-center justify-center rounded-2xl border border-accent/10">
-            <h3 className="text-5xl font-bold text-red-600 mb-4">5min</h3>
+          <div className="bg-card text-center p-8 flex flex-col items-center justify-center rounded-2xl border border-accent/10">
+            <h3 className="text-5xl font-bold text-primary mb-4">5min</h3>
             <p className="text-muted-foreground text-lg">Szybka ankieta, której rezultaty zmienią Waszą relację na zawsze</p>
           </div>
         </div>
 
         {/* Sekcja funkcji - 3 kolumny - zmniejszony odstęp mt-8 zamiast mt-12 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-          <div className="bg-black p-8 flex flex-col rounded-2xl border border-accent/10">
-            <div className="text-red-600 mb-6">
+          <div className="bg-card p-8 flex flex-col rounded-2xl border border-accent/10">
+            <div className="text-primary mb-6">
               <Sparkles className="h-10 w-10" />
             </div>
             <h3 className="text-2xl font-bold mb-4">Odkryjcie siebie</h3>
@@ -86,8 +86,8 @@ const HeroSection = () => {
             </p>
           </div>
           
-          <div className="bg-black p-8 flex flex-col rounded-2xl border border-accent/10">
-            <div className="text-red-600 mb-6">
+          <div className="bg-card p-8 flex flex-col rounded-2xl border border-accent/10">
+            <div className="text-primary mb-6">
               <Heart className="h-10 w-10" />
             </div>
             <h3 className="text-2xl font-bold mb-4">Rozpalcie siebie nawzajem</h3>
@@ -96,8 +96,8 @@ const HeroSection = () => {
             </p>
           </div>
           
-          <div className="bg-black p-8 flex flex-col rounded-2xl border border-accent/10">
-            <div className="text-red-600 mb-6">
+          <div className="bg-card p-8 flex flex-col rounded-2xl border border-accent/10">
+            <div className="text-primary mb-6">
               <Zap className="h-10 w-10" />
             </div>
             <h3 className="text-2xl font-bold mb-4">Eksplorujcie pragnienia</h3>

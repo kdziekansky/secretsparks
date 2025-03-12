@@ -85,11 +85,11 @@
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    @apply bg-black;
+    @apply bg-background;
   }
   
   body {
-    @apply bg-black text-foreground font-sans;
+    @apply bg-background text-foreground font-sans;
   }
   
   .scale-rating {
@@ -146,13 +146,13 @@
   }
   
   .glass-panel {
-    @apply bg-black/70 backdrop-blur-md rounded-2xl 
+    @apply bg-card/70 backdrop-blur-md rounded-2xl 
            shadow-[0_8px_30px_rgba(0,0,0,0.3)]
            border border-accent/20;
   }
 
   .glass-card {
-    @apply bg-black/80 backdrop-blur-md rounded-2xl 
+    @apply bg-card/80 backdrop-blur-md rounded-2xl 
            shadow-[0_4px_20px_rgba(0,0,0,0.25)]
            border border-accent/30 hover:border-accent/50 transition-all;
   }

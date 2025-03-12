@@ -9,7 +9,7 @@ import ReportSection from '@/components/sections/ReportSection';
 
 const Index = () => {
   return (
-    <div className="bg-black text-foreground min-h-screen">
+    <div className="bg-background text-foreground min-h-screen">
       <Header />
       
       <main>
