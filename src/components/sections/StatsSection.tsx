@@ -1,6 +1,8 @@
 
 import React from 'react';
 
+// UWAGA: Ten komponent został zintegrowany z HeroSection.tsx i nie jest już używany oddzielnie
+
 const StatsSection = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8 mb-16">
