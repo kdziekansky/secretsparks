@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Confetti } from '@/components/Confetti';
 import { Button } from '@/components/ui/button';
-import { Heart, AlertCircle, Mail, User, Users, Gift, CheckCircle, Calendar } from 'lucide-react';
+import { Heart, AlertCircle, User, Users, Gift, CheckCircle, Calendar } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { toast } from 'sonner';
@@ -248,7 +248,8 @@ const ThankYouPage: React.FC = () => {
                 </div>
               )}
               
-              {orderDetails.user_question_sequence && (
+              {/* Ukrywamy komunikat o sekwencji pytań, ponieważ jest zbędny dla klienta */}
+              {false && orderDetails.user_question_sequence && (
                 <div className="flex items-start gap-3">
                   <div className="bg-green-500/10 p-2 rounded-full">
                     <CheckCircle className="h-5 w-5 text-green-500" />
@@ -267,7 +268,7 @@ const ThankYouPage: React.FC = () => {
         
         <div className="space-y-4">
           <p className="text-muted-foreground">
-            Wysłaliśmy potwierdzenie na Twój adres email. Twój partner otrzyma wkrótce zaproszenie do ankiety z identycznymi pytaniami.
+            Wysłaliśmy potwierdzenie zakupu na Twój adres email. Twój partner/-rka otrzyma wkrótce zaproszenie do swojej ankiety. Po wypełnieniu otrzymacie raport.
           </p>
           
           <div className="flex justify-center">
