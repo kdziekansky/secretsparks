@@ -129,13 +129,13 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
   return (
     <div className={`glass-panel w-full max-w-4xl transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100 animate-slide-up'}`}>
       <div className="flex flex-col md:flex-row">
-        {/* Left side - Illustration - teraz z białym tłem */}
-        <div className="md:w-2/5 p-6 flex items-center justify-center bg-white rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none">
+        {/* Left side - Illustration - z gradientowym tłem */}
+        <div className="md:w-2/5 p-0 flex items-center justify-center bg-gradient-to-br from-accent/30 to-accent/10 rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none overflow-hidden">
           {currentQuestion.illustration && !imageError ? (
-            <div className="w-full max-w-xs rounded-lg overflow-hidden" style={{ aspectRatio: '3/5' }}>
+            <div className="w-full h-full rounded-lg overflow-hidden" style={{ aspectRatio: '1/1' }}>
               {/* Placeholder while image loads */}
               {!imageLoaded && (
-                <div className="w-full h-full bg-gray-100 flex flex-col items-center justify-center text-gray-500">
+                <div className="w-full h-full bg-accent/20 flex flex-col items-center justify-center text-muted-foreground">
                   <ImageIcon className="h-12 w-12 mb-2 opacity-50" />
                   <span>Ładowanie...</span>
                 </div>
@@ -150,8 +150,9 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
                   onLoad={handleImageLoad}
                   onError={handleImageError}
                   aria-label={currentQuestion.text}
+                  style={{ width: '100%', height: '100%', minHeight: '400px' }}
                 >
-                  <div className="w-full h-full bg-gray-100 flex flex-col items-center justify-center text-gray-500">
+                  <div className="w-full h-full bg-accent/20 flex flex-col items-center justify-center text-muted-foreground">
                     <ImageIcon className="h-12 w-12 mb-2 opacity-50" />
                     <span>Ilustracja {questionNumber || currentQuestion.id}</span>
                   </div>
@@ -164,13 +165,14 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
                   className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                   onLoad={handleImageLoad}
                   onError={handleImageError}
+                  style={{ width: '100%', height: '100%', minHeight: '400px' }}
                 />
               )}
             </div>
           ) : (
             <div 
-              className="w-full max-w-xs bg-gray-100 rounded-lg flex flex-col items-center justify-center text-gray-500" 
-              style={{ aspectRatio: '3/5' }}
+              className="w-full h-full bg-accent/20 flex flex-col items-center justify-center text-muted-foreground" 
+              style={{ minHeight: '400px' }}
             >
               <ImageIcon className="h-12 w-12 mb-2 opacity-50" />
               <span>Ilustracja {questionNumber || currentQuestion.id}</span>
@@ -267,3 +269,4 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
 };
 
 export default QuestionCard;
+
