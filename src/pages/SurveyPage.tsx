@@ -7,7 +7,7 @@ import QuestionCard from '@/components/QuestionCard';
 import SurveyConfig from '@/components/SurveyConfig';
 import PartnerWelcome from '@/components/PartnerWelcome';
 import { Loader2, AlertTriangle, Clock } from 'lucide-react';
-import { toast } from 'sonner';
+import { toast, Toaster } from 'sonner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { GameLevel } from '@/types/survey';
 
@@ -157,6 +157,7 @@ const SurveyPage: React.FC = () => {
   if (isLoadingOrder) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <Toaster position="top-center" />
         <div className="flex flex-col items-center">
           <Loader2 className="w-12 h-12 animate-spin text-primary mb-4" />
           <p className="text-lg">Ładowanie ankiety...</p>
@@ -168,6 +169,7 @@ const SurveyPage: React.FC = () => {
   if (error) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <Toaster position="top-center" />
         <div className="glass-panel w-full max-w-md p-6 text-center">
           <Alert variant="destructive" className="mb-4">
             <AlertTriangle className="h-5 w-5 mr-2" />
@@ -191,10 +193,10 @@ const SurveyPage: React.FC = () => {
     );
   }
   
-  // Dodane nowe renderowanie dla stanu oczekiwania na pytania
   if (isPartnerSurvey && !isLoadingOrder && waitingForQuestions) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <Toaster position="top-center" />
         <div className="glass-panel w-full max-w-md p-6 text-center">
           <Clock className="w-12 h-12 text-amber-500 mx-auto mb-4" />
           <h2 className="text-xl font-medium mb-2">Oczekiwanie na pytania</h2>
@@ -211,6 +213,8 @@ const SurveyPage: React.FC = () => {
   
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6">
+      <Toaster position="top-center" />
+      
       {!isInConfigurationMode && (
         <div className="w-full max-w-xl mb-8">
           <ProgressBar progress={progress} />

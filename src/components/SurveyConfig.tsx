@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSurvey } from '@/contexts/SurveyContext';
 import { Button } from '@/components/ui/button';
-import { User, UserCircle, Smile, Zap, SmilePlus } from 'lucide-react';
+import { User, UserCircle, Smile, Zap, SmilePlus, X } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
@@ -34,14 +35,26 @@ const SurveyConfig: React.FC = () => {
     return true;
   };
 
-  // Modyfikujemy funkcje ustawiające płeć
+  // Modyfikujemy funkcje ustawiające płeć, dodając możliwość cofnięcia wyboru
   const handleSetPartnerGender = (gender: Gender) => {
+    // Jeśli ta sama płeć jest już wybrana, usuwamy wybór
+    if (partnerGender === gender) {
+      setPartnerGender(null);
+      return;
+    }
+    
     if (checkGenderCombination(userGender, gender)) {
       setPartnerGender(gender);
     }
   };
 
   const handleSetUserGender = (gender: Gender) => {
+    // Jeśli ta sama płeć jest już wybrana, usuwamy wybór
+    if (userGender === gender) {
+      setUserGender(null);
+      return;
+    }
+    
     if (checkGenderCombination(gender, partnerGender)) {
       setUserGender(gender);
     }
@@ -70,6 +83,9 @@ const SurveyConfig: React.FC = () => {
                 <User className="w-6 h-6 text-pink-500" />
               </div>
               <span>Kobieta</span>
+              {userGender === 'female' && (
+                <X className="w-5 h-5 ml-auto text-gray-500 hover:text-red-500" />
+              )}
             </button>
             <button
               type="button"
@@ -85,6 +101,9 @@ const SurveyConfig: React.FC = () => {
                 <UserCircle className="w-6 h-6 text-blue-500" />
               </div>
               <span>Mężczyzna</span>
+              {userGender === 'male' && (
+                <X className="w-5 h-5 ml-auto text-gray-500 hover:text-red-500" />
+              )}
             </button>
           </div>
         </div>
@@ -107,6 +126,9 @@ const SurveyConfig: React.FC = () => {
                 <User className="w-6 h-6 text-pink-500" />
               </div>
               <span>Kobieta</span>
+              {partnerGender === 'female' && (
+                <X className="w-5 h-5 ml-auto text-gray-500 hover:text-red-500" />
+              )}
             </button>
             <button
               type="button"
@@ -122,6 +144,9 @@ const SurveyConfig: React.FC = () => {
                 <UserCircle className="w-6 h-6 text-blue-500" />
               </div>
               <span>Mężczyzna</span>
+              {partnerGender === 'male' && (
+                <X className="w-5 h-5 ml-auto text-gray-500 hover:text-red-500" />
+              )}
             </button>
           </div>
         </div>
@@ -132,7 +157,7 @@ const SurveyConfig: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <button
               type="button"
-              onClick={() => setGameLevel('discover')}
+              onClick={() => setGameLevel(gameLevel === 'discover' ? null : 'discover')}
               className={`flex items-center p-4 rounded-lg border transition-all ${
                 gameLevel === 'discover' 
                   ? 'border-primary bg-primary/10 font-medium' 
@@ -145,10 +170,13 @@ const SurveyConfig: React.FC = () => {
               <div>
                 <span>Odkrywaj intymność</span>
               </div>
+              {gameLevel === 'discover' && (
+                <X className="w-5 h-5 ml-auto text-gray-500 hover:text-red-500" />
+              )}
             </button>
             <button
               type="button"
-              onClick={() => setGameLevel('explore')}
+              onClick={() => setGameLevel(gameLevel === 'explore' ? null : 'explore')}
               className={`flex items-center p-4 rounded-lg border transition-all ${
                 gameLevel === 'explore' 
                   ? 'border-primary bg-primary/10 font-medium' 
@@ -161,10 +189,13 @@ const SurveyConfig: React.FC = () => {
               <div>
                 <span>Eksploruj pragnienia</span>
               </div>
+              {gameLevel === 'explore' && (
+                <X className="w-5 h-5 ml-auto text-gray-500 hover:text-red-500" />
+              )}
             </button>
             <button
               type="button"
-              onClick={() => setGameLevel('exceed')}
+              onClick={() => setGameLevel(gameLevel === 'exceed' ? null : 'exceed')}
               className={`flex items-center p-4 rounded-lg border transition-all ${
                 gameLevel === 'exceed' 
                   ? 'border-primary bg-primary/10 font-medium' 
@@ -177,6 +208,9 @@ const SurveyConfig: React.FC = () => {
               <div>
                 <span>Przekraczaj granice</span>
               </div>
+              {gameLevel === 'exceed' && (
+                <X className="w-5 h-5 ml-auto text-gray-500 hover:text-red-500" />
+              )}
             </button>
           </div>
         </div>
