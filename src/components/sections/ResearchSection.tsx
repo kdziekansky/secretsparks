@@ -1,15 +1,19 @@
 
 import React from 'react';
+import { BookOpen, Brain, HeartHandshake, Sparkles, Flame } from 'lucide-react';
 
 const ResearchSection = () => {
   return (
-    <section className="section-padding bg-[#070711]">
+    <section className="section-padding">
       <div className="section-container">
         <h2 className="text-3xl md:text-4xl font-bold mb-10 text-left">Co mówią badania</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
           {/* Main content - spans 2 columns */}
           <div className="md:col-span-2 glass-card p-10 flex flex-col items-start text-left">
+            <div className="px-6 py-2 rounded-full bg-accent inline-block mb-6">
+              <BookOpen className="h-5 w-5 text-primary" />
+            </div>
             <h3 className="text-2xl font-bold mb-6">Długoterminowe badania wykazują</h3>
             <p className="text-lg mb-6">
               Pary, które regularnie komunikują swoje potrzeby i pragnienia seksualne, doświadczają 
@@ -24,6 +28,9 @@ const ResearchSection = () => {
           
           {/* Side card */}
           <div className="glass-card p-10 flex flex-col items-start text-left">
+            <div className="px-6 py-2 rounded-full bg-accent inline-block mb-6">
+              <Sparkles className="h-5 w-5 text-primary" />
+            </div>
             <h3 className="text-2xl font-bold mb-6">Satysfakcja seksualna</h3>
             <p className="text-lg">
               Badania pokazują, że pary dzielące się swoimi pragnieniami seksualnymi 
@@ -39,6 +46,9 @@ const ResearchSection = () => {
         {/* 3 Feature boxes */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-10">
           <div className="glass-card p-10 flex flex-col items-start text-left">
+            <div className="px-6 py-2 rounded-full bg-accent inline-block mb-6">
+              <Brain className="h-5 w-5 text-primary" />
+            </div>
             <h3 className="text-2xl font-bold mb-6">Nie tylko orgazm</h3>
             <p className="text-lg">
               Intymność to nie tylko orgazm. Badania wskazują, że eksperymentowanie i 
@@ -48,6 +58,9 @@ const ResearchSection = () => {
           </div>
           
           <div className="glass-card p-10 flex flex-col items-start text-left">
+            <div className="px-6 py-2 rounded-full bg-accent inline-block mb-6">
+              <HeartHandshake className="h-5 w-5 text-primary" />
+            </div>
             <h3 className="text-2xl font-bold mb-6">Zmiany w mózgu</h3>
             <p className="text-lg">
               Neuronauka wykazała, że dzielenie się intymnymi pragnieniami aktywuje 
@@ -57,6 +70,9 @@ const ResearchSection = () => {
           </div>
           
           <div className="glass-card p-10 flex flex-col items-start text-left">
+            <div className="px-6 py-2 rounded-full bg-accent inline-block mb-6">
+              <Flame className="h-5 w-5 text-primary" />
+            </div>
             <h3 className="text-2xl font-bold mb-6">Fizjologia namiętności</h3>
             <p className="text-lg">
               Regularna, satysfakcjonująca aktywność seksualna prowadzi do wzrostu 
