@@ -895,8 +895,8 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'h-p3', 
-    text: 'Pozycja „na pieska"',
-    description: "Czy masz ochotę na pozycję, która zapewnia intensywne doznania i daje przestrzeń do eksperymentowania? Pozycja „na pieska" pozwala na głębszą penetrację, a jednocześnie daje możliwość eksploracji dynamiki dominacji i uległości. Możecie dostosować kąt, tempo i intensywność do własnych preferencji, odkrywając nowe sposoby na budowanie napięcia i przyjemności.",
+    text: 'Pozycja "na pieska"',
+    description: "Czy masz ochotę na pozycję, która zapewnia intensywne doznania i daje przestrzeń do eksperymentowania? Pozycja \"na pieska\" pozwala na głębszą penetrację, a jednocześnie daje możliwość eksploracji dynamiki dominacji i uległości. Możecie dostosować kąt, tempo i intensywność do własnych preferencji, odkrywając nowe sposoby na budowanie napięcia i przyjemności.",
     illustration: '/placeholder.svg',
     forConfig: { 
       userGender: 'female',
@@ -906,8 +906,8 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'h-p4', 
-    text: 'Pozycja „wodnik"',
-    description: "Czy szukasz pozycji, która łączy wygodę z nowymi doznaniami? Pozycja „wodnik" pozwala na pełny kontakt ciał i eksplorację różnorodnych ruchów w rytmie, który sprzyja zarówno delikatnej, jak i intensywniejszej bliskości. Idealna dla osób ceniących kreatywność i subtelne zmiany tempa.",
+    text: 'Pozycja "wodnik"',
+    description: "Czy szukasz pozycji, która łączy wygodę z nowymi doznaniami? Pozycja \"wodnik\" pozwala na pełny kontakt ciał i eksplorację różnorodnych ruchów w rytmie, który sprzyja zarówno delikatnej, jak i intensywniejszej bliskości. Idealna dla osób ceniących kreatywność i subtelne zmiany tempa.",
     illustration: '/placeholder.svg',
     forConfig: { 
       userGender: 'female',
@@ -917,8 +917,8 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'h-p5', 
-    text: 'Pozycja „syreny"',
-    description: "Czy chcesz doświadczyć pozycji, która sprzyja zarówno bliskości, jak i głębokim doznaniom? Pozycja „syreny" opiera się na delikatnych, płynnych ruchach i pełnym kontakcie ciał, co zwiększa intensywność przeżyć. Możesz eksplorować różne kąty, dostosowując ruchy do własnego komfortu i preferencji.",
+    text: 'Pozycja "syreny"',
+    description: "Czy chcesz doświadczyć pozycji, która sprzyja zarówno bliskości, jak i głębokim doznaniom? Pozycja \"syreny\" opiera się na delikatnych, płynnych ruchach i pełnym kontakcie ciał, co zwiększa intensywność przeżyć. Możesz eksplorować różne kąty, dostosowując ruchy do własnego komfortu i preferencji.",
     illustration: '/placeholder.svg',
     forConfig: { 
       userGender: 'female',
@@ -928,8 +928,8 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'h-p6', 
-    text: 'Pozycja „na królową"',
-    description: "Czy masz ochotę na pozycję, która łączy komfort i możliwość kontroli tempa? Pozycja „na królową" pozwala na eksplorowanie głębszych doznań oraz bliskości, dając jednocześnie pełną swobodę ruchów i dostosowania rytmu do własnych potrzeb.",
+    text: 'Pozycja "na królową"',
+    description: "Czy masz ochotę na pozycję, która łączy komfort i możliwość kontroli tempa? Pozycja \"na królową\" pozwala na eksplorowanie głębszych doznań oraz bliskości, dając jednocześnie pełną swobodę ruchów i dostosowania rytmu do własnych potrzeb.",
     illustration: '/placeholder.svg',
     forConfig: { 
       userGender: 'female',
@@ -939,5 +939,5 @@ export const questionsDatabase: Question[] = [
   },
   { 
     id: 'h-p7', 
-    text: 'Pozycja „jeździec"',
+    text: 'Pozycja "jeździec"',
     description: "Czy chcesz w pełni kontrolować rytm
