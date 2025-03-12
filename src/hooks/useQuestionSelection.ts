@@ -1,21 +1,44 @@
+
 import { useMemo } from 'react';
 import { Question, SurveyConfig } from '@/types/survey';
 
 const getRandomizedQuestions = (questions: Question[], config: SurveyConfig, maxQuestions: number = 15) => {
-  // Filter questions based on configuration
+  // Filtruj pytania na podstawie konfiguracji
   const filteredByConfig = questions.filter(question => {
     if (!question.forConfig) return true;
     
     const { userGender, partnerGender, gameLevel } = question.forConfig;
     
+    // Sprawdź dokładne warunki płci - jeśli warunek płci jest określony, musi dokładnie pasować
     if (userGender && userGender !== config.userGender) return false;
     if (partnerGender && partnerGender !== config.partnerGender) return false;
+    
+    // Walidacja specyficzna dla kombinacji płci (np. pytania męsko-męskie tylko dla par męsko-męskich)
+    if (userGender === 'male' && partnerGender === 'male' && 
+        (config.userGender !== 'male' || config.partnerGender !== 'male')) {
+      return false;
+    }
+    
+    if (userGender === 'female' && partnerGender === 'female' && 
+        (config.userGender !== 'female' || config.partnerGender !== 'female')) {
+      return false;
+    }
+    
+    // Dodatkowa walidacja dla pytań heteroseksualnych
+    if (userGender && partnerGender) {
+      const isQuestionHetero = userGender !== partnerGender;
+      const isConfigHetero = config.userGender !== config.partnerGender;
+      
+      if (isQuestionHetero !== isConfigHetero) return false;
+    }
+    
+    // Sprawdź poziom gry
     if (gameLevel && !gameLevel.includes(config.gameLevel as any)) return false;
     
     return true;
   });
 
-  // Group questions by pairGroup
+  // Grupuj pytania według pairGroup
   const groupedQuestions: Record<string, Question[]> = {};
   const singleQuestions: Question[] = [];
 
@@ -30,13 +53,13 @@ const getRandomizedQuestions = (questions: Question[], config: SurveyConfig, max
     }
   });
 
-  // Select questions
+  // Wybierz pytania
   const result: Question[] = [];
   const availableGroups = Object.keys(groupedQuestions);
   const groupsToSelect = Math.min(Math.floor(maxQuestions / 2), availableGroups.length);
   let remainingSlots = maxQuestions - (groupsToSelect * 2);
   
-  // Randomly select groups and singles
+  // Losowo wybierz grupy i pojedyncze pytania
   const selectedGroups = availableGroups
     .sort(() => 0.5 - Math.random())
     .slice(0, groupsToSelect);
@@ -45,7 +68,7 @@ const getRandomizedQuestions = (questions: Question[], config: SurveyConfig, max
     .sort(() => 0.5 - Math.random())
     .slice(0, remainingSlots);
 
-  // Add selected questions to result
+  // Dodaj wybrane pytania do wyniku
   selectedGroups.forEach(group => {
     const sortedGroupQuestions = groupedQuestions[group]
       .sort((a, b) => (a.pairPriority || 0) - (b.pairPriority || 0));
@@ -53,6 +76,8 @@ const getRandomizedQuestions = (questions: Question[], config: SurveyConfig, max
   });
   
   result.push(...selectedSingles);
+  
+  console.log(`Wybrano ${result.length} pytań dla konfiguracji: `, config);
   
   return result.slice(0, maxQuestions);
 };
