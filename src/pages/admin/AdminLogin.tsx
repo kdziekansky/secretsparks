@@ -1,9 +1,9 @@
-
 import React, { useState } from 'react';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Loader2, Lock } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 
 const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -16,18 +16,22 @@ const AdminLogin: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
-        <div className="text-center">
-          <Lock className="mx-auto h-12 w-12 text-primary" />
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">Panel administracyjny</h2>
-          <p className="mt-2 text-sm text-gray-600">Dostęp tylko dla autoryzowanych użytkowników</p>
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <Card className="w-full max-w-md shadow-md">
+        <CardHeader className="text-center pb-6">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-4">
+            <Lock className="h-6 w-6 text-primary" />
+          </div>
+          <CardTitle className="text-2xl font-bold">Panel administracyjny</CardTitle>
+          <CardDescription>
+            Dostęp tylko dla autoryzowanych użytkowników
+          </CardDescription>
+        </CardHeader>
         
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="email" className="block text-sm font-medium">
                 Email
               </label>
               <Input
@@ -38,13 +42,12 @@ const AdminLogin: React.FC = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1"
                 placeholder="admin@example.com"
               />
             </div>
             
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <div className="space-y-2">
+              <label htmlFor="password" className="block text-sm font-medium">
                 Hasło
               </label>
               <Input
@@ -55,28 +58,31 @@ const AdminLogin: React.FC = () => {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1"
                 placeholder="••••••••"
               />
             </div>
-          </div>
 
-          <Button 
-            type="submit" 
-            className="w-full" 
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Logowanie...
-              </>
-            ) : (
-              'Zaloguj się'
-            )}
-          </Button>
-        </form>
-      </div>
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Logowanie...
+                </>
+              ) : (
+                'Zaloguj się'
+              )}
+            </Button>
+          </form>
+        </CardContent>
+        
+        <CardFooter className="justify-center text-center text-xs text-muted-foreground">
+          <p>© {new Date().getFullYear()} Secret Sparks. Wszelkie prawa zastrzeżone.</p>
+        </CardFooter>
+      </Card>
     </div>
   );
 };
