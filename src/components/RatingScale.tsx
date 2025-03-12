@@ -35,11 +35,11 @@ const RatingScale: React.FC<RatingScaleProps> = ({
   onChange,
 }) => {
   // Punkty kontrolne dla krzywej Beziera
-  // Zmodyfikowane punkty, aby punkt "Zdecydowanie tak!" był najwyżej
+  // Zmodyfikowane punkty, aby punkt "Zdecydowanie tak!" był jeszcze wyżej
   const controlPoints = {
     p0: { x: 20, y: 170 },    // Początek
     p1: { x: 100, y: 120 },   // Kontrolny 1
-    p2: { x: 200, y: 30 },    // Kontrolny 2 - obniżony dla lepszego wzniesienia
+    p2: { x: 200, y: 20 },    // Kontrolny 2 - jeszcze bardziej obniżony dla większego wzniesienia
     p3: { x: 380, y: 120 }    // Koniec - na poziomie "Może warto rozważyć"
   };
   
