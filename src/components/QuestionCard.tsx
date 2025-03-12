@@ -5,6 +5,7 @@ import RatingScale from './RatingScale';
 import { useSurvey } from '@/contexts/SurveyContext';
 import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, Image as ImageIcon } from 'lucide-react';
 import { toast } from 'sonner';
+import { Button } from './ui/button';
 
 interface QuestionCardProps {
   isPartnerSurvey?: boolean;
@@ -240,26 +241,16 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
                 <span className="text-sm">Wstecz</span>
               </button>
               
-              {/* Super uproszczona wersja przycisku */}
-              <button
+              {/* Zmodyfikowany przycisk z nowym wyglądem - bardziej widoczny, czerwony */}
+              <Button
                 onClick={handleNext}
-                type="button"
-                style={{
-                  backgroundColor: hasAnswer ? (isLastQuestion ? '#800000' : '#000') : '#ccc',
-                  color: 'white',
-                  padding: '12px 32px',
-                  borderRadius: '9999px',
-                  cursor: hasAnswer ? 'pointer' : 'not-allowed',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  transition: 'all 0.2s',
-                  opacity: hasAnswer ? 1 : 0.5
-                }}
+                disabled={!hasAnswer}
+                variant="destructive" 
+                className="px-6 py-2 rounded-full transition-all duration-200 font-medium flex items-center gap-2"
               >
-                <span style={{fontSize: '14px'}}>{nextButtonText}</span>
-                <ArrowRight style={{width: '16px', height: '16px'}} />
-              </button>
+                <span>{nextButtonText}</span>
+                <ArrowRight className="w-4 h-4" />
+              </Button>
             </div>
           </div>
         </div>
@@ -269,4 +260,3 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
 };
 
 export default QuestionCard;
-
