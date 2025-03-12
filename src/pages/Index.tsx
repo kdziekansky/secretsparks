@@ -260,7 +260,7 @@ const Index = () => {
           <h2 className="text-4xl md:text-5xl font-bold mb-16 text-left">Nasz raport</h2>
           
           {/* Two-column layout with separator */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-16 mb-16 relative">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-20 mb-16 relative">
             {/* Left column - 2 columns wide */}
             <div className="md:col-span-2">
               <h3 className="text-3xl font-bold mb-8 text-left">Co zawiera raport</h3>
@@ -296,18 +296,10 @@ const Index = () => {
                   </div>
                 </div>
               </div>
-              
-              <div className="mt-10">
-                <h3 className="text-2xl font-bold mb-5 text-left">Otrzymasz wyjątkowy dokument</h3>
-                <p className="text-lg mb-6">
-                  Nasz raport to nie tylko suche fakty, ale praktyczny przewodnik, który pomoże Wam 
-                  zbliżyć się do siebie i odkryć nowe wymiary Waszej relacji.
-                </p>
-              </div>
             </div>
             
             {/* Separator - pokazuje się tylko na większych ekranach */}
-            <div className="hidden md:block absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#9F9EA1]/30 to-transparent" aria-hidden="true"></div>
+            <div className="hidden md:block absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#9F9EA1]/30 to-transparent z-10" aria-hidden="true"></div>
             
             {/* Right column - Email editor mockup - 3 columns wide */}
             <div className="md:col-span-3 flex flex-col justify-center">
