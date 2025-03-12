@@ -82,7 +82,7 @@ const HeroSection = () => {
             </div>
             <h3 className="text-2xl font-bold mb-4">Odkryjcie siebie</h3>
             <p className="text-muted-foreground">
-              Poznajcie siebie w nowym świetle. Ujawniamy te pragnienia, które łączą Was oboje, tworząc mapę wspólnych fascynacji i otwierając drzwi do głębszej bliskości. Odkryjcie razem wymiary Waszej relacji, o których istnieniu być może nawet nie wiedzieliście.
+              Poznajcie siebie w nowym świetle. Ujawniamy te pragnienia, które Was łączą, tworząc mapę wspólnych fascynacji i otwierając drzwi do głębszej bliskości. Odkryjcie razem wymiary Waszej relacji, o których istnieniu nie wiedzieliście.
             </p>
           </div>
           
