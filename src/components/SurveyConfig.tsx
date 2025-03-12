@@ -2,6 +2,7 @@
 import React from 'react';
 import { useSurvey, Gender, GameLevel } from '@/contexts/SurveyContext';
 import { Button } from '@/components/ui/button';
+import { User, UserCircle, Smile, Zap, SmilePlus } from 'lucide-react';
 
 const SurveyConfig: React.FC = () => {
   const { 
@@ -35,7 +36,7 @@ const SurveyConfig: React.FC = () => {
               }`}
             >
               <div className="flex items-center justify-center w-12 h-12 bg-pink-100 rounded-full mr-4">
-                <img src="/kobieta.svg" alt="Kobieta" className="w-6 h-6" />
+                <User className="w-6 h-6 text-pink-500" />
               </div>
               <span>Kobieta</span>
             </button>
@@ -49,7 +50,7 @@ const SurveyConfig: React.FC = () => {
               }`}
             >
               <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mr-4">
-                <img src="/mężczyzna.svg" alt="Mężczyzna" className="w-6 h-6" />
+                <UserCircle className="w-6 h-6 text-blue-500" />
               </div>
               <span>Mężczyzna</span>
             </button>
@@ -70,7 +71,7 @@ const SurveyConfig: React.FC = () => {
               }`}
             >
               <div className="flex items-center justify-center w-12 h-12 bg-pink-100 rounded-full mr-4">
-                <img src="/kobieta.svg" alt="Kobieta" className="w-6 h-6" />
+                <User className="w-6 h-6 text-pink-500" />
               </div>
               <span>Kobieta</span>
             </button>
@@ -84,7 +85,7 @@ const SurveyConfig: React.FC = () => {
               }`}
             >
               <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mr-4">
-                <img src="/mężczyzna.svg" alt="Mężczyzna" className="w-6 h-6" />
+                <UserCircle className="w-6 h-6 text-blue-500" />
               </div>
               <span>Mężczyzna</span>
             </button>
@@ -105,7 +106,7 @@ const SurveyConfig: React.FC = () => {
               }`}
             >
               <div className="flex items-center justify-center w-12 h-12 bg-yellow-100 rounded-full mr-4">
-                <img src="/Odkrywaj intymność.svg" alt="Odkrywaj intymność" className="w-6 h-6" />
+                <Smile className="w-6 h-6 text-yellow-500" />
               </div>
               <div>
                 <span>Odkrywaj intymność</span>
@@ -121,7 +122,7 @@ const SurveyConfig: React.FC = () => {
               }`}
             >
               <div className="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-full mr-4">
-                <img src="/Eksploruj pragnienia.svg" alt="Eksploruj pragnienia" className="w-6 h-6" />
+                <SmilePlus className="w-6 h-6 text-orange-500" />
               </div>
               <div>
                 <span>Eksploruj pragnienia</span>
@@ -137,7 +138,7 @@ const SurveyConfig: React.FC = () => {
               }`}
             >
               <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full mr-4">
-                <img src="/przekraczaj granice.svg" alt="Przekraczaj granice" className="w-6 h-6" />
+                <Zap className="w-6 h-6 text-purple-500" />
               </div>
               <div>
                 <span>Przekraczaj granice</span>
