@@ -955,4 +955,7 @@ export const questionsDatabase: Question[] = [
     illustration: '/placeholder.svg',
     forConfig: { 
       userGender: 'male',
-      partnerGender: 'female
+      partnerGender: 'female',
+      gameLevel: ['discover', 'explore'] 
+    }
+  }
