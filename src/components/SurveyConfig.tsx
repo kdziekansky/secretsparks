@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useSurvey } from '@/contexts/SurveyContext';
 import { Button } from '@/components/ui/button';
@@ -163,7 +162,7 @@ const SurveyConfig: React.FC = () => {
               htmlFor="ageConfirmation" 
               className="text-foreground font-medium cursor-pointer"
             >
-              Oświadczam, że ukończyłem/-am 18 rok życia i wyrażam zgodę na oglądanie treści o charakterze jednoznacznie seksualnym
+              Oświadczam, że ukończyłem/-am 18 rok życia
             </Label>
           </div>
         </div>
