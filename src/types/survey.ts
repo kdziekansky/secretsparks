@@ -21,7 +21,6 @@ export interface Question {
   };
   pairGroup?: string;
   pairPriority?: number;
-  together?: boolean; // Oznaczenie pytań, które powinny występować parami
 }
 
 export interface SurveyContextType {

@@ -1,3 +1,4 @@
+
 import { Question } from '@/types/survey';
 
 export const questionsDatabase: Question[] = [
@@ -869,75 +870,5 @@ export const questionsDatabase: Question[] = [
       partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
-  },
-  // POZYCJE SEKSUALNE DLA PAR HETEROSEKSUALNYCH
-  { 
-    id: 'h-p1', 
-    text: 'Pozycja Amazonki',
-    description: "Czy chcesz poczuć pełną kontrolę i intensyfikację doznań? Pozycja Amazonki daje możliwość prowadzenia rytmu i eksplorowania różnych kątów penetracji. Dzięki bliskiemu kontaktowi możecie obserwować swoje reakcje i budować napięcie, koncentrując się na własnym tempie oraz rytmie oddechu.",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      userGender: 'female',
-      partnerGender: 'male',
-      gameLevel: ['discover', 'explore'] 
-    }
-  },
-  { 
-    id: 'h-p2', 
-    text: 'Pozycja misjonarska',
-    description: "Czy cenisz bliskość i możliwość patrzenia sobie w oczy podczas intymnych chwil? Pozycja misjonarska to klasyczna i komfortowa forma bliskości, pozwalająca na głęboki kontakt zarówno fizyczny, jak i emocjonalny. Subtelne zmiany kąta lub tempa mogą całkowicie zmienić odczucia i sprawić, że ta pozycja stanie się jeszcze bardziej satysfakcjonująca.",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      userGender: 'female',
-      partnerGender: 'male',
-      gameLevel: ['discover'] 
-    }
-  },
-  { 
-    id: 'h-p3', 
-    text: 'Pozycja "na pieska"',
-    description: "Czy masz ochotę na pozycję, która zapewnia intensywne doznania i daje przestrzeń do eksperymentowania? Pozycja \"na pieska\" pozwala na głębszą penetrację, a jednocześnie daje możliwość eksploracji dynamiki dominacji i uległości. Możecie dostosować kąt, tempo i intensywność do własnych preferencji, odkrywając nowe sposoby na budowanie napięcia i przyjemności.",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      userGender: 'female',
-      partnerGender: 'male',
-      gameLevel: ['discover', 'explore', 'exceed'] 
-    }
-  },
-  { 
-    id: 'h-p4', 
-    text: 'Pozycja "wodnik"',
-    description: "Czy szukasz pozycji, która łączy wygodę z nowymi doznaniami? Pozycja \"wodnik\" pozwala na pełny kontakt ciał i eksplorację różnorodnych ruchów w rytmie, który sprzyja zarówno delikatnej, jak i intensywniejszej bliskości. Idealna dla osób ceniących kreatywność i subtelne zmiany tempa.",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      userGender: 'female',
-      partnerGender: 'male',
-      gameLevel: ['discover', 'explore'] 
-    }
-  },
-  { 
-    id: 'h-p5', 
-    text: 'Pozycja "syreny"',
-    description: "Czy chcesz doświadczyć pozycji, która sprzyja zarówno bliskości, jak i głębokim doznaniom? Pozycja \"syreny\" opiera się na delikatnych, płynnych ruchach i pełnym kontakcie ciał, co zwiększa intensywność przeżyć. Możesz eksplorować różne kąty, dostosowując ruchy do własnego komfortu i preferencji.",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      userGender: 'female',
-      partnerGender: 'male',
-      gameLevel: ['discover', 'explore', 'exceed'] 
-    }
-  },
-  { 
-    id: 'h-p6', 
-    text: 'Pozycja "na królową"',
-    description: "Czy masz ochotę na pozycję, która łączy komfort i możliwość kontroli tempa? Pozycja \"na królową\" pozwala na eksplorowanie głębszych doznań oraz bliskości, dając jednocześnie pełną swobodę ruchów i dostosowania rytmu do własnych potrzeb.",
-    illustration: '/placeholder.svg',
-    forConfig: { 
-      userGender: 'female',
-      partnerGender: 'male',
-      gameLevel: ['discover'] 
-    }
-  },
-  { 
-    id: 'h-p7', 
-    text: 'Pozycja "jeździec"',
-    description: "Czy chcesz w pełni kontrolować rytm
+  }
+];
