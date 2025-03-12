@@ -151,12 +151,12 @@ const SurveyConfig: React.FC = () => {
         </div>
         
         {/* Age Confirmation */}
-        <div className="flex items-center space-x-2 border border-border rounded-lg p-4">
+        <div className="flex items-center space-x-2 border border-primary/30 bg-primary/5 rounded-lg p-5 hover:border-primary/50 transition-all">
           <Checkbox 
             id="ageConfirmation" 
             checked={ageConfirmed}
             onCheckedChange={(checked) => setAgeConfirmed(checked as boolean)}
-            className="data-[state=checked]:bg-primary"
+            className="h-5 w-5 data-[state=checked]:bg-primary"
           />
           <Label 
             htmlFor="ageConfirmation" 
@@ -167,7 +167,7 @@ const SurveyConfig: React.FC = () => {
         </div>
       </div>
 
-      <div className="mt-10 flex justify-center">
+      <div className="mt-10 flex flex-col items-center">
         <Button 
           onClick={completeConfig} 
           disabled={!canContinue}
@@ -175,8 +175,9 @@ const SurveyConfig: React.FC = () => {
         >
           Rozpocznij ankietę
         </Button>
+        
         {!ageConfirmed && userGender !== null && partnerGender !== null && gameLevel !== null && (
-          <p className="text-red-500 text-sm mt-2 text-center">
+          <p className="text-red-500 text-sm mt-4 text-center">
             Aby kontynuować, musisz potwierdzić że ukończyłeś/-aś 18 lat
           </p>
         )}
