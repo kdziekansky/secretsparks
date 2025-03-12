@@ -29,8 +29,11 @@ const Header = () => {
         </Link>
         
         <nav className="hidden md:flex items-center space-x-8">
-          <Link to="/about" className="nav-link">
+          <Link to="/o-nas" className="nav-link">
             O nas
+          </Link>
+          <Link to="/zasady" className="nav-link">
+            Zasady
           </Link>
           <Link to="/faq" className="nav-link">
             FAQ
@@ -50,7 +53,7 @@ const Header = () => {
                 <Link to="/survey" className="w-full">Ankieta</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to="/blog" className="w-full">Blog</Link>
+                <Link to="/regulamin" className="w-full">Regulamin</Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -79,8 +82,11 @@ const Header = () => {
       {isMenuOpen && (
         <div className="md:hidden p-4 pb-6 border-t border-border/40 bg-[#05050a]">
           <nav className="flex flex-col space-y-4">
-            <Link to="/about" className="nav-link-mobile">
+            <Link to="/o-nas" className="nav-link-mobile">
               O nas
+            </Link>
+            <Link to="/zasady" className="nav-link-mobile">
+              Zasady
             </Link>
             <Link to="/faq" className="nav-link-mobile">
               FAQ
@@ -94,8 +100,8 @@ const Header = () => {
             <Link to="/survey" className="nav-link-mobile">
               Ankieta
             </Link>
-            <Link to="/blog" className="nav-link-mobile">
-              Blog
+            <Link to="/regulamin" className="nav-link-mobile">
+              Regulamin
             </Link>
             <Link to="/survey">
               <Button className="w-full rounded-full bg-primary hover:bg-primary/80 mt-2">

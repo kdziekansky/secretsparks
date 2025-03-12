@@ -14,6 +14,8 @@ import ThankYouPage from "./pages/ThankYouPage";
 import FAQPage from "./pages/FAQPage";
 import SecurityPage from "./pages/SecurityPage";
 import SecretAIPage from "./pages/SecretAIPage";
+import RulesPage from "./pages/RulesPage";
+import TermsPage from "./pages/TermsPage";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminOrders from "./pages/admin/AdminOrders";
@@ -44,11 +46,9 @@ const App = () => {
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/idea" element={<Index />} />
-                  <Route path="/zasady-gry" element={<Index />} />
-                  <Route path="/priveai" element={<Index />} />
+                  <Route path="/zasady" element={<RulesPage />} />
+                  <Route path="/regulamin" element={<TermsPage />} />
                   <Route path="/o-nas" element={<Index />} />
-                  <Route path="/kontakt" element={<Index />} />
-                  <Route path="/regulamin" element={<Index />} />
                   <Route path="/faq" element={<FAQPage />} />
                   <Route path="/bezpieczenstwo" element={<SecurityPage />} />
                   <Route path="/secretai" element={<SecretAIPage />} />
