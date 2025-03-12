@@ -29,33 +29,6 @@ const getRandomizedQuestions = (questions: Question[], config: SurveyConfig, max
       isPassing = false;
     }
     
-    // Specjalna walidacja dla pytań męsko-męskich
-    if (userGender === 'male' && partnerGender === 'male') {
-      if (config.userGender !== 'male' || config.partnerGender !== 'male') {
-        console.log(`Pytanie ${question.id} odrzucone: dedykowane dla par M-M, aktualna konfiguracja: ${config.userGender}-${config.partnerGender}`);
-        isPassing = false;
-      }
-    }
-    
-    // Specjalna walidacja dla pytań damsko-damskich
-    if (userGender === 'female' && partnerGender === 'female') {
-      if (config.userGender !== 'female' || config.partnerGender !== 'female') {
-        console.log(`Pytanie ${question.id} odrzucone: dedykowane dla par K-K, aktualna konfiguracja: ${config.userGender}-${config.partnerGender}`);
-        isPassing = false;
-      }
-    }
-    
-    // Dodatkowa walidacja dla pytań heteroseksualnych
-    if (userGender && partnerGender) {
-      const isQuestionHetero = userGender !== partnerGender;
-      const isConfigHetero = config.userGender !== config.partnerGender;
-      
-      if (isQuestionHetero !== isConfigHetero) {
-        console.log(`Pytanie ${question.id} odrzucone: niezgodność heteroseksualności, pytanie: ${isQuestionHetero ? 'hetero' : 'homo'}, konfiguracja: ${isConfigHetero ? 'hetero' : 'homo'}`);
-        isPassing = false;
-      }
-    }
-    
     // Sprawdź poziom gry
     if (gameLevel && !gameLevel.includes(config.gameLevel as any)) {
       console.log(`Pytanie ${question.id} odrzucone: poziom gry ${gameLevel} nie zawiera ${config.gameLevel}`);
@@ -86,26 +59,40 @@ const getRandomizedQuestions = (questions: Question[], config: SurveyConfig, max
     }
   });
 
+  // Posortuj pytania w grupach według pairPriority (jeśli istnieje)
+  Object.keys(groupedQuestions).forEach(group => {
+    groupedQuestions[group].sort((a, b) => {
+      const priorityA = a.pairPriority || 0;
+      const priorityB = b.pairPriority || 0;
+      return priorityA - priorityB;
+    });
+  });
+
   // Wybierz pytania
   const result: Question[] = [];
+  
+  // Najpierw oblicz ile możemy wybrać par pytań
   const availableGroups = Object.keys(groupedQuestions);
-  const groupsToSelect = Math.min(Math.floor(maxQuestions / 2), availableGroups.length);
+  const maxPairs = Math.floor(maxQuestions / 2);
+  const groupsToSelect = Math.min(maxPairs, availableGroups.length);
+  
+  // Teraz oblicz ile zostanie miejsca na pojedyncze pytania
   let remainingSlots = maxQuestions - (groupsToSelect * 2);
   
-  // Losowo wybierz grupy i pojedyncze pytania
+  // Losowo wybierz grupy
   const selectedGroups = availableGroups
     .sort(() => 0.5 - Math.random())
     .slice(0, groupsToSelect);
   
+  // Losowo wybierz pojedyncze pytania
   const selectedSingles = singleQuestions
     .sort(() => 0.5 - Math.random())
     .slice(0, remainingSlots);
 
   // Dodaj wybrane pytania do wyniku
   selectedGroups.forEach(group => {
-    const sortedGroupQuestions = groupedQuestions[group]
-      .sort((a, b) => (a.pairPriority || 0) - (b.pairPriority || 0));
-    result.push(...sortedGroupQuestions);
+    // Dodajemy wszystkie pytania z grupy, zachowując ich sortowanie według pairPriority
+    result.push(...groupedQuestions[group]);
   });
   
   result.push(...selectedSingles);
