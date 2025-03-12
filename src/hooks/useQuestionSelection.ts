@@ -1,8 +1,7 @@
-
 import { useMemo } from 'react';
 import { Question, SurveyConfig } from '@/types/survey';
 
-const getRandomizedQuestions = (questions: Question[], config: SurveyConfig, maxQuestions: number = 15) => {
+const getRandomizedQuestions = (questions: Question[], config: SurveyConfig, maxQuestions: number = 20) => {
   // Filtruj pytania na podstawie konfiguracji
   console.log('Filtrowanie pytań dla konfiguracji:', config);
   
@@ -71,34 +70,70 @@ const getRandomizedQuestions = (questions: Question[], config: SurveyConfig, max
   // Wybierz pytania
   const result: Question[] = [];
   
-  // Najpierw oblicz ile możemy wybrać par pytań
+  // WAŻNA ZMIANA: Ograniczamy liczbę par pytań do maksymalnie 2
   const availableGroups = Object.keys(groupedQuestions);
-  const maxPairs = Math.floor(maxQuestions / 2);
-  const groupsToSelect = Math.min(maxPairs, availableGroups.length);
+  const MAX_PAIRS_ALLOWED = 2; // Maksymalnie 2 pary pytań
+  const groupsToSelect = Math.min(MAX_PAIRS_ALLOWED, availableGroups.length);
   
   // Teraz oblicz ile zostanie miejsca na pojedyncze pytania
-  let remainingSlots = maxQuestions - (groupsToSelect * 2);
+  let pairsCount = 0; // Licznik dodanych par
+  let addedPairQuestions = 0; // Licznik pytań dodanych w parach
   
   // Losowo wybierz grupy
   const selectedGroups = availableGroups
     .sort(() => 0.5 - Math.random())
     .slice(0, groupsToSelect);
   
-  // Losowo wybierz pojedyncze pytania
-  const selectedSingles = singleQuestions
-    .sort(() => 0.5 - Math.random())
-    .slice(0, remainingSlots);
-
-  // Dodaj wybrane pytania do wyniku
+  // Dodaj wybrane pary do wyniku
   selectedGroups.forEach(group => {
-    // Dodajemy wszystkie pytania z grupy, zachowując ich sortowanie według pairPriority
-    result.push(...groupedQuestions[group]);
+    const pairQuestions = groupedQuestions[group];
+    if (pairQuestions.length > 0) {
+      result.push(...pairQuestions);
+      pairsCount++;
+      addedPairQuestions += pairQuestions.length;
+      console.log(`Dodano parę pytań '${group}' (${pairQuestions.length} pytań)`);
+    }
   });
   
-  result.push(...selectedSingles);
+  console.log(`Dodano ${pairsCount} par, łącznie ${addedPairQuestions} pytań`);
   
-  console.log(`Wybrano ${result.length} pytań dla konfiguracji: `, config);
+  // Oblicz ile pojedynczych pytań można jeszcze dodać
+  const remainingSlots = maxQuestions - addedPairQuestions;
+  console.log(`Pozostało miejsce na ${remainingSlots} pojedynczych pytań`);
   
+  // Losowo wybierz pojedyncze pytania
+  if (remainingSlots > 0 && singleQuestions.length > 0) {
+    const selectedSingles = singleQuestions
+      .sort(() => 0.5 - Math.random())
+      .slice(0, remainingSlots);
+    
+    result.push(...selectedSingles);
+    console.log(`Dodano ${selectedSingles.length} pojedynczych pytań`);
+  }
+  
+  console.log(`Wybrano łącznie ${result.length} pytań dla konfiguracji: `, config);
+  
+  // Jeśli mamy za mało pytań, możemy losowo wybrać więcej z pozostałych pojedynczych
+  if (result.length < maxQuestions && singleQuestions.length > 0) {
+    const additionalNeeded = maxQuestions - result.length;
+    console.log(`Za mało pytań. Dodajemy jeszcze ${additionalNeeded} dodatkowych pytań`);
+    
+    // Usuń pytania, które już zostały wybrane
+    const remainingSingles = singleQuestions.filter(
+      q => !result.some(selected => selected.id === q.id)
+    );
+    
+    if (remainingSingles.length > 0) {
+      const additionalSingles = remainingSingles
+        .sort(() => 0.5 - Math.random())
+        .slice(0, additionalNeeded);
+      
+      result.push(...additionalSingles);
+      console.log(`Dodano ${additionalSingles.length} dodatkowych pojedynczych pytań`);
+    }
+  }
+  
+  // Upewnij się, że nie przekraczamy maksymalnej liczby pytań
   return result.slice(0, maxQuestions);
 };
 
@@ -148,7 +183,7 @@ export const useQuestionSelection = (
     if (!config.isConfigComplete) return [];
     
     // For regular user survey, generate randomized questions
-    const randomizedQuestions = getRandomizedQuestions(questions, config, 15);
+    const randomizedQuestions = getRandomizedQuestions(questions, config, 20);
     console.log(`Generated ${randomizedQuestions.length} randomized questions for user`);
     return randomizedQuestions;
   }, [questions, config, selectedQuestionIds, isPartnerSurvey]);
