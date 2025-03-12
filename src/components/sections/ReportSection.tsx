@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 
 const ReportSection = () => {
   return (
-    <section className="py-16 bg-[#0a0a12]">
+    <section className="py-16 bg-[#0c0c14]">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl md:text-5xl font-bold mb-16 text-left">Nasz raport</h2>
         
