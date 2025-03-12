@@ -73,7 +73,7 @@ const ReportSection = () => {
           <div className="flex flex-col h-full">
             <h3 className="text-3xl font-bold mb-8 text-center">Otrzymaj spersonalizowany raport</h3>
             <p className="text-lg text-muted-foreground text-center mb-8">
-              Unikalny raport tworzony jest tylko dla Was, na podstawie Waszych ankiet. Nie poznacie swoich odpowiedzi nawzajem.
+              Nie poznacie swoich odpowiedzi nawzajem. Za to otrzymacie spersonalizowany raport.
             </p>
             
             {/* Email editor interface - dostosowane wymiary */}

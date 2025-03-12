@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -82,7 +81,7 @@ const HeroSection = () => {
             </div>
             <h3 className="text-2xl font-bold mb-4">Odkryjcie siebie</h3>
             <p className="text-muted-foreground">
-              Poznajcie siebie w zupełnie nowym świetle. Secret Sparks ujawnia te pragnienia, które łączą Was oboje, tworząc mapę wspólnych fascynacji i otwierając drzwi do głębszej bliskości.
+              Poznajcie siebie w zupełnie nowym świetle. Secret Sparks ujawnia te pragnienia, które łączą Was oboje, tworząc mapę wspólnych fascynacji i otwierając drzwi do głębszej bliskości. Odkryjcie razem wymiary Waszej relacji, o których istnieniu być może nawet nie wiedzieliście.
             </p>
           </div>
           
