@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import RatingScale from './RatingScale';
 import { useSurvey } from '@/contexts/SurveyContext';
-import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, Image as ImageIcon, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from './ui/button';
 
@@ -32,11 +32,13 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [imageBlurred, setImageBlurred] = useState(true);
   
   // Reset image state when question changes
   useEffect(() => {
     setImageLoaded(false);
     setImageError(false);
+    setImageBlurred(true);
   }, [currentQuestion?.id]);
   
   // Directly check for undefined, not null
@@ -112,6 +114,10 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     setImageLoaded(false);
   };
 
+  const toggleImageBlur = () => {
+    setImageBlurred(!imageBlurred);
+  };
+
   if (!currentQuestion) return null;
   
   const truncateDescription = (text: string, length = 150) => {
@@ -133,7 +139,11 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
         {/* Left side - Illustration - z gradientowym tłem */}
         <div className="md:w-2/5 p-0 flex items-center justify-center bg-gradient-to-br from-accent/30 to-accent/10 rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none overflow-hidden">
           {currentQuestion.illustration && !imageError ? (
-            <div className="w-full h-full rounded-lg overflow-hidden" style={{ aspectRatio: '2/3' }}>
+            <div 
+              className="w-full h-full rounded-lg overflow-hidden relative" 
+              style={{ aspectRatio: '2/3' }}
+              onClick={toggleImageBlur}
+            >
               {/* Placeholder while image loads */}
               {!imageLoaded && (
                 <div className="w-full h-full bg-accent/20 flex flex-col items-center justify-center text-muted-foreground">
@@ -144,30 +154,60 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
               
               {/* Try to display SVG using object tag if it's an SVG */}
               {currentQuestion.illustration.toLowerCase().endsWith('.svg') ? (
-                <object 
-                  data={currentQuestion.illustration} 
-                  type="image/svg+xml"
-                  className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                  onLoad={handleImageLoad}
-                  onError={handleImageError}
-                  aria-label={currentQuestion.text}
-                  style={{ width: '100%', height: '100%', minHeight: '300px' }}
-                >
-                  <div className="w-full h-full bg-accent/20 flex flex-col items-center justify-center text-muted-foreground">
-                    <ImageIcon className="h-12 w-12 mb-2 opacity-50" />
-                    <span>Ilustracja {questionNumber || currentQuestion.id}</span>
-                  </div>
-                </object>
+                <>
+                  <object 
+                    data={currentQuestion.illustration} 
+                    type="image/svg+xml"
+                    className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                    onLoad={handleImageLoad}
+                    onError={handleImageError}
+                    aria-label={currentQuestion.text}
+                    style={{ width: '100%', height: '100%', minHeight: '300px' }}
+                  >
+                    <div className="w-full h-full bg-accent/20 flex flex-col items-center justify-center text-muted-foreground">
+                      <ImageIcon className="h-12 w-12 mb-2 opacity-50" />
+                      <span>Ilustracja {questionNumber || currentQuestion.id}</span>
+                    </div>
+                  </object>
+                  
+                  {/* Blur overlay for SVG */}
+                  {imageBlurred && (
+                    <div className="absolute inset-0 backdrop-blur-lg bg-black/50 flex flex-col items-center justify-center gap-3 cursor-pointer">
+                      <div className="bg-destructive text-white p-2 rounded-full">
+                        <AlertTriangle className="h-8 w-8" />
+                      </div>
+                      <p className="text-white font-bold text-xl">18+</p>
+                      <p className="text-white text-sm px-4 text-center max-w-xs">
+                        Kliknij, aby wyświetlić. Uwaga - może zawierać treści pornograficzne
+                      </p>
+                    </div>
+                  )}
+                </>
               ) : (
                 /* Normal image for non-SVG */
-                <img 
-                  src={currentQuestion.illustration} 
-                  alt={currentQuestion.text} 
-                  className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                  onLoad={handleImageLoad}
-                  onError={handleImageError}
-                  style={{ width: '100%', height: '100%', minHeight: '300px' }}
-                />
+                <>
+                  <img 
+                    src={currentQuestion.illustration} 
+                    alt={currentQuestion.text} 
+                    className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                    onLoad={handleImageLoad}
+                    onError={handleImageError}
+                    style={{ width: '100%', height: '100%', minHeight: '300px' }}
+                  />
+                  
+                  {/* Blur overlay for images */}
+                  {imageBlurred && (
+                    <div className="absolute inset-0 backdrop-blur-lg bg-black/50 flex flex-col items-center justify-center gap-3 cursor-pointer">
+                      <div className="bg-destructive text-white p-2 rounded-full">
+                        <AlertTriangle className="h-8 w-8" />
+                      </div>
+                      <p className="text-white font-bold text-xl">18+</p>
+                      <p className="text-white text-sm px-4 text-center max-w-xs">
+                        Kliknij, aby wyświetlić. Uwaga - może zawierać treści pornograficzne
+                      </p>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           ) : (
