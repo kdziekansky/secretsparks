@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button';
 
 const ReportSection = () => {
   return (
-    <section className="section-padding bg-[#070711]">
-      <div className="section-container">
+    <section className="py-16 bg-[#0a0a12]">
+      <div className="container mx-auto px-4">
         <h2 className="text-4xl md:text-5xl font-bold mb-16 text-left">Nasz raport</h2>
         
         {/* Two-column layout with consistent height */}
