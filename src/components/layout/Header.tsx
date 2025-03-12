@@ -24,7 +24,7 @@ const Header = () => {
           <img 
             src="/lovable-uploads/0537e49e-f4b0-49a8-bedb-41f3876d6f50.png" 
             alt="Secret Sparks Logo" 
-            className="h-10"
+            className="h-12"
           />
         </Link>
         
