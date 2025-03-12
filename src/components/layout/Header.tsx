@@ -1,14 +1,8 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, X, Menu, Shield, Bot } from 'lucide-react';
+import { X, Menu, Shield, Bot } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -44,19 +38,6 @@ const Header = () => {
           <Link to="/secretai" className="nav-link flex items-center">
             <Bot className="h-4 w-4 mr-1" /> Secret AI
           </Link>
-          <DropdownMenu>
-            <DropdownMenuTrigger className="nav-link flex items-center">
-              Więcej <ChevronDown className="ml-1 h-4 w-4" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem asChild>
-                <Link to="/survey" className="w-full">Ankieta</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/regulamin" className="w-full">Regulamin</Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
         </nav>
         
         {/* Mobile menu button */}
@@ -96,9 +77,6 @@ const Header = () => {
             </Link>
             <Link to="/secretai" className="nav-link-mobile flex items-center">
               <Bot className="h-4 w-4 mr-2" /> Secret AI
-            </Link>
-            <Link to="/survey" className="nav-link-mobile">
-              Ankieta
             </Link>
             <Link to="/regulamin" className="nav-link-mobile">
               Regulamin
