@@ -46,7 +46,7 @@ const HeroSection = () => {
           
           {/* Prawa kolumna - aplikacja mobilna */}
           <div className="glass-card flex items-center justify-center p-8">
-            <div className="w-full rounded-2xl overflow-hidden">
+            <div className="w-[95%] rounded-2xl overflow-hidden">
               <img 
                 src="/lovable-uploads/4ded2cf2-a974-478a-b815-f5d1f9ccfdbf.png" 
                 alt="Aplikacja mobilna" 
