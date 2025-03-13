@@ -1,6 +1,7 @@
+
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from '../_shared/cors.ts'
-import { Resend } from 'https://esm.sh/resend@1.0.0'
+import { Resend } from 'https://esm.sh/resend@2.0.0'
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
@@ -30,7 +31,7 @@ Deno.serve(async (req) => {
     )
 
     // Initialize Resend - z dodatkowym logowaniem
-    console.log("Inicjalizacja klienta Resend...");
+    console.log("Inicjalizacja klienta Resend z wersją 2.0.0...");
     let resend;
     try {
       resend = new Resend(resendApiKey);
@@ -38,16 +39,6 @@ Deno.serve(async (req) => {
     } catch (resendInitError) {
       console.error("Błąd inicjalizacji klienta Resend:", resendInitError);
       throw new Error(`Nie można zainicjalizować klienta Resend: ${resendInitError.message}`);
-    }
-
-    // POMOCNICZE: Sprawdź działanie Resend
-    try {
-      console.log("Sprawdzam połączenie z Resend API...");
-      // Ta część działa tylko w nowszych wersjach Resend API - można ją zakomentować, jeśli powoduje błędy
-      // const domains = await resend.domains.list();
-      // console.log("Połączenie z Resend API działa:", domains);
-    } catch (testError) {
-      console.log("Test połączenia z Resend nie powiódł się, ale kontynuujemy:", testError.message);
     }
 
     // Get order ID from request
