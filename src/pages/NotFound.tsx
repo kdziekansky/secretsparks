@@ -14,11 +14,14 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-background">
       <div className="glass-panel p-8 max-w-xl w-full text-center animate-scale-in">
         <h1 className="text-5xl font-bold mb-6">404</h1>
         <p className="text-xl text-muted-foreground mb-8">
           Ta strona nie istnieje
+        </p>
+        <p className="text-sm text-muted-foreground mb-4">
+          Adres URL: {location.pathname}
         </p>
         <Link
           to="/"
