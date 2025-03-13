@@ -17,7 +17,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-m2', 
     text: 'Pozycja misjonarska',
     description: "Pozycja klasyczna, z mężczyzną na górze - ceniona za bliskość i intymność. Umożliwia głęboki kontakt wzrokowy i pocałunki, budując więź podczas stosunku.",
-    illustration: '/images/illustrations/techniques/Pozycja jeździec (discover).png',
+    illustration: '/images/illustrations/techniques/Pozycja misjonarska (discover).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -28,7 +28,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-m3', 
     text: 'Pozycja "na pieska"',
     description: "Pozycja od tyłu, która pozwala na głębszą penetrację. Daje dostęp do punktu G partnerki i umożliwia swobodne ruchy biodrami, zwiększając intensywność doznań.",
-    illustration: '/images/illustrations/techniques/doggy.svg',
+    illustration: '/images/illustrations/techniques/Pozycja _na pieska_ (discover, explore, exceed).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -39,7 +39,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-m6', 
     text: 'Pozycja "na królową"',
     description: "Kobieta leży na plecach z uniesionymi biodrami, a Ty klęczysz. Ta pozycja pozwala na głęboką penetrację przy jednoczesnym kontakcie wzrokowym i pieszczeniu ciała partnerki.",
-    illustration: '/images/illustrations/techniques/Pozycja na królową (discover).png',
+    illustration: '/images/illustrations/techniques/Pozycja _na królową_ (discover).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -50,7 +50,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-m7', 
     text: 'Pozycja "jeździec"',
     description: "Kobieta siedzi na Tobie twarzą do Twojej twarzy. Daje to możliwość przytulania się i całowania przy jednoczesnym stymulowaniu łechtaczki partnerki przez tarcie.",
-    illustration: '/images/illustrations/techniques/Pozycja jeździec (discover).png',
+    illustration: '/images/illustrations/techniques/Pozycja _jeździec_ (discover).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -61,7 +61,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-m8', 
     text: 'Pozycja "odwrócona amazońska"',
     description: "Kobieta siedzi na Tobie tyłem do Twojej twarzy. Ta pozycja oferuje wyjątkowe widoki i dostęp do pieszczenia pleców, pośladków i innych części ciała partnerki.",
-    illustration: '/images/illustrations/techniques/Pozycja odwrócona amazońska (discover, explore).png',
+    illustration: '/images/illustrations/techniques/Pozycja _odwrócona amazońska_ (discover, explore).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -72,7 +72,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-m9', 
     text: 'Pozycja "leniwego pieska"',
     description: "Kobieta leży płasko na brzuchu, a Ty wchodzisz od tyłu. Idealny wybór, gdy chcecie połączyć odpoczynek z przyjemnością, oferując głęboką penetrację przy minimalnym wysiłku.",
-    illustration: '/images/illustrations/techniques/Pozycja łyżeczki (discover).png',
+    illustration: '/images/illustrations/techniques/Pozycja _leniwego pieska_ (discover).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -83,7 +83,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-m12', 
     text: 'Pozycja "kruka" (69)',
     description: "Pozycja, w której oboje jednocześnie sprawiacie sobie przyjemność oralnie. Fantastyczny sposób, by dawać i otrzymywać przyjemność w tym samym czasie.",
-    illustration: '/images/illustrations/techniques/69.svg',
+    illustration: '/images/illustrations/techniques/Pozycja _kruka_ (69) (explore).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -94,7 +94,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-m13', 
     text: 'Pozycja "lotus"',
     description: "Siedzisz ze skrzyżowanymi nogami, a partnerka siada na Tobie, oplatając Cię nogami. Ta intymna pozycja sprzyja głębokiemu połączeniu duchowemu i fizycznemu.",
-    illustration: '/images/illustrations/techniques/Pozycja lotus (discover, explore, exceed).png',
+    illustration: '/images/illustrations/techniques/Pozycja _lotus_ (discover, explore, exceed).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -105,7 +105,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-m14', 
     text: 'Pozycja "łyżeczki"',
     description: "Oboje leżycie na boku, Ty za partnerką. Przyjemna, delikatna pozycja, idealna na romantyczne chwile, pozwalająca na obejmowanie ciała partnerki i intymną bliskość.",
-    illustration: '/images/illustrations/techniques/Pozycja łyżeczki (discover).png',
+    illustration: '/images/illustrations/techniques/Pozycja _łyżeczki_ (discover).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -116,7 +116,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-m15', 
     text: 'Pozycja "mostek"',
     description: "Partnerka opiera się na rękach i nogach tworząc łuk, a Ty klękasz między jej nogami. Wymagająca pozycja oferująca intensywne doznania i możliwość głębokiej penetracji.",
-    illustration: '/images/illustrations/techniques/Pozycja mostek (exceed).png',
+    illustration: '/images/illustrations/techniques/Pozycja _mostek_ (exceed).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -149,7 +149,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'rol-m3', 
     text: '"Złota rączka" i samotna żona',
     description: "Odgrywanie fantazji o hydrauliku/majsterkowiczu i samotnej kobiecie. Klasyczny scenariusz pełen napięcia seksualnego i spontaniczności, gdy przychodzisz naprawić coś w jej domu.",
-    illustration: '/images/illustrations/techniques/Uwodzenie, np. pacjentka i lekarz.png',
+    illustration: '/images/illustrations/techniques/Złota rączka_ i samotna żona.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -208,7 +208,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'mas-m2', 
     text: 'Pieszczoty lodem i ciepłem',
     description: "Eksperymentowanie z kontrastami temperatur podczas pieszczot. Kostki lodu i ciepłe oleje mogą zintensyfikować doznania i uwrażliwić skórę na najlżejszy dotyk.",
-    illustration: '/images/illustrations/techniques/Massaż tantryczny dla niej (discover, explore).png',
+    illustration: '/images/illustrations/techniques/Pieszczoty lodem i ciepłem (discover, explore).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -229,7 +229,7 @@ export const questionsHeteroMale: Question[] = [
   { 
     id: 'adv-m1', 
     text: 'Zabawy z bitą śmietaną',
-    description: "Smarowanie ciała partnerki bitą śmietaną i zlizywanie jej. Słodka, zmysłowa zabawa łącząca przyjemności kulinarne z erotyzmem dla jeszcze intensywniejszych doznań.",
+    description: "Smarowanie ciała partnerki bitą śmietaną i zlizywanie jej. Słodka, zmysłowa zabawa łącząca przyjemności kulinarne z erotycznymi dla jeszcze intensywniejszych doznań.",
     illustration: '/images/illustrations/techniques/Zabawy z bitą śmietaną (explore, exceed).png',
     forConfig: { 
       userGender: 'male',
@@ -289,7 +289,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'tan-m1', 
     text: 'Masaż tantryczny dla pary',
     description: "Wzajemny masaż całego ciała oparty na starożytnych technikach tantry. To doświadczenie łączące duchowość z erotyzmem, prowadzące do głębszego połączenia między wami.",
-    illustration: '/images/illustrations/techniques/Massaż tantryczny dla pary (explore, exceed).png',
+    illustration: '/images/illustrations/techniques/Masaż tantryczny dla pary (explore, exceed).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -313,7 +313,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'tan-m3', 
     text: 'Masaż tantryczny dla niej',
     description: "Czy chciałbyś dać partnerce tantryczny masaż całego ciała? Nauka tej starożytnej sztuki może pomóc Ci lepiej rozumieć jej ciało i prowadzić ją do niesamowitych doznań.",
-    illustration: '/images/illustrations/techniques/Massaż tantryczny dla niej (discover, explore).png',
+    illustration: '/images/illustrations/techniques/Masaż tantryczny dla niej (discover, explore).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -396,7 +396,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'striptiz-m1', 
     text: 'Striptiz dla niej',
     description: "Czy chciałbyś zatańczyć dla partnerki zmysłowy taniec rozbierany? Pokazanie swojego ciała w ten sposób może być niezwykle uwodzicielskie i podkreślić Twoją pewność siebie.",
-    illustration: '/images/illustrations/techniques/Striptiz dla niego (discover).png',
+    illustration: '/images/illustrations/techniques/Striptiz dla niej (discover).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -444,7 +444,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'sensual-m3', 
     text: 'Sexting',
     description: "Czy lubisz wymieniać się z partnerką pikantnymi wiadomościami i zdjęciami? Budowanie napięcia przez cały dzień może prowadzić do niezwykle namiętnego spotkania wieczorem.",
-    illustration: '/images/illustrations/techniques/Dirty talk (discover).png',
+    illustration: '/images/illustrations/techniques/Sexting (discover, explore).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -557,12 +557,141 @@ export const questionsHeteroMale: Question[] = [
   { 
     id: 'loc-m3', 
     text: 'Seks w trakcie kąpieli',
-    description: "Miłość w wannie lub pod prysznicem. Woda i mydło tworzą doskonały lubykant, a ciepło i bliskość sprzyjają relaksowi i przyjemności.",
-    illustration: '/images/illustrations/techniques/Seks w trakcie kąpieli (discover, explore).png',
+    description: "Miłość w wannie lub pod prysznicem. Woda i mydło tworzą zmysłowe doznania, a ciepło i para mogą stworzyć romantyczną, intymną atmosferę dla waszego zbliżenia.",
+    illustration: '/images/illustrations/techniques/Seks w trakcie kąpieli (explore).png',
+    forConfig: { 
+      userGender: 'male',
+      partnerGender: 'female',
+      gameLevel: ['explore'] 
+    }
+  },
+  { 
+    id: 'loc-m4', 
+    text: 'Seks w windzie',
+    description: "Szybki, namiętny seks w windzie między piętrami. Ekstremalnie ryzykowne, ale dla niektórych par właśnie to ryzyko i ograniczony czas stanowią największą atrakcję.",
+    illustration: '/images/illustrations/techniques/Seks w windzie (explore, exceed).png',
+    forConfig: { 
+      userGender: 'male',
+      partnerGender: 'female',
+      gameLevel: ['explore', 'exceed'] 
+    }
+  },
+  { 
+    id: 'loc-m5', 
+    text: 'Seks w przebieralni',
+    description: "Szybkie zbliżenie w przymierzalni sklepu. Ciasne pomieszczenie i ryzyko zostania usłyszanym dodają adrenaliny, która może znacząco zwiększyć intensywność doznań.",
+    illustration: '/images/illustrations/techniques/Seks w przebieralni (explore, exceed).png',
+    forConfig: { 
+      userGender: 'male',
+      partnerGender: 'female',
+      gameLevel: ['explore', 'exceed'] 
+    }
+  },
+  { 
+    id: 'loc-m6', 
+    text: 'Seks na stole kuchennym',
+    description: "Spontaniczny seks na blacie kuchennym lub stole. Kuchnia jako miejsce codziennych aktywności zamienia się w scenę namiętnego, niecodziennego zbliżenia.",
+    illustration: '/images/illustrations/techniques/Seks na stole kuchennym (discover, explore).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
       gameLevel: ['discover', 'explore'] 
+    }
+  },
+  { 
+    id: 'med-m1', 
+    text: 'Wspólne oglądanie filmów porno',
+    description: "Czy chciałbyś oglądać filmy dla dorosłych razem z partnerką? To może być inspirujące doświadczenie, źródło nowych pomysłów i sposób na rozmowę o fantazjach.",
+    illustration: '/images/illustrations/techniques/Wspólne oglądanie filmów porno (discover).png',
+    forConfig: { 
+      userGender: 'male',
+      partnerGender: 'female',
+      gameLevel: ['discover'] 
+    }
+  },
+  { 
+    id: 'med-m2', 
+    text: 'Cyberseks z obcymi',
+    description: "Erotyczne rozmowy wideo z nieznajomymi osobami. Ta forma eksploracji może wnieść nową energię do związku, jeśli oboje partnerzy są na to otwarci i ustalili granice.",
+    illustration: '/images/illustrations/techniques/Cyberseks z obcymi (explore, exceed).png',
+    forConfig: { 
+      userGender: 'male',
+      partnerGender: 'female',
+      gameLevel: ['explore', 'exceed'] 
+    },
+    pairGroup: "cyber",
+    pairPriority: 1
+  },
+  { 
+    id: 'med-m3', 
+    text: 'Cyberseks ze znajomymi',
+    description: "Erotyczne rozmowy wideo z parami, które znacie. Ta zaawansowana praktyka wymaga dużego zaufania i otwartości, ale może znacząco wzmocnić więź między wami.",
+    illustration: '/images/illustrations/techniques/Cyberseks ze znajomymi (explore, exceed).png',
+    forConfig: { 
+      userGender: 'male',
+      partnerGender: 'female',
+      gameLevel: ['explore', 'exceed'] 
+    },
+    pairGroup: "cyber",
+    pairPriority: 2
+  },
+  { 
+    id: 'med-m4', 
+    text: 'Poker rozbierany ze znajomymi',
+    description: "Gra w karty, gdzie przegraną jest zdejmowanie kolejnych części garderoby. Zabawa wprowadzająca element erotyzmu do spotkania towarzyskiego w zaufanym gronie.",
+    illustration: '/images/illustrations/techniques/Poker rozbierany ze znajomymi (explore, exceed).png',
+    forConfig: { 
+      userGender: 'male',
+      partnerGender: 'female',
+      gameLevel: ['explore', 'exceed'] 
+    },
+    pairGroup: "poker",
+    pairPriority: 1
+  },
+  { 
+    id: 'med-m5', 
+    text: 'Poker rozbierany z obcymi',
+    description: "Gra w karty z nieznajomymi, gdzie stawką jest rozbieranie się. Ta odważna aktywność może być ekscytująca dla par szukających nowych, odważnych doświadczeń.",
+    illustration: '/images/illustrations/techniques/Poker rozbierany z obcymi (explore, exceed).png',
+    forConfig: { 
+      userGender: 'male',
+      partnerGender: 'female',
+      gameLevel: ['explore', 'exceed'] 
+    },
+    pairGroup: "poker",
+    pairPriority: 2
+  },
+  { 
+    id: 'ext-m1', 
+    text: 'Seks, gdy ktoś Was obserwuje',
+    description: "Uprawianie seksu ze świadomością, że ktoś was widzi. Świadomość bycia obserwowanym może dodać ogromnego ładunku emocjonalnego i zwiększyć intensywność doznań.",
+    illustration: '/images/illustrations/techniques/Seks, gdy ktoś Was obserwuje (explore, exceed).png',
+    forConfig: { 
+      userGender: 'male',
+      partnerGender: 'female',
+      gameLevel: ['explore', 'exceed'] 
+    }
+  },
+  { 
+    id: 'ext-m2', 
+    text: 'Seks w tańcu',
+    description: "Połączenie tańca i aktu seksualnego. Ruch, muzyka i seks tworzą unikalną kombinację zmysłowych doznań, które mogą prowadzić do niezwykłych doświadczeń erotycznych.",
+    illustration: '/images/illustrations/techniques/Seks w tańcu (exceed).png',
+    forConfig: { 
+      userGender: 'male',
+      partnerGender: 'female',
+      gameLevel: ['exceed'] 
+    }
+  },
+  { 
+    id: 'ext-m3', 
+    text: 'Seks w masce',
+    description: "Zakrywanie twarzy podczas seksu dla zwiększenia anonimowości. Maski mogą pomóc wyzwolić się z zahamowań i wcielić w zuchwałą, odważniejszą seksualnie wersję siebie.",
+    illustration: '/images/illustrations/techniques/Seks w masce (exceed).png',
+    forConfig: { 
+      userGender: 'male',
+      partnerGender: 'female',
+      gameLevel: ['exceed'] 
     }
   }
 ];

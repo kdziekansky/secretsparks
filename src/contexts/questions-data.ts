@@ -16,46 +16,43 @@ const encodeImagePaths = (questions: Question[]): Question[] => {
       // Nie modyfikuj już zakodowanych ścieżek
       if (question.illustration.includes('%')) return question;
       
-      // Sprawdź, czy plik jest SVG - wtedy użyj bezpośrednio pliku SVG z folderu
-      if (question.illustration.includes('.svg')) {
-        // Wyczyść ścieżkę do pliku SVG
-        const fileName = question.illustration.split('/').pop() || '';
-        return {
-          ...question,
-          illustration: `/images/illustrations/techniques/${fileName}`
-        };
-      }
-      
-      // Jeśli mamy do czynienia z obrazem przesłanym przez użytkownika
-      if (question.illustration.includes('/lovable-uploads/')) {
-        return question;
-      }
-      
-      // Obsługa specjalnych przypadków dla edgingu
-      if (question.id === 'edg-m1' || question.id === 'edg-f1') {
-        return {
-          ...question,
-          illustration: '/images/illustrations/techniques/eding-him.svg'
-        };
-      }
-      
-      if (question.id === 'edg-m2' || question.id === 'edg-f2') {
-        return {
-          ...question,
-          illustration: '/images/illustrations/techniques/edging-her.svg'
-        };
-      }
-      
       // Usuń podwójne i wielokrotne ukośniki
       let cleanUrl = question.illustration.replace(/\/+/g, '/');
       
-      // Standardowa ścieżka dla wszystkich ilustracji
-      const fileName = cleanUrl.split('/').pop() || '';
+      // Dla ścieżek z lovable-uploads, zachowaj ścieżkę ale zakoduj nazwę pliku
+      if (cleanUrl.startsWith('/lovable-uploads/')) {
+        const basePath = '/lovable-uploads/';
+        const fileName = cleanUrl.substring(basePath.length);
+        
+        if (fileName.includes(' ') || /[^a-zA-Z0-9._-]/.test(fileName)) {
+          return {
+            ...question,
+            illustration: basePath + encodeURIComponent(fileName)
+          };
+        }
+        return question;
+      }
       
-      // Zawsze używamy ścieżki /images/illustrations/techniques/
+      // Dla ścieżek z /images/illustrations/ przekieruj na /lovable-uploads/
+      if (cleanUrl.includes('/images/illustrations/')) {
+        const fileName = cleanUrl.split('/').pop() || '';
+        return {
+          ...question,
+          illustration: `/lovable-uploads/${encodeURIComponent(fileName)}`
+        };
+      }
+      
+      // Dla innych ścieżek, zakoduj tylko część po ostatnim slashu (nazwa pliku)
+      const lastSlashIndex = cleanUrl.lastIndexOf('/');
+      if (lastSlashIndex === -1) return question;
+      
+      const path = cleanUrl.substring(0, lastSlashIndex + 1);
+      const fileName = cleanUrl.substring(lastSlashIndex + 1);
+      
+      // Utwórz nowy obiekt pytania z zakodowaną ścieżką do ilustracji
       return {
         ...question,
-        illustration: `/images/illustrations/techniques/${encodeURIComponent(fileName)}`
+        illustration: path + encodeURIComponent(fileName)
       };
     } catch (error) {
       console.error("Error encoding image path:", question.illustration, error);

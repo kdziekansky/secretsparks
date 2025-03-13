@@ -103,7 +103,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     }, 300);
   };
 
-  // Zakoduj URL obrazka dla poprawnego ładowania zdjęć
+  // Zakoduj URL obrazka dla poprawnego ładowania zdjęć z nazwami zawierającymi spacje
   const getEncodedImageUrl = (url: string) => {
     if (!url) return '';
     
@@ -111,36 +111,36 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
       // Sprawdź czy URL jest już poprawnie zakodowany lub jest bezwzględnym URL
       if (url.startsWith('http')) return url;
       
-      // Dla przesłanych obrazów z lovable-uploads
-      if (url.includes('/lovable-uploads/')) {
-        return url;
-      }
-      
       // Jeśli URL zawiera już zakodowane znaki (%), nie koduj ponownie
       if (url.includes('%')) return url;
-      
-      // Obsługa specjalnych przypadków dla edgingu
-      if (currentQuestion?.id === 'edg-m1' || currentQuestion?.id === 'edg-f1') {
-        return '/images/illustrations/techniques/eding-him.svg';
-      }
-      
-      if (currentQuestion?.id === 'edg-m2' || currentQuestion?.id === 'edg-f2') {
-        return '/images/illustrations/techniques/edging-her.svg';
-      }
       
       // Usuń wszystkie podwójne lub więcej slashe, zostawiając tylko pojedyncze
       let cleanUrl = url.replace(/\/+/g, '/');
       
-      // Wyciągnij nazwę pliku z URL
-      const fileName = cleanUrl.split('/').pop() || '';
-      
-      // Dla wszystkich ścieżek, zawsze kieruj do katalogu techniques
-      if (!cleanUrl.includes('/illustrations/techniques/')) {
-        return `/images/illustrations/techniques/${encodeURIComponent(fileName)}`;
+      // Sprawdź czy ścieżka zaczyna się od /lovable-uploads/
+      if (cleanUrl.startsWith('/lovable-uploads/')) {
+        const basePath = '/lovable-uploads/';
+        const fileName = cleanUrl.substring(basePath.length);
+        
+        // Zakoduj tylko nazwę pliku, nie całą ścieżkę
+        return basePath + encodeURIComponent(fileName);
       }
       
-      // Jeśli ścieżka jest już we właściwym katalogu, zwróć ją
-      return cleanUrl;
+      // Sprawdź czy ścieżka zaczyna się od /images/illustrations/
+      if (cleanUrl.includes('/images/illustrations/')) {
+        const fileName = cleanUrl.split('/').pop() || '';
+        // Przekieruj na ścieżkę lovable-uploads
+        return `/lovable-uploads/${encodeURIComponent(fileName)}`;
+      }
+      
+      // Dla innych ścieżek, zakoduj tylko część po ostatnim slashu (nazwa pliku)
+      const lastSlashIndex = cleanUrl.lastIndexOf('/');
+      if (lastSlashIndex === -1) return encodeURI(cleanUrl);
+      
+      const path = cleanUrl.substring(0, lastSlashIndex + 1);
+      const filename = cleanUrl.substring(lastSlashIndex + 1);
+      
+      return path + encodeURIComponent(filename);
     } catch (error) {
       console.error("Error encoding image URL:", error, "Original URL:", url);
       return url; // W razie błędu zwróć oryginalny URL
@@ -177,7 +177,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     ? (isPartnerSurvey ? 'Zakończ ankietę' : 'Przejdź do płatności') 
     : 'Zapisz odpowiedź';
   
-  // Zakodowany URL obrazka z użyciem nowej funkcji
+  // Zakodowany URL obrazka
   const encodedImageUrl = currentQuestion.illustration ? getEncodedImageUrl(currentQuestion.illustration) : '';
   
   // DEBUG: Wyświetl w konsoli oryginalne i zakodowane URL obrazka
