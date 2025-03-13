@@ -19,28 +19,31 @@ const encodeImagePaths = (questions: Question[]): Question[] => {
       // Usuń podwójne i wielokrotne ukośniki
       let cleanUrl = question.illustration.replace(/\/+/g, '/');
       
-      // Dla ścieżek z lovable-uploads, zachowaj ścieżkę ale zakoduj nazwę pliku
+      // Standardowa ścieżka dla wszystkich ilustracji
+      const fileName = cleanUrl.split('/').pop() || '';
+      
+      // Dla ścieżek zaczynających się od /lovable-uploads/, przekieruj do /images/illustrations/techniques/
       if (cleanUrl.startsWith('/lovable-uploads/')) {
-        const basePath = '/lovable-uploads/';
-        const fileName = cleanUrl.substring(basePath.length);
-        
-        // Przekieruj na prawidłową ścieżkę z nazwą pliku
         return {
           ...question,
           illustration: `/images/illustrations/techniques/${encodeURIComponent(fileName)}`
         };
       }
       
-      // Standardowa obsługa dla ścieżek z /images/illustrations/
-      if (cleanUrl.includes('/images/illustrations/') || cleanUrl.startsWith('/images/')) {
-        const fileName = cleanUrl.split('/').pop() || '';
+      // Dla ścieżek zaczynających się od /images/, ale bez /illustrations/techniques/
+      if (cleanUrl.startsWith('/images/') && !cleanUrl.includes('/illustrations/techniques/')) {
         return {
           ...question,
           illustration: `/images/illustrations/techniques/${encodeURIComponent(fileName)}`
         };
       }
       
-      // Dla ścieżek bez określonego katalogu, załóż że to obrazy w techniques
+      // Zachowaj ścieżki, które już wskazują na właściwy katalog
+      if (cleanUrl.includes('/illustrations/techniques/')) {
+        return question;
+      }
+      
+      // Dla pozostałych ścieżek, przyjmij, że to nazwa pliku i dodaj odpowiedni katalog
       if (!cleanUrl.startsWith('/')) {
         return {
           ...question,
@@ -48,23 +51,10 @@ const encodeImagePaths = (questions: Question[]): Question[] => {
         };
       }
       
-      // Dla innych ścieżek, zakoduj tylko część po ostatnim slashu (nazwa pliku)
-      const lastSlashIndex = cleanUrl.lastIndexOf('/');
-      if (lastSlashIndex === -1) {
-        // Jeśli nie ma slasha, to zapewne sama nazwa pliku - dodaj do ścieżki technik
-        return {
-          ...question,
-          illustration: `/images/illustrations/techniques/${encodeURIComponent(cleanUrl)}`
-        };
-      }
-      
-      const path = cleanUrl.substring(0, lastSlashIndex + 1);
-      const fileName = cleanUrl.substring(lastSlashIndex + 1);
-      
-      // Utwórz nowy obiekt pytania z zakodowaną ścieżką do ilustracji
+      // Dla innych ścieżek, domyślnie dodaj do katalogu techniques
       return {
         ...question,
-        illustration: path + encodeURIComponent(fileName)
+        illustration: `/images/illustrations/techniques/${encodeURIComponent(fileName)}`
       };
     } catch (error) {
       console.error("Error encoding image path:", question.illustration, error);

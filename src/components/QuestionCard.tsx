@@ -117,29 +117,16 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
       // Usuń wszystkie podwójne lub więcej slashe, zostawiając tylko pojedyncze
       let cleanUrl = url.replace(/\/+/g, '/');
       
-      // Sprawdź czy ścieżka zaczyna się od /lovable-uploads/
-      if (cleanUrl.startsWith('/lovable-uploads/')) {
-        const fileName = cleanUrl.split('/').pop() || '';
-        // Przekieruj na ścieżkę z ilustracjami technik
+      // Wyciągnij nazwę pliku z URL
+      const fileName = cleanUrl.split('/').pop() || '';
+      
+      // Dla wszystkich ścieżek, zawsze kieruj do katalogu techniques
+      if (!cleanUrl.includes('/illustrations/techniques/')) {
         return `/images/illustrations/techniques/${encodeURIComponent(fileName)}`;
       }
       
-      // Sprawdź czy ścieżka zawiera /images/illustrations/
-      if (cleanUrl.includes('/images/illustrations/')) {
-        return cleanUrl; // Już jest we właściwej lokalizacji
-      }
-      
-      // Dla innych ścieżek, zakoduj tylko część po ostatnim slashu (nazwa pliku)
-      const lastSlashIndex = cleanUrl.lastIndexOf('/');
-      if (lastSlashIndex === -1) {
-        // Jeśli nie ma slasha, to zapewne sama nazwa pliku
-        return `/images/illustrations/techniques/${encodeURIComponent(cleanUrl)}`;
-      }
-      
-      const path = cleanUrl.substring(0, lastSlashIndex + 1);
-      const filename = cleanUrl.substring(lastSlashIndex + 1);
-      
-      return path + encodeURIComponent(filename);
+      // Jeśli ścieżka jest już we właściwym katalogu, zwróć ją
+      return cleanUrl;
     } catch (error) {
       console.error("Error encoding image URL:", error, "Original URL:", url);
       return url; // W razie błędu zwróć oryginalny URL
