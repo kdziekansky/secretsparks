@@ -1,6 +1,12 @@
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { corsHeaders } from '../_shared/cors.ts'
+
+// Poprawione nagłówki CORS, które zawierają nagłówek "prefer"
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, prefer',
+  'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
+}
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
