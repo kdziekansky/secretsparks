@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import RatingScale from './RatingScale';
@@ -117,6 +116,9 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
       // Usuń wszystkie podwójne lub więcej slashe, zostawiając tylko pojedyncze
       let cleanUrl = url.replace(/\/+/g, '/');
       
+      // POPRAWKA: Nie przekierowuj ścieżek z /images/illustrations/ do /lovable-uploads/
+      // Zamiast tego pozostaw oryginalną ścieżkę
+      
       // Sprawdź czy ścieżka zaczyna się od /lovable-uploads/
       if (cleanUrl.startsWith('/lovable-uploads/')) {
         const basePath = '/lovable-uploads/';
@@ -124,13 +126,6 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
         
         // Zakoduj tylko nazwę pliku, nie całą ścieżkę
         return basePath + encodeURIComponent(fileName);
-      }
-      
-      // Sprawdź czy ścieżka zaczyna się od /images/illustrations/
-      if (cleanUrl.includes('/images/illustrations/')) {
-        const fileName = cleanUrl.split('/').pop() || '';
-        // Przekieruj na ścieżkę lovable-uploads
-        return `/lovable-uploads/${encodeURIComponent(fileName)}`;
       }
       
       // Dla innych ścieżek, zakoduj tylko część po ostatnim slashu (nazwa pliku)
