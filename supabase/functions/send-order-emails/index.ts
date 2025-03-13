@@ -1,4 +1,5 @@
 
+
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from '../_shared/cors.ts'
 import { Resend } from 'https://esm.sh/resend@2.0.0'
@@ -37,7 +38,7 @@ Deno.serve(async (req) => {
       resend = new Resend(resendApiKey);
       console.log("Klient Resend został pomyślnie zainicjalizowany");
     } catch (resendInitError) {
-      console.error("Błąd inicjalizacji klienta Resend:", resendInitError);
+      console.error("Błąd podczas inicjalizacji klienta Resend:", resendInitError);
       throw new Error(`Nie można zainicjalizować klienta Resend: ${resendInitError.message}`);
     }
 
@@ -135,7 +136,8 @@ Deno.serve(async (req) => {
     let userEmailResult;
     try {
       userEmailResult = await resend.emails.send({
-        from: 'Ankieta Seksualna <no-reply@seks-ankieta.pl>',
+        from: 'Ankieta Seksualna <notifications@secretsparks.pl>',
+        reply_to: 'contact@secresparks.pl',
         to: order.user_email,
         subject: 'Dziękujemy za zamówienie ankiety seksualnej',
         html: `
@@ -164,7 +166,8 @@ Deno.serve(async (req) => {
     let partnerEmailResult;
     try {
       partnerEmailResult = await resend.emails.send({
-        from: 'Ankieta Seksualna <no-reply@seks-ankieta.pl>',
+        from: 'Ankieta Seksualna <notifications@secretsparks.pl>',
+        reply_to: 'contact@secresparks.pl',
         to: order.partner_email,
         subject: `${order.user_name} zaprasza Cię do wypełnienia ankiety seksualnej`,
         html: `
@@ -226,3 +229,4 @@ Deno.serve(async (req) => {
     );
   }
 });
+
