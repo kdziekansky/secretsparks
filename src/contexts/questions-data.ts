@@ -1,4 +1,3 @@
-
 import { questionsHeteroMale } from './questions/questions-hetero-male';
 import { questionsHeteroFemale } from './questions/questions-hetero-female';
 import { questionsAdditional } from './questions/questions-additional';
@@ -19,6 +18,9 @@ const encodeImagePaths = (questions: Question[]): Question[] => {
       // Usuń podwójne i wielokrotne ukośniki
       let cleanUrl = question.illustration.replace(/\/+/g, '/');
       
+      // POPRAWKA: Nie przekierowuj ścieżek z /images/illustrations/ na /lovable-uploads/
+      // zamiast tego używaj oryginalnej ścieżki z poprawnym kodowaniem znaków specjalnych
+      
       // Dla ścieżek z lovable-uploads, zachowaj ścieżkę ale zakoduj nazwę pliku
       if (cleanUrl.startsWith('/lovable-uploads/')) {
         const basePath = '/lovable-uploads/';
@@ -31,15 +33,6 @@ const encodeImagePaths = (questions: Question[]): Question[] => {
           };
         }
         return question;
-      }
-      
-      // Dla ścieżek z /images/illustrations/ przekieruj na /lovable-uploads/
-      if (cleanUrl.includes('/images/illustrations/')) {
-        const fileName = cleanUrl.split('/').pop() || '';
-        return {
-          ...question,
-          illustration: `/lovable-uploads/${encodeURIComponent(fileName)}`
-        };
       }
       
       // Dla innych ścieżek, zakoduj tylko część po ostatnim slashu (nazwa pliku)
