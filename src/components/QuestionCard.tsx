@@ -103,7 +103,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     }, 300);
   };
 
-  // Zakoduj URL obrazka dla poprawnego ładowania zdjęć z nazwami zawierającymi spacje
+  // Zakoduj URL obrazka dla poprawnego ładowania zdjęć
   const getEncodedImageUrl = (url: string) => {
     if (!url) return '';
     
@@ -111,15 +111,20 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
       // Sprawdź czy URL jest już poprawnie zakodowany lub jest bezwzględnym URL
       if (url.startsWith('http')) return url;
       
+      // Dla przesłanych obrazów z lovable-uploads
+      if (url.includes('/lovable-uploads/')) {
+        return url;
+      }
+      
       // Jeśli URL zawiera już zakodowane znaki (%), nie koduj ponownie
       if (url.includes('%')) return url;
       
       // Obsługa specjalnych przypadków dla edgingu
-      if (url.includes('Jego edging')) {
+      if (currentQuestion?.id === 'edg-m1' || currentQuestion?.id === 'edg-f1') {
         return '/images/illustrations/techniques/eding-him.svg';
       }
       
-      if (url.includes('Jej edging')) {
+      if (currentQuestion?.id === 'edg-m2' || currentQuestion?.id === 'edg-f2') {
         return '/images/illustrations/techniques/edging-her.svg';
       }
       

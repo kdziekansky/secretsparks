@@ -26,23 +26,28 @@ const encodeImagePaths = (questions: Question[]): Question[] => {
         };
       }
       
-      // Usuń podwójne i wielokrotne ukośniki
-      let cleanUrl = question.illustration.replace(/\/+/g, '/');
+      // Jeśli mamy do czynienia z obrazem przesłanym przez użytkownika
+      if (question.illustration.includes('/lovable-uploads/')) {
+        return question;
+      }
       
-      // Dla pary pytań edging użyj odpowiednich plików SVG zamiast PNG
-      if (cleanUrl.includes('Jego edging')) {
+      // Obsługa specjalnych przypadków dla edgingu
+      if (question.id === 'edg-m1' || question.id === 'edg-f1') {
         return {
           ...question,
           illustration: '/images/illustrations/techniques/eding-him.svg'
         };
       }
       
-      if (cleanUrl.includes('Jej edging')) {
+      if (question.id === 'edg-m2' || question.id === 'edg-f2') {
         return {
           ...question,
           illustration: '/images/illustrations/techniques/edging-her.svg'
         };
       }
+      
+      // Usuń podwójne i wielokrotne ukośniki
+      let cleanUrl = question.illustration.replace(/\/+/g, '/');
       
       // Standardowa ścieżka dla wszystkich ilustracji
       const fileName = cleanUrl.split('/').pop() || '';
