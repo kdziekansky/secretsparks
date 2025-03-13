@@ -1,3 +1,6 @@
+import type { Question } from '@/types/survey';
+
+export const questionsHeteroMale: Question[] = [
   { 
     id: 'ext-m1', 
     text: 'Seks, gdy ktoś Was obserwuje',
@@ -192,10 +195,7 @@
       partnerGender: 'female',
       gameLevel: ['explore'] 
     }
-  }
-];import type { Question } from '@/types/survey';
-
-export const questionsHeteroMale: Question[] = [
+  },
   { 
     id: 'pos-m1', 
     text: 'Pozycja Amazonki',
@@ -843,4 +843,5 @@ export const questionsHeteroMale: Question[] = [
     },
     pairGroup: "poker",
     pairPriority: 2
-  },
+  }
+];
