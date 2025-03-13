@@ -116,16 +116,11 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
       // Usuń wszystkie podwójne lub więcej slashe, zostawiając tylko pojedyncze
       let cleanUrl = url.replace(/\/+/g, '/');
       
-      // POPRAWKA: Nie przekierowuj ścieżek z /images/illustrations/ do /lovable-uploads/
-      // Zamiast tego pozostaw oryginalną ścieżkę
-      
-      // Sprawdź czy ścieżka zaczyna się od /lovable-uploads/
+      // KLUCZOWA POPRAWKA: Jeśli ścieżka zawiera lovable-uploads, przekieruj na images/illustrations
       if (cleanUrl.startsWith('/lovable-uploads/')) {
-        const basePath = '/lovable-uploads/';
-        const fileName = cleanUrl.substring(basePath.length);
-        
-        // Zakoduj tylko nazwę pliku, nie całą ścieżkę
-        return basePath + encodeURIComponent(fileName);
+        const fileName = cleanUrl.substring('/lovable-uploads/'.length);
+        cleanUrl = `/images/illustrations/techniques/${fileName}`;
+        console.log('Przekierowano ścieżkę z:', url, 'na:', cleanUrl);
       }
       
       // Dla innych ścieżek, zakoduj tylko część po ostatnim slashu (nazwa pliku)
