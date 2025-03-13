@@ -107,34 +107,44 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
   const getEncodedImageUrl = (url: string) => {
     if (!url) return '';
     
-    // Jeśli URL już zawiera protokół (http/https), zwróć go bez zmian
-    if (url.startsWith('http')) return url;
-    
-    // Jeśli URL zawiera już zakodowane znaki (%), nie koduj ponownie
-    if (url.includes('%')) return url;
-    
-    // Jeśli URL zaczyna się od /lovable-uploads/ i zawiera spacje lub znaki specjalne, zakoduj nazwę pliku
-    if (url.startsWith('/lovable-uploads/')) {
-      const basePath = '/lovable-uploads/';
-      const fileName = url.substring(basePath.length);
+    try {
+      // Sprawdź czy URL jest już poprawnie zakodowany lub jest bezwzględnym URL
+      if (url.startsWith('http')) return url;
       
-      // Sprawdź, czy nazwa pliku zawiera spacje lub znaki specjalne
-      if (fileName.includes(' ') || /[^a-zA-Z0-9._-]/.test(fileName)) {
+      // Jeśli URL zawiera już zakodowane znaki (%), nie koduj ponownie
+      if (url.includes('%')) return url;
+      
+      // Usuń wszystkie podwójne lub więcej slashe, zostawiając tylko pojedyncze
+      let cleanUrl = url.replace(/\/+/g, '/');
+      
+      // Sprawdź czy ścieżka zaczyna się od /lovable-uploads/
+      if (cleanUrl.startsWith('/lovable-uploads/')) {
+        const basePath = '/lovable-uploads/';
+        const fileName = cleanUrl.substring(basePath.length);
+        
+        // Zakoduj tylko nazwę pliku, nie całą ścieżkę
         return basePath + encodeURIComponent(fileName);
       }
       
-      return url;
+      // Sprawdź czy ścieżka zaczyna się od /images/illustrations/
+      if (cleanUrl.includes('/images/illustrations/')) {
+        const fileName = cleanUrl.split('/').pop() || '';
+        // Przekieruj na ścieżkę lovable-uploads
+        return `/lovable-uploads/${encodeURIComponent(fileName)}`;
+      }
+      
+      // Dla innych ścieżek, zakoduj tylko część po ostatnim slashu (nazwa pliku)
+      const lastSlashIndex = cleanUrl.lastIndexOf('/');
+      if (lastSlashIndex === -1) return encodeURI(cleanUrl);
+      
+      const path = cleanUrl.substring(0, lastSlashIndex + 1);
+      const filename = cleanUrl.substring(lastSlashIndex + 1);
+      
+      return path + encodeURIComponent(filename);
+    } catch (error) {
+      console.error("Error encoding image URL:", error, "Original URL:", url);
+      return url; // W razie błędu zwróć oryginalny URL
     }
-    
-    // Rozdziel ścieżkę na części
-    const lastSlashIndex = url.lastIndexOf('/');
-    if (lastSlashIndex === -1) return encodeURI(url);
-    
-    const path = url.substring(0, lastSlashIndex + 1);
-    const filename = url.substring(lastSlashIndex + 1);
-    
-    // Zakoduj tylko nazwę pliku, zostawiając ścieżkę bez zmian
-    return path + encodeURIComponent(filename);
   };
   
   const handleImageLoad = () => {
@@ -170,6 +180,10 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
   // Zakodowany URL obrazka
   const encodedImageUrl = currentQuestion.illustration ? getEncodedImageUrl(currentQuestion.illustration) : '';
   
+  // DEBUG: Wyświetl w konsoli oryginalne i zakodowane URL obrazka
+  console.log('Original image URL:', currentQuestion.illustration);
+  console.log('Encoded image URL:', encodedImageUrl);
+  
   return (
     <div className={`glass-panel w-full max-w-4xl transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100 animate-slide-up'}`}>
       <div className="flex flex-col md:flex-row">
@@ -190,7 +204,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
               )}
               
               {/* Try to display SVG using object tag if it's an SVG */}
-              {currentQuestion.illustration.toLowerCase().endsWith('.svg') ? (
+              {encodedImageUrl.toLowerCase().endsWith('.svg') ? (
                 <>
                   <object 
                     data={encodedImageUrl} 

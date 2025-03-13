@@ -9,50 +9,55 @@ const encodeImagePaths = (questions: Question[]): Question[] => {
   return questions.map(question => {
     if (!question.illustration) return question;
     
-    // Nie modyfikuj URL-i, które już mają protokół (np. http, https)
-    if (question.illustration.startsWith('http')) return question;
-    
-    // Nie modyfikuj ścieżek do lovable-uploads, które są już poprawnie ładowane
-    // ALE! Jeśli ścieżka zawiera spacje lub znaki specjalne, zakoduj cały URL
-    if (question.illustration.startsWith('/lovable-uploads/')) {
-      // Sprawdź, czy nazwa pliku zawiera spacje lub znaki specjalne
-      const fileName = question.illustration.split('/').pop() || '';
-      if (fileName.includes(' ') || /[^a-zA-Z0-9._-]/.test(fileName)) {
-        // Rozdziel ścieżkę na bazową ścieżkę i nazwę pliku
+    try {
+      // Nie modyfikuj URL-i, które już mają protokół (np. http, https)
+      if (question.illustration.startsWith('http')) return question;
+      
+      // Nie modyfikuj już zakodowanych ścieżek
+      if (question.illustration.includes('%')) return question;
+      
+      // Usuń podwójne i wielokrotne ukośniki
+      let cleanUrl = question.illustration.replace(/\/+/g, '/');
+      
+      // Dla ścieżek z lovable-uploads, zachowaj ścieżkę ale zakoduj nazwę pliku
+      if (cleanUrl.startsWith('/lovable-uploads/')) {
         const basePath = '/lovable-uploads/';
-        // Zakoduj tylko nazwę pliku
+        const fileName = cleanUrl.substring(basePath.length);
+        
+        if (fileName.includes(' ') || /[^a-zA-Z0-9._-]/.test(fileName)) {
+          return {
+            ...question,
+            illustration: basePath + encodeURIComponent(fileName)
+          };
+        }
+        return question;
+      }
+      
+      // Dla ścieżek z /images/illustrations/ przekieruj na /lovable-uploads/
+      if (cleanUrl.includes('/images/illustrations/')) {
+        const fileName = cleanUrl.split('/').pop() || '';
         return {
           ...question,
-          illustration: basePath + encodeURIComponent(fileName)
+          illustration: `/lovable-uploads/${encodeURIComponent(fileName)}`
         };
       }
-      return question;
-    }
-    
-    // Jeśli URL zawiera już zakodowane znaki (%), nie koduj ponownie
-    if (question.illustration.includes('%')) return question;
-    
-    // Modyfikuj ścieżki do images/illustrations na lovable-uploads
-    if (question.illustration.includes('/images/illustrations/')) {
-      const filename = question.illustration.split('/').pop() || '';
+      
+      // Dla innych ścieżek, zakoduj tylko część po ostatnim slashu (nazwa pliku)
+      const lastSlashIndex = cleanUrl.lastIndexOf('/');
+      if (lastSlashIndex === -1) return question;
+      
+      const path = cleanUrl.substring(0, lastSlashIndex + 1);
+      const fileName = cleanUrl.substring(lastSlashIndex + 1);
+      
+      // Utwórz nowy obiekt pytania z zakodowaną ścieżką do ilustracji
       return {
         ...question,
-        illustration: `/lovable-uploads/${encodeURIComponent(filename)}`
+        illustration: path + encodeURIComponent(fileName)
       };
+    } catch (error) {
+      console.error("Error encoding image path:", question.illustration, error);
+      return question;
     }
-    
-    // Rozdziel ścieżkę na części
-    const lastSlashIndex = question.illustration.lastIndexOf('/');
-    if (lastSlashIndex === -1) return question;
-    
-    const path = question.illustration.substring(0, lastSlashIndex + 1);
-    const filename = question.illustration.substring(lastSlashIndex + 1);
-    
-    // Utwórz nowy obiekt pytania z zakodowaną ścieżką do ilustracji
-    return {
-      ...question,
-      illustration: path + encodeURIComponent(filename)
-    };
   });
 };
 
@@ -60,6 +65,13 @@ const encodeImagePaths = (questions: Question[]): Question[] => {
 const encodedHeteroMale = encodeImagePaths(questionsHeteroMale);
 const encodedHeteroFemale = encodeImagePaths(questionsHeteroFemale);
 const encodedAdditional = encodeImagePaths(questionsAdditional);
+
+// Log zakodowanych ścieżek do debugowania
+console.log("Encoded image paths examples:", 
+  encodedHeteroMale.slice(0, 2).map(q => q.illustration),
+  encodedHeteroFemale.slice(0, 2).map(q => q.illustration),
+  encodedAdditional.slice(0, 2).map(q => q.illustration)
+);
 
 // Łączymy wszystkie pytania w jedną tablicę
 export const questions: Question[] = [

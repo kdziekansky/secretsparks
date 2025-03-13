@@ -36,7 +36,7 @@ const HeroSection = () => {
                 </Button>
               </Link>
               
-              <Link to="/idea">
+              <Link to="/zasady">
                 <Button variant="outline" className="border-gray-600 text-white hover:bg-gray-800 px-6 py-2 h-auto rounded-md text-base">
                   Dowiedz się więcej
                 </Button>
