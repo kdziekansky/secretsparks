@@ -1,17 +1,43 @@
+
 import React, { useState } from 'react';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Loader2, Lock } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { useToast } from '@/hooks/use-toast';
 
 const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { login, isLoading } = useAdminAuth();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Dodatkowa walidacja przed wysłaniem
+    if (!email) {
+      toast({
+        title: "Wprowadź adres email",
+        description: "Adres email jest wymagany do zalogowania się.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!password) {
+      toast({
+        title: "Wprowadź hasło",
+        description: "Hasło jest wymagane do zalogowania się.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    console.log('Próba logowania dla:', email);
     await login(email, password);
   };
 
@@ -31,9 +57,9 @@ const AdminLogin: React.FC = () => {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-medium">
+              <Label htmlFor="email" className="block text-sm font-medium">
                 Email
-              </label>
+              </Label>
               <Input
                 id="email"
                 name="email"
@@ -47,9 +73,9 @@ const AdminLogin: React.FC = () => {
             </div>
             
             <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm font-medium">
+              <Label htmlFor="password" className="block text-sm font-medium">
                 Hasło
-              </label>
+              </Label>
               <Input
                 id="password"
                 name="password"
@@ -76,6 +102,32 @@ const AdminLogin: React.FC = () => {
                 'Zaloguj się'
               )}
             </Button>
+            
+            <div className="text-xs text-center text-muted-foreground mt-2">
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <button type="button" className="text-xs underline hover:text-primary">
+                    Potrzebujesz pomocy z logowaniem?
+                  </button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Pomoc z logowaniem</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      <p className="mb-2">Dla konta administracyjnego:</p>
+                      <ul className="list-disc pl-5 space-y-1 mb-4">
+                        <li>Użyj adresu email, który otrzymałeś od administratora</li>
+                        <li>Jeśli nie pamiętasz hasła, skontaktuj się z głównym administratorem</li>
+                        <li>W przypadku nowego konta użyj hasła tymczasowego, które zostało dla Ciebie utworzone</li>
+                      </ul>
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Zamknij</AlertDialogCancel>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           </form>
         </CardContent>
         

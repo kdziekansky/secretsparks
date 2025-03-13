@@ -163,28 +163,42 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
     try {
       setIsLoading(true);
       
-      // Check for allowed admin emails
-      const allowedAdmins = ['admin@example.com', 'szmergon@gmail.com', 'contact@secretsparks.pl'];
+      console.log('Próba logowania dla:', email);
       
-      if (!allowedAdmins.includes(email)) {
-        throw new Error('Nieprawidłowe dane logowania');
-      }
-      
-      // Special case for admin@example.com with hardcoded password
+      // Sprawdź czy to specjalny administrator (admin@example.com)
       if (email === 'admin@example.com' && password === 'admin123') {
-        console.log('Special admin login path for admin@example.com');
-        
-        // Store demo admin status in localStorage to persist through page refreshes
+        console.log('Specjalna ścieżka logowania dla admin@example.com');
         localStorage.setItem(DEMO_ADMIN_KEY, email);
-        
-        // Set authenticated state
         setIsAuthenticated(true);
         setAdminEmail(email);
         navigate('/spe43al-adm1n-p4nel/dashboard');
         return;
       }
       
-      // For other admin users, check in admin_users table
+      // Sprawdź czy to nowo dodany administrator (kdziekansky@icloud.com)
+      if (email === 'kdziekansky@icloud.com' && password === 'tymczasowe_haslo') {
+        console.log('Specjalna ścieżka logowania dla kdziekansky@icloud.com');
+        localStorage.setItem(DEMO_ADMIN_KEY, email);
+        setIsAuthenticated(true);
+        setAdminEmail(email);
+        navigate('/spe43al-adm1n-p4nel/dashboard');
+        return;
+      }
+      
+      // Lista dozwolonych administratorów
+      const allowedAdmins = [
+        'admin@example.com', 
+        'szmergon@gmail.com', 
+        'contact@secretsparks.pl',
+        'kdziekansky@icloud.com'
+      ];
+      
+      if (!allowedAdmins.includes(email)) {
+        console.error('Email nie znajduje się na liście dozwolonych administratorów:', email);
+        throw new Error('Nieprawidłowe dane logowania');
+      }
+      
+      // Dla pozostałych administratorów, sprawdź w tabeli admin_users
       const { data: adminUser, error: adminCheckError } = await supabase
         .from('admin_users')
         .select('email')
@@ -192,29 +206,29 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
         .maybeSingle();
 
       if (adminCheckError) {
-        console.error('Admin check error:', adminCheckError);
+        console.error('Błąd weryfikacji administratora:', adminCheckError);
         throw new Error('Problem z weryfikacją danych administratora');
       }
 
       if (!adminUser) {
-        console.error('Not found in admin_users table:', email);
+        console.error('Nie znaleziono w tabeli admin_users:', email);
         throw new Error('Nieprawidłowe dane logowania');
       }
 
-      // For regular admins, use Supabase authentication
+      // Dla regularnych administratorów użyj uwierzytelniania Supabase
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) {
-        console.error('Supabase auth error:', error);
+        console.error('Błąd uwierzytelniania Supabase:', error);
         throw error;
       }
       
       navigate('/spe43al-adm1n-p4nel/dashboard');
     } catch (error: any) {
-      console.error('Error during login:', error);
+      console.error('Błąd podczas logowania:', error);
       toast.error('Błąd logowania', {
         description: error.message || 'Nieprawidłowy email lub hasło'
       });
