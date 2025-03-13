@@ -119,23 +119,22 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
       
       // Sprawdź czy ścieżka zaczyna się od /lovable-uploads/
       if (cleanUrl.startsWith('/lovable-uploads/')) {
-        const basePath = '/lovable-uploads/';
-        const fileName = cleanUrl.substring(basePath.length);
-        
-        // Zakoduj tylko nazwę pliku, nie całą ścieżkę
-        return basePath + encodeURIComponent(fileName);
+        const fileName = cleanUrl.split('/').pop() || '';
+        // Przekieruj na ścieżkę z ilustracjami technik
+        return `/images/illustrations/techniques/${encodeURIComponent(fileName)}`;
       }
       
-      // Sprawdź czy ścieżka zaczyna się od /images/illustrations/
+      // Sprawdź czy ścieżka zawiera /images/illustrations/
       if (cleanUrl.includes('/images/illustrations/')) {
-        const fileName = cleanUrl.split('/').pop() || '';
-        // Przekieruj na ścieżkę lovable-uploads
-        return `/lovable-uploads/${encodeURIComponent(fileName)}`;
+        return cleanUrl; // Już jest we właściwej lokalizacji
       }
       
       // Dla innych ścieżek, zakoduj tylko część po ostatnim slashu (nazwa pliku)
       const lastSlashIndex = cleanUrl.lastIndexOf('/');
-      if (lastSlashIndex === -1) return encodeURI(cleanUrl);
+      if (lastSlashIndex === -1) {
+        // Jeśli nie ma slasha, to zapewne sama nazwa pliku
+        return `/images/illustrations/techniques/${encodeURIComponent(cleanUrl)}`;
+      }
       
       const path = cleanUrl.substring(0, lastSlashIndex + 1);
       const filename = cleanUrl.substring(lastSlashIndex + 1);
@@ -177,7 +176,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     ? (isPartnerSurvey ? 'Zakończ ankietę' : 'Przejdź do płatności') 
     : 'Zapisz odpowiedź';
   
-  // Zakodowany URL obrazka
+  // Zakodowany URL obrazka z użyciem nowej funkcji
   const encodedImageUrl = currentQuestion.illustration ? getEncodedImageUrl(currentQuestion.illustration) : '';
   
   // DEBUG: Wyświetl w konsoli oryginalne i zakodowane URL obrazka

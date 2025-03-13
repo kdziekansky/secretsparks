@@ -24,27 +24,39 @@ const encodeImagePaths = (questions: Question[]): Question[] => {
         const basePath = '/lovable-uploads/';
         const fileName = cleanUrl.substring(basePath.length);
         
-        if (fileName.includes(' ') || /[^a-zA-Z0-9._-]/.test(fileName)) {
-          return {
-            ...question,
-            illustration: basePath + encodeURIComponent(fileName)
-          };
-        }
-        return question;
+        // Przekieruj na prawidłową ścieżkę z nazwą pliku
+        return {
+          ...question,
+          illustration: `/images/illustrations/techniques/${encodeURIComponent(fileName)}`
+        };
       }
       
-      // Dla ścieżek z /images/illustrations/ przekieruj na /lovable-uploads/
-      if (cleanUrl.includes('/images/illustrations/')) {
+      // Standardowa obsługa dla ścieżek z /images/illustrations/
+      if (cleanUrl.includes('/images/illustrations/') || cleanUrl.startsWith('/images/')) {
         const fileName = cleanUrl.split('/').pop() || '';
         return {
           ...question,
-          illustration: `/lovable-uploads/${encodeURIComponent(fileName)}`
+          illustration: `/images/illustrations/techniques/${encodeURIComponent(fileName)}`
+        };
+      }
+      
+      // Dla ścieżek bez określonego katalogu, załóż że to obrazy w techniques
+      if (!cleanUrl.startsWith('/')) {
+        return {
+          ...question,
+          illustration: `/images/illustrations/techniques/${encodeURIComponent(cleanUrl)}`
         };
       }
       
       // Dla innych ścieżek, zakoduj tylko część po ostatnim slashu (nazwa pliku)
       const lastSlashIndex = cleanUrl.lastIndexOf('/');
-      if (lastSlashIndex === -1) return question;
+      if (lastSlashIndex === -1) {
+        // Jeśli nie ma slasha, to zapewne sama nazwa pliku - dodaj do ścieżki technik
+        return {
+          ...question,
+          illustration: `/images/illustrations/techniques/${encodeURIComponent(cleanUrl)}`
+        };
+      }
       
       const path = cleanUrl.substring(0, lastSlashIndex + 1);
       const fileName = cleanUrl.substring(lastSlashIndex + 1);
