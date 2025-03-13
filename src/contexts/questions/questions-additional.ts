@@ -2,8 +2,7 @@
 import type { Question } from '@/types/survey';
 
 export const questionsAdditional: Question[] = [
-  // Tutaj można dodać pytania, które są uniwersalne dla wszystkich konfiguracji
-  // lub specjalne pytania dla relacji jednopłciowych
+  // Pytania dla relacji jednopłciowych męskich
   { 
     id: 'mm-pos1', 
     text: 'Pozycja misjonarska',
@@ -19,7 +18,7 @@ export const questionsAdditional: Question[] = [
     id: 'mm-pos2', 
     text: 'Pozycja "na pieska"',
     description: "Pozycja od tyłu, która pozwala na głębszą penetrację",
-    illustration: '/images/illustrations/techniques/doggy-mm.png',
+    illustration: '/images/illustrations/techniques/doggy.svg',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
@@ -107,7 +106,7 @@ export const questionsAdditional: Question[] = [
     id: 'mm-pos10', 
     text: 'Pozycja "69"',
     description: "Obaj partnerzy jednocześnie sprawiają sobie przyjemność oralnie",
-    illustration: '/images/illustrations/techniques/69-mm.png',
+    illustration: '/images/illustrations/techniques/69.svg',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
@@ -140,7 +139,7 @@ export const questionsAdditional: Question[] = [
     id: 'mm-role1', 
     text: 'Nauczyciel i uczeń',
     description: "Odgrywanie ról nauczyciela i ucznia",
-    illustration: '/images/illustrations/techniques/teacher-student-mm.png',
+    illustration: '/images/illustrations/techniques/Nauczycielka i student.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
@@ -184,7 +183,7 @@ export const questionsAdditional: Question[] = [
     id: 'mm-sens2', 
     text: 'Sexting',
     description: "Wysyłanie pikantnych wiadomości i zdjęć",
-    illustration: '/images/illustrations/techniques/sexting-mm.png',
+    illustration: '/images/illustrations/techniques/Dirty talk (discover).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
@@ -195,7 +194,7 @@ export const questionsAdditional: Question[] = [
     id: 'mm-adv1', 
     text: 'Pełna dominacja i uległość',
     description: "Jeden partner całkowicie dominuje, drugi jest uległy",
-    illustration: '/images/illustrations/techniques/domination-mm.png',
+    illustration: '/images/illustrations/techniques/domination.svg',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
@@ -213,12 +212,13 @@ export const questionsAdditional: Question[] = [
       gameLevel: ['exceed'] 
     }
   },
-  // Dodane poprawione ścieżki do obrazów, które powodowały błędy
+  
+  // Dodatkowe pytania dla par heteroseksualnych
   { 
     id: 'dom-f2', 
     text: 'On dominuje nad nią',
     description: "Partner przejmuje kontrolę i dominuje w relacji seksualnej",
-    illustration: '/images/illustrations/techniques/domination.svg',
+    illustration: '/images/illustrations/techniques/On dominuje nad nią (discover, explore).png',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
@@ -229,7 +229,7 @@ export const questionsAdditional: Question[] = [
     id: 'dom-f3', 
     text: 'Ona dominuje nad nim',
     description: "Partnerka przejmuje kontrolę i dominuje w relacji seksualnej",
-    illustration: '/images/illustrations/techniques/domination.svg',
+    illustration: '/images/illustrations/techniques/Ona dominuje nad nim (discover, explore).png',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
@@ -240,7 +240,7 @@ export const questionsAdditional: Question[] = [
     id: 'toys-f1', 
     text: 'Zabawki dla niej',
     description: "Wykorzystanie zabawek erotycznych dla kobiet",
-    illustration: '/images/illustrations/techniques/toys-for-her.png',
+    illustration: '/images/illustrations/techniques/Zabawki dla niej (discover).png',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
@@ -251,7 +251,7 @@ export const questionsAdditional: Question[] = [
     id: 'toys-f2', 
     text: 'Zabawki dla niego',
     description: "Wykorzystanie zabawek erotycznych dla mężczyzn",
-    illustration: '/images/illustrations/techniques/toys-for-him.png',
+    illustration: '/images/illustrations/techniques/Zabawki dla niego (discover).png',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
@@ -261,20 +261,19 @@ export const questionsAdditional: Question[] = [
   { 
     id: 'oral-f1', 
     text: 'Seks oralny dla niej',
-    description: "Partner dostarcza partnercie przyjemności oralnej",
-    illustration: '/images/illustrations/techniques/syrena.svg',
+    description: "Partner dostarcza partnerce przyjemności oralnej",
+    illustration: '/images/illustrations/techniques/Seks oralny dla niej (discover).png',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
       gameLevel: ['discover'] 
     }
   },
-  // Dodajemy nowe pytania z poprawionymi ścieżkami
   { 
     id: 'edg-f1', 
     text: 'Jego edging',
     description: "Kontrolowana stymulacja partnera z opóźnianiem orgazmu",
-    illustration: '/images/illustrations/techniques/eding-him.svg',
+    illustration: '/images/illustrations/techniques/Jego edging (discover, explore).png',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
@@ -285,7 +284,7 @@ export const questionsAdditional: Question[] = [
     id: 'edg-f2', 
     text: 'Jej edging',
     description: "Kontrolowana stymulacja partnerki z opóźnianiem orgazmu",
-    illustration: '/images/illustrations/techniques/edging-her.svg',
+    illustration: '/images/illustrations/techniques/Jej edging (discover, explore).png',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
@@ -296,7 +295,7 @@ export const questionsAdditional: Question[] = [
     id: 'striptiz-f1', 
     text: 'Striptiz dla niej',
     description: "Partner wykonuje striptiz dla partnerki",
-    illustration: '/images/illustrations/techniques/striptease-for-her.svg',
+    illustration: '/images/illustrations/techniques/Striptiz dla niego (discover).png',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
@@ -307,7 +306,7 @@ export const questionsAdditional: Question[] = [
     id: 'striptiz-f2', 
     text: 'Striptiz dla niego',
     description: "Partnerka wykonuje striptiz dla partnera",
-    illustration: '/images/illustrations/techniques/striptease-for-him.svg',
+    illustration: '/images/illustrations/techniques/Striptiz dla niego (discover).png',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',

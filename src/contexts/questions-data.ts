@@ -22,36 +22,7 @@ const encodeImagePaths = (questions: Question[]): Question[] => {
       // Standardowa ścieżka dla wszystkich ilustracji
       const fileName = cleanUrl.split('/').pop() || '';
       
-      // Dla ścieżek zaczynających się od /lovable-uploads/, przekieruj do /images/illustrations/techniques/
-      if (cleanUrl.startsWith('/lovable-uploads/')) {
-        return {
-          ...question,
-          illustration: `/images/illustrations/techniques/${encodeURIComponent(fileName)}`
-        };
-      }
-      
-      // Dla ścieżek zaczynających się od /images/, ale bez /illustrations/techniques/
-      if (cleanUrl.startsWith('/images/') && !cleanUrl.includes('/illustrations/techniques/')) {
-        return {
-          ...question,
-          illustration: `/images/illustrations/techniques/${encodeURIComponent(fileName)}`
-        };
-      }
-      
-      // Zachowaj ścieżki, które już wskazują na właściwy katalog
-      if (cleanUrl.includes('/illustrations/techniques/')) {
-        return question;
-      }
-      
-      // Dla pozostałych ścieżek, przyjmij, że to nazwa pliku i dodaj odpowiedni katalog
-      if (!cleanUrl.startsWith('/')) {
-        return {
-          ...question,
-          illustration: `/images/illustrations/techniques/${encodeURIComponent(cleanUrl)}`
-        };
-      }
-      
-      // Dla innych ścieżek, domyślnie dodaj do katalogu techniques
+      // Zawsze używamy ścieżki /images/illustrations/techniques/
       return {
         ...question,
         illustration: `/images/illustrations/techniques/${encodeURIComponent(fileName)}`
