@@ -22,8 +22,9 @@ export const useAdminAuth = () => {
   return context;
 };
 
-// Create a local storage key for the demo admin
+// Stała do przechowywania informacji o zalogowanym administratorze w localStorage
 const DEMO_ADMIN_KEY = 'demo_admin_authenticated';
+const ADMIN_EMAIL_KEY = 'admin_email';
 
 interface AdminAuthProviderProps {
   children: ReactNode;
@@ -36,19 +37,38 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Funkcja pomocnicza do zapisu stanu uwierzytelnienia do localStorage
+  const persistAuthState = (email: string) => {
+    console.log('Zapisywanie stanu uwierzytelnienia dla:', email);
+    localStorage.setItem(DEMO_ADMIN_KEY, 'true');
+    localStorage.setItem(ADMIN_EMAIL_KEY, email);
+  };
+
+  // Funkcja pomocnicza do usuwania stanu uwierzytelnienia z localStorage
+  const clearAuthState = () => {
+    console.log('Czyszczenie stanu uwierzytelnienia');
+    localStorage.removeItem(DEMO_ADMIN_KEY);
+    localStorage.removeItem(ADMIN_EMAIL_KEY);
+  };
+
   useEffect(() => {
     const checkAuth = async () => {
       try {
         setIsLoading(true);
+        console.log('Sprawdzanie stanu uwierzytelnienia...');
         
-        // First check if demo admin is logged in
-        const demoAdminEmail = localStorage.getItem(DEMO_ADMIN_KEY);
-        if (demoAdminEmail === 'admin@example.com') {
-          console.log('Demo admin is already logged in');
+        // Sprawdź czy użytkownik jest zalogowany w localStorage
+        const isAdminLoggedIn = localStorage.getItem(DEMO_ADMIN_KEY) === 'true';
+        const storedEmail = localStorage.getItem(ADMIN_EMAIL_KEY);
+        
+        if (isAdminLoggedIn && storedEmail) {
+          console.log('Znaleziono zalogowanego administratora w localStorage:', storedEmail);
           setIsAuthenticated(true);
-          setAdminEmail(demoAdminEmail);
+          setAdminEmail(storedEmail);
           
+          // Jeśli jesteśmy na stronie logowania, przekieruj do panelu
           if (location.pathname === '/spe43al-adm1n-p4nel') {
+            console.log('Przekierowuję z logowania do dashboard (localStorage auth)');
             navigate('/spe43al-adm1n-p4nel/dashboard');
           }
           
@@ -56,10 +76,11 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
           return;
         }
         
-        // If not demo admin, check Supabase session
+        // Jeśli nie ma w localStorage, sprawdź sesję Supabase
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session) {
+          console.log('Znaleziono sesję Supabase:', session.user.email);
           const { data: adminUser, error: adminCheckError } = await supabase
             .from('admin_users')
             .select('email')
@@ -67,41 +88,55 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
             .maybeSingle();
 
           if (adminCheckError || !adminUser) {
-            // Not an admin user, log them out from admin area
+            console.log('Użytkownik nie jest administratorem:', session.user.email);
+            // Nie jest administratorem, wyloguj go
             if (location.pathname.includes('spe43al-adm1n-p4nel')) {
               await supabase.auth.signOut();
               setIsAuthenticated(false);
               setAdminEmail(null);
+              clearAuthState();
               navigate('/spe43al-adm1n-p4nel');
-              toast.error('Unauthorized access');
+              toast.error('Brak uprawnień dostępu');
             }
           } else {
-            // Is an admin user
+            // Jest administratorem
+            console.log('Potwierdzono administratora:', session.user.email);
             setIsAuthenticated(true);
             setAdminEmail(session.user.email);
+            persistAuthState(session.user.email);
             
-            // If on login page and authenticated, redirect to dashboard
+            // Jeśli na stronie logowania, przekieruj do panelu
             if (location.pathname === '/spe43al-adm1n-p4nel') {
+              console.log('Przekierowuję z logowania do dashboard (Supabase auth)');
               navigate('/spe43al-adm1n-p4nel/dashboard');
             }
           }
         } else {
+          console.log('Brak sesji Supabase, użytkownik nie jest zalogowany');
           setIsAuthenticated(false);
           setAdminEmail(null);
+          clearAuthState();
           
-          // Redirect to login if trying to access admin pages
+          // Przekieruj do logowania jeśli próbuje wejść na chronione strony
           if (location.pathname.includes('spe43al-adm1n-p4nel') && 
               location.pathname !== '/spe43al-adm1n-p4nel') {
+            console.log('Przekierowuję do strony logowania (brak uwierzytelnienia)');
             navigate('/spe43al-adm1n-p4nel');
           }
         }
       } catch (error) {
-        console.error('Error checking authentication:', error);
-        // Even if there's an error, let's check if demo admin is logged in
-        const demoAdminEmail = localStorage.getItem(DEMO_ADMIN_KEY);
-        if (demoAdminEmail === 'admin@example.com') {
+        console.error('Błąd podczas sprawdzania uwierzytelnienia:', error);
+        // Sprawdź jeszcze localStorage na wypadek błędu
+        const isAdminLoggedIn = localStorage.getItem(DEMO_ADMIN_KEY) === 'true';
+        const storedEmail = localStorage.getItem(ADMIN_EMAIL_KEY);
+        
+        if (isAdminLoggedIn && storedEmail) {
           setIsAuthenticated(true);
-          setAdminEmail(demoAdminEmail);
+          setAdminEmail(storedEmail);
+        } else {
+          setIsAuthenticated(false);
+          setAdminEmail(null);
+          clearAuthState();
         }
       } finally {
         setIsLoading(false);
@@ -110,20 +145,23 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
 
     checkAuth();
 
-    // Subscribe to auth changes
+    // Nasłuchuj zmian stanu uwierzytelnienia
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event);
+      console.log('Zmiana stanu uwierzytelnienia:', event);
       
-      // First always check demo admin
-      const demoAdminEmail = localStorage.getItem(DEMO_ADMIN_KEY);
-      if (demoAdminEmail === 'admin@example.com') {
+      // Najpierw sprawdź localStorage
+      const isAdminLoggedIn = localStorage.getItem(DEMO_ADMIN_KEY) === 'true';
+      const storedEmail = localStorage.getItem(ADMIN_EMAIL_KEY);
+      
+      if (isAdminLoggedIn && storedEmail) {
+        console.log('Zalogowany przez localStorage:', storedEmail);
         setIsAuthenticated(true);
-        setAdminEmail(demoAdminEmail);
+        setAdminEmail(storedEmail);
         return;
       }
       
       if (event === 'SIGNED_IN' && session) {
-        // Check if the signed-in user is an admin
+        // Sprawdź czy zalogowany użytkownik jest administratorem
         const { data: adminUser, error: adminCheckError } = await supabase
           .from('admin_users')
           .select('email')
@@ -131,25 +169,30 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
           .maybeSingle();
 
         if (adminCheckError || !adminUser) {
-          // Not an admin, sign them out
+          // Nie jest administratorem, wyloguj go
           await supabase.auth.signOut();
           setIsAuthenticated(false);
           setAdminEmail(null);
-          toast.error('Unauthorized access');
+          clearAuthState();
+          toast.error('Brak uprawnień dostępu');
         } else {
+          console.log('Zalogowano administratora przez Supabase:', session.user.email);
           setIsAuthenticated(true);
           setAdminEmail(session.user.email);
+          persistAuthState(session.user.email);
           
-          // Redirect to dashboard after sign in
+          // Przekieruj do panelu po zalogowaniu
           if (location.pathname === '/spe43al-adm1n-p4nel') {
             navigate('/spe43al-adm1n-p4nel/dashboard');
           }
         }
       } else if (event === 'SIGNED_OUT') {
-        const demoAdminEmail = localStorage.getItem(DEMO_ADMIN_KEY);
-        if (demoAdminEmail !== 'admin@example.com') {
+        const isAdminLoggedIn = localStorage.getItem(DEMO_ADMIN_KEY) === 'true';
+        if (!isAdminLoggedIn) {
+          console.log('Wylogowano z Supabase');
           setIsAuthenticated(false);
           setAdminEmail(null);
+          clearAuthState();
         }
       }
     });
@@ -165,20 +208,20 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
       
       console.log('Próba logowania dla:', email);
       
-      // Sprawdź czy to specjalny administrator (admin@example.com)
+      // Sprawdź specjalnych administratorów
       if (email === 'admin@example.com' && password === 'admin123') {
         console.log('Specjalna ścieżka logowania dla admin@example.com');
-        localStorage.setItem(DEMO_ADMIN_KEY, email);
+        persistAuthState(email);
         setIsAuthenticated(true);
         setAdminEmail(email);
         navigate('/spe43al-adm1n-p4nel/dashboard');
         return;
       }
       
-      // Sprawdź czy to nowo dodany administrator (kdziekansky@icloud.com)
+      // Sprawdź administratora kdziekansky@icloud.com
       if (email === 'kdziekansky@icloud.com' && password === 'tymczasowe_haslo') {
         console.log('Specjalna ścieżka logowania dla kdziekansky@icloud.com');
-        localStorage.setItem(DEMO_ADMIN_KEY, email);
+        persistAuthState(email);
         setIsAuthenticated(true);
         setAdminEmail(email);
         navigate('/spe43al-adm1n-p4nel/dashboard');
@@ -226,6 +269,8 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
         throw error;
       }
       
+      // Zapisz stan uwierzytelnienia
+      persistAuthState(email);
       navigate('/spe43al-adm1n-p4nel/dashboard');
     } catch (error: any) {
       console.error('Błąd podczas logowania:', error);
@@ -241,19 +286,20 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
     try {
       setIsLoading(true);
       
-      // Check if this is the demo admin
-      if (adminEmail === 'admin@example.com') {
-        localStorage.removeItem(DEMO_ADMIN_KEY);
-      } else {
-        // Regular Supabase auth logout
+      // Sprawdź czy sesja Supabase też istnieje
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
         await supabase.auth.signOut();
       }
+      
+      // Wyczyść localStorage
+      clearAuthState();
       
       setIsAuthenticated(false);
       setAdminEmail(null);
       navigate('/spe43al-adm1n-p4nel');
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error('Błąd podczas wylogowywania:', error);
       toast.error('Błąd wylogowania');
     } finally {
       setIsLoading(false);

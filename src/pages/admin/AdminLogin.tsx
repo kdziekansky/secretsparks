@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -8,12 +8,23 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Label } from '@/components/ui/label';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login, isLoading } = useAdminAuth();
+  const { login, isLoading, isAuthenticated } = useAdminAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Przekieruj zalogowanego użytkownika jeśli wraca na stronę logowania
+  useEffect(() => {
+    if (isAuthenticated) {
+      console.log('Użytkownik już zalogowany, przekierowuję do dashboard');
+      navigate('/spe43al-adm1n-p4nel/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,6 +51,18 @@ const AdminLogin: React.FC = () => {
     console.log('Próba logowania dla:', email);
     await login(email, password);
   };
+
+  // Jeśli użytkownik jest już uwierzytelniony, pokaż loader podczas przekierowania
+  if (isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-sm text-muted-foreground">Przekierowywanie do panelu administratora...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
@@ -120,6 +143,12 @@ const AdminLogin: React.FC = () => {
                         <li>Jeśli nie pamiętasz hasła, skontaktuj się z głównym administratorem</li>
                         <li>W przypadku nowego konta użyj hasła tymczasowego, które zostało dla Ciebie utworzone</li>
                       </ul>
+                      <p className="font-medium mb-2">Przykładowe dane logowania:</p>
+                      <div className="bg-muted p-2 rounded text-sm mb-4">
+                        <p><strong>Dla administratora kdziekansky@icloud.com:</strong></p>
+                        <p>Email: kdziekansky@icloud.com</p>
+                        <p>Hasło: tymczasowe_haslo</p>
+                      </div>
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>

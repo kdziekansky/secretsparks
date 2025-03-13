@@ -12,25 +12,29 @@ const ProtectedAdminRoute: React.FC<ProtectedAdminRouteProps> = ({ children }) =
   const { isAuthenticated, isLoading } = useAdminAuth();
   const location = useLocation();
   
-  // Debug logging
+  // Szczegółowe logowanie
   useEffect(() => {
-    console.log('Protected route check - isAuthenticated:', isAuthenticated, 'isLoading:', isLoading);
-  }, [isAuthenticated, isLoading]);
+    console.log('Protected route check - isAuthenticated:', isAuthenticated, 'isLoading:', isLoading, 'path:', location.pathname);
+  }, [isAuthenticated, isLoading, location.pathname]);
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-sm text-muted-foreground">Weryfikacja uprawnień administratora...</p>
+        </div>
       </div>
     );
   }
 
   if (!isAuthenticated) {
-    console.log('Not authenticated, redirecting to login');
-    return <Navigate to="/spe43al-adm1n-p4nel" replace />;
+    console.log('Brak uwierzytelnienia, przekierowanie do logowania z:', location.pathname);
+    // Zapisz aktualną ścieżkę, aby po zalogowaniu wrócić na nią
+    return <Navigate to="/spe43al-adm1n-p4nel" replace state={{ from: location }} />;
   }
 
-  console.log('User is authenticated, rendering protected content');
+  console.log('Użytkownik uwierzytelniony, renderowanie chronionej zawartości');
   return <>{children}</>;
 };
 
