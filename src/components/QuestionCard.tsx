@@ -114,6 +114,15 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
       // Jeśli URL zawiera już zakodowane znaki (%), nie koduj ponownie
       if (url.includes('%')) return url;
       
+      // Obsługa specjalnych przypadków dla edgingu
+      if (url.includes('Jego edging')) {
+        return '/images/illustrations/techniques/eding-him.svg';
+      }
+      
+      if (url.includes('Jej edging')) {
+        return '/images/illustrations/techniques/edging-her.svg';
+      }
+      
       // Usuń wszystkie podwójne lub więcej slashe, zostawiając tylko pojedyncze
       let cleanUrl = url.replace(/\/+/g, '/');
       

@@ -16,8 +16,33 @@ const encodeImagePaths = (questions: Question[]): Question[] => {
       // Nie modyfikuj już zakodowanych ścieżek
       if (question.illustration.includes('%')) return question;
       
+      // Sprawdź, czy plik jest SVG - wtedy użyj bezpośrednio pliku SVG z folderu
+      if (question.illustration.includes('.svg')) {
+        // Wyczyść ścieżkę do pliku SVG
+        const fileName = question.illustration.split('/').pop() || '';
+        return {
+          ...question,
+          illustration: `/images/illustrations/techniques/${fileName}`
+        };
+      }
+      
       // Usuń podwójne i wielokrotne ukośniki
       let cleanUrl = question.illustration.replace(/\/+/g, '/');
+      
+      // Dla pary pytań edging użyj odpowiednich plików SVG zamiast PNG
+      if (cleanUrl.includes('Jego edging')) {
+        return {
+          ...question,
+          illustration: '/images/illustrations/techniques/eding-him.svg'
+        };
+      }
+      
+      if (cleanUrl.includes('Jej edging')) {
+        return {
+          ...question,
+          illustration: '/images/illustrations/techniques/edging-her.svg'
+        };
+      }
       
       // Standardowa ścieżka dla wszystkich ilustracji
       const fileName = cleanUrl.split('/').pop() || '';

@@ -1,4 +1,3 @@
-
 import type { Question } from '@/types/survey';
 
 export const questionsAdditional: Question[] = [
@@ -272,45 +271,53 @@ export const questionsAdditional: Question[] = [
   { 
     id: 'edg-f1', 
     text: 'Jego edging',
-    description: "Kontrolowana stymulacja partnera z opóźnianiem orgazmu",
-    illustration: '/images/illustrations/techniques/Jego edging (discover, explore).png',
+    description: "Wielokrotne doprowadzanie partnera na skraj orgazmu i wstrzymywanie go. Ta technika może prowadzić do znacznie intensywniejszych orgazmów i lepszej kontroli nad wytryskiem.",
+    illustration: '/images/illustrations/techniques/eding-him.svg',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
       gameLevel: ['discover', 'explore'] 
-    }
+    },
+    pairGroup: "edge",
+    pairPriority: 1
   },
   { 
     id: 'edg-f2', 
     text: 'Jej edging',
-    description: "Kontrolowana stymulacja partnerki z opóźnianiem orgazmu",
-    illustration: '/images/illustrations/techniques/Jej edging (discover, explore).png',
+    description: "Wielokrotne doprowadzanie Cię na skraj orgazmu i wstrzymywanie go. Ta technika wymaga wyczucia i komunikacji, ale może prowadzić do niezwykle intensywnych orgazmów.",
+    illustration: '/images/illustrations/techniques/edging-her.svg',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
       gameLevel: ['discover', 'explore'] 
-    }
+    },
+    pairGroup: "edge",
+    pairPriority: 2
   },
   { 
     id: 'striptiz-f1', 
     text: 'Striptiz dla niej',
-    description: "Partner wykonuje striptiz dla partnerki",
+    description: "Czy chciałabyś, żeby partner wykonał dla Ciebie taniec rozbierany? Zmysłowy pokaz może być doskonałą grą wstępną i sposobem na budowanie napięcia seksualnego.",
     illustration: '/images/illustrations/techniques/Striptiz dla niego (discover).png',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
       gameLevel: ['discover'] 
-    }
+    },
+    pairGroup: "striptiz",
+    pairPriority: 1
   },
   { 
     id: 'striptiz-f2', 
     text: 'Striptiz dla niego',
-    description: "Partnerka wykonuje striptiz dla partnera",
+    description: "Czy chciałabyś zatańczyć dla partnera zmysłowy taniec rozbierany? Pokazanie swojego ciała w ten sposób może być niezwykle uwodzicielskie i podkreślić Twoją pewność siebie.",
     illustration: '/images/illustrations/techniques/Striptiz dla niego (discover).png',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
       gameLevel: ['discover'] 
-    }
+    },
+    pairGroup: "striptiz",
+    pairPriority: 2
   }
 ];
