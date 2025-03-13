@@ -18,24 +18,10 @@ const encodeImagePaths = (questions: Question[]): Question[] => {
       // Usuń podwójne i wielokrotne ukośniki
       let cleanUrl = question.illustration.replace(/\/+/g, '/');
       
-      // POPRAWKA: Nie przekierowuj ścieżek z /images/illustrations/ na /lovable-uploads/
-      // zamiast tego używaj oryginalnej ścieżki z poprawnym kodowaniem znaków specjalnych
+      // WAŻNE: NIE PRZEKIEROWUJ ścieżek z /images/illustrations/ na /lovable-uploads/
+      // Po prostu zachowaj oryginalną ścieżkę
       
-      // Dla ścieżek z lovable-uploads, zachowaj ścieżkę ale zakoduj nazwę pliku
-      if (cleanUrl.startsWith('/lovable-uploads/')) {
-        const basePath = '/lovable-uploads/';
-        const fileName = cleanUrl.substring(basePath.length);
-        
-        if (fileName.includes(' ') || /[^a-zA-Z0-9._-]/.test(fileName)) {
-          return {
-            ...question,
-            illustration: basePath + encodeURIComponent(fileName)
-          };
-        }
-        return question;
-      }
-      
-      // Dla innych ścieżek, zakoduj tylko część po ostatnim slashu (nazwa pliku)
+      // Dla innych ścieżek, enkoduj tylko nazwę pliku, zachowując ścieżkę
       const lastSlashIndex = cleanUrl.lastIndexOf('/');
       if (lastSlashIndex === -1) return question;
       
