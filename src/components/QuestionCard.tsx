@@ -102,38 +102,27 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     }, 300);
   };
 
-  // Zakoduj URL obrazka dla poprawnego ładowania zdjęć z nazwami zawierającymi spacje
-  const getEncodedImageUrl = (url: string) => {
+  // POPRAWIONA FUNKCJA: Obsługuje prawidłowo ścieżki obrazów
+  const getImageUrl = (url: string) => {
     if (!url) return '';
     
     try {
-      // Sprawdź czy URL jest już poprawnie zakodowany lub jest bezwzględnym URL
+      // Jeśli URL jest już bezwzględny (http/https), zwróć go bez zmian
       if (url.startsWith('http')) return url;
       
-      // Jeśli URL zawiera już zakodowane znaki (%), nie koduj ponownie
-      if (url.includes('%')) return url;
-      
-      // Usuń wszystkie podwójne lub więcej slashe, zostawiając tylko pojedyncze
-      let cleanUrl = url.replace(/\/+/g, '/');
-      
-      // KLUCZOWA POPRAWKA: Jeśli ścieżka zawiera lovable-uploads, przekieruj na images/illustrations
-      if (cleanUrl.startsWith('/lovable-uploads/')) {
-        const fileName = cleanUrl.substring('/lovable-uploads/'.length);
-        cleanUrl = `/images/illustrations/techniques/${fileName}`;
-        console.log('Przekierowano ścieżkę z:', url, 'na:', cleanUrl);
+      // Sprawdź czy ścieżka zaczyna się od /lovable-uploads/
+      if (url.startsWith('/lovable-uploads/')) {
+        // Przekieruj na poprawną ścieżkę przy zachowaniu nazwy pliku
+        const fileName = url.substring('/lovable-uploads/'.length);
+        return `/images/illustrations/techniques/${fileName}`;
       }
       
-      // Dla innych ścieżek, zakoduj tylko część po ostatnim slashu (nazwa pliku)
-      const lastSlashIndex = cleanUrl.lastIndexOf('/');
-      if (lastSlashIndex === -1) return encodeURI(cleanUrl);
-      
-      const path = cleanUrl.substring(0, lastSlashIndex + 1);
-      const filename = cleanUrl.substring(lastSlashIndex + 1);
-      
-      return path + encodeURIComponent(filename);
+      // Jeśli to standardowa ścieżka /images/illustrations/techniques/, 
+      // zachowaj ją bez zmian
+      return url;
     } catch (error) {
-      console.error("Error encoding image URL:", error, "Original URL:", url);
-      return url; // W razie błędu zwróć oryginalny URL
+      console.error("Error processing image URL:", error, "Original URL:", url);
+      return url;
     }
   };
   
@@ -167,12 +156,12 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     ? (isPartnerSurvey ? 'Zakończ ankietę' : 'Przejdź do płatności') 
     : 'Zapisz odpowiedź';
   
-  // Zakodowany URL obrazka
-  const encodedImageUrl = currentQuestion.illustration ? getEncodedImageUrl(currentQuestion.illustration) : '';
+  // Pobierz finalny URL obrazka do wyświetlenia
+  const finalImageUrl = currentQuestion.illustration ? getImageUrl(currentQuestion.illustration) : '';
   
-  // DEBUG: Wyświetl w konsoli oryginalne i zakodowane URL obrazka
+  // DEBUG: Wyświetl w konsoli oryginalne i przetworzone URL obrazka
   console.log('Original image URL:', currentQuestion.illustration);
-  console.log('Encoded image URL:', encodedImageUrl);
+  console.log('Processed image URL:', finalImageUrl);
   
   return (
     <div className={`glass-panel w-full max-w-4xl transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100 animate-slide-up'}`}>
@@ -194,10 +183,10 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
               )}
               
               {/* Try to display SVG using object tag if it's an SVG */}
-              {encodedImageUrl.toLowerCase().endsWith('.svg') ? (
+              {finalImageUrl.toLowerCase().endsWith('.svg') ? (
                 <>
                   <object 
-                    data={encodedImageUrl} 
+                    data={finalImageUrl} 
                     type="image/svg+xml"
                     className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                     onLoad={handleImageLoad}
@@ -228,7 +217,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
                 /* Normal image for non-SVG */
                 <>
                   <img 
-                    src={encodedImageUrl} 
+                    src={finalImageUrl} 
                     alt={currentQuestion.text} 
                     className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                     onLoad={handleImageLoad}

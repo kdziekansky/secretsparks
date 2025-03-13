@@ -1,3 +1,4 @@
+
 import type { Question } from '@/types/survey';
 
 export const questionsAdditional: Question[] = [
@@ -7,7 +8,7 @@ export const questionsAdditional: Question[] = [
     id: 'mm-pos1', 
     text: 'Pozycja misjonarska',
     description: "Klasyczna pozycja twarzą w twarz, jeden partner na górze",
-    illustration: '/lovable-uploads/missionary-mm.png',
+    illustration: '/images/illustrations/techniques/missionary-mm.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
@@ -18,7 +19,7 @@ export const questionsAdditional: Question[] = [
     id: 'mm-pos2', 
     text: 'Pozycja "na pieska"',
     description: "Pozycja od tyłu, która pozwala na głębszą penetrację",
-    illustration: '/lovable-uploads/doggy-mm.png',
+    illustration: '/images/illustrations/techniques/doggy-mm.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
@@ -29,7 +30,7 @@ export const questionsAdditional: Question[] = [
     id: 'mm-pos3', 
     text: 'Pozycja "łyżeczki"',
     description: "Obaj partnerzy leżą na boku, jeden za drugim",
-    illustration: '/lovable-uploads/spoon-mm.png',
+    illustration: '/images/illustrations/techniques/spoon-mm.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
@@ -40,7 +41,7 @@ export const questionsAdditional: Question[] = [
     id: 'mm-pos4', 
     text: 'Pozycja "jeździec"',
     description: "Jeden partner siedzi na drugim twarzą do twarzy",
-    illustration: '/lovable-uploads/rider-mm.png',
+    illustration: '/images/illustrations/techniques/rider-mm.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
@@ -51,7 +52,7 @@ export const questionsAdditional: Question[] = [
     id: 'mm-pos5', 
     text: 'Pozycja "odwrócona jeździec"',
     description: "Jeden partner siedzi na drugim tyłem do twarzy",
-    illustration: '/lovable-uploads/reverse-rider-mm.png',
+    illustration: '/images/illustrations/techniques/reverse-rider-mm.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
@@ -62,7 +63,7 @@ export const questionsAdditional: Question[] = [
     id: 'mm-pos6', 
     text: 'Pozycja "bokiem z bliskim kontaktem"',
     description: "Obaj partnerzy leżą na boku twarzą do siebie",
-    illustration: '/lovable-uploads/side-mm.png',
+    illustration: '/images/illustrations/techniques/side-mm.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
@@ -73,7 +74,7 @@ export const questionsAdditional: Question[] = [
     id: 'mm-pos7', 
     text: 'Pozycja "na brzuchu"',
     description: "Jeden partner leży płasko na brzuchu, drugi wchodzi od tyłu",
-    illustration: '/lovable-uploads/prone-mm.png',
+    illustration: '/images/illustrations/techniques/prone-mm.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
@@ -84,7 +85,7 @@ export const questionsAdditional: Question[] = [
     id: 'mm-pos8', 
     text: 'Pozycja "na sofie"',
     description: "Jeden partner siedzi na sofie, drugi na nim",
-    illustration: '/lovable-uploads/sofa-mm.png',
+    illustration: '/images/illustrations/techniques/sofa-mm.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
@@ -95,7 +96,7 @@ export const questionsAdditional: Question[] = [
     id: 'mm-pos9', 
     text: 'Pozycja "twarzą w twarz, siedząc"',
     description: "Obaj partnerzy siedzą twarzą do siebie",
-    illustration: '/lovable-uploads/face-to-face-mm.png',
+    illustration: '/images/illustrations/techniques/face-to-face-mm.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
@@ -106,7 +107,7 @@ export const questionsAdditional: Question[] = [
     id: 'mm-pos10', 
     text: 'Pozycja "69"',
     description: "Obaj partnerzy jednocześnie sprawiają sobie przyjemność oralnie",
-    illustration: '/lovable-uploads/69-mm.png',
+    illustration: '/images/illustrations/techniques/69-mm.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
@@ -117,7 +118,7 @@ export const questionsAdditional: Question[] = [
     id: 'mm-pos11', 
     text: 'Pozycja "lotus"',
     description: "Obaj partnerzy siedzą twarzą do siebie, nogi splecione",
-    illustration: '/lovable-uploads/lotus-mm.png',
+    illustration: '/images/illustrations/techniques/lotus-mm.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
@@ -128,7 +129,7 @@ export const questionsAdditional: Question[] = [
     id: 'mm-pos12', 
     text: 'Pozycja "stojąca"',
     description: "Obaj partnerzy stoją, jeden za drugim",
-    illustration: '/lovable-uploads/standing-mm.png',
+    illustration: '/images/illustrations/techniques/standing-mm.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
@@ -139,7 +140,7 @@ export const questionsAdditional: Question[] = [
     id: 'mm-role1', 
     text: 'Nauczyciel i uczeń',
     description: "Odgrywanie ról nauczyciela i ucznia",
-    illustration: '/lovable-uploads/teacher-student-mm.png',
+    illustration: '/images/illustrations/techniques/teacher-student-mm.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
@@ -150,7 +151,7 @@ export const questionsAdditional: Question[] = [
     id: 'mm-role2', 
     text: 'Policjant i zatrzymany',
     description: "Odgrywanie ról policjanta i zatrzymanego",
-    illustration: '/lovable-uploads/police-mm.png',
+    illustration: '/images/illustrations/techniques/police-mm.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
@@ -161,7 +162,7 @@ export const questionsAdditional: Question[] = [
     id: 'mm-role3', 
     text: 'Szef i pracownik',
     description: "Odgrywanie ról szefa i pracownika",
-    illustration: '/lovable-uploads/boss-mm.png',
+    illustration: '/images/illustrations/techniques/boss-mm.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
@@ -172,7 +173,7 @@ export const questionsAdditional: Question[] = [
     id: 'mm-sens1', 
     text: 'Seksowna bielizna',
     description: "Noszenie seksownej bielizny dla partnera",
-    illustration: '/lovable-uploads/underwear-mm.png',
+    illustration: '/images/illustrations/techniques/underwear-mm.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
@@ -183,7 +184,7 @@ export const questionsAdditional: Question[] = [
     id: 'mm-sens2', 
     text: 'Sexting',
     description: "Wysyłanie pikantnych wiadomości i zdjęć",
-    illustration: '/lovable-uploads/sexting-mm.png',
+    illustration: '/images/illustrations/techniques/sexting-mm.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
@@ -194,7 +195,7 @@ export const questionsAdditional: Question[] = [
     id: 'mm-adv1', 
     text: 'Pełna dominacja i uległość',
     description: "Jeden partner całkowicie dominuje, drugi jest uległy",
-    illustration: '/lovable-uploads/domination-mm.png',
+    illustration: '/images/illustrations/techniques/domination-mm.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
@@ -205,19 +206,19 @@ export const questionsAdditional: Question[] = [
     id: 'mm-adv2', 
     text: 'Seks z elementami BDSM',
     description: "Wykorzystanie kajdanek, opasek na oczy, itp.",
-    illustration: '/lovable-uploads/bdsm-mm.png',
+    illustration: '/images/illustrations/techniques/bdsm-mm.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'male',
       gameLevel: ['exceed'] 
     }
   },
-  // Dodane poprawione ścieżki do obrazów, które powodowały błędy
+  // Poprawione ścieżki do obrazów - zamieniamy /lovable-uploads/ na /images/illustrations/techniques/
   { 
     id: 'dom-f2', 
     text: 'On dominuje nad nią',
     description: "Partner przejmuje kontrolę i dominuje w relacji seksualnej",
-    illustration: '/lovable-uploads/domination.svg',
+    illustration: '/images/illustrations/techniques/domination.svg',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
@@ -228,7 +229,7 @@ export const questionsAdditional: Question[] = [
     id: 'dom-f3', 
     text: 'Ona dominuje nad nim',
     description: "Partnerka przejmuje kontrolę i dominuje w relacji seksualnej",
-    illustration: '/lovable-uploads/domination.svg',
+    illustration: '/images/illustrations/techniques/domination.svg',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
@@ -239,7 +240,7 @@ export const questionsAdditional: Question[] = [
     id: 'toys-f1', 
     text: 'Zabawki dla niej',
     description: "Wykorzystanie zabawek erotycznych dla kobiet",
-    illustration: '/lovable-uploads/toys-for-her.png',
+    illustration: '/images/illustrations/techniques/toys-for-her.png',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
@@ -250,7 +251,7 @@ export const questionsAdditional: Question[] = [
     id: 'toys-f2', 
     text: 'Zabawki dla niego',
     description: "Wykorzystanie zabawek erotycznych dla mężczyzn",
-    illustration: '/lovable-uploads/toys-for-him.png',
+    illustration: '/images/illustrations/techniques/toys-for-him.png',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
@@ -261,7 +262,7 @@ export const questionsAdditional: Question[] = [
     id: 'oral-f1', 
     text: 'Seks oralny dla niej',
     description: "Partner dostarcza partnercie przyjemności oralnej",
-    illustration: '/lovable-uploads/syrena.svg',
+    illustration: '/images/illustrations/techniques/syrena.svg',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
@@ -273,7 +274,7 @@ export const questionsAdditional: Question[] = [
     id: 'edg-f1', 
     text: 'Jego edging',
     description: "Kontrolowana stymulacja partnera z opóźnianiem orgazmu",
-    illustration: '/lovable-uploads/eding-him.svg',
+    illustration: '/images/illustrations/techniques/eding-him.svg',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
@@ -284,7 +285,7 @@ export const questionsAdditional: Question[] = [
     id: 'edg-f2', 
     text: 'Jej edging',
     description: "Kontrolowana stymulacja partnerki z opóźnianiem orgazmu",
-    illustration: '/lovable-uploads/edging-her.svg',
+    illustration: '/images/illustrations/techniques/edging-her.svg',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
@@ -295,7 +296,7 @@ export const questionsAdditional: Question[] = [
     id: 'striptiz-f1', 
     text: 'Striptiz dla niej',
     description: "Partner wykonuje striptiz dla partnerki",
-    illustration: '/lovable-uploads/striptease-for-her.svg',
+    illustration: '/images/illustrations/techniques/striptease-for-her.svg',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
@@ -306,7 +307,7 @@ export const questionsAdditional: Question[] = [
     id: 'striptiz-f2', 
     text: 'Striptiz dla niego',
     description: "Partnerka wykonuje striptiz dla partnera",
-    illustration: '/lovable-uploads/striptease-for-him.svg',
+    illustration: '/images/illustrations/techniques/striptease-for-him.svg',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
