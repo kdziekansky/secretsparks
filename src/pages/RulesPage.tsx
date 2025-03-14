@@ -67,8 +67,8 @@ const RulesPage = () => {
                 <h3 className="text-xl font-bold">Zaproś partnera</h3>
               </div>
               <p className="text-sm text-gray-400">
-                Po wypełnieniu swojej ankiety, wyślemy Twojej partnerce/partnerowi specjalny link, 
-                który pozwoli na wypełnienie drugiej części ankiety.
+                Po wypełnieniu ankiety otrzymasz link do wysłania partnerce/partnerowi, 
+                aby mógł wypełnić swoją część. Dzięki temu Secret AI stworzy raport.
               </p>
             </div>
             
@@ -81,9 +81,8 @@ const RulesPage = () => {
                 <h3 className="text-xl font-bold">Otrzymacie raport</h3>
               </div>
               <p className="text-sm text-gray-400">
-                Po wypełnieniu ankiety przez obie osoby, otrzymacie spersonalizowany raport zawierający 
-                analizę Waszego życia seksualnego i konkretne wskazówki. Raport będzie zawierał tylko te 
-                aktywności, którymi oboje jesteście zainteresowani.
+                Po zakończeniu obu ankiet otrzymacie raport z analizą Waszego życia seksualnego i wskazówkami. 
+                Zawiera on tylko te aktywności, którymi oboje będziecie zainteresowani.
               </p>
             </div>
             
@@ -96,8 +95,8 @@ const RulesPage = () => {
                 <h3 className="text-xl font-bold">Odkryjcie seks na nowo</h3>
               </div>
               <p className="text-sm text-gray-400">
-                Potraktujcie to jako punkt wyjścia do podniesienia jakości swojego życia seksualnego, 
-                wdrażajcie wytyczne z raportu w życie i podnieście swoją satysfakcję o kilkadziesiąt procent.
+                Potraktujcie to jako punkt wyjścia do urozmaicenia życia intymnego. 
+                Wdrażając sugestie z raportu, możecie podnieść poziom satysfakcji i bliskości w związku.
               </p>
             </div>
           </div>
