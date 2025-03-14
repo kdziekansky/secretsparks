@@ -5,7 +5,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'ext-1', 
     text: 'Seks, gdy ktoś Was obserwuje',
     description: "Uprawianie seksu ze świadomością, że ktoś was widzi. Świadomość bycia obserwowanym może dodać ogromnego ładunku emocjonalnego i zwiększyć intensywność doznań.",
-    illustration: '/images/illustrations/techniques/Seks, gdy ktoś Was obserwuje (explore, exceed).png',
+    illustration: '/images/illustrations/techniques/Seks, gdy ktoś Was obserwuje (exceed).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -60,7 +60,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'ext-6', 
     text: 'Pissing – jego złoty deszcz',
     description: "Oddawanie moczu na ciało partnera lub partnerki. Ta kontrowersyjna praktyka jest formą BDSM, która dla niektórych par stanowi akt oddania i symbol głębokiego zaufania.",
-    illustration: '/images/illustrations/techniques/Pissing - jego złoty deszcz (exceed).png',
+    illustration: '/images/illustrations/techniques/Pissing – jego złoty deszcz (exceed).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -82,7 +82,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'ext-8', 
     text: 'Elektrostymulacja',
     description: "Używanie delikatnych impulsów elektrycznych do stymulacji erotycznej. Specjalistyczne zabawki mogą wywołać unikalne doznania niemożliwe do osiągnięcia w inny sposób.",
-    illustration: '/images/illustrations/techniques/Elektrostymulacja - (explore, exceed).png',
+    illustration: '/images/illustrations/techniques/Elektrostymulacja – (explore, exceed).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -163,7 +163,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'gru-6', 
     text: 'Zdrada kontrolowana – ona zdradza',
     description: "Partnerka uprawia seks z innym mężczyzną za Twoją wiedzą i zgodą. Ta fantazja, znana jako cuckold, dla niektórych mężczyzn stanowi źródło intensywnego podniecenia.",
-    illustration: '/images/illustrations/techniques/Zdrada kontrolowana - ona zdradza (exceed).png',
+    illustration: '/images/illustrations/techniques/Zdrada kontrolowana – on zdradza (exceed).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -176,7 +176,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'gru-7', 
     text: 'Zdrada kontrolowana – on zdradza',
     description: "Uprawiasz seks z inną kobietą za wiedzą i zgodą swojej partnerki. Ta praktyka wymaga ogromnego zaufania i jasnych zasad, aby nie zagrażała związkowi.",
-    illustration: '/images/illustrations/techniques/Zdrada kontrolowana - on zdradza (exceed).png',
+    illustration: '/images/illustrations/techniques/Zdrada kontrolowana – on zdradza (exceed).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -189,7 +189,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'gru-8', 
     text: 'Symulowanie „pierwszego razu"',
     description: "Odgrywanie scenariusza, jakbyście byli ze sobą po raz pierwszy. Ta zabawa pozwala odkryć partnerkę na nowo, odświeżyć relację i poczuć ekscytację pierwszego zbliżenia.",
-    illustration: '/images/illustrations/techniques/Symulowanie pierwszego razu (explore).png',
+    illustration: '/images/illustrations/techniques/Symulowanie "pierwszego razu" (explore).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -222,7 +222,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-3', 
     text: 'Pozycja "na pieska"',
     description: "Pozycja od tyłu, która pozwala na głębszą penetrację. Daje dostęp do punktu G partnerki i umożliwia swobodne ruchy biodrami, zwiększając intensywność doznań.",
-    illustration: '/images/illustrations/techniques/Pozycja na pieska (discover, explore, exceed).png',
+    illustration: '/images/illustrations/techniques/Pozycja _na pieska_ (discover, explore, exceed).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -255,7 +255,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-8', 
     text: 'Pozycja "odwrócona amazońska"',
     description: "Kobieta siedzi na Tobie tyłem do Twojej twarzy. Ta pozycja oferuje wyjątkowe widoki i dostęp do pieszczenia pleców, pośladków i innych części ciała partnerki.",
-    illustration: '/images/illustrations/techniques/Pozycja odwrócona amazońska (discover, explore).png',
+    illustration: '/images/illustrations/techniques/Pozycja odwrócona amazonka (discover, explore).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -266,7 +266,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-9', 
     text: 'Pozycja "leniwego pieska"',
     description: "Kobieta leży płasko na brzuchu, a Ty wchodzisz od tyłu. Idealny wybór, gdy chcecie połączyć odpoczynek z przyjemnością, oferując głęboką penetrację przy minimalnym wysiłku.",
-    illustration: '/images/illustrations/techniques/Pozycja leniwego pieska (discover).png',
+    illustration: '/images/illustrations/techniques/Pozycja _leniwego pieska_ (discover).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -277,7 +277,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-12', 
     text: 'Pozycja "kruka" (69)',
     description: "Pozycja, w której oboje jednocześnie sprawiacie sobie przyjemność oralnie. Fantastyczny sposób, by dawać i otrzymywać przyjemność w tym samym czasie.",
-    illustration: '/images/illustrations/techniques/Pozycja kruka (69) (explore).png',
+    illustration: '/images/illustrations/techniques/Pozycja kruka, (69) (explore).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -288,7 +288,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-13', 
     text: 'Pozycja "lotus"',
     description: "Siedzisz ze skrzyżowanymi nogami, a partnerka siada na Tobie, oplatając Cię nogami. Ta intymna pozycja sprzyja głębokiemu połączeniu duchowemu i fizycznemu.",
-    illustration: '/images/illustrations/techniques/Pozycja lotus (discover, explore, exceed).png',
+    illustration: '/images/illustrations/techniques/Pozycja lotus (discover, explore).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -299,7 +299,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-14', 
     text: 'Pozycja "łyżeczki"',
     description: "Oboje leżycie na boku, Ty za partnerką. Przyjemna, delikatna pozycja, idealna na romantyczne chwile, pozwalająca na obejmowanie ciała partnerki i intymną bliskość.",
-    illustration: '/images/illustrations/techniques/Pozycja łyżeczki (discover).png',
+    illustration: '/images/illustrations/techniques/Pozycja _łyżeczki_ (discover).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -321,7 +321,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'rol-1', 
     text: 'Nauczycielka i student',
     description: "Odgrywanie ról nauczycielki i ucznia - kto będzie prowadził lekcje? Fantazja o władzy i wiedzy, gdzie jeden z was staje się przewodnikiem, a drugi chętnym do nauki uczniem.",
-    illustration: '/images/illustrations/techniques/Nauczycielka i student.png',
+    illustration: '/images/illustrations/techniques/Nauczycielka i student (png)',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -649,7 +649,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'com-1', 
     text: 'Dirty talk',
     description: "Wypowiadanie nieprzyzwoitych słów i fantazji podczas seksu. Erotyczne słowa mogą stymulować umysł - najważniejszy organ seksualny - i znacząco zwiększyć podniecenie.",
-    illustration: '/images/illustrations/techniques/Dirty talk (discover).png',
+    illustration: '/images/illustrations/techniques/Dirty talk (discover, exceed).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -671,7 +671,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'dom-1', 
     text: 'Wzajemna lekka dominacja',
     description: "Naprzemienne przejmowanie kontroli podczas seksu. Zmienianie ról dominującego i uległego może dodać dynamiki waszemu życiu seksualnemu i zaspokoić różne potrzeby.",
-    illustration: '/images/illustrations/techniques/Wzajemna lekka dominacja (discover, explore).png',
+    illustration: '/images/illustrations/techniques/Wzajemna lekka dominacja (discover, exceed).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -682,7 +682,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'dom-2', 
     text: 'On dominuje nad nią',
     description: "Przejęcie kontroli i kierowanie przebiegiem zbliżenia. Dla wielu par taki układ jest podniecający, daje poczucie bezpieczeństwa i pozwala spełniać różne fantazje.",
-    illustration: '/images/illustrations/techniques/On dominuje nad nią (discover, explore).png',
+    illustration: '/images/illustrations/techniques/On dominuje nad nią (exceed).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -719,7 +719,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'dom-5', 
     text: 'Seks z lekkim podduszaniem',
     description: "Kontrolowane ograniczanie dopływu powietrza dla zwiększenia doznań. Ta praktyka wymaga absolutnego zaufania, wiedzy i ostrożności, ale może intensyfikować orgazmy.",
-    illustration: '/images/illustrations/techniques/Seks z lekkim podduszaniem (explore).png',
+    illustration: '/images/illustrations/techniques/Seks z lekkim podduszeniem (explore).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -741,7 +741,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'loc-2', 
     text: 'Seks w samochodzie',
     description: "Spontaniczny seks w zaparkowanym aucie. Ograniczona przestrzeń wymusza kreatywność w pozycjach, a element ryzyka dodaje pikanterii całemu doświadczeniu.",
-    illustration: '/images/illustrations/techniques/Seks w samochodzie (discover, explore).png',
+    illustration: '/images/illustrations/techniques/Seks w samochodzie (explore, exceed).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -796,7 +796,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'med-1', 
     text: 'Wspólne oglądanie filmów porno',
     description: "Czy chciałbyś oglądać filmy dla dorosłych razem z partnerką? To może być inspirujące doświadczenie, źródło nowych pomysłów i sposób na rozmowę o fantazjach.",
-    illustration: '/images/illustrations/techniques/Wspólne oglądanie filmów porno (discover, explore).png',
+    illustration: '/images/illustrations/techniques/Wspólne oglądanie filmów porno (discover).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
