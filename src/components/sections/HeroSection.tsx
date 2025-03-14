@@ -48,8 +48,8 @@ const HeroSection = () => {
           <div className="glass-card flex items-center justify-center p-8">
             <div className="w-[95%] rounded-2xl overflow-hidden">
               <img 
-                src="/lovable-uploads/4ded2cf2-a974-478a-b815-f5d1f9ccfdbf.png" 
-                alt="Aplikacja mobilna" 
+                src="/lovable-uploads/d423d250-7687-4e1f-9364-61805fb55c9f.png" 
+                alt="Secret Sparks" 
                 className="w-full h-auto object-cover rounded-2xl"
               />
             </div>
