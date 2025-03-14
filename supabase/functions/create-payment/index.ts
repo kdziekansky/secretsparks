@@ -54,7 +54,7 @@ serve(async (req) => {
     if (!stripe) {
       console.error('Stripe client initialization failed - missing secret key');
       return new Response(
-        JSON.stringify({ error: "Nie skonfigurowano klucza API Stripe. Skontaktuj się z administratorem systemu." }),
+        JSON.stringify({ error: "Brak klucza API Stripe. Skontaktuj się z administratorem systemu." }),
         {
           status: 200, // Always use 200 for responses from Edge Functions
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
