@@ -23,7 +23,7 @@ if (!SUPABASE_ANON_KEY) {
 console.info("Using Supabase URL:", SUPABASE_URL);
 
 // Add Stripe publishable key constant
-export const STRIPE_PUBLISHABLE_KEY = "pk_test_51R1AxJIY3wH8ltzbjfmYXzIMyNXdDHK19zPkcnjUlgxZeqfe2NiQYkcheHyK8QkwbG7DdfY8c3naJEuOG3JebxJ200v7kA5ZfK";
+export const STRIPE_PUBLISHABLE_KEY = "pk_live_51R1AxDI1gdf4PaDcceM1NokcVee3cfnDG5xZq9sqycPlvpsFxENWVojPoXmsavaZXOykgWEY66Th0w5eNS5FV6Ub00RIpHVp1p";
 
 let supabase;
 
