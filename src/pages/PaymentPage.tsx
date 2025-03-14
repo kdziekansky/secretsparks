@@ -5,13 +5,14 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import { Link } from 'react-router-dom';
-import { Gift, Info } from 'lucide-react';
+import { Gift, Info, Loader2 } from 'lucide-react';
 
 // Fixed product price at 29 zł, gift wrapping is free
 const PRODUCT_PRICE = 29;
+const CURRENCY = 'zł';
 
 const PaymentPage: React.FC = () => {
   const [userName, setUserName] = useState('');
@@ -21,6 +22,7 @@ const PaymentPage: React.FC = () => {
   const [giftWrap, setGiftWrap] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [ageConfirmed, setAgeConfirmed] = useState(false);
+  const [sendNow, setSendNow] = useState(true);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get('orderId');
@@ -240,19 +242,19 @@ const PaymentPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-[#05050a]">
       <div className="container mx-auto py-6">
         {/* Logo */}
         <div className="flex justify-center mb-8">
-          <img src="/logo.svg" alt="Logo" className="h-12" />
+          <img src="/lovable-uploads/0537e49e-f4b0-49a8-bedb-41f3876d6f50.png" alt="Secret Sparks Logo" className="h-16" />
         </div>
         
         <div className="mx-auto max-w-6xl px-4">
-          <div className="flex flex-col lg:flex-row gap-6">
+          <div className="flex flex-col lg:flex-row gap-8">
             {/* Form Section */}
-            <div className="w-full lg:w-1/2 lg:pr-6">
+            <div className="w-full lg:w-1/2">
               <div className="mb-6">
-                <h1 className="text-4xl font-bold mb-3 text-white flex items-center">
+                <h1 className="text-3xl sm:text-4xl font-bold mb-3 text-white flex items-center">
                   Co raz bliżej <span className="text-red-500 ml-2">❤️</span>
                 </h1>
                 <p className="text-gray-300 mb-3">
@@ -268,7 +270,7 @@ const PaymentPage: React.FC = () => {
                   placeholder="Twoje imię"
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
-                  className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500 focus:ring-primary focus:border-primary"
+                  className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500"
                 />
                 
                 <Input 
@@ -276,45 +278,72 @@ const PaymentPage: React.FC = () => {
                   type="email"
                   value={userEmail}
                   onChange={(e) => setUserEmail(e.target.value)}
-                  className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500 focus:ring-primary focus:border-primary"
+                  className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500"
                 />
                 
                 <Input 
-                  placeholder="Imię Twojej partnerki"
+                  placeholder="Imię Twojej partnerki/partnera"
                   value={partnerName}
                   onChange={(e) => setPartnerName(e.target.value)}
-                  className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500 focus:ring-primary focus:border-primary"
+                  className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500"
                 />
                 
                 <Input 
-                  placeholder="E-mail partnerki (tam wyślemy zaproszenie)"
+                  placeholder="E-mail partnerki/partnera (tam wyślemy zaproszenie)"
                   type="email"
                   value={partnerEmail}
                   onChange={(e) => setPartnerEmail(e.target.value)}
-                  className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500 focus:ring-primary focus:border-primary"
+                  className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500"
                 />
                 
-                <div className="flex items-center space-x-2 pt-2">
+                {/* Timing options */}
+                <div className="bg-[#111] border border-[#333] rounded-md p-4">
+                  <p className="font-medium text-white mb-2">Kiedy wysłać zaproszenie?</p>
+                  <div className="flex gap-8 text-gray-300">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input 
+                        type="radio"
+                        checked={sendNow}
+                        onChange={() => setSendNow(true)}
+                        className="accent-primary w-4 h-4"
+                      />
+                      <span>teraz</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input 
+                        type="radio"
+                        checked={!sendNow}
+                        onChange={() => setSendNow(false)}
+                        className="accent-primary w-4 h-4"
+                      />
+                      <span>chcę wybrać</span>
+                    </label>
+                  </div>
+                </div>
+                
+                {/* Gift option */}
+                <div className="flex items-center bg-[#111] border border-[#333] rounded-md p-4 gap-3">
                   <Checkbox 
                     id="giftWrap" 
                     checked={giftWrap}
                     onCheckedChange={(checked) => setGiftWrap(!!checked)}
-                    className="border-white/40 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                    className="h-4 w-4 border-white/40"
                   />
-                  <Label htmlFor="giftWrap" className="text-white flex items-center cursor-pointer">
-                    <span className="mr-2">🎁</span> Zapakuj na prezent (bezpłatnie)
+                  <Gift className="h-5 w-5 text-yellow-500" />
+                  <Label htmlFor="giftWrap" className="text-white cursor-pointer flex-grow">
+                    Zapakuj na prezent (bezpłatnie)
                   </Label>
+                  <Info className="h-4 w-4 text-gray-400 cursor-help" />
                 </div>
                 
-                <div className="flex items-start space-x-2 pt-2">
-                  <div className="mt-1">
-                    <Checkbox 
-                      id="ageConfirmation" 
-                      checked={ageConfirmed}
-                      onCheckedChange={(checked) => setAgeConfirmed(!!checked)}
-                      className="border-white/40 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                    />
-                  </div>
+                {/* Terms and Conditions */}
+                <div className="flex items-center gap-3 pt-3">
+                  <Checkbox 
+                    id="ageConfirmation" 
+                    checked={ageConfirmed}
+                    onCheckedChange={(checked) => setAgeConfirmed(!!checked)}
+                    className="h-4 w-4 border-white/40"
+                  />
                   <Label htmlFor="ageConfirmation" className="text-gray-300 text-sm cursor-pointer">
                     Grając, akceptujesz przyjazny <Link to="/regulamin" className="text-primary hover:underline">Regulamin</Link> i <Link to="/polityka-prywatnosci" className="text-primary hover:underline">Politykę Prywatności</Link>, która gwarantuje bezpieczeństwo Waszych danych. Usuwamy je po 7 dniach.
                   </Label>
@@ -323,50 +352,61 @@ const PaymentPage: React.FC = () => {
                 <Button 
                   type="submit"
                   disabled={isProcessing}
-                  className="w-full bg-rose-500 hover:bg-rose-600 text-white py-5 rounded-md transition-colors mt-4"
+                  className="w-full bg-primary hover:bg-primary/90 text-white py-6 rounded-full text-lg mt-6"
                 >
-                  {isProcessing ? 'Przetwarzanie...' : 'Zapłać'}
+                  {isProcessing ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Przetwarzanie...
+                    </>
+                  ) : (
+                    <>Zapłać {PRODUCT_PRICE} {CURRENCY}</>
+                  )}
                 </Button>
+                
+                <p className="text-center text-sm text-gray-500 mt-2">
+                  Płatność jest zabezpieczona szyfrowaniem SSL
+                </p>
               </form>
             </div>
             
             {/* Email Preview Section */}
-            <div className="w-full lg:w-1/2 lg:pl-2">
-              <div className="rounded-lg overflow-hidden border border-gray-800 bg-black h-full">
-                <div className="bg-black text-center p-3 border-b border-gray-800">
-                  <p className="text-gray-200 text-sm font-medium">TA WIADOMOŚĆ ZOSTANIE WYSŁANA DO PARTNERKI/PARTNERA</p>
+            <div className="w-full lg:w-1/2">
+              <div className="rounded-lg overflow-hidden border border-gray-800 bg-[#0D0D12] h-full">
+                <div className="bg-[#0D0D12] text-center p-4 border-b border-gray-800">
+                  <p className="text-gray-200 text-sm font-medium">TA WIADOMOŚĆ ZOSTANIE WYSŁANA DO PARTNERA/PARTNERKI</p>
                 </div>
                 
-                <div className="p-3 border-b border-gray-800">
-                  <div className="flex justify-between items-center mb-2">
+                <div className="p-4 border-b border-gray-800">
+                  <div className="flex justify-between items-center mb-3">
                     <span className="text-gray-400 text-sm">Od</span>
-                    <span className="text-white">Gra Privé</span>
+                    <span className="text-white">Secret Sparks</span>
                   </div>
-                  <div className="flex justify-between items-center mb-2">
+                  <div className="flex justify-between items-center mb-3">
                     <span className="text-gray-400 text-sm">Do</span>
-                    <span className="text-white">Imię {partnerEmail ? `<${partnerEmail}>` : "<dfgdfgdg>"}</span>
+                    <span className="text-white">{partnerEmail || 'Imię <email@gmail.com>'}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-400 text-sm">Temat</span>
                     <div className="flex items-center">
-                      <span className="text-amber-500 mr-1">•</span>
-                      <span className="text-white">Ktoś zaprasza Cię do gry</span>
+                      <span className="text-amber-500 mr-2">🔔</span>
+                      <span className="text-white"> {userName || 'Ktoś'} zaprasza Cię do gry</span>
                     </div>
                   </div>
                 </div>
                 
-                <div className="p-4 text-gray-200">
+                <div className="p-6 text-gray-200">
                   <div className="space-y-4">
                     <p>Cześć,</p>
                     
                     <p>
-                      Twój partner zaprosił(a) Cię do gry Secret Sparks – wyjątkowego doświadczenia, które pomoże Wam odkryć wspólne pragnienia i fantazje, o których może nawet nie wiedzieliście.
+                      {userName ? `${userName}` : 'Twój partner'} zaprosił(a) Cię do gry Secret Sparks – wyjątkowego doświadczenia, które pomoże Wam odkryć wspólne pragnienia i fantazje, o których może nawet nie wiedzieliście.
                     </p>
                     
-                    <div className="border-l-4 border-rose-500 pl-4 py-2">
+                    <div className="border-l-4 border-primary pl-4 py-2">
                       <h3 className="font-medium mb-1">Jak to działa?</h3>
                       <p className="text-sm text-gray-300">
-                        Odpowiadasz na kilka pytań o swoich preferencjach i zainteresowaniach. Twój partner już wypełnił(a) swoją ankietę. Na podstawie Waszych odpowiedzi stworzymy spersonalizowany raport pokazujący tylko te aktywności i fantazje, które oboje uznaliście za atrakcyjne.
+                        Odpowiadasz na kilka pytań o swoich preferencjach i zainteresowaniach. {userName ? userName : 'Twój partner'} już wypełnił(a) swoją ankietę. Na podstawie Waszych odpowiedzi stworzymy spersonalizowany raport pokazujący tylko te aktywności i fantazje, które oboje uznaliście za atrakcyjne.
                       </p>
                     </div>
                     
@@ -375,12 +415,12 @@ const PaymentPage: React.FC = () => {
                     </p>
                     
                     <div className="flex justify-center mt-6">
-                      <button className="bg-rose-500 hover:bg-rose-600 text-white font-medium py-2 px-6 rounded-md">
+                      <button className="bg-primary hover:bg-primary/90 text-white font-medium py-2 px-6 rounded-md">
                         Rozpocznij ankietę
                       </button>
                     </div>
                     
-                    <div className="text-center text-sm text-gray-400 pt-4">
+                    <div className="text-center text-sm text-gray-400 mt-6">
                       <p>Pozdrawiamy,<br/>Zespół Secret Sparks</p>
                     </div>
                   </div>
