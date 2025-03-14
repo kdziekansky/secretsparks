@@ -4,20 +4,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Check, Info, AlertTriangle } from 'lucide-react';
+import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import EmailPreview from '../components/EmailPreview';
-
-interface FormErrors {
-  userName?: string;
-  userEmail?: string;
-  partnerName?: string;
-  partnerEmail?: string;
-  ageConfirmation?: string;
-}
 
 // Fixed product price at 29 zł, gift wrapping is free
 const PRODUCT_PRICE = 29;
@@ -28,105 +18,15 @@ const PaymentPage: React.FC = () => {
   const [partnerName, setPartnerName] = useState('');
   const [partnerEmail, setPartnerEmail] = useState('');
   const [giftWrap, setGiftWrap] = useState(false);
-  const [ageConfirmed, setAgeConfirmed] = useState(false);
-  const [showErrors, setShowErrors] = useState(false);
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [sendInvitation, setSendInvitation] = useState('teraz'); // Zachowuję stan, ale ukrywam element UI
   const [isProcessing, setIsProcessing] = useState(false);
-  const [surveyCompleted, setSurveyCompleted] = useState(false);
+  const [ageConfirmed, setAgeConfirmed] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get('orderId');
 
-  const { answers, surveyConfig, filteredQuestions } = useSurvey();
-  
-  // Check if survey is completed when component mounts
-  useEffect(() => {
-    const checkSurveyStatus = () => {
-      const answersCount = Object.keys(answers).length;
-      console.log('Current answers count:', answersCount);
-      console.log('Current survey config:', surveyConfig);
-      
-      // Consider survey completed if there are answers or if coming back from payment with orderId
-      if (answersCount > 0 || orderId) {
-        setSurveyCompleted(true);
-      } else {
-        setSurveyCompleted(false);
-      }
-    };
-    
-    checkSurveyStatus();
-  }, [answers, orderId, surveyConfig]);
-  
-  const isValidEmail = (email: string) => {
-    // Better email validation
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(email);
-  };
+  const { answers, surveyConfig, filteredQuestions, saveAnswer } = useSurvey();
 
-  const validateForm = () => {
-    const newErrors: FormErrors = {};
-    
-    // Form validation with better sanitization
-    if (!userName || userName.trim().length === 0) {
-      newErrors.userName = 'Imię jest wymagane';
-    } else if (userName.length > 100) {
-      newErrors.userName = 'Imię jest za długie (maksymalnie 100 znaków)';
-    }
-    
-    if (!userEmail || userEmail.trim().length === 0) {
-      newErrors.userEmail = 'Email jest wymagany';
-    } else if (!isValidEmail(userEmail)) {
-      newErrors.userEmail = 'Nieprawidłowy format email';
-    } else if (userEmail.length > 150) {
-      newErrors.userEmail = 'Email jest za długi (maksymalnie 150 znaków)';
-    }
-    
-    if (!partnerName || partnerName.trim().length === 0) {
-      newErrors.partnerName = 'Imię partnera jest wymagane';
-    } else if (partnerName.length > 100) {
-      newErrors.partnerName = 'Imię partnera jest za długie (maksymalnie 100 znaków)';
-    }
-    
-    if (!partnerEmail || partnerEmail.trim().length === 0) {
-      newErrors.partnerEmail = 'Email partnera jest wymagany';
-    } else if (!isValidEmail(partnerEmail)) {
-      newErrors.partnerEmail = 'Nieprawidłowy format email partnera';
-    } else if (partnerEmail.length > 150) {
-      newErrors.partnerEmail = 'Email partnera jest za długi (maksymalnie 150 znaków)';
-    }
-    
-    if (!ageConfirmed) {
-      newErrors.ageConfirmation = 'Musisz potwierdzić, że ukończyłeś/-aś 18 lat';
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    switch (name) {
-      case 'userName':
-        setUserName(value);
-        break;
-      case 'userEmail':
-        setUserEmail(value);
-        break;
-      case 'partnerName':
-        setPartnerName(value);
-        break;
-      case 'partnerEmail':
-        setPartnerEmail(value);
-        break;
-      default:
-        break;
-    }
-  };
-
-  const handleCheckboxChange = (checked: boolean) => {
-    setGiftWrap(checked);
-  };
-  
   // Save survey responses before initiating payment
   const saveResponses = async (orderId: string) => {
     try {
@@ -134,13 +34,8 @@ const PaymentPage: React.FC = () => {
       
       if (Object.keys(answers).length === 0) {
         console.warn('No answers to save! Skipping survey response saving.');
-        return true; // Changed to true to allow order to proceed even without answers
+        return true;
       }
-      
-      // Debug diagnostyczny - sprawdź zawartość odpowiedzi
-      console.log('DEBUG - Answers content:', JSON.stringify(answers));
-      console.log('DEBUG - Number of answers:', Object.keys(answers).length);
-      console.log('DEBUG - Filtered questions:', filteredQuestions.map(q => q.id));
       
       // Set default values for survey config if they're missing
       const safeConfig = {
@@ -149,13 +44,10 @@ const PaymentPage: React.FC = () => {
         gameLevel: surveyConfig.gameLevel || 'discover'
       };
       
-      console.log('Using survey config for responses:', safeConfig);
-      
-      // IMPORTANT: First save question sequence to order!
+      // Save question sequence to orders table
       const questionSequence = filteredQuestions.map(q => q.id);
       console.log('Saving question sequence to orders table:', questionSequence);
       
-      // Save question sequence to orders table
       const { error: sequenceError } = await supabase
         .from('orders')
         .update({ user_question_sequence: questionSequence })
@@ -163,7 +55,6 @@ const PaymentPage: React.FC = () => {
         
       if (sequenceError) {
         console.error('Error saving question sequence:', sequenceError);
-        // Continue even if there's an error saving the sequence
       } else {
         console.log('Question sequence saved successfully');
       }
@@ -173,61 +64,23 @@ const PaymentPage: React.FC = () => {
         order_id: orderId,
         question_id: questionId,
         answer: answer,
-        user_type: 'user',  // CRITICAL: Always set user_type to 'user' for the orderer
+        user_type: 'user',
         user_gender: safeConfig.userGender,
         partner_gender: safeConfig.partnerGender,
         game_level: safeConfig.gameLevel
       }));
       
-      console.log('Preparing to save responses:', responsesToSave);
-      
-      // First approach: Try saving responses with insert
+      // Try saving responses
       console.log('Attempting to save responses using INSERT');
       const { error } = await supabase
         .from('survey_responses')
         .insert(responsesToSave);
         
       if (error) {
-        console.error('Error saving survey responses with INSERT:', error);
-        
-        // Second approach: Try saving with upsert if insert failed
-        console.log('Falling back to UPSERT method');
-        const { error: upsertError } = await supabase
-          .from('survey_responses')
-          .upsert(responsesToSave, { onConflict: 'order_id,question_id,user_type' });
-          
-        if (upsertError) {
-          console.error('Error saving survey responses with UPSERT:', upsertError);
-          toast.error('Wystąpił błąd podczas zapisywania odpowiedzi z ankiety');
-          
-          // Try an even more direct approach - one by one
-          console.log('Trying to save responses one by one');
-          let saveSuccess = true;
-          
-          for (const response of responsesToSave) {
-            const { error: singleError } = await supabase
-              .from('survey_responses')
-              .insert([response]);
-              
-            if (singleError) {
-              console.error(`Error saving response for question ${response.question_id}:`, singleError);
-              saveSuccess = false;
-            }
-          }
-          
-          if (!saveSuccess) {
-            console.error('Some responses failed to save individually');
-            return false;
-          } else {
-            console.log('At least some responses saved individually');
-            return true;
-          }
-        } else {
-          console.log('Survey responses saved successfully using UPSERT');
-          return true;
-        }
+        console.error('Error saving survey responses:', error);
+        return false;
       } else {
-        console.log('Survey responses saved successfully using INSERT');
+        console.log('Survey responses saved successfully');
         return true;
       }
     } catch (error) {
@@ -239,28 +92,15 @@ const PaymentPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) {
-      setShowErrors(true);
+    // Validate required fields
+    if (!userName || !userEmail || !partnerName || !partnerEmail) {
+      toast.error('Wypełnij wszystkie wymagane pola');
       return;
     }
     
-    // Sanitize data before saving
-    const sanitizedUserName = userName.trim().substring(0, 100);
-    const sanitizedUserEmail = userEmail.trim().toLowerCase().substring(0, 150);
-    const sanitizedPartnerName = partnerName.trim().substring(0, 100);
-    const sanitizedPartnerEmail = partnerEmail.trim().toLowerCase().substring(0, 150);
-    
-    // Set default values for survey config
-    const safeConfig = {
-      userGender: surveyConfig.userGender || 'unknown',
-      partnerGender: surveyConfig.partnerGender || 'unknown',
-      gameLevel: surveyConfig.gameLevel || 'discover'
-    };
-    
-    console.log('Using survey config for order:', safeConfig);
-    
-    if (!surveyCompleted && Object.keys(answers).length === 0 && !orderId) {
-      console.warn('Survey not completed, but proceeding for testing purposes');
+    if (!ageConfirmed) {
+      toast.error('Musisz potwierdzić, że masz ukończone 18 lat');
+      return;
     }
     
     setIsProcessing(true);
@@ -268,12 +108,20 @@ const PaymentPage: React.FC = () => {
     try {
       console.log('Creating order in database');
       
-      // Add validation before sending to Supabase
-      if (!sanitizedUserEmail || !sanitizedPartnerEmail) {
-        throw new Error('Brak wymaganych danych: email użytkownika lub partnera');
-      }
+      // Sanitize data
+      const sanitizedUserName = userName.trim().substring(0, 100);
+      const sanitizedUserEmail = userEmail.trim().toLowerCase().substring(0, 150);
+      const sanitizedPartnerName = partnerName.trim().substring(0, 100);
+      const sanitizedPartnerEmail = partnerEmail.trim().toLowerCase().substring(0, 150);
       
-      // Also save survey configuration to orders table
+      // Set default survey config values
+      const safeConfig = {
+        userGender: surveyConfig.userGender || 'male',
+        partnerGender: surveyConfig.partnerGender || 'female',
+        gameLevel: surveyConfig.gameLevel || 'discover'
+      };
+      
+      // Create order in database
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .insert({
@@ -282,7 +130,7 @@ const PaymentPage: React.FC = () => {
           partner_name: sanitizedPartnerName,
           partner_email: sanitizedPartnerEmail,
           gift_wrap: giftWrap,
-          price: PRODUCT_PRICE, // Gift wrapping is now free
+          price: PRODUCT_PRICE,
           user_gender: safeConfig.userGender,
           partner_gender: safeConfig.partnerGender,
           game_level: safeConfig.gameLevel
@@ -297,60 +145,40 @@ const PaymentPage: React.FC = () => {
       
       console.log('Order created:', orderData);
       
-      // Save survey responses and wait for completion
+      // Save survey responses
       const responsesSaved = await saveResponses(orderData.id);
       
       if (!responsesSaved && Object.keys(answers).length > 0) {
         console.error('Failed to save survey responses');
-        toast.error('Wystąpił błąd podczas zapisywania odpowiedzi z ankiety. Spróbuj ponownie później.');
+        toast.error('Wystąpił błąd podczas zapisywania odpowiedzi z ankiety.');
         setIsProcessing(false);
         return;
       }
       
       // Proceed to create payment
       try {
-        // Order information
-        const price = PRODUCT_PRICE; // Gift wrapping is free now
-        
         const paymentData = {
-          price: price,
+          price: PRODUCT_PRICE,
           currency: 'pln',
           user_name: sanitizedUserName,
           user_email: sanitizedUserEmail,
           partner_name: sanitizedPartnerName,
           partner_email: sanitizedPartnerEmail,
           gift_wrap: giftWrap,
-          order_id: orderData.id
+          order_id: orderData.id,
+          send_invitation: sendInvitation
         };
 
-        console.log('Preparing payment data:', {
-          ...paymentData,
-          user_email: '***@***.com',
-          partner_email: '***@***.com'
-        });
-
-        // TEMPORARY SOLUTION: For tests, we can use a static Stripe URL
-        // Uncomment the code below to bypass the Edge Function and test the rest of the process
-        /*
-        const mockStripeUrl = 'https://checkout.stripe.com/c/pay/cs_test_123456789';
-        console.log('TEST MODE: Using mock Stripe URL:', mockStripeUrl);
-        window.location.href = mockStripeUrl;
-        return;
-        */
-
-        // Call Edge Function using standard fetch API
-        console.log('Calling Edge Function with fetch...');
+        console.log('Preparing payment data');
         
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://bqbgrjpxufblrgcoxpfk.supabase.co';
         const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxYmdyanB4dWZibHJnY294cGZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE1Mzk4NzUsImV4cCI6MjA1NzExNTg3NX0.kSryhe5Z4BILp_ss5LpSxanGSvx4HZzZtVzYia4bgik";
         
-        // Simplified data format for Edge Function
         const requestPayload = {
           data: paymentData
         };
         
-        console.log('Sending request to:', `${supabaseUrl}/functions/v1/create-payment`);
-        console.log('With payload:', JSON.stringify(requestPayload));
+        console.log('Sending request to create-payment endpoint');
         
         const response = await fetch(`${supabaseUrl}/functions/v1/create-payment`, {
           method: 'POST',
@@ -362,27 +190,20 @@ const PaymentPage: React.FC = () => {
           body: JSON.stringify(requestPayload)
         });
         
-        // Check response status
-        console.log('Response status:', response.status);
-        console.log('Response headers:', Object.fromEntries([...response.headers.entries()]));
-        
-        // Get raw response text for better diagnostics
+        // Check response
         const responseText = await response.text();
-        console.log('Response as text (first 100 chars):', responseText.substring(0, 100));
+        console.log('Response received');
         
-        // Try parsing JSON
         let data;
         try {
           data = JSON.parse(responseText);
-          console.log('Response as object:', data);
         } catch (jsonError) {
-          console.error('Error parsing JSON:', jsonError.message);
-          throw new Error(`Invalid response format: ${responseText.substring(0, 200)}...`);
+          console.error('Error parsing JSON:', jsonError);
+          throw new Error(`Nieprawidłowy format odpowiedzi: ${responseText.substring(0, 200)}...`);
         }
         
-        // Check response content
         if (!data) {
-          throw new Error('No data in response');
+          throw new Error('Brak danych w odpowiedzi');
         }
         
         if (data.error) {
@@ -390,199 +211,202 @@ const PaymentPage: React.FC = () => {
         }
         
         if (!data.url) {
-          throw new Error('No payment URL in response: ' + JSON.stringify(data));
+          throw new Error('Brak URL do płatności w odpowiedzi: ' + JSON.stringify(data));
         }
         
         // Update order with payment session ID
         if (data.sessionId) {
-          try {
-            const { error: updateError } = await supabase
-              .from('orders')
-              .update({ payment_id: data.sessionId })
-              .eq('id', orderData.id);
-              
-            if (updateError) {
-              console.error('Error updating order with payment ID:', updateError);
-            } else {
-              console.log('Updated order with payment session ID:', data.sessionId);
-            }
-          } catch (updateError) {
-            console.error('Exception updating order:', updateError);
-          }
+          await supabase
+            .from('orders')
+            .update({ payment_id: data.sessionId })
+            .eq('id', orderData.id);
+            
+          console.log('Updated order with payment session ID');
         }
         
         // Redirect to Stripe
-        console.log('Redirecting to payment URL:', data.url);
+        console.log('Redirecting to payment URL');
         window.location.href = data.url;
         
-      } catch (paymentError) {
+      } catch (paymentError: any) {
         console.error('Payment creation error:', paymentError);
-        toast.error(`Payment error: ${paymentError.message || 'Unknown error'}`);
+        toast.error(`Błąd płatności: ${paymentError.message || 'Nieznany błąd'}`);
         setIsProcessing(false);
       }
     } catch (error: any) {
       console.error('Order creation error:', error);
-      toast.error(error.message || 'An error occurred while processing your order. Please try again.');
+      toast.error(error.message || 'Wystąpił błąd podczas przetwarzania zamówienia.');
       setIsProcessing(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#05050a] p-4">
-      <div className="w-full max-w-6xl">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2">Prawie gotowe 👋</h1>
-          <p className="text-lg text-muted-foreground mb-2">
-            Czas zaprosić do gry Twoją partnerkę. Na końcu poznacie Wasze ukryte pragnienia.
-          </p>
-          <div className="inline-block bg-primary/10 text-primary rounded-full px-4 py-1 text-sm font-medium">
-            96% par rekomenduje tę grę
-          </div>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto py-8 px-4">
+        <div className="flex flex-col items-center mb-6">
+          <img src="/logo.svg" alt="Logo" className="h-12 mb-4" />
         </div>
         
-        {/* Main content */}
-        <div className="flex flex-col lg:flex-row gap-6">
-          {/* Form */}
-          <div className="flex-1">
-            <Card className="shadow-lg rounded-lg border-border bg-card/60 backdrop-blur">
-              <CardHeader className="space-y-1">
-                <CardTitle className="text-2xl font-bold text-foreground">Dane zamówienia</CardTitle>
-                <CardDescription className="text-muted-foreground">
-                  Wypełnij dane, aby kontynuować
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <form onSubmit={handleSubmit}>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="userName" className="text-foreground">Twoje imię</Label>
-                      <Input
-                        type="text"
-                        id="userName"
-                        name="userName"
-                        value={userName}
-                        onChange={handleChange}
-                        required
-                        placeholder="Twoje imię"
-                        className="bg-input text-foreground"
-                      />
-                      {showErrors && errors.userName && (
-                        <p className="text-red-500 text-sm">{errors.userName}</p>
-                      )}
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="userEmail" className="text-foreground">Twój e-mail (tam wyślemy raport)</Label>
-                      <Input
-                        type="email"
-                        id="userEmail"
-                        name="userEmail"
-                        value={userEmail}
-                        onChange={handleChange}
-                        required
-                        placeholder="Twój email"
-                        className="bg-input text-foreground"
-                      />
-                      {showErrors && errors.userEmail && (
-                        <p className="text-red-500 text-sm">{errors.userEmail}</p>
-                      )}
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="partnerName" className="text-foreground">Imię Twojej partnerki</Label>
-                      <Input
-                        type="text"
-                        id="partnerName"
-                        name="partnerName"
-                        value={partnerName}
-                        onChange={handleChange}
-                        required
-                        placeholder="Imię Twojej drugiej połówki"
-                        className="bg-input text-foreground"
-                      />
-                      {showErrors && errors.partnerName && (
-                        <p className="text-red-500 text-sm">{errors.partnerName}</p>
-                      )}
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="partnerEmail" className="text-foreground">E-mail Twojej partnerki</Label>
-                      <Input
-                        type="email"
-                        id="partnerEmail"
-                        name="partnerEmail"
-                        value={partnerEmail}
-                        onChange={handleChange}
-                        required
-                        placeholder="Email Twojej drugiej połówki"
-                        className="bg-input text-foreground"
-                      />
-                      {showErrors && errors.partnerEmail && (
-                        <p className="text-red-500 text-sm">{errors.partnerEmail}</p>
-                      )}
-                    </div>
-                  
-                    <div className="flex items-center space-x-2 mt-4">
-                      <Checkbox 
-                        id="giftWrap"
-                        checked={giftWrap}
-                        onCheckedChange={handleCheckboxChange}
-                      />
-                      <Label htmlFor="giftWrap" className="cursor-pointer text-foreground">
-                        Zapakuj na prezent (gratis)
-                      </Label>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2 mt-4 p-3 rounded-md border border-border">
-                      <Checkbox 
-                        id="ageConfirmation"
-                        checked={ageConfirmed}
-                        onCheckedChange={(checked) => setAgeConfirmed(checked as boolean)}
-                      />
-                      <Label htmlFor="ageConfirmation" className="cursor-pointer text-foreground font-medium">
-                        Oświadczam, że ukończyłem/-am 18 rok życia
-                      </Label>
-                    </div>
-                    
-                    {showErrors && errors.ageConfirmation && (
-                      <p className="text-red-500 text-sm mt-1">{errors.ageConfirmation}</p>
-                    )}
-                    
-                    <div className="mt-6">
-                      <Button type="submit" disabled={isProcessing} className="w-full text-lg py-6">
-                        {isProcessing ? (
-                          <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Przetwarzanie...</>
-                        ) : (
-                          <>Zapłać {PRODUCT_PRICE} zł</>
-                        )}
-                      </Button>
-                    </div>
-                    
-                    <p className="text-xs text-muted-foreground text-center mt-4">
-                      Grając, akceptujesz przyjazny{" "}
-                      <a href="/regulamin" className="text-primary hover:underline">
-                        Regulamin
-                      </a>{" "}
-                      i{" "}
-                      <a href="/polityka-prywatnosci" className="text-primary hover:underline">
-                        Politykę Prywatności
-                      </a>
-                      , która gwarantuje bezpieczeństwo Waszych danych. Usuwamy je po 7 dniach.
-                    </p>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
+          <div className="w-full lg:w-1/2">
+            <div className="mb-6">
+              <h1 className="text-3xl font-bold mb-2">Co raz bliżej ❤️</h1>
+              <p className="text-muted-foreground mb-4">
+                Czas zaprosić do gry Twoją partnerkę. Na końcu poznacie Wasze ukryte pragnienia.
+              </p>
+              <div className="text-primary font-semibold">
+                <span className="text-muted-foreground">Wszystkie dane są bezpieczne</span>
+              </div>
+            </div>
+            
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <Input
+                  type="text"
+                  id="userName"
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
+                  required
+                  placeholder="Twoje imię"
+                  className="w-full"
+                />
+              </div>
+              
+              <div>
+                <Input
+                  type="email"
+                  id="userEmail"
+                  value={userEmail}
+                  onChange={(e) => setUserEmail(e.target.value)}
+                  required
+                  placeholder="Twój e-mail (tam wyślemy raport)"
+                  className="w-full"
+                />
+              </div>
+              
+              <div>
+                <Input
+                  type="text"
+                  id="partnerName"
+                  value={partnerName}
+                  onChange={(e) => setPartnerName(e.target.value)}
+                  required
+                  placeholder="Imię Twojej partnerki"
+                  className="w-full"
+                />
+              </div>
+              
+              <div>
+                <Input
+                  type="email"
+                  id="partnerEmail"
+                  value={partnerEmail}
+                  onChange={(e) => setPartnerEmail(e.target.value)}
+                  required
+                  placeholder="E-mail partnerki (tam wyślemy zaproszenie)"
+                  className="w-full"
+                />
+              </div>
+              
+
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="giftWrap"
+                  checked={giftWrap}
+                  onCheckedChange={(checked) => setGiftWrap(!!checked)}
+                  className="border-primary"
+                />
+                <div className="grid gap-1.5 leading-none">
+                  <Label htmlFor="giftWrap" className="flex items-center">
+                    <span className="mr-1">🎁</span> Zapakuj na prezent (bezpłatnie)
+                  </Label>
+                </div>
+                <Info className="h-4 w-4 text-muted-foreground" />
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="ageConfirmation"
+                  checked={ageConfirmed}
+                  onCheckedChange={(checked) => setAgeConfirmed(!!checked)}
+                  className="border-primary"
+                />
+                <div className="grid gap-1.5 leading-none">
+                  <Label htmlFor="ageConfirmation">
+                    Grając, akceptujesz przyjazny <a href="/regulamin" className="text-primary hover:underline">Regulamin</a> i <a href="/polityka-prywatnosci" className="text-primary hover:underline">Politykę Prywatności</a>, która gwarantuje bezpieczeństwo Waszych danych. Usuwamy je po 7 dniach.
+                  </Label>
+                </div>
+              </div>
+              
+              <Button 
+                type="submit" 
+                className="w-full bg-primary hover:bg-primary/90 rounded-full py-6 text-lg"
+                disabled={isProcessing}
+              >
+                Zapłać
+              </Button>
+            </form>
           </div>
           
-          {/* Email Preview */}
-          <div className="flex-1">
-            <EmailPreview 
-              to={partnerEmail || "email@partnera.com"}
-              userName={userName || "Użytkownik"}
-              partnerName={partnerName || "Partner"}
-            />
+          <div className="w-full lg:w-1/2">
+            <div className="border rounded-md bg-black text-white overflow-hidden">
+              <div className="p-3 text-center border-b border-gray-800 text-sm font-medium">
+                TA WIADOMOŚĆ ZOSTANIE WYSŁANA DO PARTNERKI/PARTNERA
+              </div>
+              
+              <div className="p-3 border-b border-gray-800">
+                <div className="flex justify-between items-center mb-1">
+                  <div className="text-gray-400 text-sm">Od</div>
+                  <div>Gra Privé</div>
+                </div>
+                <div className="flex justify-between items-center mb-1">
+                  <div className="text-gray-400 text-sm">Do</div>
+                  <div>Imię {partnerEmail ? `<${partnerEmail}>` : "<email@gmail.com>"}</div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div className="text-gray-400 text-sm">Temat</div>
+                  <div className="flex items-center">
+                    <span className="text-red-500 mr-1">🔥</span> 
+                    Ktoś zaprasza Cię do gry
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-black p-4">
+                <div className="space-y-4">
+                <p>Cześć,</p>
+                
+                <p>
+                  Twój partner zaprosił(a) Cię do gry Secret Sparks – wyjątkowego doświadczenia, które pomoże Wam odkryć wspólne pragnienia i fantazje, o których może nawet nie wiedzieliście.
+                </p>
+                
+                <div className="border-l-4 border-primary pl-4 py-2">
+                  <h3 className="font-medium mb-1">Jak to działa?</h3>
+                  <p className="text-sm text-gray-300">
+                    Odpowiadasz na kilka pytań o swoich preferencjach i zainteresowaniach. 
+                    Twój partner już wypełnił(a) swoją ankietę. Na podstawie Waszych odpowiedzi 
+                    stworzymy spersonalizowany raport pokazujący tylko te aktywności i fantazje, 
+                    które oboje uznaliście za atrakcyjne.
+                  </p>
+                </div>
+                
+                <p>
+                  Twoje odpowiedzi są <strong>całkowicie poufne</strong> – nigdy nie zobaczy Twoich 
+                  indywidualnych wyborów, a jedynie wspólne dopasowania w raporcie końcowym.
+                </p>
+                
+                <div className="flex justify-center">
+                  <button className="bg-primary hover:bg-primary/90 text-white font-medium py-2 px-6 rounded">
+                    Rozpocznij ankietę
+                  </button>
+                </div>
+                
+                <div className="text-center text-sm text-gray-400 pt-4">
+                  <p>Pozdrawiamy,<br/>Zespół Secret Sparks</p>
+                </div>
+              </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
