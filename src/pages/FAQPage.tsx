@@ -162,7 +162,7 @@ const FAQPage = () => {
                   <AccordionItem value="other-4">
                     <AccordionTrigger className="text-left">Jak mogę skontaktować się z zespołem wsparcia?</AccordionTrigger>
                     <AccordionContent>
-                      Nasz zespół wsparcia jest dostępny pod adresem email: pomoc@secretsparks.pl. Zazwyczaj odpowiadamy w ciągu 24 godzin w dni robocze. W wiadomości prosimy o podanie adresu email, który został użyty przy zakupie (jeśli dotyczy), aby szybciej zidentyfikować Twoje zamówienie.
+                      Nasz zespół wsparcia jest dostępny pod adresem email: contact@secretsparks.pl. Zazwyczaj odpowiadamy w ciągu 24 godzin w dni robocze. W wiadomości prosimy o podanie adresu email, który został użyty przy zakupie (jeśli dotyczy), aby szybciej zidentyfikować Twoje zamówienie.
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
