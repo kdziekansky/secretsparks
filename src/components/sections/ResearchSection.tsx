@@ -40,19 +40,16 @@ const ResearchSection = () => {
             </div>
             <h3 className="text-2xl font-bold mb-6">Rozmowa kluczem do pożądania</h3>
             <p className="text-lg mb-6">
-              W badaniu Montesi i współautorów (2011) pary szczerze dyskutujące o aktywności seksualnej deklarowały wyraźnie wyższe zadowolenie z życia intymnego i relacji. Wyniki te pokazują, jak ogromne znaczenie ma otwartość w budowaniu silniejszej więzi emocjonalnej.
-            </p>
-            <p className="text-lg mb-6">
-              Secret Sparks wspiera takie dialogi, pozwalając partnerom na wypełnianie anonimowych ankiet i porównywanie wyników. Dzięki temu każdy głos jest słyszany, a wspólne zainteresowania nabierają realnych kształtów.
+              Badanie Montesi i in. (2011) dowiodło, że szczera rozmowa o seksie podnosi satysfakcję i więź. Secret Sparks ułatwia taki dialog, zapewniając bezpieczne, anonimowe ankiety.
             </p>
             <div className="text-sm text-muted-foreground">
-              <a 
+                              <a 
                 href="https://journals.sagepub.com/doi/10.1177/0265407510386833" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="hover:text-primary transition-colors"
               >
-                Montesi, J.L. i in. (2011). <em>The specific importance of communicating about sex to couples' sexual and overall relationship satisfaction</em>. <strong>Journal of Social and Personal Relationships, 28</strong>(5), 591-609
+                Montesi, J.L. i in. (2011). <em>The specific importance of communicating about sex to couples' sexual and overall relationship satisfaction</em>. <strong>Journal of Social and Personal Relationships</strong>
               </a>
             </div>
           </div>
@@ -66,19 +63,16 @@ const ResearchSection = () => {
             </div>
             <h3 className="text-2xl font-bold mb-6">Równowaga w relacji</h3>
             <p className="text-lg mb-6">
-              Zgodnie z wnioskami Goli (2019), osoby osiągające wyższy poziom satysfakcji seksualnej doświadczają również lepszego dobrostanu psychicznego i mocniejszego zaangażowania w związek. Zarówno kobiety, jak i mężczyźni przyznają, że ich jakość życia wzrasta, gdy potrzeby intymne są spełniane.
-            </p>
-            <p className="text-lg mb-6">
-              Secret Sparks pozwala parom odkryć, w których obszarach mogą się najlepiej uzupełniać, oferując wgląd w wzajemne preferencje i proponując pomysły na dalszy rozwój relacji.
+              Badanie Goli (2019) wskazuje, że wyższa satysfakcja seksualna sprzyja lepszemu dobrostanowi i zaangażowaniu. Secret Sparks pomaga parom poznać potrzeby i wzmacniać relację.
             </p>
             <div className="text-sm text-muted-foreground">
-              <a 
+                              <a 
                 href="https://ruj.uj.edu.pl/entities/publication/9f90ed2d-0432-4e6b-af78-5792923477de" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="hover:text-primary transition-colors"
               >
-                Gola, I. (2019). <em>Satysfakcja seksualna w związku a inne sfery funkcjonowania związku</em>. Praca magisterska, UJ Kraków
+                Gola, I. (2019). <em>Satysfakcja seksualna w związku a inne sfery funkcjonowania związku</em>. UJ Kraków
               </a>
             </div>
           </div>
@@ -89,19 +83,16 @@ const ResearchSection = () => {
             </div>
             <h3 className="text-2xl font-bold mb-6">Hormony bliskości</h3>
             <p className="text-lg mb-6">
-              Feldman i zespół (2012) wykazali, że częsty kontakt fizyczny i zaangażowanie romantyczne podnoszą poziom oksytocyny – hormonu przyczyniającego się do wzrostu zaufania i poczucia bezpieczeństwa. Z czasem partnerzy budują w ten sposób trwalszą i bardziej harmonijną więź.
-            </p>
-            <p className="text-lg mb-6">
-              Aplikacja Secret Sparks podpowiada, jak świadomie wzmacniać ten efekt poprzez proste rytuały: ćwiczenia we dwoje, nowe formy bliskości czy regularną rozmowę o potrzebach, co sprzyja długotrwałemu przywiązaniu.
+              Feldman i in. (2012) pokazali, że częste kontakty fizyczne zwiększają oksytocynę, wzmacniając zaufanie i bezpieczeństwo. Secret Sparks oferuje rytuały sprzyjające trwałemu przywiązaniu.
             </p>
             <div className="text-sm text-muted-foreground">
-              <a 
+                              <a 
                 href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3936960/#:~:text=new%20lovers%20,correlated%20with%20the%20couples%E2%80%99%20interactive" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="hover:text-primary transition-colors"
               >
-                Feldman, R. et al. (2012). <em>Oxytocin and the development of romantic attachment: A study of new lovers</em>. <strong>Psychoneuroendocrinology, 37</strong>(8), 1277–1285
+                Feldman, R. et al. (2012). <em>Oxytocin and the development of romantic attachment: A study of new lovers</em>. <strong>Psychoneuroendocrinology</strong>
               </a>
             </div>
           </div>
@@ -112,19 +103,16 @@ const ResearchSection = () => {
             </div>
             <h3 className="text-2xl font-bold mb-6">Zadowolenie i codzienna satysfakcja</h3>
             <p className="text-lg mb-6">
-              W analizie Schmiedeberg i innych (2017) zaobserwowano istotny związek między częstotliwością współżycia a ogólnym szczęściem w życiu. Pary, które pozostają aktywne seksualnie i poszukują nowych doświadczeń, częściej deklarują wyższe zadowolenie w pozostałych sferach codzienności.
-            </p>
-            <p className="text-lg mb-6">
-              Secret Sparks pomaga w znalezieniu inspirujących scenariuszy oraz punktów wspólnych, co pozwala parom zachować entuzjazm w sypialni i jednocześnie przekłada się na lepsze samopoczucie na co dzień.
+              Schmiedeberg i in. (2017) wykazali, że częstsze współżycie wiąże się z wyższym poczuciem szczęścia. Secret Sparks inspiruje do odkrywania nowych doznań, podtrzymując entuzjazm w relacji.
             </p>
             <div className="text-sm text-muted-foreground">
-              <a 
+                              <a 
                 href="https://pubmed.ncbi.nlm.nih.gov/27757732/#:~:text=intraindividual%20changes%20in%20life%20satisfaction,corresponding%20increases%20in%20life%20satisfaction" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="hover:text-primary transition-colors"
               >
-                Schmiedeberg, C. et al. (2017). <em>The more or the better? How sex contributes to life satisfaction</em>. <strong>Archives of Sexual Behavior, 46</strong>(2), 465–473
+                Schmiedeberg, C. et al. (2017). <em>The more or the better? How sex contributes to life satisfaction</em>. <strong>Archives of Sexual Behavior</strong>
               </a>
             </div>
           </div>
