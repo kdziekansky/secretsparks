@@ -189,7 +189,7 @@ export const questionsHeteroFemale: Question[] = [
     id: 'gru-8', 
     text: 'Symulowanie „pierwszego razu"',
     description: "Odgrywanie scenariusza, jakbyście byli ze sobą po raz pierwszy. Ta zabawa pozwala odkryć partnera na nowo, odświeżyć relację i poczuć ekscytację pierwszego zbliżenia.",
-    illustration: '/images/illustrations/techniques/Symulowanie "pierwszego razu" (explore).png',
+    illustration: '/images/illustrations/techniques/firsttime.png',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
@@ -233,7 +233,7 @@ export const questionsHeteroFemale: Question[] = [
     id: 'pos-6', 
     text: 'Pozycja "na królową"',
     description: "Leżysz na plecach z uniesionymi biodrami, partner klęczy. Ta pozycja pozwala na głęboką penetrację przy jednoczesnym kontakcie wzrokowym i możliwości pieszczot.",
-    illustration: '/images/illustrations/techniques/Pozycja na królową (discover).png',
+    illustration: '/images/illustrations/techniques/queen.png',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
@@ -244,7 +244,7 @@ export const questionsHeteroFemale: Question[] = [
     id: 'pos-7', 
     text: 'Pozycja "jeździec"',
     description: "Siedzisz na partnerze twarzą do jego twarzy. Daje to możliwość przytulania się i całowania, przy jednoczesnej stymulacji łechtaczki przez tarcie o jego ciało.",
-    illustration: '/images/illustrations/techniques/Pozycja jeździec (discover).png',
+    illustration: '/images/illustrations/techniques/riding.png',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
@@ -255,7 +255,7 @@ export const questionsHeteroFemale: Question[] = [
     id: 'pos-8', 
     text: 'Pozycja "odwrócona amazońska"',
     description: "Siedzisz na partnerze tyłem do jego twarzy. Ta pozycja oferuje intensywną stymulację punktu G i pozwala Ci kontrolować tempo, jednocześnie dając mu fascynujący widok.",
-    illustration: '/images/illustrations/techniques/Pozycja odwrócona amazonka (discover, explore).png',
+    illustration: '/images/illustrations/techniques/reversedamazonka.png',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
@@ -288,7 +288,7 @@ export const questionsHeteroFemale: Question[] = [
     id: 'pos-13', 
     text: 'Pozycja "lotus"',
     description: "Partner siedzi ze skrzyżowanymi nogami, a Ty siadasz na nim, oplatając go nogami. Ta intymna pozycja sprzyja głębokiemu połączeniu duchowemu i fizycznemu.",
-    illustration: '/images/illustrations/techniques/Pozycja lotus (discover, explore).png',
+    illustration: '/images/illustrations/techniques/lotus.png',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
@@ -413,7 +413,7 @@ export const questionsHeteroFemale: Question[] = [
     id: 'mas-3', 
     text: 'Seks po omacku',
     description: "Eksplorowanie ciała partnera bez użycia wzroku. Wyłączenie jednego zmysłu wzmacnia pozostałe, intensyfikując dotyk, smak i zapach, co prowadzi do niezwykłych doznań.",
-    illustration: '/images/illustrations/techniques/Seks po omacku (explore).png',
+    illustration: '/images/illustrations/techniques/poomacku.png',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
@@ -671,7 +671,7 @@ export const questionsHeteroFemale: Question[] = [
     id: 'dom-1', 
     text: 'Wzajemna lekka dominacja',
     description: "Naprzemienne przejmowanie kontroli podczas seksu. Zmienianie ról dominującej i uległej może dodać dynamiki waszemu życiu seksualnemu i zaspokoić różne potrzeby.",
-    illustration: '/images/illustrations/techniques/Wzajemna lekka dominacja (discover, exceed).png',
+    illustration: '/images/illustrations/techniques/softdomination.png',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
@@ -719,7 +719,7 @@ export const questionsHeteroFemale: Question[] = [
     id: 'dom-5', 
     text: 'Seks z lekkim podduszaniem',
     description: "Kontrolowane ograniczanie dopływu powietrza dla zwiększenia doznań. Ta praktyka wymaga absolutnego zaufania, wiedzy i ostrożności, ale może intensyfikować orgazmy.",
-    illustration: '/images/illustrations/techniques/Seks z lekkim podduszeniem (explore).png',
+    illustration: '/images/illustrations/techniques/lekkiepodduszanie.png',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
@@ -741,7 +741,7 @@ export const questionsHeteroFemale: Question[] = [
     id: 'loc-2', 
     text: 'Seks w samochodzie',
     description: "Spontaniczny seks w zaparkowanym aucie. Ograniczona przestrzeń wymusza kreatywność w pozycjach, a element ryzyka dodaje pikanterii całemu doświadczeniu.",
-    illustration: '/images/illustrations/techniques/Seks w samochodzie (explore, exceed).png',
+    illustration: '/images/illustrations/techniques/incar.png',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
