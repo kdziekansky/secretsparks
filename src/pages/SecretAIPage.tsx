@@ -21,7 +21,7 @@ const SecretAIPage = () => {
             </div>
             
             <p className="text-lg text-muted-foreground mb-12 text-center">
-              Poznaj sztuczną inteligencję, która stoi za naszą grą dla par. Technologia, która pomaga budować bliskość.
+              Technologia, która pomaga budować bliskość.
             </p>
             
             <Card className="border-accent/20 bg-card/40 backdrop-blur mb-12">
@@ -37,16 +37,17 @@ const SecretAIPage = () => {
               <CardContent className="space-y-6">
                 <p className="text-muted-foreground">
                   Secret AI to nasza autorska technologia oparta na zaawansowanych modelach sztucznej inteligencji, 
-                  która została stworzona specjalnie z myślą o analizie i zrozumieniu dynamiki związku.
+                  która została stworzona specjalnie z myślą o analizie i zrozumieniu dynamiki związku,
+                  preferencji seksualnych, satysfakcji seksualnej i zdrowia.
                 </p>
                 
                 <p className="text-muted-foreground">
-                  W przeciwieństwie do ogólnych modeli AI, Secret AI została specjalnie wytrenowana na podstawie:
+                  W przeciwieństwie do ogólnych modeli AI, nasz został specjalnie wytrenowany na podstawie:
                 </p>
                 
                 <ul className="list-disc pl-6 text-muted-foreground">
-                  <li>Tysięcy ankiet wypełnionych przez rzeczywiste pary</li>
                   <li>Badań psychologicznych dotyczących bliskości i intymności</li>
+                  <li>Badań z zakresu seksuologii, socjologii i neurobiologii</li>
                   <li>Konsultacji z seksuologami i terapeutami par</li>
                   <li>Anonimowych danych o preferencjach i pragnieniach w związkach</li>
                 </ul>
