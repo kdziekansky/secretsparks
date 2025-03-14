@@ -18,26 +18,23 @@ const ContactPage = () => {
             <section className="space-y-4">
               <h2 className="text-2xl font-bold">Dane kontaktowe</h2>
               <p className="text-muted-foreground">
-                Secret Sparks Sp. z o.o.<br />
-                ul. Przykładowa 123<br />
-                00-001 Warszawa<br />
-                Polska
+                KDY PROJECT<br />
+                Fiszewo 12/3<br />
+                82-335 Fiszewo
               </p>
             </section>
             
             <section className="space-y-4">
               <h2 className="text-2xl font-bold">Email</h2>
               <p className="text-muted-foreground">
-                Obsługa klienta: kontakt@secretsparks.pl<br />
-                Sprawy techniczne: support@secretsparks.pl<br />
-                Ochrona danych: privacy@secretsparks.pl
+                Obsługa klienta: contact@secretsparks.pl<br />
+                Ochrona danych: contact@secretsparks.pl
               </p>
             </section>
             
             <section className="space-y-4">
               <h2 className="text-2xl font-bold">Godziny pracy</h2>
               <p className="text-muted-foreground">
-                Poniedziałek - Piątek: 9:00 - 17:00<br />
                 Na emaile odpowiadamy w ciągu 24 godzin w dni robocze.
               </p>
             </section>
