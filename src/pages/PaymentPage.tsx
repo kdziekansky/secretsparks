@@ -22,7 +22,7 @@ const PaymentPage: React.FC = () => {
   const [giftWrap, setGiftWrap] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [ageConfirmed, setAgeConfirmed] = useState(false);
-  const [sendNow, setSendNow] = useState(true);
+  // Removed sendNow state as it's no longer needed
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get('orderId');
@@ -246,7 +246,7 @@ const PaymentPage: React.FC = () => {
       <div className="container mx-auto py-6">
         {/* Logo */}
         <div className="flex justify-center mb-8">
-          <img src="/lovable-uploads/0537e49e-f4b0-49a8-bedb-41f3876d6f50.png" alt="Secret Sparks Logo" className="h-16" />
+          <img src="/lovable-uploads/0537e49e-f4b0-49a8-bedb-41f3876d6f50.png" alt="Secret Sparks Logo" className="h-24" />
         </div>
         
         <div className="mx-auto max-w-6xl px-4">
@@ -258,9 +258,10 @@ const PaymentPage: React.FC = () => {
                   Co raz bliżej <span className="text-red-500 ml-2">❤️</span>
                 </h1>
                 <p className="text-gray-300 mb-3">
-                  Czas zaprosić do gry Twoją partnerkę. Na końcu poznacie Wasze ukryte pragnienia.
+                  Czas zaprosić swoją partnerkę/-ra. Nie poznacie swoich odpowiedzi, ale odkryjecie siebie na nowo.
                 </p>
-                <p className="text-gray-400 text-sm">
+                <p className="text-gray-400 text-sm flex items-center">
+                  <span className="mr-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></span>
                   Wszystkie dane są bezpieczne
                 </p>
               </div>
@@ -296,30 +297,7 @@ const PaymentPage: React.FC = () => {
                   className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500"
                 />
                 
-                {/* Timing options */}
-                <div className="bg-[#111] border border-[#333] rounded-md p-4">
-                  <p className="font-medium text-white mb-2">Kiedy wysłać zaproszenie?</p>
-                  <div className="flex gap-8 text-gray-300">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input 
-                        type="radio"
-                        checked={sendNow}
-                        onChange={() => setSendNow(true)}
-                        className="accent-primary w-4 h-4"
-                      />
-                      <span>teraz</span>
-                    </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input 
-                        type="radio"
-                        checked={!sendNow}
-                        onChange={() => setSendNow(false)}
-                        className="accent-primary w-4 h-4"
-                      />
-                      <span>chcę wybrać</span>
-                    </label>
-                  </div>
-                </div>
+
                 
                 {/* Gift option */}
                 <div className="flex items-center bg-[#111] border border-[#333] rounded-md p-4 gap-3">
@@ -384,7 +362,7 @@ const PaymentPage: React.FC = () => {
                   </div>
                   <div className="flex justify-between items-center mb-3">
                     <span className="text-gray-400 text-sm">Do</span>
-                    <span className="text-white">{partnerEmail || 'Imię <email@gmail.com>'}</span>
+                    <span className="text-white">{partnerName ? `${partnerName} <${partnerEmail || 'email@gmail.com'}>` : 'Imię <email@gmail.com>'}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-400 text-sm">Temat</span>
@@ -413,16 +391,6 @@ const PaymentPage: React.FC = () => {
                     <p>
                       Twoje odpowiedzi są <strong>całkowicie poufne</strong> – nigdy nie zobaczy Twoich indywidualnych wyborów, a jedynie wspólne dopasowania w raporcie końcowym.
                     </p>
-                    
-                    <div className="flex justify-center mt-6">
-                      <button className="bg-primary hover:bg-primary/90 text-white font-medium py-2 px-6 rounded-md">
-                        Rozpocznij ankietę
-                      </button>
-                    </div>
-                    
-                    <div className="text-center text-sm text-gray-400 mt-6">
-                      <p>Pozdrawiamy,<br/>Zespół Secret Sparks</p>
-                    </div>
                   </div>
                 </div>
               </div>
