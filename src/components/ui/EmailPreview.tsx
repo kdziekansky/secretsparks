@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Card } from '../components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Heart } from 'lucide-react';
 
 interface EmailPreviewProps {
