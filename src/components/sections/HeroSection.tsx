@@ -44,13 +44,13 @@ const HeroSection = () => {
             </div>
           </div>
           
-          {/* Prawa kolumna - aplikacja mobilna */}
-          <div className="glass-card flex items-center justify-center p-8">
-            <div className="w-[95%] rounded-2xl overflow-hidden">
+          {/* Prawa kolumna - zdjęcie tła */}
+          <div className="glass-card relative overflow-hidden flex items-center justify-center">
+            <div className="absolute inset-0">
               <img 
-                src="/lovable-uploads/d423d250-7687-4e1f-9364-61805fb55c9f.png" 
+                src="/lovable-uploads/d68fef22-dab7-4879-a55a-3e4e49d9e114.png" 
                 alt="Secret Sparks" 
-                className="w-full h-auto object-cover rounded-2xl"
+                className="w-full h-full object-cover object-center"
               />
             </div>
           </div>
