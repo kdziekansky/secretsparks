@@ -242,11 +242,11 @@ const PaymentPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#05050a]">
-      <div className="container mx-auto py-6">
+    <div className="min-h-screen bg-[#05050a] flex flex-col items-center justify-start">
+      <div className="container mx-auto py-12 px-4 w-full max-w-7xl">
         {/* Logo */}
-        <div className="flex justify-center mb-8">
-          <img src="/lovable-uploads/0537e49e-f4b0-49a8-bedb-41f3876d6f50.png" alt="Secret Sparks Logo" className="h-24" />
+        <div className="flex justify-center mb-12">
+          <img src="/lovable-uploads/0537e49e-f4b0-49a8-bedb-41f3876d6f50.png" alt="Secret Sparks Logo" className="h-36" />
         </div>
         
         <div className="mx-auto max-w-6xl px-4">
