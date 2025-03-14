@@ -5,7 +5,7 @@ export const questionsHeteroFemale: Question[] = [
     id: 'ext-1', 
     text: 'Seks, gdy ktoś Was obserwuje',
     description: "Uprawianie seksu ze świadomością, że ktoś was widzi. Świadomość bycia obserwowaną może dodać ogromnego ładunku emocjonalnego i zwiększyć intensywność doznań.",
-    illustration: '/images/illustrations/techniques/Seks, gdy ktoś Was obserwuje (exceed).png',
+    illustration: '/images/illustrations/techniques/Seks, gdy ktoś Was obserwuje (explore, exceed).png',
     forConfig: { 
       userGender: 'female',
       partnerGender: 'male',
