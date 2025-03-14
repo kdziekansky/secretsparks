@@ -80,7 +80,7 @@ const SecurityPage = () => {
               <CardHeader>
                 <div className="flex items-center mb-2">
                   <Lock className="h-8 w-8 text-primary mr-3" />
-                  <CardTitle className="text-xl">Nasza polityka prywatności</CardTitle>
+                  <CardTitle className="text-xl">W skrócie o bezpieczeństwie danych</CardTitle>
                 </div>
                 <CardDescription>
                   Transparentność w zarządzaniu Twoimi danymi
@@ -91,7 +91,7 @@ const SecurityPage = () => {
                   <h3 className="text-lg font-medium mb-2">Jakie dane zbieramy?</h3>
                   <p className="text-muted-foreground">
                     Zbieramy tylko te dane, które są niezbędne do funkcjonowania aplikacji:
-                    imię/pseudonim Twój i Twojego partnera, odpowiedzi na pytania ankiety
+                    imię/pseudonim Twój i Twojego partnera, adresy mailowe, odpowiedzi na pytania ankiety
                     oraz preferencje dotyczące poziomu gry. Nie zbieramy danych osobowych
                     takich jak nazwisko, adres czy PESEL.
                   </p>
@@ -105,16 +105,15 @@ const SecurityPage = () => {
                   <ul className="list-disc pl-6 mt-2 text-muted-foreground">
                     <li>Generowania spersonalizowanego raportu dla Ciebie i Twojego partnera</li>
                     <li>Poprawy jakości naszych usług i rozwoju produktu</li>
-                    <li>Anonimowych analiz statystycznych (bez możliwości identyfikacji użytkowników)</li>
+                    <li>Anonimowych analiz statystycznych (bez możliwości identyfikacji osób)</li>
                   </ul>
                 </div>
                 
                 <div>
-                  <h3 className="text-lg font-medium mb-2">Udostępnianie danych</h3>
+                  <h3 className="text-lg font-medium mb-2">Nie udostępniamy danych</h3>
                   <p className="text-muted-foreground">
-                    Nie udostępniamy Twoich danych osobowych ani odpowiedzi na ankietę stronom trzecim.
-                    Twoje odpowiedzi są widoczne wyłącznie dla Ciebie i Twojego partnera, jeśli 
-                    zdecydujesz się udostępnić mu swój raport.
+                    Nikomu nie udostępniamy Twoich danych osobowych ani odpowiedzi na ankietę stronom trzecim.
+                    Twoje odpowiedzi są widoczne wyłącznie dla Ciebie, nawet twój partner ich nie zobaczy.
                   </p>
                 </div>
               </CardContent>
@@ -140,13 +139,13 @@ const SecurityPage = () => {
                 <CardHeader className="space-y-1">
                   <div className="flex items-center mb-2">
                     <ServerCrash className="h-6 w-6 text-primary mr-2" />
-                    <CardTitle className="text-lg">Kopie zapasowe</CardTitle>
+                    <CardTitle className="text-lg">Szyfrowanie</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground">
-                    Regularnie tworzymy kopie zapasowe wszystkich danych, 
-                    chroniąc je przed przypadkową utratą czy awarią systemu.
+                    Nasza baza danych ma wdrożone procedury bezpieczeństwa, 
+                    jest zaszyfrowana, a odpowiedzi nie powiązujemy z danymi osobowymi.
                   </p>
                 </CardContent>
               </Card>
@@ -161,38 +160,13 @@ const SecurityPage = () => {
                 <CardContent>
                   <p className="text-sm text-muted-foreground">
                     Zauważyłeś lukę w zabezpieczeniach? Skontaktuj się z nami 
-                    natychmiast pod adresem: security@secretsparks.pl
+                    natychmiast pod adresem: contact@secretsparks.pl
                   </p>
                 </CardContent>
               </Card>
             </div>
             
-            <Card className="border-accent/20 bg-card/40 backdrop-blur">
-              <CardHeader>
-                <div className="flex items-center mb-2">
-                  <FileCheck className="h-8 w-8 text-primary mr-3" />
-                  <CardTitle className="text-xl">Zgodność z RODO</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-muted-foreground">
-                  Secret Sparks jest w pełni zgodny z przepisami RODO (Rozporządzenie o Ochronie Danych Osobowych).
-                  Jako użytkownik masz prawo do:
-                </p>
-                <ul className="list-disc pl-6 text-muted-foreground">
-                  <li>Dostępu do swoich danych</li>
-                  <li>Poprawiania swoich danych</li>
-                  <li>Usunięcia swoich danych ("prawo do bycia zapomnianym")</li>
-                  <li>Ograniczenia przetwarzania swoich danych</li>
-                  <li>Przenoszenia swoich danych</li>
-                  <li>Sprzeciwu wobec przetwarzania swoich danych</li>
-                </ul>
-                <p className="text-muted-foreground mt-4">
-                  Aby skorzystać z któregokolwiek z tych praw, wyślij e-mail na adres: 
-                  privacy@secretsparks.pl. Odpowiemy na Twoją prośbę w ciągu 30 dni.
-                </p>
-              </CardContent>
-            </Card>
+
           </div>
         </div>
       </main>
