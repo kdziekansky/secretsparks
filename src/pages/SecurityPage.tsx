@@ -33,15 +33,15 @@ const SecurityPage = () => {
                   <ul className="space-y-3">
                     <li className="flex items-start">
                       <span className="bg-primary/20 p-1 rounded text-primary mr-3 mt-0.5">✓</span>
-                      <span>Wszystkie dane przesyłane są przez szyfrowane połączenie SSL</span>
+                      <span>Baza danych jest zaszyfrowana, a przesył odbywa się przez połączenie SSL</span>
                     </li>
                     <li className="flex items-start">
                       <span className="bg-primary/20 p-1 rounded text-primary mr-3 mt-0.5">✓</span>
-                      <span>Odpowiedzi na ankiety są przechowywane w zaszyfrowanej bazie danych</span>
+                      <span>Nikt nie pozna Twoich odpowiedzi, nie są wiązane z danymi osobowymi.</span>
                     </li>
                     <li className="flex items-start">
                       <span className="bg-primary/20 p-1 rounded text-primary mr-3 mt-0.5">✓</span>
-                      <span>Dane są dostępne tylko dla Ciebie i Twojego partnera</span>
+                      <span>W bezpieczny sposób wysyłamy do Ciebie raport, nie przechowujemy go.</span>
                     </li>
                   </ul>
                 </CardContent>
