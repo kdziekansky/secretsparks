@@ -7,8 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Checkbox } from '@/components/ui/checkbox';
+import EmailPreview from '@/components/EmailPreview';
 
 interface FormErrors {
   userName?: string;
@@ -18,74 +19,8 @@ interface FormErrors {
   ageConfirmation?: string;
 }
 
+// Fixed product price at 29 zł, gift wrapping is free
 const PRODUCT_PRICE = 29;
-
-// Funkcja diagnostyczna do testowania połączenia z Edge Function
-const testEdgeFunction = async () => {
-  try {
-    console.log("Testowanie połączenia z Edge Function...");
-    
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://bqbgrjpxufblrgcoxpfk.supabase.co';
-    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxYmdyanB4dWZibHJnY294cGZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE1Mzk4NzUsImV4cCI6MjA1NzExNTg3NX0.kSryhe5Z4BILp_ss5LpSxanGSvx4HZzZtVzYia4bgik";
-    
-    // Sprawdź dostępność CORS - najpierw OPTIONS
-    const corsCheck = await fetch(`${supabaseUrl}/functions/v1/create-payment`, {
-      method: 'OPTIONS',
-      headers: {
-        'Origin': window.location.origin
-      }
-    });
-    
-    console.log("Test CORS:", {
-      status: corsCheck.status,
-      ok: corsCheck.ok,
-      headers: Object.fromEntries([...corsCheck.headers.entries()])
-    });
-    
-    // Teraz sprawdź prostym żądaniem
-    const response = await fetch(`${supabaseUrl}/functions/v1/create-payment`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${supabaseKey}`,
-        'apikey': supabaseKey
-      },
-      body: JSON.stringify({
-        data: {
-          price: 29,
-          currency: 'pln',
-          user_name: 'Test User',
-          user_email: 'test@example.com',
-          partner_name: 'Test Partner',
-          partner_email: 'partner@example.com',
-          gift_wrap: false,
-          order_id: 'test-' + Date.now()
-        }
-      })
-    });
-    
-    console.log("Test Edge Function:", {
-      status: response.status,
-      ok: response.ok,
-      headers: Object.fromEntries([...response.headers.entries()])
-    });
-    
-    const text = await response.text();
-    console.log("Odpowiedź jako tekst:", text);
-    
-    try {
-      const json = JSON.parse(text);
-      console.log("Odpowiedź jako JSON:", json);
-      return json;
-    } catch (e) {
-      console.error("Nie można sparsować odpowiedzi jako JSON:", e);
-      return null;
-    }
-  } catch (error) {
-    console.error("Błąd testowania Edge Function:", error);
-    return null;
-  }
-};
 
 const PaymentPage: React.FC = () => {
   const [userName, setUserName] = useState('');
@@ -123,7 +58,7 @@ const PaymentPage: React.FC = () => {
   }, [answers, orderId, surveyConfig]);
   
   const isValidEmail = (email: string) => {
-    // Bardziej rygorystyczna walidacja email
+    // Better email validation
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(email);
   };
@@ -131,7 +66,7 @@ const PaymentPage: React.FC = () => {
   const validateForm = () => {
     const newErrors: FormErrors = {};
     
-    // Walidacja pól formularza z lepszym sanityzowaniem
+    // Form validation with better sanitization
     if (!userName || userName.trim().length === 0) {
       newErrors.userName = 'Imię jest wymagane';
     } else if (userName.length > 100) {
@@ -216,11 +151,11 @@ const PaymentPage: React.FC = () => {
       
       console.log('Using survey config for responses:', safeConfig);
       
-      // WAŻNE: Najpierw zapisz sekwencję pytań do zamówienia!
+      // IMPORTANT: First save question sequence to order!
       const questionSequence = filteredQuestions.map(q => q.id);
       console.log('Saving question sequence to orders table:', questionSequence);
       
-      // Zapisz sekwencję pytań do tabeli orders
+      // Save question sequence to orders table
       const { error: sequenceError } = await supabase
         .from('orders')
         .update({ user_question_sequence: questionSequence })
@@ -228,17 +163,17 @@ const PaymentPage: React.FC = () => {
         
       if (sequenceError) {
         console.error('Error saving question sequence:', sequenceError);
-        // Kontynuujemy nawet jeśli wystąpił błąd zapisywania sekwencji
+        // Continue even if there's an error saving the sequence
       } else {
         console.log('Question sequence saved successfully');
       }
       
-      // Przygotuj odpowiedzi do zapisania
+      // Prepare responses to save
       const responsesToSave = Object.entries(answers).map(([questionId, answer]) => ({
         order_id: orderId,
         question_id: questionId,
         answer: answer,
-        user_type: 'user',  // KRYTYCZNE: Zawsze ustawiaj user_type na 'user' dla zamawiającego
+        user_type: 'user',  // CRITICAL: Always set user_type to 'user' for the orderer
         user_gender: safeConfig.userGender,
         partner_gender: safeConfig.partnerGender,
         game_level: safeConfig.gameLevel
@@ -246,7 +181,7 @@ const PaymentPage: React.FC = () => {
       
       console.log('Preparing to save responses:', responsesToSave);
       
-      // Pierwszy sposób: Próba zapisania odpowiedzi przez insert
+      // First approach: Try saving responses with insert
       console.log('Attempting to save responses using INSERT');
       const { error } = await supabase
         .from('survey_responses')
@@ -255,7 +190,7 @@ const PaymentPage: React.FC = () => {
       if (error) {
         console.error('Error saving survey responses with INSERT:', error);
         
-        // Drugi sposób: Próba zapisania przez upsert jeśli insert nie zadziałał
+        // Second approach: Try saving with upsert if insert failed
         console.log('Falling back to UPSERT method');
         const { error: upsertError } = await supabase
           .from('survey_responses')
@@ -265,7 +200,7 @@ const PaymentPage: React.FC = () => {
           console.error('Error saving survey responses with UPSERT:', upsertError);
           toast.error('Wystąpił błąd podczas zapisywania odpowiedzi z ankiety');
           
-          // Spróbujmy jeszcze bardziej bezpośredni sposób - pojedynczo
+          // Try an even more direct approach - one by one
           console.log('Trying to save responses one by one');
           let saveSuccess = true;
           
@@ -309,7 +244,7 @@ const PaymentPage: React.FC = () => {
       return;
     }
     
-    // Sanityzacja danych przed zapisem
+    // Sanitize data before saving
     const sanitizedUserName = userName.trim().substring(0, 100);
     const sanitizedUserEmail = userEmail.trim().toLowerCase().substring(0, 150);
     const sanitizedPartnerName = partnerName.trim().substring(0, 100);
@@ -333,7 +268,7 @@ const PaymentPage: React.FC = () => {
     try {
       console.log('Creating order in database');
       
-      // Dodanie walidacji przed wysłaniem do Supabase
+      // Add validation before sending to Supabase
       if (!sanitizedUserEmail || !sanitizedPartnerEmail) {
         throw new Error('Brak wymaganych danych: email użytkownika lub partnera');
       }
@@ -347,7 +282,7 @@ const PaymentPage: React.FC = () => {
           partner_name: sanitizedPartnerName,
           partner_email: sanitizedPartnerEmail,
           gift_wrap: giftWrap,
-          price: PRODUCT_PRICE + (giftWrap ? 20 : 0),
+          price: PRODUCT_PRICE, // Gift wrapping is now free
           user_gender: safeConfig.userGender,
           partner_gender: safeConfig.partnerGender,
           game_level: safeConfig.gameLevel
@@ -374,8 +309,8 @@ const PaymentPage: React.FC = () => {
       
       // Proceed to create payment
       try {
-        // Informacje o zamówieniu
-        const price = PRODUCT_PRICE + (giftWrap ? 20 : 0);
+        // Order information
+        const price = PRODUCT_PRICE; // Gift wrapping is free now
         
         const paymentData = {
           price: price,
@@ -388,34 +323,34 @@ const PaymentPage: React.FC = () => {
           order_id: orderData.id
         };
 
-        console.log('Przygotowuję dane płatności:', {
+        console.log('Preparing payment data:', {
           ...paymentData,
           user_email: '***@***.com',
           partner_email: '***@***.com'
         });
 
-        // TYMCZASOWE ROZWIĄZANIE: Dla testów, możemy użyć statycznego URL Stripe
-        // Odkomentuj poniższy kod, aby ominąć Edge Function i przetestować pozostałą część procesu
+        // TEMPORARY SOLUTION: For tests, we can use a static Stripe URL
+        // Uncomment the code below to bypass the Edge Function and test the rest of the process
         /*
         const mockStripeUrl = 'https://checkout.stripe.com/c/pay/cs_test_123456789';
-        console.log('TRYB TESTOWY: Używam mocka URL Stripe:', mockStripeUrl);
+        console.log('TEST MODE: Using mock Stripe URL:', mockStripeUrl);
         window.location.href = mockStripeUrl;
         return;
         */
 
-        // Wywołanie Edge Function przy użyciu standardowego fetch API
-        console.log('Wywołuję Edge Function za pomocą fetch...');
+        // Call Edge Function using standard fetch API
+        console.log('Calling Edge Function with fetch...');
         
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://bqbgrjpxufblrgcoxpfk.supabase.co';
         const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxYmdyanB4dWZibHJnY294cGZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE1Mzk4NzUsImV4cCI6MjA1NzExNTg3NX0.kSryhe5Z4BILp_ss5LpSxanGSvx4HZzZtVzYia4bgik";
         
-        // Uproszczony format danych dla Edge Function
+        // Simplified data format for Edge Function
         const requestPayload = {
           data: paymentData
         };
         
-        console.log('Wysyłam żądanie do:', `${supabaseUrl}/functions/v1/create-payment`);
-        console.log('Z ładunkiem:', JSON.stringify(requestPayload));
+        console.log('Sending request to:', `${supabaseUrl}/functions/v1/create-payment`);
+        console.log('With payload:', JSON.stringify(requestPayload));
         
         const response = await fetch(`${supabaseUrl}/functions/v1/create-payment`, {
           method: 'POST',
@@ -427,27 +362,27 @@ const PaymentPage: React.FC = () => {
           body: JSON.stringify(requestPayload)
         });
         
-        // Sprawdź status odpowiedzi
-        console.log('Status odpowiedzi:', response.status);
-        console.log('Nagłówki odpowiedzi:', Object.fromEntries([...response.headers.entries()]));
+        // Check response status
+        console.log('Response status:', response.status);
+        console.log('Response headers:', Object.fromEntries([...response.headers.entries()]));
         
-        // Pobierz surowy tekst odpowiedzi, dla lepszej diagnostyki
+        // Get raw response text for better diagnostics
         const responseText = await response.text();
-        console.log('Odpowiedź jako tekst (pierwsze 100 znaków):', responseText.substring(0, 100));
+        console.log('Response as text (first 100 chars):', responseText.substring(0, 100));
         
-        // Próba parsowania JSON
+        // Try parsing JSON
         let data;
         try {
           data = JSON.parse(responseText);
-          console.log('Odpowiedź jako obiekt:', data);
+          console.log('Response as object:', data);
         } catch (jsonError) {
-          console.error('Błąd parsowania JSON:', jsonError.message);
-          throw new Error(`Nieprawidłowy format odpowiedzi: ${responseText.substring(0, 200)}...`);
+          console.error('Error parsing JSON:', jsonError.message);
+          throw new Error(`Invalid response format: ${responseText.substring(0, 200)}...`);
         }
         
-        // Sprawdź zawartość odpowiedzi
+        // Check response content
         if (!data) {
-          throw new Error('Brak danych w odpowiedzi');
+          throw new Error('No data in response');
         }
         
         if (data.error) {
@@ -455,10 +390,10 @@ const PaymentPage: React.FC = () => {
         }
         
         if (!data.url) {
-          throw new Error('Brak URL do płatności w odpowiedzi: ' + JSON.stringify(data));
+          throw new Error('No payment URL in response: ' + JSON.stringify(data));
         }
         
-        // Aktualizuj zamówienie z identyfikatorem sesji płatności
+        // Update order with payment session ID
         if (data.sessionId) {
           try {
             const { error: updateError } = await supabase
@@ -467,143 +402,191 @@ const PaymentPage: React.FC = () => {
               .eq('id', orderData.id);
               
             if (updateError) {
-              console.error('Błąd aktualizacji zamówienia z ID płatności:', updateError);
+              console.error('Error updating order with payment ID:', updateError);
             } else {
-              console.log('Zaktualizowano zamówienie z ID sesji płatności:', data.sessionId);
+              console.log('Updated order with payment session ID:', data.sessionId);
             }
           } catch (updateError) {
-            console.error('Wyjątek podczas aktualizacji zamówienia:', updateError);
+            console.error('Exception updating order:', updateError);
           }
         }
         
-        // Przekieruj do Stripe
-        console.log('Przekierowuję do URL płatności:', data.url);
+        // Redirect to Stripe
+        console.log('Redirecting to payment URL:', data.url);
         window.location.href = data.url;
         
       } catch (paymentError) {
-        console.error('Błąd tworzenia płatności:', paymentError);
-        toast.error(`Błąd płatności: ${paymentError.message || 'Nieznany błąd'}`);
+        console.error('Payment creation error:', paymentError);
+        toast.error(`Payment error: ${paymentError.message || 'Unknown error'}`);
         setIsProcessing(false);
       }
     } catch (error: any) {
       console.error('Order creation error:', error);
-      toast.error(error.message || 'Wystąpił błąd podczas przetwarzania zamówienia. Spróbuj ponownie.');
+      toast.error(error.message || 'An error occurred while processing your order. Please try again.');
       setIsProcessing(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <Card className="shadow-lg rounded-lg border-border bg-card">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center text-foreground">Podsumowanie zamówienia</CardTitle>
-            <CardDescription className="text-muted-foreground text-center">Wypełnij dane, aby złożyć zamówienie</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <form onSubmit={handleSubmit}>
-              <div className="space-y-2">
-                <Label htmlFor="userName" className="text-foreground">Imię</Label>
-                <Input
-                  type="text"
-                  id="userName"
-                  name="userName"
-                  value={userName}
-                  onChange={handleChange}
-                  required
-                  placeholder="Twoje imię"
-                  className="bg-input text-foreground"
-                />
-                {showErrors && errors.userName && (
-                  <p className="text-red-500 text-sm">{errors.userName}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="userEmail" className="text-foreground">Email</Label>
-                <Input
-                  type="email"
-                  id="userEmail"
-                  name="userEmail"
-                  value={userEmail}
-                  onChange={handleChange}
-                  required
-                  placeholder="Twój email"
-                  className="bg-input text-foreground"
-                />
-                {showErrors && errors.userEmail && (
-                  <p className="text-red-500 text-sm">{errors.userEmail}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="partnerName" className="text-foreground">Imię partnera/partnerki</Label>
-                <Input
-                  type="text"
-                  id="partnerName"
-                  name="partnerName"
-                  value={partnerName}
-                  onChange={handleChange}
-                  required
-                  placeholder="Imię Twojej drugiej połówki"
-                  className="bg-input text-foreground"
-                />
-                {showErrors && errors.partnerName && (
-                  <p className="text-red-500 text-sm">{errors.partnerName}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="partnerEmail" className="text-foreground">Email partnera/partnerki</Label>
-                <Input
-                  type="email"
-                  id="partnerEmail"
-                  name="partnerEmail"
-                  value={partnerEmail}
-                  onChange={handleChange}
-                  required
-                  placeholder="Email Twojej drugiej połówki"
-                  className="bg-input text-foreground"
-                />
-                {showErrors && errors.partnerEmail && (
-                  <p className="text-red-500 text-sm">{errors.partnerEmail}</p>
-                )}
-              </div>
-              <div className="flex items-center space-x-2 mt-4">
-                <Checkbox 
-                  id="giftWrap"
-                  checked={giftWrap}
-                  onCheckedChange={handleCheckboxChange}
-                />
-                <Label htmlFor="giftWrap" className="cursor-pointer text-foreground">Zapakuj na prezent (+20zł)</Label>
-              </div>
-              <div className="flex items-center space-x-2 mt-4 p-3 rounded-md border border-border">
-                <Checkbox 
-                  id="ageConfirmation"
-                  checked={ageConfirmed}
-                  onCheckedChange={(checked) => setAgeConfirmed(checked as boolean)}
-                />
-                <Label htmlFor="ageConfirmation" className="cursor-pointer text-foreground font-medium">Oświadczam, że ukończyłem/-am 18 rok życia</Label>
-              </div>
-              {showErrors && errors.ageConfirmation && (
-                <p className="text-red-500 text-sm mt-1">{errors.ageConfirmation}</p>
-              )}
-              <div className="mt-6">
-                <Button type="submit" disabled={isProcessing} className="w-full">
-                  {isProcessing ? (
-                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Przetwarzanie...</>
-                  ) : (
-                    <>Zapłać {PRODUCT_PRICE + (giftWrap ? 20 : 0)} zł</>
-                  )}
-                </Button>
-              </div>
-              
-              {/* Ukryty przycisk testowy - można odkometować do diagnostyki */}
-              {/* <div className="mt-2">
-                <Button type="button" variant="outline" size="sm" onClick={testEdgeFunction} className="w-full text-xs">
-                  Test Edge Function (Debug)
-                </Button>
-              </div> */}
-            </form>
-          </CardContent>
-        </Card>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#05050a] to-[#121217] p-4">
+      <div className="w-full max-w-6xl">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold mb-2">Prawie gotowe 👋</h1>
+          <p className="text-lg text-muted-foreground mb-2">
+            Czas zaprosić do gry Twoją partnerkę. Na końcu poznacie Wasze ukryte pragnienia.
+          </p>
+          <div className="inline-block bg-primary/10 text-primary rounded-full px-4 py-1 text-sm font-medium">
+            96% par rekomenduje tę grę
+          </div>
+        </div>
+        
+        {/* Main content */}
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Form */}
+          <div className="flex-1">
+            <Card className="shadow-lg rounded-lg border-border bg-card/60 backdrop-blur">
+              <CardHeader className="space-y-1">
+                <CardTitle className="text-2xl font-bold text-foreground">Dane zamówienia</CardTitle>
+                <CardDescription className="text-muted-foreground">
+                  Wypełnij dane, aby kontynuować
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <form onSubmit={handleSubmit}>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="userName" className="text-foreground">Twoje imię</Label>
+                      <Input
+                        type="text"
+                        id="userName"
+                        name="userName"
+                        value={userName}
+                        onChange={handleChange}
+                        required
+                        placeholder="Twoje imię"
+                        className="bg-input text-foreground"
+                      />
+                      {showErrors && errors.userName && (
+                        <p className="text-red-500 text-sm">{errors.userName}</p>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="userEmail" className="text-foreground">Twój e-mail (tam wyślemy raport)</Label>
+                      <Input
+                        type="email"
+                        id="userEmail"
+                        name="userEmail"
+                        value={userEmail}
+                        onChange={handleChange}
+                        required
+                        placeholder="Twój email"
+                        className="bg-input text-foreground"
+                      />
+                      {showErrors && errors.userEmail && (
+                        <p className="text-red-500 text-sm">{errors.userEmail}</p>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="partnerName" className="text-foreground">Imię Twojej partnerki</Label>
+                      <Input
+                        type="text"
+                        id="partnerName"
+                        name="partnerName"
+                        value={partnerName}
+                        onChange={handleChange}
+                        required
+                        placeholder="Imię Twojej drugiej połówki"
+                        className="bg-input text-foreground"
+                      />
+                      {showErrors && errors.partnerName && (
+                        <p className="text-red-500 text-sm">{errors.partnerName}</p>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="partnerEmail" className="text-foreground">E-mail Twojej partnerki</Label>
+                      <Input
+                        type="email"
+                        id="partnerEmail"
+                        name="partnerEmail"
+                        value={partnerEmail}
+                        onChange={handleChange}
+                        required
+                        placeholder="Email Twojej drugiej połówki"
+                        className="bg-input text-foreground"
+                      />
+                      {showErrors && errors.partnerEmail && (
+                        <p className="text-red-500 text-sm">{errors.partnerEmail}</p>
+                      )}
+                    </div>
+                  
+                    <div className="flex items-center space-x-2 mt-4">
+                      <Checkbox 
+                        id="giftWrap"
+                        checked={giftWrap}
+                        onCheckedChange={handleCheckboxChange}
+                      />
+                      <Label htmlFor="giftWrap" className="cursor-pointer text-foreground">
+                        Zapakuj na prezent (gratis)
+                      </Label>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2 mt-4 p-3 rounded-md border border-border">
+                      <Checkbox 
+                        id="ageConfirmation"
+                        checked={ageConfirmed}
+                        onCheckedChange={(checked) => setAgeConfirmed(checked as boolean)}
+                      />
+                      <Label htmlFor="ageConfirmation" className="cursor-pointer text-foreground font-medium">
+                        Oświadczam, że ukończyłem/-am 18 rok życia
+                      </Label>
+                    </div>
+                    
+                    {showErrors && errors.ageConfirmation && (
+                      <p className="text-red-500 text-sm mt-1">{errors.ageConfirmation}</p>
+                    )}
+                    
+                    <div className="mt-6">
+                      <Button type="submit" disabled={isProcessing} className="w-full text-lg py-6">
+                        {isProcessing ? (
+                          <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Przetwarzanie...</>
+                        ) : (
+                          <>Zapłać {PRODUCT_PRICE} zł</>
+                        )}
+                      </Button>
+                    </div>
+                    
+                    <p className="text-xs text-muted-foreground text-center mt-4">
+                      Grając, akceptujesz przyjazny{" "}
+                      <a href="/regulamin" className="text-primary hover:underline">
+                        Regulamin
+                      </a>{" "}
+                      i{" "}
+                      <a href="/polityka-prywatnosci" className="text-primary hover:underline">
+                        Politykę Prywatności
+                      </a>
+                      , która gwarantuje bezpieczeństwo Waszych danych. Usuwamy je po 7 dniach.
+                    </p>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+          
+          {/* Email Preview */}
+          <div className="flex-1">
+            <EmailPreview 
+              from="Secret Sparks" 
+              to={partnerEmail || "email@partnera.com"}
+              subject={`${userName || "Ktoś"} zaprasza Cię do gry`}
+              userName={userName || "Użytkownik"}
+              partnerName={partnerName || "Partner"}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
