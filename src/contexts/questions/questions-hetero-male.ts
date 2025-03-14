@@ -60,7 +60,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'ext-6', 
     text: 'Pissing – jego złoty deszcz',
     description: "Oddawanie moczu na ciało partnera lub partnerki. Ta kontrowersyjna praktyka jest formą BDSM, która dla niektórych par stanowi akt oddania i symbol głębokiego zaufania.",
-    illustration: '/images/illustrations/techniques/Pissing - jego złoty deszcz (exceed).png',
+    illustration: '/images/illustrations/techniques/Pissing – jego złoty deszcz (exceed).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -82,7 +82,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'ext-8', 
     text: 'Elektrostymulacja',
     description: "Używanie delikatnych impulsów elektrycznych do stymulacji erotycznej. Specjalistyczne zabawki mogą wywołać unikalne doznania niemożliwe do osiągnięcia w inny sposób.",
-    illustration: '/images/illustrations/techniques/Elektrostymulacja - (explore, exceed).png',
+    illustration: '/images/illustrations/techniques/Elektrostymulacja – (explore, exceed).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -222,7 +222,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-3', 
     text: 'Pozycja "na pieska"',
     description: "Pozycja od tyłu, która pozwala na głębszą penetrację. Daje dostęp do punktu G partnerki i umożliwia swobodne ruchy biodrami, zwiększając intensywność doznań.",
-    illustration: '/images/illustrations/techniques/Pozycja na pieska (discover, explore, exceed).png',
+    illustration: '/images/illustrations/techniques/Pozycja _na pieska_ (discover, explore, exceed).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -266,7 +266,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-9', 
     text: 'Pozycja "leniwego pieska"',
     description: "Kobieta leży płasko na brzuchu, a Ty wchodzisz od tyłu. Idealny wybór, gdy chcecie połączyć odpoczynek z przyjemnością, oferując głęboką penetrację przy minimalnym wysiłku.",
-    illustration: '/images/illustrations/techniques/Pozycja leniwego pieska (discover).png',
+    illustration: '/images/illustrations/techniques/Pozycja _leniwego pieska_ (discover).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -299,7 +299,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'pos-14', 
     text: 'Pozycja "łyżeczki"',
     description: "Oboje leżycie na boku, Ty za partnerką. Przyjemna, delikatna pozycja, idealna na romantyczne chwile, pozwalająca na obejmowanie ciała partnerki i intymną bliskość.",
-    illustration: '/images/illustrations/techniques/Pozycja łyżeczki (discover).png',
+    illustration: '/images/illustrations/techniques/Pozycja _łyżeczki_ (discover).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -343,7 +343,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'rol-3', 
     text: '"Złota rączka" i samotna żona',
     description: "Odgrywanie fantazji o hydrauliku/majsterkowiczu i samotnej kobiecie. Klasyczny scenariusz pełen napięcia seksualnego i spontaniczności, gdy przychodzisz naprawić coś w jej domu.",
-    illustration: '/images/illustrations/techniques/Złota rączka i samotna żona.png',
+    illustration: '/images/illustrations/techniques/Złota rączka_ i samotna żona.png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
@@ -796,7 +796,7 @@ export const questionsHeteroMale: Question[] = [
     id: 'med-1', 
     text: 'Wspólne oglądanie filmów porno',
     description: "Czy chciałbyś oglądać filmy dla dorosłych razem z partnerką? To może być inspirujące doświadczenie, źródło nowych pomysłów i sposób na rozmowę o fantazjach.",
-    illustration: '/images/illustrations/techniques/Wspólne oglądanie filmów porno (discover, explore).png',
+    illustration: '/images/illustrations/techniques/Wspólne oglądanie filmów porno (discover).png',
     forConfig: { 
       userGender: 'male',
       partnerGender: 'female',
