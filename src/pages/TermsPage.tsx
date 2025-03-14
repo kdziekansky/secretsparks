@@ -12,114 +12,171 @@ const TermsPage = () => {
       <div className="flex-grow container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto space-y-8">
           <h1 className="text-4xl font-bold tracking-tight text-center">Regulamin serwisu Secret Sparks</h1>
-          <p className="text-center text-muted-foreground">Ostatnia aktualizacja: 30.07.2023</p>
+          <p className="text-center text-muted-foreground">Ostatnia aktualizacja: 14.03.2025</p>
           <Separator className="my-8" />
           
           <section className="space-y-4">
-            <h2 className="text-2xl font-bold">§1. Postanowienia ogólne</h2>
+            <h2 className="text-2xl font-bold">§1 Postanowienia ogólne</h2>
             <p className="text-muted-foreground">
-              1.1 Niniejszy Regulamin określa zasady korzystania z serwisu internetowego Secret Sparks dostępnego pod adresem www.secretsparks.pl.
+              Regulamin określa zasady świadczenia usług drogą elektroniczną za pośrednictwem serwisu internetowego Secret Sparks („Serwis").
             </p>
             <p className="text-muted-foreground">
-              1.2 Właścicielem i administratorem serwisu Secret Sparks jest Secret Sparks Sp. z o.o. z siedzibą w Warszawie, ul. Przykładowa 123, 00-001 Warszawa, wpisana do rejestru przedsiębiorców Krajowego Rejestru Sądowego prowadzonego przez Sąd Rejonowy dla m.st. Warszawy, XIII Wydział Gospodarczy Krajowego Rejestru Sądowego pod numerem KRS 0000123456, NIP 1234567890, REGON 123456789.
+              Administratorem Serwisu jest KDY PROJECT z siedzibą w Fiszewie 12/3, 82-335 Gronowo Elbląskie, kontakt: contact@secretsparks.pl.
             </p>
             <p className="text-muted-foreground">
-              1.3 Niniejszy Regulamin jest regulaminem, o którym mowa w art. 8 ustawy z dnia 18 lipca 2002 r. o świadczeniu usług drogą elektroniczną.
-            </p>
-          </section>
-          
-          <section className="space-y-4 mt-8">
-            <h2 className="text-2xl font-bold">§2. Definicje</h2>
-            <p className="text-muted-foreground">
-              2.1 Serwis – serwis internetowy Secret Sparks dostępny pod adresem www.secretsparks.pl, za pośrednictwem którego Użytkownik może korzystać z usług oferowanych przez Właściciela.
-            </p>
-            <p className="text-muted-foreground">
-              2.2 Użytkownik – osoba fizyczna posiadająca pełną zdolność do czynności prawnych, korzystająca z Serwisu.
-            </p>
-            <p className="text-muted-foreground">
-              2.3 Usługa – usługa świadczona drogą elektroniczną przez Właściciela na rzecz Użytkownika za pośrednictwem Serwisu.
-            </p>
-            <p className="text-muted-foreground">
-              2.4 Raport – spersonalizowany dokument generowany na podstawie odpowiedzi udzielonych przez Użytkownika i jego partnera/partnerkę w ankiecie.
+              Niniejszy regulamin stanowi integralną część umowy zawieranej między Administratorem a Użytkownikiem.
             </p>
           </section>
           
           <section className="space-y-4 mt-8">
-            <h2 className="text-2xl font-bold">§3. Zasady korzystania z Serwisu</h2>
+            <h2 className="text-2xl font-bold">§2 Definicje</h2>
             <p className="text-muted-foreground">
-              3.1 Korzystanie z Serwisu jest dobrowolne i bezpłatne, z wyjątkiem usługi generowania Raportu, która jest usługą płatną.
+              Administrator – KDY PROJECT z siedzibą w Fiszewie 12/3, 82-335 Gronowo Elbląskie.
             </p>
             <p className="text-muted-foreground">
-              3.2 Warunkiem korzystania z Serwisu jest:
-            </p>
-            <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-6">
-              <li>Ukończenie 18 roku życia i posiadanie pełnej zdolności do czynności prawnych</li>
-              <li>Zaakceptowanie postanowień niniejszego Regulaminu</li>
-              <li>Wyrażenie zgody na przetwarzanie danych osobowych w zakresie niezbędnym do korzystania z Serwisu</li>
-            </ul>
-            <p className="text-muted-foreground">
-              3.3 Zabronione jest dostarczanie przez Użytkownika treści o charakterze bezprawnym, obraźliwym, naruszającym dobra osobiste osób trzecich lub sprzecznych z dobrymi obyczajami.
-            </p>
-          </section>
-          
-          <section className="space-y-4 mt-8">
-            <h2 className="text-2xl font-bold">§4. Usługa generowania Raportu</h2>
-            <p className="text-muted-foreground">
-              4.1 Usługa generowania Raportu polega na analizie odpowiedzi udzielonych przez Użytkownika i jego partnera/partnerkę w ankiecie oraz utworzeniu na ich podstawie spersonalizowanego Raportu.
+              Serwis – serwis internetowy działający pod domeną secretsparks.pl.
             </p>
             <p className="text-muted-foreground">
-              4.2 Cena za usługę generowania Raportu jest podana w Serwisie i jest wyrażona w złotych polskich (PLN).
+              Użytkownik – osoba fizyczna korzystająca z usług Serwisu.
             </p>
             <p className="text-muted-foreground">
-              4.3 Płatność za usługę generowania Raportu może być dokonana za pomocą systemu płatności elektronicznych dostępnego w Serwisie.
+              Usługa – usługa świadczona elektronicznie polegająca na generowaniu spersonalizowanych raportów na podstawie ankiety wypełnianej przez Użytkownika.
             </p>
             <p className="text-muted-foreground">
-              4.4 Po dokonaniu płatności Użytkownik otrzyma Raport w formie elektronicznej na podany adres e-mail.
+              Ankieta – zestaw pytań, na które odpowiada Użytkownik w celu wygenerowania spersonalizowanego raportu.
+            </p>
+            <p className="text-muted-foreground">
+              Raport – zestawienie wyników i informacji wygenerowane na podstawie odpowiedzi Użytkowników udzielonych w Ankietach.
+            </p>
+            <p className="text-muted-foreground">
+              Partner – osoba, którą Użytkownik zaprasza do wypełnienia Ankiety w celu wygenerowania wspólnego raportu.
             </p>
           </section>
           
           <section className="space-y-4 mt-8">
-            <h2 className="text-2xl font-bold">§5. Ochrona danych osobowych</h2>
+            <h2 className="text-2xl font-bold">§3 Warunki korzystania z Serwisu</h2>
             <p className="text-muted-foreground">
-              5.1 Administratorem danych osobowych Użytkowników jest Secret Sparks Sp. z o.o. z siedzibą w Warszawie.
+              Korzystanie z Serwisu wymaga zaakceptowania Regulaminu.
             </p>
             <p className="text-muted-foreground">
-              5.2 Dane osobowe Użytkowników są przetwarzane zgodnie z przepisami Rozporządzenia Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. w sprawie ochrony osób fizycznych w związku z przetwarzaniem danych osobowych i w sprawie swobodnego przepływu takich danych oraz uchylenia dyrektywy 95/46/WE (RODO).
+              Serwis przeznaczony jest wyłącznie dla osób pełnoletnich.
             </p>
             <p className="text-muted-foreground">
-              5.3 Szczegółowe informacje dotyczące przetwarzania danych osobowych zawarte są w Polityce Prywatności dostępnej w Serwisie.
-            </p>
-          </section>
-          
-          <section className="space-y-4 mt-8">
-            <h2 className="text-2xl font-bold">§6. Reklamacje</h2>
-            <p className="text-muted-foreground">
-              6.1 Użytkownik ma prawo do złożenia reklamacji dotyczącej usług świadczonych przez Właściciela za pośrednictwem Serwisu.
-            </p>
-            <p className="text-muted-foreground">
-              6.2 Reklamacje należy składać drogą elektroniczną na adres e-mail: kontakt@secretsparks.pl lub pisemnie na adres siedziby Właściciela.
-            </p>
-            <p className="text-muted-foreground">
-              6.3 Reklamacja powinna zawierać co najmniej: imię i nazwisko Użytkownika, adres e-mail oraz opis zgłaszanych zastrzeżeń.
-            </p>
-            <p className="text-muted-foreground">
-              6.4 Właściciel rozpatrzy reklamację w terminie 14 dni od daty jej otrzymania i poinformuje Użytkownika o sposobie jej rozpatrzenia na adres e-mail podany w reklamacji.
+              Użytkownik zobowiązany jest do podawania prawdziwych i aktualnych danych.
             </p>
           </section>
           
           <section className="space-y-4 mt-8">
-            <h2 className="text-2xl font-bold">§7. Postanowienia końcowe</h2>
+            <h2 className="text-2xl font-bold">§4 Warunki świadczenia usługi</h2>
             <p className="text-muted-foreground">
-              7.1 Właściciel zastrzega sobie prawo do zmiany niniejszego Regulaminu w dowolnym momencie.
+              Usługa jest przeznaczona dla osób pełnoletnich.
             </p>
             <p className="text-muted-foreground">
-              7.2 Zmiany Regulaminu wchodzą w życie z dniem ich opublikowania w Serwisie.
+              Aby skorzystać z usługi generowania raportu, Użytkownik musi wypełnić Ankietę dostępną w Serwisie oraz opłacić usługę.
             </p>
             <p className="text-muted-foreground">
-              7.3 W sprawach nieuregulowanych niniejszym Regulaminem zastosowanie mają przepisy prawa polskiego, w szczególności Kodeksu cywilnego oraz ustawy o świadczeniu usług drogą elektroniczną.
+              Usługę uruchamia Użytkownik inicjujący, który jako pierwszy wypełnia Ankietę i podaje swoje dane kontaktowe (imię oraz adres e-mail), a także dane Partnera. Opłaca również usługę i akceptuję Regulamin oraz Politykę Prywatności.
             </p>
             <p className="text-muted-foreground">
-              7.4 Wszelkie spory wynikające z korzystania z Serwisu będą rozstrzygane przez sąd właściwy dla siedziby Właściciela.
+              Po ukończeniu Ankiety przez Użytkownika inicjującego, Partner otrzymuje drogą elektroniczną zaproszenie do wypełnienia Ankiety.
+            </p>
+            <p className="text-muted-foreground">
+              Po wypełnieniu Ankiety przez obu Użytkowników, Serwis generuje Raport, który wysyłany jest w formie elektronicznej na wskazany adres e-mail.
+            </p>
+            <p className="text-muted-foreground">
+              Raport jest generowany w ciągu maksymalnie 24 godzin od momentu zakończenia Ankiet przez obu Użytkowników.
+            </p>
+            <p className="text-muted-foreground">
+              Raport nie zawiera szczegółowych odpowiedzi poszczególnych Użytkowników.
+            </p>
+            <p className="text-muted-foreground">
+              Użytkownik ponosi pełną odpowiedzialność za prawdziwość oraz zgodność ze stanem faktycznym udzielonych odpowiedzi.
+            </p>
+            <p className="text-muted-foreground">
+              Administrator zastrzega sobie prawo do odmowy świadczenia usługi, jeśli treść odpowiedzi Użytkownika jest niezgodna z prawem, narusza prawa osób trzecich lub jest sprzeczna z dobrymi obyczajami.
+            </p>
+          </section>
+          
+          <section className="space-y-4 mt-8">
+            <h2 className="text-2xl font-bold">§5 Płatności</h2>
+            <p className="text-muted-foreground">
+              Korzystanie z podstawowych usług Serwisu może być bezpłatne.
+            </p>
+            <p className="text-muted-foreground">
+              Administrator zastrzega możliwość wprowadzenia dodatkowych płatnych usług. W takim przypadku informacja o płatnościach zostanie jasno przedstawiona Użytkownikowi.
+            </p>
+          </section>
+          
+          <section className="space-y-4 mt-8">
+            <h2 className="text-2xl font-bold">§6 Odpowiedzialność</h2>
+            <p className="text-muted-foreground">
+              Administrator dokłada wszelkich starań, aby raporty były rzetelne i aktualne, jednak mają one charakter wyłącznie informacyjny.
+            </p>
+            <p className="text-muted-foreground">
+              Administrator nie ponosi odpowiedzialności za decyzje Użytkownika podjęte na podstawie informacji zawartych w raportach.
+            </p>
+            <p className="text-muted-foreground">
+              Administrator nie ponosi odpowiedzialności za szkody wynikłe z nieprawidłowego użytkowania Serwisu.
+            </p>
+          </section>
+          
+          <section className="space-y-4 mt-8">
+            <h2 className="text-2xl font-bold">§7 Reklamacje</h2>
+            <p className="text-muted-foreground">
+              Reklamacje dotyczące działania Serwisu można zgłaszać na adres contact@secretsparks.pl.
+            </p>
+            <p className="text-muted-foreground">
+              Reklamacja powinna zawierać dane Użytkownika oraz szczegółowy opis problemu.
+            </p>
+            <p className="text-muted-foreground">
+              Administrator rozpatruje reklamacje w terminie 14 dni od ich otrzymania.
+            </p>
+          </section>
+          
+          <section className="space-y-4 mt-8">
+            <h2 className="text-2xl font-bold">§8 Ochrona danych osobowych</h2>
+            <p className="text-muted-foreground">
+              Dane osobowe są przetwarzane zgodnie z Polityką Prywatności Serwisu dostępną na stronie secretsparks.pl/privacy-policy.
+            </p>
+          </section>
+          
+          <section className="space-y-4 mt-8">
+            <h2 className="text-2xl font-bold">§9 Własność intelektualna</h2>
+            <p className="text-muted-foreground">
+              Wszystkie materiały udostępnione w Serwisie są własnością Administratora i podlegają ochronie prawnej.
+            </p>
+            <p className="text-muted-foreground">
+              Zabrania się kopiowania, rozpowszechniania lub wykorzystywania materiałów bez zgody Administratora.
+            </p>
+          </section>
+          
+          <section className="space-y-4 mt-8">
+            <h2 className="text-2xl font-bold">§10 Zmiany Regulaminu</h2>
+            <p className="text-muted-foreground">
+              Administrator zastrzega sobie prawo do zmiany Regulaminu.
+            </p>
+            <p className="text-muted-foreground">
+              O każdej istotnej zmianie Regulaminu Administrator powiadomi Użytkowników drogą elektroniczną lub poprzez widoczną informację na stronie Serwisu.
+            </p>
+            <p className="text-muted-foreground">
+              Korzystanie z Serwisu po wprowadzeniu zmian oznacza akceptację nowego Regulaminu.
+            </p>
+          </section>
+          
+          <section className="space-y-4 mt-8">
+            <h2 className="text-2xl font-bold">§11 Postanowienia końcowe</h2>
+            <p className="text-muted-foreground">
+              W sprawach nieuregulowanych niniejszym Regulaminem zastosowanie mają obowiązujące przepisy prawa polskiego.
+            </p>
+            <p className="text-muted-foreground">
+              Spory wynikające z korzystania z Serwisu rozpatrywane będą przez właściwy sąd zgodnie z obowiązującymi przepisami.
+            </p>
+          </section>
+          
+          <section className="space-y-4 mt-8">
+            <h2 className="text-2xl font-bold">§12 Kontakt</h2>
+            <p className="text-muted-foreground">
+              W przypadku pytań dotyczących Regulaminu prosimy o kontakt mailowy na adres: contact@secretsparks.pl lub listownie na adres Administratora: KDY PROJECT, Fiszewo 12/3, 82-335 Gronowo Elbląskie.
             </p>
           </section>
           
