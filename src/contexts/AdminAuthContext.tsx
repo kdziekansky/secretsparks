@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -306,7 +305,7 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
     try {
       setIsLoading(true);
       
-      console.log('Próba logowania dla:', email);
+      console.log('Próba logowania bezpośrednio z bazy danych dla:', email);
       
       // Weryfikacja formatu adresu email
       const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -314,10 +313,10 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
         throw new Error('Nieprawidłowy format adresu email');
       }
       
-      // Weryfikacja w bazie danych
+      // Weryfikacja w bazie danych - bezpośrednie pobranie rekordu z hasłem
       const { data: adminUser, error: adminCheckError } = await supabase
         .from('admin_users')
-        .select('email')
+        .select('*')
         .eq('email', email)
         .maybeSingle();
 
@@ -331,19 +330,18 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
         throw new Error('Nieprawidłowe dane logowania');
       }
 
-      // Użyj uwierzytelniania Supabase
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        console.error('Błąd uwierzytelniania Supabase:', error);
-        throw error;
+      // Porównaj bezpośrednio hasło z bazy danych (w produkcji powinno być zaszyfrowane)
+      if (adminUser.password !== password) {
+        console.error('Nieprawidłowe hasło dla użytkownika:', email);
+        throw new Error('Nieprawidłowe dane logowania');
       }
+      
+      console.log('Weryfikacja hasła zakończona sukcesem');
       
       // Zapisz stan uwierzytelnienia
       persistAuthState(email);
+      setIsAuthenticated(true);
+      setAdminEmail(email);
       
       // Dodaj wpis do dziennika logowań (jeśli tabela istnieje)
       try {
@@ -354,6 +352,8 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
             login_at: new Date().toISOString(),
             user_agent: navigator.userAgent.substring(0, 255),
           }]);
+          
+        console.log('Zapisano log logowania');
       } catch (err) {
         // Ignoruj błąd jeśli tabela nie istnieje
         console.error('Błąd zapisywania logowania:', err);

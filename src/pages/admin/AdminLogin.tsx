@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label';
 import { LockIcon, EyeIcon, EyeOffIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
 
 const AdminLogin = () => {
   const { login, isAuthenticated, isLoading } = useAdminAuth();
@@ -41,49 +40,8 @@ const AdminLogin = () => {
       setLoginInProgress(true);
       const normalizedEmail = email.trim().toLowerCase();
       console.log('Próba logowania z danymi:', { email: normalizedEmail });
-
-      // Najpierw sprawdźmy, czy użytkownik istnieje w tabeli admin_users
-      console.log('Wykonuję zapytanie do tabeli admin_users');
       
-      const { data: adminUser, error: adminCheckError } = await supabase
-        .from('admin_users')
-        .select('*')
-        .eq('email', normalizedEmail)
-        .maybeSingle();
-
-      console.log('Wynik zapytania admin_users:', { adminUser, adminCheckError });
-
-      if (adminCheckError) {
-        console.error('Błąd weryfikacji administratora:', adminCheckError);
-        throw new Error('Problem z weryfikacją danych administratora');
-      }
-
-      if (!adminUser) {
-        console.error('Nie znaleziono użytkownika w tabeli admin_users:', normalizedEmail);
-        // Sprawdźmy listę wszystkich administratorów (tylko w trybie deweloperskim)
-        const { data: allAdmins } = await supabase
-          .from('admin_users')
-          .select('email');
-        console.log('Dostępni administratorzy:', allAdmins);
-        
-        throw new Error('Nieprawidłowe dane logowania');
-      }
-
-      console.log('Znaleziono administratora, przekazuję do kontekstu uwierzytelniania');
-      
-      // Spróbujmy najpierw zalogować przez Supabase Auth
-      // Jeśli użytkownik nie istnieje w Auth, zostanie obsłużony przez kontekst
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email: normalizedEmail,
-        password: password
-      });
-      
-      if (authError) {
-        console.log('Błąd logowania przez Supabase Auth:', authError.message);
-        console.log('Przechodzimy do weryfikacji przez kontekst administratora...');
-      }
-      
-      // Przekaż logowanie do kontekstu
+      // Bezpośrednio przekaż dane do funkcji login w kontekście
       await login(normalizedEmail, password);
       
       // Pomyślne logowanie jest obsługiwane przez useEffect z isAuthenticated
