@@ -3,16 +3,20 @@ import React, { useState, useEffect } from 'react';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Loader2, Lock } from 'lucide-react';
+import { Loader2, Lock, UserPlus } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
   const { login, isLoading, isAuthenticated } = useAdminAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -26,7 +30,7 @@ const AdminLogin: React.FC = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Dodatkowa walidacja przed wysłaniem
@@ -50,6 +54,121 @@ const AdminLogin: React.FC = () => {
     
     console.log('Próba logowania dla:', email);
     await login(email, password);
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Walidacja formularza rejestracji
+    if (!email) {
+      toast({
+        title: "Wprowadź adres email",
+        description: "Adres email jest wymagany do utworzenia konta.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!password) {
+      toast({
+        title: "Wprowadź hasło",
+        description: "Hasło jest wymagane do utworzenia konta.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (password.length < 8) {
+      toast({
+        title: "Zbyt krótkie hasło",
+        description: "Hasło musi zawierać co najmniej 8 znaków.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (password !== confirmPassword) {
+      toast({
+        title: "Hasła nie są zgodne",
+        description: "Powtórzone hasło musi być identyczne z hasłem.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Lista dozwolonych administratorów
+    const allowedAdmins = [
+      'admin@example.com', 
+      'szmergon@gmail.com', 
+      'contact@secretsparks.pl',
+      'kdziekansky@icloud.com'
+    ];
+    
+    if (!allowedAdmins.includes(email)) {
+      toast({
+        title: "Brak uprawnień",
+        description: "Ten adres email nie jest autoryzowany jako administrator.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setIsRegistering(true);
+    
+    try {
+      // Najpierw sprawdzamy, czy admin już istnieje w tabeli admin_users
+      const { data: existingAdmin, error: checkError } = await supabase
+        .from('admin_users')
+        .select('email')
+        .eq('email', email)
+        .maybeSingle();
+      
+      if (existingAdmin) {
+        toast({
+          title: "Konto już istnieje",
+          description: "Administrator o tym adresie email już istnieje. Możesz się zalogować.",
+          variant: "destructive",
+        });
+        setIsRegistering(false);
+        return;
+      }
+      
+      // Rejestracja w auth
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: window.location.origin + '/spe43al-adm1n-p4nel/dashboard'
+        }
+      });
+      
+      if (error) throw error;
+      
+      // Tworzymy wpis w tabeli admin_users
+      const { error: adminError } = await supabase
+        .from('admin_users')
+        .insert([{ email }]);
+      
+      if (adminError) throw adminError;
+      
+      toast({
+        title: "Konto utworzone",
+        description: "Konto administratora zostało utworzone. Możesz się teraz zalogować.",
+      });
+      
+      // Automatyczne logowanie po rejestracji
+      await login(email, password);
+      
+    } catch (error: any) {
+      console.error('Błąd podczas rejestracji:', error);
+      toast({
+        title: "Błąd rejestracji",
+        description: error.message || "Nie udało się utworzyć konta administratora.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRegistering(false);
+    }
   };
 
   // Jeśli użytkownik jest już uwierzytelniony, pokaż loader podczas przekierowania
@@ -78,80 +197,164 @@ const AdminLogin: React.FC = () => {
         </CardHeader>
         
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email" className="block text-sm font-medium">
-                Email
-              </Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@example.com"
-              />
-            </div>
+          <Tabs defaultValue="login" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsTrigger value="login">Logowanie</TabsTrigger>
+              <TabsTrigger value="register">Rejestracja</TabsTrigger>
+            </TabsList>
             
-            <div className="space-y-2">
-              <Label htmlFor="password" className="block text-sm font-medium">
-                Hasło
-              </Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-              />
-            </div>
+            <TabsContent value="login">
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="login-email" className="block text-sm font-medium">
+                    Email
+                  </Label>
+                  <Input
+                    id="login-email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="admin@example.com"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="login-password" className="block text-sm font-medium">
+                    Hasło
+                  </Label>
+                  <Input
+                    id="login-password"
+                    name="password"
+                    type="password"
+                    autoComplete="current-password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                  />
+                </div>
 
-            <Button 
-              type="submit" 
-              className="w-full" 
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Logowanie...
-                </>
-              ) : (
-                'Zaloguj się'
-              )}
-            </Button>
+                <Button 
+                  type="submit" 
+                  className="w-full" 
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Logowanie...
+                    </>
+                  ) : (
+                    'Zaloguj się'
+                  )}
+                </Button>
+              </form>
+            </TabsContent>
             
-            <div className="text-xs text-center text-muted-foreground mt-2">
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <button type="button" className="text-xs underline hover:text-primary">
-                    Potrzebujesz pomocy z logowaniem?
-                  </button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Pomoc z logowaniem</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      <p className="mb-2">Dla konta administracyjnego:</p>
-                      <ul className="list-disc pl-5 space-y-1 mb-4">
-                        <li>Użyj adresu email, który otrzymałeś od administratora</li>
-                        <li>Jeśli nie pamiętasz hasła, skontaktuj się z głównym administratorem</li>
-                        <li>W przypadku nowego konta użyj hasła tymczasowego, które zostało dla Ciebie utworzone</li>
-                      </ul>
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Zamknij</AlertDialogCancel>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
-          </form>
+            <TabsContent value="register">
+              <form onSubmit={handleRegister} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="register-email" className="block text-sm font-medium">
+                    Email
+                  </Label>
+                  <Input
+                    id="register-email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="admin@example.com"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="register-password" className="block text-sm font-medium">
+                    Hasło
+                  </Label>
+                  <Input
+                    id="register-password"
+                    name="password"
+                    type="password"
+                    autoComplete="new-password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="register-confirm-password" className="block text-sm font-medium">
+                    Powtórz hasło
+                  </Label>
+                  <Input
+                    id="register-confirm-password"
+                    name="confirmPassword"
+                    type="password"
+                    autoComplete="new-password"
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="••••••••"
+                  />
+                </div>
+
+                <Button 
+                  type="submit" 
+                  className="w-full" 
+                  disabled={isRegistering}
+                >
+                  {isRegistering ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Tworzenie konta...
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus className="mr-2 h-4 w-4" />
+                      Utwórz konto administratora
+                    </>
+                  )}
+                </Button>
+                
+                <p className="text-xs text-center text-muted-foreground mt-2">
+                  Tylko autoryzowane adresy email mogą utworzyć konto administratora
+                </p>
+              </form>
+            </TabsContent>
+          </Tabs>
+          
+          <div className="text-xs text-center text-muted-foreground mt-6">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button type="button" className="text-xs underline hover:text-primary">
+                  Potrzebujesz pomocy z logowaniem?
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Pomoc z logowaniem</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    <p className="mb-2">Dla konta administracyjnego:</p>
+                    <ul className="list-disc pl-5 space-y-1 mb-4">
+                      <li>Użyj adresu email, który otrzymałeś od administratora</li>
+                      <li>Jeśli nie pamiętasz hasła, skontaktuj się z głównym administratorem</li>
+                      <li>W przypadku nowego konta użyj zakładki "Rejestracja" by utworzyć swoje konto</li>
+                      <li>Tylko autoryzowane adresy email mogą utworzyć konto administratora</li>
+                    </ul>
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Zamknij</AlertDialogCancel>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         </CardContent>
         
         <CardFooter className="justify-center text-center text-xs text-muted-foreground">
