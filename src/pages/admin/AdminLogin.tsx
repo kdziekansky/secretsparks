@@ -41,7 +41,7 @@ const AdminLogin = () => {
       const normalizedEmail = email.trim().toLowerCase();
       console.log('Próba logowania z danymi:', { email: normalizedEmail });
       
-      // Bezpośrednio przekaż dane do funkcji login w kontekście
+      // Przekazujemy dane do funkcji login w kontekście, która użyje Supabase Auth
       await login(normalizedEmail, password);
       
       // Pomyślne logowanie jest obsługiwane przez useEffect z isAuthenticated

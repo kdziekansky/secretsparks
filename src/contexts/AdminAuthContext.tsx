@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -148,19 +149,10 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
         if (isAdminLoggedIn && storedEmail) {
           console.log('Znaleziono zalogowanego administratora w sessionStorage:', storedEmail);
           
-          // Dodatkowa weryfikacja na podstawie bazy danych
-          const { data: adminCheck, error: adminCheckError } = await supabase
-            .from('admin_users')
-            .select('email')
-            .eq('email', storedEmail)
-            .maybeSingle();
-            
-          if (adminCheckError || !adminCheck) {
-            console.error('Błąd weryfikacji administratora:', adminCheckError);
-            clearAuthState();
-            setIsAuthenticated(false);
-            setAdminEmail(null);
-          } else {
+          // Weryfikujemy czy użytkownik istnieje w Supabase Auth
+          const { data: { session } } = await supabase.auth.getSession();
+          
+          if (session && session.user.email === storedEmail) {
             setIsAuthenticated(true);
             setAdminEmail(storedEmail);
             
@@ -169,6 +161,11 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
               console.log('Przekierowuję z logowania do dashboard (sessionStorage auth)');
               navigate('/spe43al-adm1n-p4nel/dashboard');
             }
+          } else {
+            // Sesja Supabase nie istnieje, wyloguj
+            clearAuthState();
+            setIsAuthenticated(false);
+            setAdminEmail(null);
           }
           
           setIsLoading(false);
@@ -180,35 +177,16 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
         
         if (session) {
           console.log('Znaleziono sesję Supabase:', session.user.email);
-          const { data: adminUser, error: adminCheckError } = await supabase
-            .from('admin_users')
-            .select('email')
-            .eq('email', session.user.email)
-            .maybeSingle();
-
-          if (adminCheckError || !adminUser) {
-            console.log('Użytkownik nie jest administratorem:', session.user.email);
-            // Nie jest administratorem, wyloguj go
-            if (location.pathname.includes('spe43al-adm1n-p4nel')) {
-              await supabase.auth.signOut();
-              setIsAuthenticated(false);
-              setAdminEmail(null);
-              clearAuthState();
-              navigate('/spe43al-adm1n-p4nel');
-              toast.error('Brak uprawnień dostępu');
-            }
-          } else {
-            // Jest administratorem
-            console.log('Potwierdzono administratora:', session.user.email);
-            setIsAuthenticated(true);
-            setAdminEmail(session.user.email);
-            persistAuthState(session.user.email);
-            
-            // Jeśli na stronie logowania, przekieruj do panelu
-            if (location.pathname === '/spe43al-adm1n-p4nel') {
-              console.log('Przekierowuję z logowania do dashboard (Supabase auth)');
-              navigate('/spe43al-adm1n-p4nel/dashboard');
-            }
+          
+          // Zapisz stan uwierzytelnienia
+          setIsAuthenticated(true);
+          setAdminEmail(session.user.email);
+          persistAuthState(session.user.email);
+          
+          // Jeśli na stronie logowania, przekieruj do panelu
+          if (location.pathname === '/spe43al-adm1n-p4nel') {
+            console.log('Przekierowuję z logowania do dashboard (Supabase auth)');
+            navigate('/spe43al-adm1n-p4nel/dashboard');
           }
         } else {
           console.log('Brak sesji Supabase, użytkownik nie jest zalogowany');
@@ -225,18 +203,9 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
         }
       } catch (error) {
         console.error('Błąd podczas sprawdzania uwierzytelnienia:', error);
-        // Sprawdź jeszcze sessionStorage na wypadek błędu
-        const isAdminLoggedIn = sessionStorage.getItem(ADMIN_AUTH_KEY) === 'true';
-        const storedEmail = sessionStorage.getItem(ADMIN_EMAIL_KEY);
-        
-        if (isAdminLoggedIn && storedEmail && !isSessionExpired()) {
-          setIsAuthenticated(true);
-          setAdminEmail(storedEmail);
-        } else {
-          setIsAuthenticated(false);
-          setAdminEmail(null);
-          clearAuthState();
-        }
+        setIsAuthenticated(false);
+        setAdminEmail(null);
+        clearAuthState();
       } finally {
         setIsLoading(false);
       }
@@ -248,50 +217,26 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Zmiana stanu uwierzytelnienia:', event);
       
-      // Najpierw sprawdź sessionStorage
-      const isAdminLoggedIn = sessionStorage.getItem(ADMIN_AUTH_KEY) === 'true';
-      const storedEmail = sessionStorage.getItem(ADMIN_EMAIL_KEY);
-      
-      if (isAdminLoggedIn && storedEmail && !isSessionExpired()) {
-        console.log('Zalogowany przez sessionStorage:', storedEmail);
-        setIsAuthenticated(true);
-        setAdminEmail(storedEmail);
-        return;
-      }
-      
       if (event === 'SIGNED_IN' && session) {
-        // Sprawdź czy zalogowany użytkownik jest administratorem
-        const { data: adminUser, error: adminCheckError } = await supabase
-          .from('admin_users')
-          .select('email')
-          .eq('email', session.user.email)
-          .maybeSingle();
-
-        if (adminCheckError || !adminUser) {
-          // Nie jest administratorem, wyloguj go
-          await supabase.auth.signOut();
-          setIsAuthenticated(false);
-          setAdminEmail(null);
-          clearAuthState();
-          toast.error('Brak uprawnień dostępu');
-        } else {
-          console.log('Zalogowano administratora przez Supabase:', session.user.email);
-          setIsAuthenticated(true);
-          setAdminEmail(session.user.email);
-          persistAuthState(session.user.email);
-          
-          // Przekieruj do panelu po zalogowaniu
-          if (location.pathname === '/spe43al-adm1n-p4nel') {
-            navigate('/spe43al-adm1n-p4nel/dashboard');
-          }
+        console.log('Zalogowano przez Supabase:', session.user.email);
+        setIsAuthenticated(true);
+        setAdminEmail(session.user.email);
+        persistAuthState(session.user.email);
+        
+        // Przekieruj do panelu po zalogowaniu
+        if (location.pathname === '/spe43al-adm1n-p4nel') {
+          navigate('/spe43al-adm1n-p4nel/dashboard');
         }
       } else if (event === 'SIGNED_OUT') {
-        const isAdminLoggedIn = sessionStorage.getItem(ADMIN_AUTH_KEY) === 'true';
-        if (!isAdminLoggedIn) {
-          console.log('Wylogowano z Supabase');
-          setIsAuthenticated(false);
-          setAdminEmail(null);
-          clearAuthState();
+        console.log('Wylogowano z Supabase');
+        setIsAuthenticated(false);
+        setAdminEmail(null);
+        clearAuthState();
+        
+        // Przekieruj do logowania
+        if (location.pathname.includes('spe43al-adm1n-p4nel') && 
+            location.pathname !== '/spe43al-adm1n-p4nel') {
+          navigate('/spe43al-adm1n-p4nel');
         }
       }
     });
@@ -305,7 +250,7 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
     try {
       setIsLoading(true);
       
-      console.log('Próba logowania bezpośrednio z bazy danych dla:', email);
+      console.log('Próba logowania przez Supabase Auth dla:', email);
       
       // Weryfikacja formatu adresu email
       const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -313,30 +258,22 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
         throw new Error('Nieprawidłowy format adresu email');
       }
       
-      // Weryfikacja w bazie danych - bezpośrednie pobranie rekordu z hasłem
-      const { data: adminUser, error: adminCheckError } = await supabase
-        .from('admin_users')
-        .select('*')
-        .eq('email', email)
-        .maybeSingle();
+      // Użyj standardowego uwierzytelniania Supabase
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-      if (adminCheckError) {
-        console.error('Błąd weryfikacji administratora:', adminCheckError);
-        throw new Error('Problem z weryfikacją danych administratora');
+      if (error) {
+        console.error('Błąd uwierzytelniania Supabase:', error);
+        throw new Error(error.message || 'Nieprawidłowe dane logowania');
       }
-
-      if (!adminUser) {
-        console.error('Nie znaleziono w tabeli admin_users:', email);
-        throw new Error('Nieprawidłowe dane logowania');
-      }
-
-      // Porównaj bezpośrednio hasło z bazy danych (w produkcji powinno być zaszyfrowane)
-      if (adminUser.password !== password) {
-        console.error('Nieprawidłowe hasło dla użytkownika:', email);
+      
+      if (!data || !data.user) {
         throw new Error('Nieprawidłowe dane logowania');
       }
       
-      console.log('Weryfikacja hasła zakończona sukcesem');
+      console.log('Logowanie zakończone sukcesem:', data.user.email);
       
       // Zapisz stan uwierzytelnienia
       persistAuthState(email);
@@ -375,11 +312,8 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
     try {
       setIsLoading(true);
       
-      // Sprawdź czy sesja Supabase też istnieje
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        await supabase.auth.signOut();
-      }
+      // Wyloguj z Supabase Auth
+      await supabase.auth.signOut();
       
       // Wyczyść sessionStorage
       clearAuthState();
