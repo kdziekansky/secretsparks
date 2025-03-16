@@ -39,19 +39,18 @@ const AdminLogin = () => {
 
     try {
       setLoginInProgress(true);
-      console.log('Próba logowania z danymi:', { email });
+      const normalizedEmail = email.trim().toLowerCase();
+      console.log('Próba logowania z danymi:', { email: normalizedEmail });
 
-      // Sprawdź, czy użytkownik istnieje w tabeli admin_users
-      // Użyjemy console.log do debugowania zapytania
+      // Najpierw sprawdźmy, czy użytkownik istnieje w tabeli admin_users
       console.log('Wykonuję zapytanie do tabeli admin_users');
       
       const { data: adminUser, error: adminCheckError } = await supabase
         .from('admin_users')
-        .select('*')  // Zmiana z select('email') na select('*'), aby zobaczyć wszystkie kolumny
-        .eq('email', email.trim().toLowerCase())  // Dodajemy trim() i toLowerCase() dla większej elastyczności
-        .maybeSingle();  // Używamy maybeSingle() zamiast single(), aby uniknąć błędu, gdy nie znaleziono użytkownika
+        .select('*')
+        .eq('email', normalizedEmail)
+        .maybeSingle();
 
-      // Wyświetlamy szczegóły zapytania dla debugowania
       console.log('Wynik zapytania admin_users:', { adminUser, adminCheckError });
 
       if (adminCheckError) {
@@ -60,7 +59,7 @@ const AdminLogin = () => {
       }
 
       if (!adminUser) {
-        console.error('Nie znaleziono użytkownika w tabeli admin_users:', email);
+        console.error('Nie znaleziono użytkownika w tabeli admin_users:', normalizedEmail);
         // Sprawdźmy listę wszystkich administratorów (tylko w trybie deweloperskim)
         const { data: allAdmins } = await supabase
           .from('admin_users')
@@ -72,8 +71,20 @@ const AdminLogin = () => {
 
       console.log('Znaleziono administratora, przekazuję do kontekstu uwierzytelniania');
       
+      // Spróbujmy najpierw zalogować przez Supabase Auth
+      // Jeśli użytkownik nie istnieje w Auth, zostanie obsłużony przez kontekst
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: normalizedEmail,
+        password: password
+      });
+      
+      if (authError) {
+        console.log('Błąd logowania przez Supabase Auth:', authError.message);
+        console.log('Przechodzimy do weryfikacji przez kontekst administratora...');
+      }
+      
       // Przekaż logowanie do kontekstu
-      await login(email, password);
+      await login(normalizedEmail, password);
       
       // Pomyślne logowanie jest obsługiwane przez useEffect z isAuthenticated
     } catch (error: any) {
