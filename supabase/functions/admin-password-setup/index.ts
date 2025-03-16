@@ -44,49 +44,142 @@ serve(async (req) => {
       );
     }
 
-    // Check if the user is an admin
-    const { data: adminUser, error: adminError } = await supabaseAdmin
-      .from('admin_users')
-      .select('*')
-      .eq('email', user.email)
-      .single();
-
-    if (adminError || !adminUser) {
-      return new Response(
-        JSON.stringify({ error: "User is not an admin" }),
-        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
     // Get the request body
-    const { password } = await req.json();
+    const requestData = await req.json();
+    const { email, password, action } = requestData;
 
-    if (!password || typeof password !== 'string' || password.length < 8) {
+    // Action to create a new admin user
+    if (action === "create" && email && password) {
+      // Check if the requester has permission to create an admin
+      // This typically would check for a specific admin role
+      const { data: adminCheck, error: adminCheckError } = await supabaseAdmin
+        .from('admin_users')
+        .select('email')
+        .eq('email', user.email)
+        .single();
+        
+      if (adminCheckError || !adminCheck) {
+        return new Response(
+          JSON.stringify({ error: "You don't have permission to create admin users" }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
+      // Check if admin user already exists
+      const { data: existingAdmin, error: existingAdminError } = await supabaseAdmin
+        .from('admin_users')
+        .select('email')
+        .eq('email', email)
+        .maybeSingle();
+        
+      if (existingAdmin) {
+        return new Response(
+          JSON.stringify({ error: "Admin user already exists" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
+      // Create a user in auth if it doesn't exist
+      const { data: authUserCheck, error: authUserCheckError } = await supabaseAdmin.auth.admin.getUserByEmail(email);
+      
+      if (!authUserCheck) {
+        // Create the user in auth
+        const { data: newAuthUser, error: newAuthUserError } = await supabaseAdmin.auth.admin.createUser({
+          email: email,
+          password: password,
+          email_confirm: true
+        });
+        
+        if (newAuthUserError) {
+          return new Response(
+            JSON.stringify({ error: `Failed to create auth user: ${newAuthUserError.message}` }),
+            { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+      }
+      
+      // Hash the password for storage in admin_users
+      const hashedPassword = await bcrypt.hash(password);
+      
+      // Create the admin user
+      const { data: newAdmin, error: newAdminError } = await supabaseAdmin
+        .from('admin_users')
+        .insert([{ email: email, password: hashedPassword }]);
+        
+      if (newAdminError) {
+        return new Response(
+          JSON.stringify({ error: `Failed to create admin user: ${newAdminError.message}` }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
       return new Response(
-        JSON.stringify({ error: "Password must be at least 8 characters long" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ success: true, message: "Admin user created successfully" }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+    
+    // Action to update an existing admin's password
+    if (action === "update" && password) {
+      // Check if the user exists in the admin_users table
+      const { data: adminUser, error: adminError } = await supabaseAdmin
+        .from('admin_users')
+        .select('*')
+        .eq('email', user.email)
+        .single();
 
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password);
+      if (adminError || !adminUser) {
+        return new Response(
+          JSON.stringify({ error: "User is not an admin" }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
 
-    // Update the admin user's password
-    const { error: updateError } = await supabaseAdmin
-      .from('admin_users')
-      .update({ password: hashedPassword })
-      .eq('email', user.email);
+      if (!password || typeof password !== 'string' || password.length < 8) {
+        return new Response(
+          JSON.stringify({ error: "Password must be at least 8 characters long" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
 
-    if (updateError) {
+      // Update auth user password
+      const { error: authUpdateError } = await supabaseAdmin.auth.admin.updateUserById(
+        user.id,
+        { password: password }
+      );
+      
+      if (authUpdateError) {
+        return new Response(
+          JSON.stringify({ error: `Failed to update auth password: ${authUpdateError.message}` }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(password);
+
+      // Update the admin user's password
+      const { error: updateError } = await supabaseAdmin
+        .from('admin_users')
+        .update({ password: hashedPassword })
+        .eq('email', user.email);
+
+      if (updateError) {
+        return new Response(
+          JSON.stringify({ error: updateError.message }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
       return new Response(
-        JSON.stringify({ error: updateError.message }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ success: true, message: "Password updated successfully" }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
-
+    
     return new Response(
-      JSON.stringify({ success: true, message: "Password updated successfully" }),
-      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({ error: "Invalid action or missing parameters" }),
+      { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
     return new Response(

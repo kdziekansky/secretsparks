@@ -143,12 +143,6 @@ const AdminLogin: React.FC = () => {
                         <li>Jeśli nie pamiętasz hasła, skontaktuj się z głównym administratorem</li>
                         <li>W przypadku nowego konta użyj hasła tymczasowego, które zostało dla Ciebie utworzone</li>
                       </ul>
-                      <p className="font-medium mb-2">Przykładowe dane logowania:</p>
-                      <div className="bg-muted p-2 rounded text-sm mb-4">
-                        <p><strong>Dla administratora kdziekansky@icloud.com:</strong></p>
-                        <p>Email: kdziekansky@icloud.com</p>
-                        <p>Hasło: tymczasowe_haslo</p>
-                      </div>
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>

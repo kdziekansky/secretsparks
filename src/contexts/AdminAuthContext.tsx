@@ -208,26 +208,6 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
       
       console.log('Próba logowania dla:', email);
       
-      // Sprawdź specjalnych administratorów
-      if (email === 'admin@example.com' && password === 'admin123') {
-        console.log('Specjalna ścieżka logowania dla admin@example.com');
-        persistAuthState(email);
-        setIsAuthenticated(true);
-        setAdminEmail(email);
-        navigate('/spe43al-adm1n-p4nel/dashboard');
-        return;
-      }
-      
-      // Sprawdź administratora kdziekansky@icloud.com
-      if (email === 'kdziekansky@icloud.com' && password === 'tymczasowe_haslo') {
-        console.log('Specjalna ścieżka logowania dla kdziekansky@icloud.com');
-        persistAuthState(email);
-        setIsAuthenticated(true);
-        setAdminEmail(email);
-        navigate('/spe43al-adm1n-p4nel/dashboard');
-        return;
-      }
-      
       // Lista dozwolonych administratorów
       const allowedAdmins = [
         'admin@example.com', 
@@ -241,7 +221,7 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
         throw new Error('Nieprawidłowe dane logowania');
       }
       
-      // Dla pozostałych administratorów, sprawdź w tabeli admin_users
+      // Dla administratorów, najpierw sprawdź w tabeli admin_users
       const { data: adminUser, error: adminCheckError } = await supabase
         .from('admin_users')
         .select('email')
@@ -258,7 +238,7 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
         throw new Error('Nieprawidłowe dane logowania');
       }
 
-      // Dla regularnych administratorów użyj uwierzytelniania Supabase
+      // Użyj uwierzytelniania Supabase
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
