@@ -67,42 +67,42 @@ const SurveyInstruction: React.FC = () => {
           {/* Sekcja z ceną - wyróżniona i atrakcyjniejsza */}
           <div className="bg-gradient-to-br from-primary/20 to-primary/5 p-6 md:p-8 rounded-2xl my-6 md:my-8 w-full mx-auto shadow-lg border border-primary/10 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/40 to-transparent"></div>
-            <div className="flex flex-col items-center relative z-10">
+            <div className="relative z-10">
               <h2 className="text-xl md:text-2xl font-bold mb-3 text-gradient-primary">Koszt usługi</h2>
               
-              <div className="flex items-center justify-center mb-3">
+              <div className="flex items-center mb-3">
                 <span className="text-3xl md:text-5xl font-bold text-primary">29 zł</span>
-                <Sparkles className="w-6 h-6 md:w-8 md:h-8 text-primary ml-2 opacity-80" />
+                <Sparkles className="w-6 h-8 md:w-8 md:h-8 text-primary ml-2 opacity-80" />
               </div>
               
-              <p className="text-sm md:text-base opacity-90 text-center font-medium mb-4">
+              <p className="text-sm md:text-base opacity-90 text-left font-medium mb-4">
                 Jednorazowa opłata obejmuje obie ankiety i pełny raport
               </p>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-xl">
-                <div className="flex items-center justify-center md:justify-start">
+              <div className="grid grid-cols-1 gap-2 w-full max-w-xl">
+                <div className="flex items-center justify-start">
                   <CheckCircle className="h-4 w-4 text-primary/70 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-muted-foreground">Płatność po wypełnieniu ankiety</span>
+                  <span className="text-sm text-muted-foreground text-left">Płatność po wypełnieniu ankiety</span>
                 </div>
-                <div className="flex items-center justify-center md:justify-start">
+                <div className="flex items-center justify-start">
                   <CheckCircle className="h-4 w-4 text-primary/70 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-muted-foreground">Spersonalizowany praktyczny raport</span>
+                  <span className="text-sm text-muted-foreground text-left">Spersonalizowany praktyczny raport</span>
                 </div>
-                <div className="flex items-center justify-center md:justify-start">
+                <div className="flex items-center justify-start">
                   <CheckCircle className="h-4 w-4 text-primary/70 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-muted-foreground">Wspólne fascynacje i preferencje</span>
+                  <span className="text-sm text-muted-foreground text-left">Wspólne fascynacje i preferencje</span>
                 </div>
-                <div className="flex items-center justify-center md:justify-start">
+                <div className="flex items-center justify-start">
                   <CheckCircle className="h-4 w-4 text-primary/70 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-muted-foreground">Strefy odkrywania i eksperymentowania</span>
+                  <span className="text-sm text-muted-foreground text-left">Scenariusze do odkrycia</span>
                 </div>
-                <div className="flex items-center justify-center md:justify-start">
+                <div className="flex items-center justify-start">
                   <CheckCircle className="h-4 w-4 text-primary/70 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-muted-foreground">Mapa komfortu z oznaczeniami</span>
+                  <span className="text-sm text-muted-foreground text-left">Mapa komfortu z oznaczeniami</span>
                 </div>
-                <div className="flex items-center justify-center md:justify-start">
+                <div className="flex items-center justify-start">
                   <CheckCircle className="h-4 w-4 text-primary/70 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-muted-foreground">Inspiracje i scenariusze do wspólnego odkrywania</span>
+                  <span className="text-sm text-muted-foreground text-left">Życie seksualne na nowym poziomie</span>
                 </div>
               </div>
             </div>
