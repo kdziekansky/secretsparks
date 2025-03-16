@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import { Input } from '@/components/ui/input';
@@ -71,7 +72,7 @@ const AdminLogin = () => {
         description: "Trwa weryfikacja kodu administratora...",
       });
       
-      // Wywołanie funkcji brzegowej bez nagłówka prefer i innych problematycznych nagłówków
+      // Bezpośrednie wywołanie funkcji brzegowej bez problematycznych nagłówków
       const { data, error } = await supabase.functions.invoke('admin-verify-code', {
         method: 'POST',
         body: { code: registrationCode },
@@ -92,7 +93,7 @@ const AdminLogin = () => {
         return false;
       }
       
-      if (!data.verified) {
+      if (!data?.verified) {
         toast.error('Nieprawidłowy kod administratora', {
           description: 'Podany kod dostępu jest nieprawidłowy.'
         });
@@ -134,6 +135,7 @@ const AdminLogin = () => {
                 onChange={(e) => setRegistrationCode(e.target.value)}
                 placeholder="Wprowadź kod dostępu"
                 disabled={isLoading}
+                className="pl-8"
               />
               <Button
                 type="button"
@@ -170,6 +172,7 @@ const AdminLogin = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
+                className="pl-8"
               />
               <Button
                 type="button"
