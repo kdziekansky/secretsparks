@@ -53,7 +53,7 @@ const Header = () => {
         </div>
         
         <div className="hidden md:block">
-          <Link to="/survey">
+          <Link to="/ankieta">
             <Button className="btn-primary text-sm">
               Zamów raport
             </Button>
@@ -83,7 +83,7 @@ const Header = () => {
             <Link to="/regulamin" className="nav-link-mobile" onClick={() => setIsMenuOpen(false)}>
               Regulamin
             </Link>
-            <Link to="/survey" onClick={() => setIsMenuOpen(false)}>
+            <Link to="/ankieta" onClick={() => setIsMenuOpen(false)}>
               <Button className="w-full rounded-full bg-primary hover:bg-primary/80 mt-2 text-sm">
                 Zamów raport
               </Button>
