@@ -47,7 +47,7 @@ const SurveyInstruction: React.FC = () => {
                 <h3 className="text-lg md:text-xl font-semibold">Wyślij zaproszenie</h3>
               </div>
               <p className="text-sm md:text-base text-muted-foreground">
-                Po wypełnieniu ankiety otrzymasz link, który możesz wysłać do swojego partnera/-rki, 
+                Po wypełnieniu ankiety i opłaceniu zamówienia, wyślemy link do Twojego partnera/-rki, 
                 aby również wypełnił(a) ankietę.
               </p>
             </div>
@@ -59,7 +59,7 @@ const SurveyInstruction: React.FC = () => {
               </div>
               <p className="text-sm md:text-base text-muted-foreground">
                 Po wypełnieniu ankiet przez Was oboje, otrzymacie szczegółowy raport 
-                pokazujący Wasze preferencje i dopasowanie.
+                i gotowe scenariusze. Odkryjcie się na nowo.
               </p>
             </div>
           </div>
@@ -79,50 +79,31 @@ const SurveyInstruction: React.FC = () => {
                 Jednorazowa opłata obejmuje obie ankiety i pełny raport
               </p>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-xl text-sm text-center md:text-left">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-xl">
                 <div className="flex items-center justify-center md:justify-start">
                   <CheckCircle className="h-4 w-4 text-primary/70 mr-2 flex-shrink-0" />
-                  <span className="text-muted-foreground">Płatność po wypełnieniu ankiety</span>
+                  <span className="text-sm text-muted-foreground">Płatność po wypełnieniu ankiety</span>
                 </div>
                 <div className="flex items-center justify-center md:justify-start">
                   <CheckCircle className="h-4 w-4 text-primary/70 mr-2 flex-shrink-0" />
-                  <span className="text-muted-foreground">Raport po obu ankietach</span>
+                  <span className="text-sm text-muted-foreground">Spersonalizowany praktyczny raport</span>
                 </div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Sekcja "Co zawiera raport" - nowa wersja */}
-          <div className="bg-card/20 p-6 md:p-8 rounded-lg shadow-md border border-primary/5 relative">
-            <div className="absolute top-0 right-0 translate-x-1/4 -translate-y-1/4 w-24 h-24 md:w-32 md:h-32 bg-primary/5 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 left-0 -translate-x-1/4 translate-y-1/4 w-32 h-32 md:w-48 md:h-48 bg-primary/5 rounded-full blur-3xl"></div>
-            
-            <h2 className="text-xl md:text-2xl font-bold mb-5 text-center relative z-10">Co zawiera raport:</h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-w-3xl mx-auto relative z-10">
-              <div className="flex items-start bg-card/30 p-4 rounded-lg hover:shadow-md transition-shadow duration-200">
-                <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                <span className="text-sm md:text-base ml-3">Wspólne fascynacje i preferencje</span>
-              </div>
-              
-              <div className="flex items-start bg-card/30 p-4 rounded-lg hover:shadow-md transition-shadow duration-200">
-                <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                <span className="text-sm md:text-base ml-3">Strefy odkrywania i eksperymentowania</span>
-              </div>
-              
-              <div className="flex items-start bg-card/30 p-4 rounded-lg hover:shadow-md transition-shadow duration-200">
-                <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                <span className="text-sm md:text-base ml-3">Mapa komfortu z oznaczeniem obszarów idealnego dopasowania</span>
-              </div>
-              
-              <div className="flex items-start bg-card/30 p-4 rounded-lg hover:shadow-md transition-shadow duration-200">
-                <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                <span className="text-sm md:text-base ml-3">Inspiracje i scenariusze na wspólne odkrywanie</span>
-              </div>
-              
-              <div className="flex items-start bg-card/30 p-4 rounded-lg col-span-1 md:col-span-2 hover:shadow-md transition-shadow duration-200">
-                <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                <span className="text-sm md:text-base ml-3">Wskazówki jak rozpocząć rozmowę o wzajemnych pragnieniach</span>
+                <div className="flex items-center justify-center md:justify-start">
+                  <CheckCircle className="h-4 w-4 text-primary/70 mr-2 flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground">Wspólne fascynacje i preferencje</span>
+                </div>
+                <div className="flex items-center justify-center md:justify-start">
+                  <CheckCircle className="h-4 w-4 text-primary/70 mr-2 flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground">Strefy odkrywania i eksperymentowania</span>
+                </div>
+                <div className="flex items-center justify-center md:justify-start">
+                  <CheckCircle className="h-4 w-4 text-primary/70 mr-2 flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground">Mapa komfortu z oznaczeniami</span>
+                </div>
+                <div className="flex items-center justify-center md:justify-start">
+                  <CheckCircle className="h-4 w-4 text-primary/70 mr-2 flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground">Inspiracje i scenariusze do wspólnego odkrywania</span>
+                </div>
               </div>
             </div>
           </div>
