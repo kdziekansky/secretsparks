@@ -39,7 +39,7 @@ const SurveyInstruction: React.FC = () => {
         
         <div className="bg-secondary/30 p-6 rounded-lg my-6 w-full max-w-md">
           <h2 className="text-xl font-semibold mb-2">Koszt usługi</h2>
-          <p className="text-3xl font-bold text-primary mb-2">49 zł</p>
+          <p className="text-3xl font-bold text-primary mb-2">29 zł</p>
           <p className="text-sm opacity-80">Jednorazowa opłata obejmuje obie ankiety i pełny raport</p>
           
           <div className="mt-4 text-xs text-left text-muted-foreground">
