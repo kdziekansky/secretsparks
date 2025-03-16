@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSurvey } from '@/contexts/SurveyContext';
 import { supabase, fetchFromSupabase } from '@/integrations/supabase/client';
+import { useIsMobile } from '@/hooks/use-mobile';
 import ProgressBar from '@/components/ProgressBar';
 import QuestionCard from '@/components/QuestionCard';
 import SurveyConfig from '@/components/SurveyConfig';
@@ -24,6 +25,7 @@ interface OrderDetails {
 const SurveyPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const partnerToken = searchParams.get('token');
+  const isMobile = useIsMobile();
   
   const { 
     progress, 
@@ -222,10 +224,10 @@ const SurveyPage: React.FC = () => {
   
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6">
-      <Toaster position="top-center" />
+      <Toaster position={isMobile ? "bottom-center" : "top-center"} />
       
       {!isInConfigurationMode && (
-        <div className="w-full max-w-xl mb-8">
+        <div className={`w-full ${isMobile ? 'max-w-sm' : 'max-w-xl'} mb-6 md:mb-8`}>
           <ProgressBar progress={progress} />
         </div>
       )}
