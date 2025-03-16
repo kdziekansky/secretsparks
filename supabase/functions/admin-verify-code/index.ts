@@ -2,17 +2,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import * as crypto from "https://deno.land/std@0.190.0/crypto/mod.ts";
-
-// Zdefiniuj nagłówki CORS - bardzo ważne dla komunikacji cross-origin
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*", // W produkcji warto ograniczyć do konkretnej domeny
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Max-Age": "86400",
-  "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-  "Pragma": "no-cache",
-  "Expires": "0"
-};
+import { corsHeaders } from "../_shared/cors.ts";
 
 // Konwertuje string na ArrayBuffer
 const stringToArrayBuffer = (str: string): ArrayBuffer => {

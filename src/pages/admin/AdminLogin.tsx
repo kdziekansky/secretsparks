@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import { Input } from '@/components/ui/input';
@@ -154,10 +155,13 @@ const AdminLogin: React.FC = () => {
         description: "Trwa weryfikacja kodu administratora...",
       });
       
-      // Poprawione wywołanie funkcji brzegowej
+      // Poprawione wywołanie funkcji brzegowej bez nagłówka prefer
       const { data, error } = await supabase.functions.invoke('admin-verify-code', {
         method: 'POST',
-        body: { code: registrationCode }
+        body: { code: registrationCode },
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
       
       console.log('Odpowiedź z funkcji weryfikacji:', data, error);
