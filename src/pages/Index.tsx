@@ -12,7 +12,7 @@ const Index = () => {
     <div className="bg-background text-foreground min-h-screen">
       <Header />
       
-      <main>
+      <main className="pb-12">
         <HeroSection />
         <div className="py-16 bg-[#0B0B0E]">
           <StepsSection />
