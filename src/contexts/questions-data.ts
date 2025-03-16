@@ -15,9 +15,7 @@ const normalizeImagePaths = (questions: Question[]): Question[] => {
     // Pobierz nazwę pliku z oryginalnej ścieżki - wyciągamy ostatnią część po ostatnim /
     let fileName = question.illustration.split('/').pop() || '';
     
-    // Sprawdź, czy plik istnieje w dostępnej liście plików
-    // Jeśli tak, użyj dokładnie takiej nazwy jak w pliku
-    // Ta lista powinna zawierać dokładne nazwy plików dostępnych w katalogu
+    // Lista dostępnych plików
     const availableFiles = [
       "69.png", "bridge.png", "Bukkake (exceed).png", "Cyberseks z obcymi (explore, exceed).png",
       "Cyberseks ze znajomymi (explore, exceed).png", "dirtytalk.png", "doctor.png", 
@@ -53,24 +51,38 @@ const normalizeImagePaths = (questions: Question[]): Question[] => {
       "zdrada.png", "Złota rączka_ i samotna żona.png", "handyman.svg", "krolowa.svg"
     ];
     
-    // Standardizujemy bazową ścieżkę dla wszystkich obrazów
+    // Bazowa ścieżka dla wszystkich obrazów
     const basePath = "/images/illustrations/techniques/";
     
-    // Znajdź najbardziej pasujący plik (nawet jeśli ma nieco inną nazwę)
+    // Najpierw próbujemy znaleźć dokładne dopasowanie
     let matchedFile = availableFiles.find(file => file === fileName);
     
-    // Jeśli nie znaleziono dokładnego dopasowania, spróbuj znaleźć podobną nazwę
-    // (to jest pomocne w przypadku różnic w odstępach, podkreślnikach itp.)
+    // Jeśli nie znaleziono dokładnego dopasowania, spróbujmy znaleźć najbliższy plik
     if (!matchedFile) {
-      // Usuń znaków specjalne i spacje dla porównania
-      const normalizedFileName = fileName.toLowerCase().replace(/[^a-z0-9]/g, '');
+      // Spróbujmy znaleźć plik, ignorując wielkość liter, spacje, etc.
+      const normalizedFileName = fileName.toLowerCase().replace(/[\s\(\),']/g, '');
       matchedFile = availableFiles.find(file => {
-        const normalizedFile = file.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const normalizedFile = file.toLowerCase().replace(/[\s\(\),']/g, '');
         return normalizedFile.includes(normalizedFileName) || normalizedFileName.includes(normalizedFile);
       });
+      
+      // Jeśli nie znaleźliśmy pasującego pliku, sprawdźmy konkretne mapowania dla problematycznych plików
+      if (!matchedFile) {
+        const specialCases: Record<string, string> = {
+          'Seks oralny dla niej (discover).png': 'Seks oralny dla niej (discover).png',
+          'Seks oralny dla niego (discover).png': 'Seks oralny dla niego (discover).png',
+          'Masaż tantryczny dla niego (discover, explore).png': 'Masaż tantryczny dla niego (discover, explore).png',
+          'Masaż tantryczny dla niej (discover, explore).png': 'Masaż tantryczny dla niej (discover, explore).png',
+          'Nauczycielka i student.png': 'Nauczycielka i student.png',
+          'Pozycja Amazonki (discover, explore).png': 'Pozycja Amazonki (discover, explore).png',
+          'Złota rączka_ i samotna żona.png': 'Złota rączka_ i samotna żona.png'
+        };
+        
+        matchedFile = specialCases[fileName];
+      }
     }
     
-    // Użyj dopasowanego pliku lub oryginału jako ostateczności
+    // Jeśli znaleźliśmy pasujący plik, użyjmy go; w przeciwnym razie użyjmy oryginalnej nazwy
     updatedQuestion.illustration = basePath + (matchedFile || fileName);
     
     return updatedQuestion;

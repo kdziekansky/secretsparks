@@ -104,26 +104,10 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     }, 300);
   };
 
-  // Zaktualizowana funkcja do obsługi ścieżek obrazów
+  // Funkcja do obsługi ścieżek obrazów - uproszczona, aby brać dokładnie to co jest w pliku
   const getImageUrl = (url: string) => {
     if (!url) return '';
-    
-    try {
-      // Jeśli URL jest już bezwzględny (http/https), zwróć go bez zmian
-      if (url.startsWith('http')) return url;
-      
-      // Jeśli ścieżka zaczyna się od /lovable-uploads/
-      if (url.startsWith('/lovable-uploads/')) {
-        // Przekieruj bezpośrednio na ten obraz, bez modyfikacji
-        return url;
-      }
-      
-      // Standardowa ścieżka - już powinna być poprawiona przez normalizeImagePaths
-      return url;
-    } catch (error) {
-      console.error("Error processing image URL:", error, "Original URL:", url);
-      return url;
-    }
+    return url; // Zwracamy dokładnie taką ścieżkę jaką dostajemy
   };
   
   const handleImageLoad = () => {
