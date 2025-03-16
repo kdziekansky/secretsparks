@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import { Loader2, AlertTriangle } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface ProtectedAdminRouteProps {
   children: React.ReactNode;
@@ -52,6 +53,10 @@ const ProtectedAdminRoute: React.FC<ProtectedAdminRouteProps> = ({ children }) =
 
   if (!isAuthenticated) {
     console.log('Brak uwierzytelnienia, przekierowanie do logowania z:', location.pathname);
+    // Powiadom użytkownika o przekierowaniu
+    toast.info('Wymagane logowanie', {
+      description: 'Dostęp do tej strony wymaga zalogowania jako administrator'
+    });
     // Zapisz aktualną ścieżkę, aby po zalogowaniu wrócić na nią
     return <Navigate to="/spe43al-adm1n-p4nel" replace state={{ from: location }} />;
   }

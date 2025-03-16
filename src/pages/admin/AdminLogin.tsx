@@ -148,12 +148,22 @@ const AdminLogin: React.FC = () => {
     setIsVerifying(true);
     
     try {
-      // Użyj funkcji brzegowej do weryfikacji kodu
+      console.log('Rozpoczynam weryfikację kodu dostępu:', registrationCode);
+      
+      // Użyj funkcji brzegowej do weryfikacji kodu z dodatkowymi opcjami
       const { data, error } = await supabase.functions.invoke('admin-verify-code', {
-        body: { code: registrationCode }
+        body: { code: registrationCode },
+        headers: {
+          'Content-Type': 'application/json',
+        }
       });
       
-      if (error) throw error;
+      console.log('Odpowiedź z funkcji weryfikacji:', { data, error });
+      
+      if (error) {
+        console.error('Błąd podczas wywołania funkcji edge:', error);
+        throw new Error(`Błąd wywołania funkcji: ${error.message}`);
+      }
       
       if (data && data.verified) {
         setIsCodeVerified(true);
@@ -175,7 +185,7 @@ const AdminLogin: React.FC = () => {
       console.error('Błąd weryfikacji kodu:', error);
       toast({
         title: "Błąd weryfikacji",
-        description: error.message || "Wystąpił problem podczas weryfikacji kodu.",
+        description: error.message || "Wystąpił problem podczas weryfikacji kodu. Sprawdź konsolę przeglądarki.",
         variant: "destructive",
       });
     } finally {

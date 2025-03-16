@@ -25,19 +25,28 @@ const sha256 = async (message: string): Promise<string> => {
 };
 
 serve(async (req) => {
+  console.log(`Admin verify code function called with method: ${req.method}`);
+  
   // Obsługa zapytań CORS preflight
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    console.log("Handling CORS preflight request");
+    return new Response(null, { 
+      status: 204, 
+      headers: corsHeaders 
+    });
   }
 
   try {
     // Sprawdź nagłówek Origin, ograniczając dostęp tylko do znanej domeny
     const origin = req.headers.get("Origin") || "*";
+    console.log(`Request from origin: ${origin}`);
+    
     // W produkcji powinno się ograniczyć tylko do konkretnej domeny
     const allowedOrigins = [
       "http://localhost:3000", 
       "http://localhost:5173", 
       "https://secretsparks.pl",
+      "https://secret-sparks.netlify.app",
       new URL(Deno.env.get("SUPABASE_URL") || "").origin
     ];
     
@@ -50,32 +59,86 @@ serve(async (req) => {
       "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
     };
 
-    const { code } = await req.json();
+    // Sprawdź, czy body jest dostępne
+    if (req.method !== "POST") {
+      console.error("Method not allowed:", req.method);
+      return new Response(
+        JSON.stringify({ error: "Method not allowed. Use POST." }),
+        { status: 405, headers: secureHeaders }
+      );
+    }
+
+    // Debugowanie body żądania
+    let bodyText;
+    try {
+      bodyText = await req.text();
+      console.log("Request body text:", bodyText);
+    } catch (err) {
+      console.error("Cannot read request body:", err);
+      return new Response(
+        JSON.stringify({ error: "Cannot read request body" }),
+        { status: 400, headers: secureHeaders }
+      );
+    }
+    
+    // Parsuj JSON
+    let body;
+    try {
+      body = JSON.parse(bodyText);
+      console.log("Parsed body:", body);
+    } catch (err) {
+      console.error("Error parsing JSON:", err);
+      return new Response(
+        JSON.stringify({ error: "Invalid JSON body" }),
+        { status: 400, headers: secureHeaders }
+      );
+    }
+    
+    const { code } = body;
     
     if (!code) {
+      console.error("Missing verification code");
       return new Response(
         JSON.stringify({ error: "Brak kodu weryfikacyjnego" }),
         { status: 400, headers: secureHeaders }
       );
     }
 
+    // Sprawdzenie zmiennych środowiskowych
+    const secretSalt = Deno.env.get("ADMIN_SECRET_SALT");
+    const correctAdminCode = Deno.env.get("ADMIN_ACCESS_CODE");
+    
+    console.log("Environment variables check:", { 
+      saltExists: !!secretSalt, 
+      codeExists: !!correctAdminCode 
+    });
+    
+    if (!secretSalt || !correctAdminCode) {
+      console.error("Missing environment variables:", { 
+        secretSalt: !!secretSalt, 
+        correctAdminCode: !!correctAdminCode 
+      });
+      
+      return new Response(
+        JSON.stringify({ 
+          error: "Brak wymaganych zmiennych środowiskowych na serwerze", 
+          missingVars: {
+            ADMIN_SECRET_SALT: !secretSalt,
+            ADMIN_ACCESS_CODE: !correctAdminCode
+          }
+        }),
+        { status: 500, headers: secureHeaders }
+      );
+    }
+    
     // Pobierz bieżący rok dla soli
     const currentYear = new Date().getFullYear().toString();
-    
-    // Pobierz nazwę tajnego klucza z zmiennych środowiskowych
-    const secretSalt = Deno.env.get("ADMIN_SECRET_SALT") || "SecretSparks";
-    
-    // Pobierz kod administratora z zmiennych środowiskowych lub użyj awaryjnego kodu
-    const correctAdminCode = Deno.env.get("ADMIN_ACCESS_CODE") || "sparks2024secure_r3J7%#@!";
     
     // Oblicz poprawny hash
     const correctHash = await sha256(correctAdminCode + currentYear + secretSalt);
     
     // Oblicz hash przesłanego kodu
     const inputHash = await sha256(code + currentYear + secretSalt);
-    
-    // Usuwamy ukrytą kombinację - nie jest to bezpieczne rozwiązanie
-    // Przeniesiono całą logikę do weryfikacji hashem
     
     // Weryfikacja kodu - używamy tylko bezpiecznej metody porównania hashy
     const isValid = inputHash === correctHash;
@@ -98,6 +161,8 @@ serve(async (req) => {
           successful: isValid,
           ip_hash: await sha256(req.headers.get("x-forwarded-for") || "unknown")
         }]);
+        
+      console.log("Zapisano próbę logowania w bazie danych");
     } catch (err) {
       // Ignorujemy błąd jeśli tabela nie istnieje
       console.error("Błąd zapisywania próby logowania:", err);
@@ -112,7 +177,10 @@ serve(async (req) => {
     console.error("Błąd podczas weryfikacji kodu administratora:", error);
     
     return new Response(
-      JSON.stringify({ error: "Wystąpił błąd podczas weryfikacji kodu" }),
+      JSON.stringify({ 
+        error: "Wystąpił błąd podczas weryfikacji kodu",
+        details: error.message || "Nieznany błąd" 
+      }),
       { status: 500, headers: corsHeaders }
     );
   }
