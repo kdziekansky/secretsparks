@@ -47,10 +47,10 @@ function App() {
     <div className={`app min-h-screen flex flex-col ${fontVariables}`}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-          <AdminAuthProvider>
-            <SurveyProvider>
-              <main className="flex-1">
-                <Router>
+          <Router>
+            <AdminAuthProvider>
+              <SurveyProvider>
+                <main className="flex-1">
                   <ScrollToTop />
                   <Toaster />
                   <Routes>
@@ -82,10 +82,10 @@ function App() {
                     } />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
-                </Router>
-              </main>
-            </SurveyProvider>
-          </AdminAuthProvider>
+                </main>
+              </SurveyProvider>
+            </AdminAuthProvider>
+          </Router>
         </ThemeProvider>
       </QueryClientProvider>
     </div>
