@@ -37,8 +37,7 @@ try {
       headers: {
         'Content-Type': 'application/json',
         'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'Prefer': 'return=representation'
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
       },
     },
     auth: {
@@ -80,7 +79,6 @@ export const fetchFromSupabase = async (path: string, options = {}) => {
       'apikey': SUPABASE_ANON_KEY,
       'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
       'Content-Type': 'application/json',
-      'Prefer': 'return=representation',
       ...(options as any).headers
     }
   });
@@ -93,7 +91,6 @@ export const fetchFromSupabase = async (path: string, options = {}) => {
         'apikey': SUPABASE_ANON_KEY,
         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
         'Content-Type': 'application/json',
-        'Prefer': 'return=representation',
         ...(options as any).headers,
       },
     });
