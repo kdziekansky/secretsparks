@@ -64,45 +64,45 @@ const SurveyInstruction: React.FC = () => {
             </div>
           </div>
           
-          {/* Sekcja z ceną - wyróżniona i atrakcyjniejsza */}
-          <div className="bg-gradient-to-br from-primary/20 to-primary/5 p-6 md:p-8 rounded-2xl my-6 md:my-8 w-full mx-auto shadow-lg border border-primary/10 relative overflow-hidden">
+          {/* Sekcja z ceną - zmniejszona i z układem dwóch kolumn */}
+          <div className="bg-gradient-to-br from-primary/20 to-primary/5 p-4 md:p-6 rounded-2xl my-4 md:my-6 w-full mx-auto shadow-lg border border-primary/10 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/40 to-transparent"></div>
             <div className="relative z-10">
-              <h2 className="text-xl md:text-2xl font-bold mb-3 text-gradient-primary">Koszt usługi</h2>
+              <h2 className="text-lg md:text-xl font-bold mb-2 text-gradient-primary">Koszt usługi</h2>
               
-              <div className="flex items-center mb-3">
-                <span className="text-3xl md:text-5xl font-bold text-primary">29 zł</span>
-                <Sparkles className="w-6 h-8 md:w-8 md:h-8 text-primary ml-2 opacity-80" />
+              <div className="flex items-center mb-2">
+                <span className="text-2xl md:text-4xl font-bold text-primary">29 zł</span>
+                <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-primary ml-2 opacity-80" />
               </div>
               
-              <p className="text-sm md:text-base opacity-90 text-left font-medium mb-4">
+              <p className="text-xs md:text-sm opacity-90 text-left font-medium mb-3">
                 Jednorazowa opłata obejmuje obie ankiety i pełny raport
               </p>
               
-              <div className="grid grid-cols-1 gap-2 w-full max-w-xl">
+              <div className="grid grid-cols-2 gap-x-2 gap-y-1 w-full">
                 <div className="flex items-center justify-start">
                   <CheckCircle className="h-4 w-4 text-primary/70 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-muted-foreground text-left">Płatność po wypełnieniu ankiety</span>
+                  <span className="text-xs md:text-sm text-muted-foreground text-left whitespace-nowrap overflow-hidden text-ellipsis">Płatność po wypełnieniu ankiety</span>
                 </div>
                 <div className="flex items-center justify-start">
                   <CheckCircle className="h-4 w-4 text-primary/70 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-muted-foreground text-left">Spersonalizowany praktyczny raport</span>
+                  <span className="text-xs md:text-sm text-muted-foreground text-left whitespace-nowrap overflow-hidden text-ellipsis">Spersonalizowany praktyczny raport</span>
                 </div>
                 <div className="flex items-center justify-start">
                   <CheckCircle className="h-4 w-4 text-primary/70 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-muted-foreground text-left">Wspólne fascynacje i preferencje</span>
+                  <span className="text-xs md:text-sm text-muted-foreground text-left whitespace-nowrap overflow-hidden text-ellipsis">Wspólne fascynacje i preferencje</span>
                 </div>
                 <div className="flex items-center justify-start">
                   <CheckCircle className="h-4 w-4 text-primary/70 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-muted-foreground text-left">Scenariusze do odkrycia</span>
+                  <span className="text-xs md:text-sm text-muted-foreground text-left whitespace-nowrap overflow-hidden text-ellipsis">Scenariusze do odkrycia</span>
                 </div>
                 <div className="flex items-center justify-start">
                   <CheckCircle className="h-4 w-4 text-primary/70 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-muted-foreground text-left">Mapa komfortu z oznaczeniami</span>
+                  <span className="text-xs md:text-sm text-muted-foreground text-left whitespace-nowrap overflow-hidden text-ellipsis">Mapa komfortu z oznaczeniami</span>
                 </div>
                 <div className="flex items-center justify-start">
                   <CheckCircle className="h-4 w-4 text-primary/70 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-muted-foreground text-left">Życie seksualne na nowym poziomie</span>
+                  <span className="text-xs md:text-sm text-muted-foreground text-left whitespace-nowrap overflow-hidden text-ellipsis">Życie seksualne na nowym poziomie</span>
                 </div>
               </div>
             </div>
