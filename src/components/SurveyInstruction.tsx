@@ -68,15 +68,15 @@ const SurveyInstruction: React.FC = () => {
           <div className="bg-gradient-to-br from-primary/20 to-primary/5 p-4 md:p-6 rounded-2xl my-4 md:my-6 w-full mx-auto shadow-lg border border-primary/10 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/40 to-transparent"></div>
             <div className="relative z-10">
-              <h2 className="text-lg md:text-xl font-bold mb-2 text-gradient-primary">Koszt usługi</h2>
+              <h2 className="text-lg md:text-xl font-bold mb-2 text-gradient-primary text-center">Koszt usługi</h2>
               
-              <div className="flex items-center mb-2">
+              <div className="flex items-center justify-center mb-2">
                 <span className="text-2xl md:text-4xl font-bold text-primary">29 zł</span>
                 <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-primary ml-2 opacity-80" />
               </div>
               
-              <p className="text-xs md:text-sm opacity-90 text-left font-medium mb-3">
-                Jednorazowa opłata obejmuje obie ankiety i pełny raport
+              <p className="text-xs md:text-sm opacity-90 text-center font-medium mb-3">
+                Jednorazowa opłata za raport nieograniczony czasowo
               </p>
               
               <div className="grid grid-cols-2 gap-x-2 gap-y-1 w-full">
