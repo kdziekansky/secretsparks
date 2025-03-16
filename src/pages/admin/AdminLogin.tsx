@@ -4,7 +4,7 @@ import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { KeyIcon, LockIcon } from 'lucide-react';
+import { KeyIcon, LockIcon, EyeIcon, EyeOffIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -41,13 +41,10 @@ const AdminLogin = () => {
         description: "Trwa weryfikacja kodu administratora...",
       });
       
-      // Bezpośrednie wywołanie funkcji brzegowej bez problematycznych nagłówków
+      // Wywołanie funkcji Edge z poprawnym JSON
       const { data, error } = await supabase.functions.invoke('admin-verify-code', {
         method: 'POST',
         body: { code },
-        headers: {
-          'Content-Type': 'application/json'
-        }
       });
       
       console.log('Odpowiedź z funkcji weryfikacji:', data, error);
@@ -189,13 +186,20 @@ const AdminLogin = () => {
               <Input
                 id="registrationCode"
                 type={showRegistrationCode ? 'text' : 'password'}
-                className="bg-gray-900 border-gray-700 text-white pl-10"
+                className="bg-gray-900 border-gray-700 text-white pl-10 pr-10"
                 value={registrationCode}
                 onChange={(e) => setRegistrationCode(e.target.value)}
-                placeholder="••••••••••••••••••••••••••••••••••"
+                placeholder="••••••••••••••••••••••••••••••••"
                 disabled={isLoading || isVerifying}
               />
               <KeyIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
+                onClick={toggleRegistrationCodeVisibility}
+              >
+                {showRegistrationCode ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+              </button>
             </div>
             
             <Button

@@ -50,12 +50,40 @@ serve(async (req) => {
     // Próba odczytania i parsowania ciała żądania
     let body;
     try {
-      body = await req.json();
-      console.log("Parsed request body:", body);
+      // Sprawdzenie czy req.body istnieje i nie jest null
+      if (!req.body) {
+        console.error("Request body is null or undefined");
+        return new Response(
+          JSON.stringify({ error: "Empty request body" }),
+          { status: 400, headers: secureHeaders }
+        );
+      }
+      
+      const text = await req.text();
+      console.log("Raw request body:", text);
+      
+      if (!text || text.trim() === '') {
+        console.error("Empty text in request body");
+        return new Response(
+          JSON.stringify({ error: "Empty request body" }),
+          { status: 400, headers: secureHeaders }
+        );
+      }
+      
+      try {
+        body = JSON.parse(text);
+        console.log("Parsed request body:", body);
+      } catch (parseError) {
+        console.error("Error parsing JSON:", parseError);
+        return new Response(
+          JSON.stringify({ error: "Invalid JSON body", details: parseError.message, receivedText: text }),
+          { status: 400, headers: secureHeaders }
+        );
+      }
     } catch (err) {
-      console.error("Error parsing JSON:", err);
+      console.error("Error reading request body:", err);
       return new Response(
-        JSON.stringify({ error: "Invalid JSON body", details: err.message }),
+        JSON.stringify({ error: "Could not read request body", details: err.message }),
         { status: 400, headers: secureHeaders }
       );
     }
