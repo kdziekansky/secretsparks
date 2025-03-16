@@ -308,6 +308,12 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
       
       console.log('Próba logowania dla:', email);
       
+      // Weryfikacja formatu adresu email
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(email)) {
+        throw new Error('Nieprawidłowy format adresu email');
+      }
+      
       // Weryfikacja w bazie danych
       const { data: adminUser, error: adminCheckError } = await supabase
         .from('admin_users')
@@ -338,6 +344,21 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
       
       // Zapisz stan uwierzytelnienia
       persistAuthState(email);
+      
+      // Dodaj wpis do dziennika logowań (jeśli tabela istnieje)
+      try {
+        await supabase
+          .from('admin_login_log')
+          .insert([{
+            email: email,
+            login_at: new Date().toISOString(),
+            user_agent: navigator.userAgent.substring(0, 255),
+          }]);
+      } catch (err) {
+        // Ignoruj błąd jeśli tabela nie istnieje
+        console.error('Błąd zapisywania logowania:', err);
+      }
+      
       navigate('/spe43al-adm1n-p4nel/dashboard');
     } catch (error: any) {
       console.error('Błąd podczas logowania:', error);

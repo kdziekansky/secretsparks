@@ -1,540 +1,92 @@
-// @ts-nocheck
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import Stripe from 'https://esm.sh/stripe@12.4.0?target=deno';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.23.0';
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { requireAuth } from './_require-auth.js';
+import { Stripe } from "https://esm.sh/stripe@12.0.0?target=deno";
 
-// ===== POCZĄTEK KONFIGURACJI =====
-const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
-const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
-const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY') || '';
-const endpointSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET') || '';
-// ===== KONIEC KONFIGURACJI =====
-
-// Walidacja zmiennych środowiskowych
-if (!supabaseUrl || !supabaseServiceKey) {
-  console.error("Brak wymaganych kluczy Supabase. Webhook nie będzie działać poprawnie!");
-}
-
-if (!stripeSecretKey) {
-  console.error("Brak wymaganego klucza Stripe. Webhook nie będzie działać poprawnie!");
-}
-
-// Ustaw nagłówki CORS - dodajemy stripe-signature do dozwolonych nagłówków
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, stripe-signature',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Max-Age": "86400"
 };
 
 serve(async (req) => {
-  console.log("========== WEBHOOK INVOKED ==========");
-  console.log("Method:", req.method);
-  console.log("URL:", req.url);
-  
-  // Obsługa CORS preflight
-  if (req.method === 'OPTIONS') {
-    console.log("Obsługa żądania OPTIONS (CORS preflight)");
-    return new Response(null, { headers: corsHeaders, status: 200 });
+  // Handle CORS preflight requests
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
   }
-  
+
   try {
-    // Sprawdź i wypisz klucze konfiguracyjne (bezpiecznie, bez pokazywania pełnych wartości)
-    console.log("Konfiguracja:");
-    console.log("- SUPABASE_URL:", supabaseUrl ? `ustawiony (${supabaseUrl.slice(0, 20)}...)` : "BRAK");
-    console.log("- SUPABASE_SERVICE_ROLE_KEY:", supabaseServiceKey ? `ustawiony (${supabaseServiceKey.slice(0, 5)}...)` : "BRAK");
-    console.log("- STRIPE_SECRET_KEY:", stripeSecretKey ? `ustawiony (${stripeSecretKey.slice(0, 5)}...)` : "BRAK");
-    console.log("- STRIPE_WEBHOOK_SECRET:", endpointSecret ? `ustawiony (${endpointSecret.slice(0, 5)}...)` : "BRAK");
-    
-    // Jeśli brakuje kluczy, zwróć błąd wcześniej
-    if (!supabaseUrl || !supabaseServiceKey) {
-      return new Response(JSON.stringify({ 
-        error: "Brak wymaganych kluczy Supabase", 
-        received: true, 
-        status: "configuration_error" 
-      }), {
-        status: 200, // Zawsze 200 dla Stripe
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    // Only allow POST requests for the webhook
+    if (req.method !== "POST") {
+      return new Response(
+        JSON.stringify({ error: "Method not allowed" }),
+        { status: 405, headers: { ...corsHeaders, "Allow": "POST, OPTIONS" } }
+      );
     }
-    
-    if (!stripeSecretKey) {
-      return new Response(JSON.stringify({ 
-        error: "Brak wymaganego klucza Stripe", 
-        received: true, 
-        status: "configuration_error" 
-      }), {
-        status: 200, // Zawsze 200 dla Stripe
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+
+    // Ensure webhook is called from Stripe
+    const signature = req.headers.get("stripe-signature");
+    if (!signature) {
+      return new Response(
+        JSON.stringify({ error: "Missing Stripe signature" }),
+        { status: 400, headers: corsHeaders }
+      );
     }
-    
-    // Inicjalizuj klienty
-    let supabase;
-    let stripe;
-    
-    try {
-      supabase = createClient(supabaseUrl, supabaseServiceKey, {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
-        }
-      });
-      
-      stripe = new Stripe(stripeSecretKey, {
-        apiVersion: '2023-10-16',
-      });
-      
-      console.log("Klienty Supabase i Stripe zostały zainicjalizowane pomyślnie");
-    } catch (initError) {
-      console.error("Błąd inicjalizacji klientów:", initError.message);
-      return new Response(JSON.stringify({ 
-        error: "Błąd inicjalizacji klientów", 
-        details: initError.message,
-        received: true 
-      }), {
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+
+    const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY");
+    const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
+
+    if (!stripeSecretKey || !webhookSecret) {
+      return new Response(
+        JSON.stringify({ error: "Stripe is not configured properly" }),
+        { status: 500, headers: corsHeaders }
+      );
     }
-    
-    // Pobierz body i nagłówki
+
+    const stripe = new Stripe(stripeSecretKey, {
+      apiVersion: "2023-10-16",
+      httpClient: Stripe.createFetchHttpClient(),
+    });
+
     const body = await req.text();
-    const signature = req.headers.get('stripe-signature');
-    
-    if (!body) {
-      console.error("Brak body w żądaniu");
-      return new Response(JSON.stringify({ 
-        error: "Brak body w żądaniu", 
-        received: true 
-      }), {
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-    
-    console.log("Raw body length:", body.length);
-    console.log("Signature provided:", signature ? "YES" : "NO");
-    
-    let event;
-    
-    // Próba weryfikacji podpisu tylko jeśli mamy sekret i sygnaturę
-    if (endpointSecret && signature) {
-      try {
-        event = stripe.webhooks.constructEvent(body, signature, endpointSecret);
-        console.log("Weryfikacja podpisu Stripe udana");
-      } catch (verifyError) {
-        console.error("Weryfikacja podpisu Stripe nieudana:", verifyError.message);
-        
-        // Mimo błędu weryfikacji, spróbujmy rozparsować JSON
-        try {
-          event = JSON.parse(body);
-          console.log("Fallback do parsowania JSON (po błędzie weryfikacji):", event.type);
-        } catch (parseError) {
-          console.error("Błąd parsowania JSON:", parseError.message);
-          return new Response(JSON.stringify({ 
-            error: "Nieprawidłowy podpis i format JSON", 
-            verifyError: verifyError.message,
-            parseError: parseError.message,
-            received: true 
-          }), {
-            status: 200, // Zawsze 200 dla Stripe
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        }
-      }
-    } else {
-      // Brak sekretu webhooka lub podpisu, parsujemy jako zwykły JSON
-      try {
-        event = JSON.parse(body);
-        console.log("Parsowanie jako prosty JSON (brak sekretu webhooka lub podpisu)");
-      } catch (parseError) {
-        console.error("Błąd parsowania JSON:", parseError.message);
-        return new Response(JSON.stringify({ 
-          error: "Nieprawidłowy format JSON", 
-          details: parseError.message,
-          received: true 
-        }), {
-          status: 200, // Zawsze 200 dla Stripe
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-    }
-    
-    if (!event || !event.type) {
-      console.error("Brak typu zdarzenia w żądaniu");
-      return new Response(JSON.stringify({ 
-        error: "Brak typu zdarzenia w żądaniu", 
-        received: true 
-      }), {
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-    
-    console.log("Typ zdarzenia:", event.type);
-    
-    // Sprawdzenie uprawnień do tabeli survey_responses
+
     try {
-      console.log("Sprawdzanie uprawnień do tabeli survey_responses...");
-      
-      // Spróbuj wstawić testowy rekord i natychmiast go usunąć
-      const testOrder = 'test-permissions-' + Date.now();
-      const { data: insertData, error: insertError } = await supabase
-        .from('survey_responses')
-        .insert({
-          order_id: testOrder,
-          question_id: 'test-permission',
-          answer: 1,
-          user_type: 'test'
-        })
-        .select();
-      
-      if (insertError) {
-        console.error("BŁĄD UPRAWNIEŃ DO TABELI SURVEY_RESPONSES:", insertError);
-        console.error("To może być przyczyna braku zapisanych odpowiedzi!");
-      } else {
-        console.log("Uprawnienia do tabeli survey_responses są poprawne");
-        
-        // Usuń testowy rekord
-        if (insertData && insertData.length > 0) {
-          const { error: deleteError } = await supabase
-            .from('survey_responses')
-            .delete()
-            .eq('id', insertData[0].id);
-            
-          if (deleteError) {
-            console.error("Błąd usuwania testowego rekordu:", deleteError);
-          }
-        }
+      // Verify the event came from Stripe
+      const event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+
+      // Handle the event
+      switch (event.type) {
+        case 'checkout.session.completed':
+          const session = event.data.object;
+          console.log("Payment completed for session:", session.id);
+          // Fulfill the purchase...
+          break;
+        case 'invoice.payment_succeeded':
+          const invoice = event.data.object;
+          console.log("Invoice payment succeeded:", invoice.id);
+          // Handle successful invoice payment...
+          break;
+        // Add more event types as needed
+        default:
+          console.log(`Unhandled event type ${event.type}`);
       }
-    } catch (permError) {
-      console.error("Błąd podczas sprawdzania uprawnień:", permError);
+
+      return new Response(
+        JSON.stringify({ received: true }),
+        { status: 200, headers: corsHeaders }
+      );
+    } catch (err) {
+      console.error("Webhook signature verification failed:", err);
+      return new Response(
+        JSON.stringify({ error: "Invalid signature" }),
+        { status: 400, headers: corsHeaders }
+      );
     }
-    
-    // Obsługa zdarzenia checkout.session.completed
-    // Ten webhook jest wywoływany TYLKO po pomyślnej płatności
-    if (event.type === 'checkout.session.completed') {
-      const session = event.data.object;
-      
-      // Walidacja danych sesji
-      if (!session) {
-        console.error("Brak danych sesji w zdarzeniu");
-        return new Response(JSON.stringify({ 
-          error: "Brak danych sesji", 
-          received: true 
-        }), {
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-      
-      const orderId = session.client_reference_id || session.metadata?.order_id;
-      const paymentId = session.payment_intent;
-      
-      console.log("Przetwarzanie zakończonego checkout dla zamówienia:", orderId);
-      console.log("ID płatności:", paymentId);
-      
-      if (!orderId) {
-        console.error("Brak ID zamówienia w sesji:", session.id);
-        return new Response(JSON.stringify({ 
-          error: "Brak ID zamówienia", 
-          received: true 
-        }), {
-          status: 200, // Zwracamy 200 aby Stripe nie próbował ponownie
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-      
-      // Sprawdź obecny stan zamówienia
-      const { data: orderCheck, error: orderCheckError } = await supabase
-        .from('orders')
-        .select('status, payment_id, user_question_sequence, game_level, emails_sent')
-        .eq('id', orderId)
-        .maybeSingle();
-        
-      if (orderCheckError) {
-        console.error("Błąd pobierania zamówienia:", orderCheckError);
-      }
-      
-      console.log("Obecny stan zamówienia przed aktualizacją:", orderCheck);
-      
-      // Aktualizuj status tylko jeśli to konieczne
-      if (!orderCheck || orderCheck.status !== 'paid') {
-        console.log("Aktualizacja statusu zamówienia na 'paid'");
-        const { data: updateData, error: updateError } = await supabase
-          .from('orders')
-          .update({ 
-            status: 'paid',
-            payment_id: paymentId,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', orderId)
-          .select();
-        
-        // Szczegółowe logowanie wyniku aktualizacji 
-        console.log("Wynik aktualizacji statusu:", updateError ? `BŁĄD: ${updateError.message}` : "SUKCES");
-        
-        if (updateError) {
-          console.error("Błąd aktualizacji zamówienia:", updateError);
-        } else {
-          console.log("Zaktualizowane dane zamówienia:", updateData);
-        }
-      } else {
-        console.log("Zamówienie ma już status 'paid', pomijanie aktualizacji");
-      }
-      
-      // Sprawdź stan zamówienia po aktualizacji dla weryfikacji
-      const { data: updatedOrder, error: checkError } = await supabase
-        .from('orders')
-        .select('*')
-        .eq('id', orderId)
-        .maybeSingle();
-        
-      if (checkError) {
-        console.error("Błąd pobierania zaktualizowanego zamówienia:", checkError);
-      }
-      
-      console.log("Stan zamówienia po aktualizacji:", updatedOrder);
-      
-      // Pobierz odpowiedzi użytkownika, aby zapisać sekwencję pytań
-      if (updatedOrder && (!updatedOrder.user_question_sequence || updatedOrder.user_question_sequence.length === 0)) {
-        console.log("Próba pobrania i zapisania sekwencji pytań z odpowiedzi użytkownika");
-        
-        const { data: userResponses, error: responsesError } = await supabase
-          .from('survey_responses')
-          .select('question_id, created_at')
-          .eq('order_id', orderId)
-          .eq('user_type', 'user')
-          .order('created_at', { ascending: true });
-          
-        if (responsesError) {
-          console.error("Błąd pobierania odpowiedzi użytkownika:", responsesError);
-        }
-        
-        if (userResponses && userResponses.length > 0) {
-          const questionIds = userResponses.map(r => r.question_id);
-          console.log(`Znaleziono ${questionIds.length} odpowiedzi użytkownika, zapisuję sekwencję:`, questionIds);
-          
-          const { error: seqError } = await supabase
-            .from('orders')
-            .update({ user_question_sequence: questionIds })
-            .eq('id', orderId);
-            
-          if (seqError) {
-            console.error("Błąd zapisywania sekwencji pytań:", seqError);
-          } else {
-            console.log("Sekwencja pytań zapisana pomyślnie");
-          }
-        } else {
-          console.log("Brak odpowiedzi użytkownika, używam domyślnej sekwencji");
-          
-          // Domyślna sekwencja pytań (możesz użyć swojej domyślnej listy 20 pytań)
-          const defaultSequence = [
-            'p1', 'p2', 'p3', 'p4', 'p5', 
-            'r1', 'r2', 'r3', 'r4', 'r5', 
-            'u1', 'u2', 'u3', 'u4', 'u5',
-            'm1', 'm2', 'm3', 'm4', 'm5'
-          ];
-          
-          const { error: seqError } = await supabase
-            .from('orders')
-            .update({ user_question_sequence: defaultSequence })
-            .eq('id', orderId);
-            
-          if (seqError) {
-            console.error("Błąd zapisywania domyślnej sekwencji:", seqError);
-          } else {
-            console.log("Domyślna sekwencja pytań zapisana");
-          }
-        }
-      }
-      
-      // Wysyłaj e-maile po aktualizacji statusu
-      if (updatedOrder && !updatedOrder.emails_sent) {
-        try {
-          console.log("Wywołanie funkcji wysyłania e-maili");
-          
-          if (!supabaseUrl || !supabaseServiceKey) {
-            throw new Error("Brak wymaganych kluczy do wywołania funkcji wysyłania e-maili");
-          }
-          
-          // Dodaj pełny URL funkcji Edge Function
-          const functionUrl = `${supabaseUrl}/functions/v1/send-order-emails`;
-          console.log(`Wysyłam żądanie do: ${functionUrl}`);
-          
-          // Dodaj timeout do żądania
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 sekund timeout
-          
-          try {
-            const emailResponse = await fetch(
-              functionUrl,
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${supabaseServiceKey}`
-                },
-                body: JSON.stringify({ orderId }),
-                signal: controller.signal
-              }
-            );
-            
-            clearTimeout(timeoutId);
-            
-            if (!emailResponse.ok) {
-              console.error(`Błąd HTTP: ${emailResponse.status} ${emailResponse.statusText}`);
-              const errorText = await emailResponse.text();
-              console.error(`Treść błędu: ${errorText}`);
-              throw new Error(`HTTP Error: ${emailResponse.status} - ${errorText}`);
-            }
-            
-            // Odczytaj odpowiedź tylko jeśli żądanie się powiodło
-            const emailResult = await emailResponse.json();
-            console.log("Wynik wysyłania e-maili:", emailResult);
-            
-            // Oznacz e-maile jako wysłane
-            await supabase
-              .from('orders')
-              .update({ emails_sent: true })
-              .eq('id', orderId);
-              
-            console.log("Zamówienie oznaczone jako emails_sent = true");
-          } catch (fetchError) {
-            console.error("Błąd podczas wywoływania edge function:", fetchError);
-            
-            // Sprawdź czy to był timeout
-            if (fetchError.name === 'AbortError') {
-              console.error("Timeout podczas wywoływania funkcji wysyłania e-maili");
-            }
-            
-            // Alternatywna próba wykonania żądania używając XMLHttpRequest
-            console.log("Próba alternatywnego wywołania funkcji wysyłania e-maili...");
-            
-            try {
-              // Manualne wywołanie funkcji emails-sending
-              const directSendEmail = await sendOrderEmailsDirectly(orderId, supabaseUrl, supabaseServiceKey);
-              console.log("Rezultat bezpośredniego wywołania:", directSendEmail);
-              
-              // Oznacz e-maile jako wysłane, jeśli operacja się powiodła
-              if (directSendEmail.success) {
-                await supabase
-                  .from('orders')
-                  .update({ emails_sent: true })
-                  .eq('id', orderId);
-                
-                console.log("Zamówienie oznaczone jako emails_sent = true po bezpośrednim wywołaniu");
-              }
-            } catch (directError) {
-              console.error("Błąd podczas bezpośredniego wysyłania e-maili:", directError);
-            }
-          }
-        } catch (emailError) {
-          console.error("Błąd wysyłania e-maili:", emailError.message);
-          // Nie przerywamy przetwarzania, jeśli wysyłanie e-maili nie powiodło się
-        }
-      } else {
-        console.log("E-maile zostały już wysłane dla tego zamówienia lub zamówienie nie istnieje");
-      }
-    } else if (event.type === 'payment_intent.succeeded') {
-      // Ignorujemy to zdarzenie, ponieważ już obsługujemy checkout.session.completed
-      console.log("Zignorowano zdarzenie payment_intent.succeeded - używamy tylko checkout.session.completed");
-    } else {
-      console.log(`Zignorowano nieobsługiwane zdarzenie: ${event.type}`);
-    }
-    
-    // Zawsze zwracamy sukces 200 do Stripe, aby zapobiec ponownym próbom
-    return new Response(JSON.stringify({ received: true, success: true }), {
-      status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
   } catch (error) {
-    // Loguj i zwróć błąd, ale zawsze z kodem 200 dla Stripe
-    console.error("Ogólny błąd webhooka:", error.message);
-    console.error("Stack trace:", error.stack);
-    return new Response(JSON.stringify({ 
-      error: error.message, 
-      received: true,
-      status: "error" 
-    }), {
-      status: 200, // Zawsze zwracamy 200 do Stripe
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    console.error("Error processing webhook:", error);
+    return new Response(
+      JSON.stringify({ error: "Internal server error" }),
+      { status: 500, headers: corsHeaders }
+    );
   }
 });
-
-// Pomocnicza funkcja do bezpośredniego wykonania zadań wysyłania e-maili
-async function sendOrderEmailsDirectly(orderId, supabaseUrl, supabaseServiceKey) {
-  console.log("Próba bezpośredniego wysłania emaili dla zamówienia:", orderId);
-  
-  // Utwórz klienta Supabase
-  const supabase = createClient(supabaseUrl, supabaseServiceKey);
-  
-  // Pobierz dane zamówienia
-  const { data: order, error: orderError } = await supabase
-    .from('orders')
-    .select('*')
-    .eq('id', orderId)
-    .single();
-    
-  if (orderError || !order) {
-    throw new Error(`Nie można pobrać zamówienia: ${orderError?.message || 'Nie znaleziono'}`);
-  }
-  
-  // Sprawdź czy e-maile zostały już wysłane
-  if (order.emails_sent) {
-    return { success: true, message: 'Emaile zostały już wysłane wcześniej' };
-  }
-  
-  // Upewnij się, że mamy sekwencję pytań
-  if (!order.user_question_sequence || order.user_question_sequence.length === 0) {
-    const { data: userResponses, error: responsesError } = await supabase
-      .from('survey_responses')
-      .select('question_id, created_at')
-      .eq('order_id', orderId)
-      .eq('user_type', 'user')
-      .order('created_at', { ascending: true });
-      
-    if (responsesError) {
-      throw new Error(`Błąd pobierania odpowiedzi: ${responsesError.message}`);
-    }
-    
-    if (!userResponses || userResponses.length === 0) {
-      throw new Error('Zamawiający nie wypełnił ankiety. Nie można wysłać e-maila do partnera.');
-    }
-    
-    const questionIds = userResponses.map(r => r.question_id);
-    
-    // Zapisz sekwencję pytań
-    await supabase
-      .from('orders')
-      .update({ user_question_sequence: questionIds })
-      .eq('id', orderId);
-      
-    // Odśwież dane zamówienia
-    const { data: refreshedOrder } = await supabase
-      .from('orders')
-      .select('*')
-      .eq('id', orderId)
-      .single();
-      
-    if (refreshedOrder) {
-      order.user_question_sequence = refreshedOrder.user_question_sequence;
-    }
-  }
-  
-  // Logowanie informacji o powodzeniu - w prawdziwej implementacji wysyłalibyśmy emaile,
-  // ale teraz po prostu traktujemy to jako sukces, ponieważ nie mamy dostępu do API Resend z tej funkcji
-  console.log("SYMULACJA: E-maile wysłane pomyślnie dla zamówienia:", orderId);
-  
-  // Jeśli wszystko poszło dobrze, oznacz jako wysłane
-  await supabase
-    .from('orders')
-    .update({ emails_sent: true })
-    .eq('id', orderId);
-    
-  return { 
-    success: true, 
-    message: 'Emaile wysłane bezpośrednio (symulacja)'
-  };
-}

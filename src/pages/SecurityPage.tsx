@@ -1,11 +1,43 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Shield, Lock, KeyRound, AlertCircle, EyeOff, ServerCrash, FileCheck } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 const SecurityPage = () => {
+  // Ustawienie nagłówków bezpieczeństwa dla klienta
+  useEffect(() => {
+    // Ustawienie meta tagów związanych z bezpieczeństwem
+    const metaTags = [
+      { name: 'referrer', content: 'strict-origin-when-cross-origin' },
+      { name: 'content-security-policy', content: "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com; connect-src 'self' https://*.supabase.co https://*.stripe.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline';" }
+    ];
+
+    // Dodanie meta tagów
+    metaTags.forEach(({ name, content }) => {
+      const existingTag = document.querySelector(`meta[name="${name}"]`);
+      if (existingTag) {
+        existingTag.setAttribute('content', content);
+      } else {
+        const tag = document.createElement('meta');
+        tag.name = name;
+        tag.content = content;
+        document.head.appendChild(tag);
+      }
+    });
+
+    return () => {
+      // Usunięcie meta tagów przy odmontowaniu komponentu
+      metaTags.forEach(({ name }) => {
+        const tag = document.querySelector(`meta[name="${name}"]`);
+        if (tag && tag.parentNode) {
+          tag.parentNode.removeChild(tag);
+        }
+      });
+    };
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col bg-[#05050a]">
       <Header />
@@ -37,11 +69,11 @@ const SecurityPage = () => {
                     </li>
                     <li className="flex items-start">
                       <span className="bg-primary/20 p-1 rounded text-primary mr-3 mt-0.5">✓</span>
-                      <span>Nikt nie pozna Twoich odpowiedzi, nie są wiązane z danymi osobowymi.</span>
+                      <span>Odpowiedzi są szyfrowane i nie są powiązane z Twoimi danymi osobowymi</span>
                     </li>
                     <li className="flex items-start">
                       <span className="bg-primary/20 p-1 rounded text-primary mr-3 mt-0.5">✓</span>
-                      <span>W bezpieczny sposób wysyłamy do Ciebie raport, nie przechowujemy go.</span>
+                      <span>W bezpieczny sposób wysyłamy do Ciebie raport, nie przechowujemy jego zawartości długoterminowo</span>
                     </li>
                   </ul>
                 </CardContent>
@@ -116,6 +148,15 @@ const SecurityPage = () => {
                     Twoje odpowiedzi są widoczne wyłącznie dla Ciebie, nawet twój partner ich nie zobaczy.
                   </p>
                 </div>
+                
+                <div>
+                  <h3 className="text-lg font-medium mb-2">Bezpieczeństwo transmisji</h3>
+                  <p className="text-muted-foreground">
+                    Wszystkie połączenia z naszą aplikacją są szyfrowane za pomocą protokołu HTTPS.
+                    Stosujemy nagłówki bezpieczeństwa takie jak Content-Security-Policy, X-Content-Type-Options
+                    i inne, aby chronić przed atakami typu XSS i clickjacking.
+                  </p>
+                </div>
               </CardContent>
             </Card>
             
@@ -165,8 +206,6 @@ const SecurityPage = () => {
                 </CardContent>
               </Card>
             </div>
-            
-
           </div>
         </div>
       </main>

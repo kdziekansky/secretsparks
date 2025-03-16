@@ -6,6 +6,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Max-Age": "86400"
 };
 
 serve(async (req) => {
@@ -15,12 +17,30 @@ serve(async (req) => {
   }
 
   try {
+    // Sprawdź nagłówek Origin, ograniczając dostęp tylko do znanej domeny
+    const origin = req.headers.get("Origin") || "*";
+    const allowedOrigins = [
+      "http://localhost:3000", 
+      "http://localhost:5173", 
+      "https://secretsparks.pl",
+      new URL(Deno.env.get("SUPABASE_URL") || "").origin
+    ];
+    
+    const secureHeaders = {
+      ...corsHeaders,
+      "Access-Control-Allow-Origin": allowedOrigins.includes(origin) ? origin : allowedOrigins[0],
+      "Content-Type": "application/json",
+      "X-Content-Type-Options": "nosniff",
+      "X-Frame-Options": "DENY",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
+    };
+
     // Get authorization header
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       return new Response(
         JSON.stringify({ error: "Missing authorization header" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 401, headers: secureHeaders }
       );
     }
 
@@ -40,7 +60,7 @@ serve(async (req) => {
     if (userError || !user) {
       return new Response(
         JSON.stringify({ error: "Invalid authorization token" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 401, headers: secureHeaders }
       );
     }
 
@@ -61,7 +81,7 @@ serve(async (req) => {
       if (adminCheckError || !adminCheck) {
         return new Response(
           JSON.stringify({ error: "You don't have permission to create admin users" }),
-          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { status: 403, headers: secureHeaders }
         );
       }
       
@@ -75,7 +95,30 @@ serve(async (req) => {
       if (existingAdmin) {
         return new Response(
           JSON.stringify({ error: "Admin user already exists" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { status: 400, headers: secureHeaders }
+        );
+      }
+      
+      // Walidacja siły hasła
+      if (!password || typeof password !== 'string' || password.length < 12) {
+        return new Response(
+          JSON.stringify({ error: "Password must be at least 12 characters long" }),
+          { status: 400, headers: secureHeaders }
+        );
+      }
+
+      // Sprawdzenie złożoności hasła
+      const hasUpperCase = /[A-Z]/.test(password);
+      const hasLowerCase = /[a-z]/.test(password);
+      const hasNumbers = /[0-9]/.test(password);
+      const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(password);
+
+      if (!(hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChar)) {
+        return new Response(
+          JSON.stringify({ 
+            error: "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character" 
+          }),
+          { status: 400, headers: secureHeaders }
         );
       }
       
@@ -93,7 +136,7 @@ serve(async (req) => {
         if (newAuthUserError) {
           return new Response(
             JSON.stringify({ error: `Failed to create auth user: ${newAuthUserError.message}` }),
-            { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+            { status: 500, headers: secureHeaders }
           );
         }
       }
@@ -109,13 +152,13 @@ serve(async (req) => {
       if (newAdminError) {
         return new Response(
           JSON.stringify({ error: `Failed to create admin user: ${newAdminError.message}` }),
-          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { status: 500, headers: secureHeaders }
         );
       }
       
       return new Response(
         JSON.stringify({ success: true, message: "Admin user created successfully" }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 200, headers: secureHeaders }
       );
     }
     
@@ -131,14 +174,30 @@ serve(async (req) => {
       if (adminError || !adminUser) {
         return new Response(
           JSON.stringify({ error: "User is not an admin" }),
-          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { status: 403, headers: secureHeaders }
         );
       }
 
-      if (!password || typeof password !== 'string' || password.length < 8) {
+      // Walidacja siły hasła
+      if (!password || typeof password !== 'string' || password.length < 12) {
         return new Response(
-          JSON.stringify({ error: "Password must be at least 8 characters long" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({ error: "Password must be at least 12 characters long" }),
+          { status: 400, headers: secureHeaders }
+        );
+      }
+
+      // Sprawdzenie złożoności hasła
+      const hasUpperCase = /[A-Z]/.test(password);
+      const hasLowerCase = /[a-z]/.test(password);
+      const hasNumbers = /[0-9]/.test(password);
+      const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(password);
+
+      if (!(hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChar)) {
+        return new Response(
+          JSON.stringify({ 
+            error: "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character" 
+          }),
+          { status: 400, headers: secureHeaders }
         );
       }
 
@@ -151,7 +210,7 @@ serve(async (req) => {
       if (authUpdateError) {
         return new Response(
           JSON.stringify({ error: `Failed to update auth password: ${authUpdateError.message}` }),
-          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { status: 500, headers: secureHeaders }
         );
       }
 
@@ -167,24 +226,37 @@ serve(async (req) => {
       if (updateError) {
         return new Response(
           JSON.stringify({ error: updateError.message }),
-          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { status: 500, headers: secureHeaders }
         );
+      }
+
+      // Zapisz informację o zmianie hasła
+      try {
+        await supabaseAdmin
+          .from('admin_password_history')
+          .insert([{ 
+            admin_email: user.email,
+            changed_at: new Date().toISOString(),
+          }]);
+      } catch (err) {
+        // Ignoruj błąd jeśli tabela nie istnieje
+        console.error("Błąd zapisywania historii hasła:", err);
       }
 
       return new Response(
         JSON.stringify({ success: true, message: "Password updated successfully" }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 200, headers: secureHeaders }
       );
     }
     
     return new Response(
       JSON.stringify({ error: "Invalid action or missing parameters" }),
-      { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { status: 400, headers: secureHeaders }
     );
   } catch (error) {
     return new Response(
       JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { status: 500, headers: corsHeaders }
     );
   }
 });

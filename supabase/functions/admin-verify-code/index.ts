@@ -6,6 +6,8 @@ import * as crypto from "https://deno.land/std@0.190.0/crypto/mod.ts";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Max-Age": "86400"
 };
 
 // Konwertuje string na ArrayBuffer
@@ -29,12 +31,31 @@ serve(async (req) => {
   }
 
   try {
+    // Sprawdź nagłówek Origin, ograniczając dostęp tylko do znanej domeny
+    const origin = req.headers.get("Origin") || "*";
+    // W produkcji powinno się ograniczyć tylko do konkretnej domeny
+    const allowedOrigins = [
+      "http://localhost:3000", 
+      "http://localhost:5173", 
+      "https://secretsparks.pl",
+      new URL(Deno.env.get("SUPABASE_URL") || "").origin
+    ];
+    
+    const secureHeaders = {
+      ...corsHeaders,
+      "Access-Control-Allow-Origin": allowedOrigins.includes(origin) ? origin : allowedOrigins[0],
+      "Content-Type": "application/json",
+      "X-Content-Type-Options": "nosniff",
+      "X-Frame-Options": "DENY",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
+    };
+
     const { code } = await req.json();
     
     if (!code) {
       return new Response(
         JSON.stringify({ error: "Brak kodu weryfikacyjnego" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 400, headers: secureHeaders }
       );
     }
 
@@ -53,36 +74,38 @@ serve(async (req) => {
     // Oblicz hash przesłanego kodu
     const inputHash = await sha256(code + currentYear + secretSalt);
     
-    // Ukryta kombinacja
-    const hiddenKey = "Kb8@dL4#sP0w$9xZ";
-    const specialCombination = 
-      code.includes(hiddenKey.substring(3, 7)) && 
-      code.length > 15 &&
-      /[A-Z]/.test(code) && 
-      /[0-9]/.test(code) && 
-      /[!@#$%^&*]/.test(code);
-      
-    // Weryfikacja kodu
-    const isValid = 
-      inputHash === correctHash || 
-      code === correctAdminCode || 
-      specialCombination;
+    // Usuwamy ukrytą kombinację - nie jest to bezpieczne rozwiązanie
+    // Przeniesiono całą logikę do weryfikacji hashem
+    
+    // Weryfikacja kodu - używamy tylko bezpiecznej metody porównania hashy
+    const isValid = inputHash === correctHash;
     
     console.log("Weryfikacja kodu administratora:", isValid ? "Sukces" : "Niepowodzenie");
     
-    // Tworzenie klienta Supabase z kluczem serwisowym
+    // Zapisz próbę logowania w bazie danych, aby śledzić potencjalne ataki
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
       { auth: { persistSession: false } }
     );
 
-    // Zapisz próby logowania w tabeli (można by dodać tabelę z limitami prób)
-    // To jest zakładka na przyszłość, jeśli chcemy śledzić próby
+    // Zapisz próbę logowania w tabeli (jeśli istnieje)
+    try {
+      await supabaseAdmin
+        .from('admin_login_attempts')
+        .insert([{ 
+          code_hash: inputHash.substring(0, 10), // Zapisujemy tylko część hashu
+          successful: isValid,
+          ip_hash: await sha256(req.headers.get("x-forwarded-for") || "unknown")
+        }]);
+    } catch (err) {
+      // Ignorujemy błąd jeśli tabela nie istnieje
+      console.error("Błąd zapisywania próby logowania:", err);
+    }
 
     return new Response(
       JSON.stringify({ verified: isValid }),
-      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { status: 200, headers: secureHeaders }
     );
 
   } catch (error) {
@@ -90,7 +113,7 @@ serve(async (req) => {
     
     return new Response(
       JSON.stringify({ error: "Wystąpił błąd podczas weryfikacji kodu" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { status: 500, headers: corsHeaders }
     );
   }
 });
