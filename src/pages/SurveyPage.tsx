@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSurvey } from '@/contexts/SurveyContext';
@@ -31,7 +32,8 @@ const SurveyPage: React.FC = () => {
     setPartnerGender,
     setGameLevel,
     setOrderId,
-    filteredQuestions
+    filteredQuestions,
+    resetSurvey
   } = useSurvey();
   
   const [isPartnerSurvey, setIsPartnerSurvey] = useState<boolean>(!!partnerToken);
@@ -40,6 +42,13 @@ const SurveyPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [orderFetched, setOrderFetched] = useState<boolean>(false);
   const [waitingForQuestions, setWaitingForQuestions] = useState<boolean>(false);
+  
+  // Reset survey on component mount, but only for standard survey (not partner survey)
+  useEffect(() => {
+    if (!isPartnerSurvey) {
+      resetSurvey();
+    }
+  }, [resetSurvey, isPartnerSurvey]);
   
   useEffect(() => {
     // Fetch order details if this is a partner survey
