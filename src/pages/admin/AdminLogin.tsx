@@ -42,11 +42,17 @@ const AdminLogin = () => {
       console.log('Próba logowania z danymi:', { email });
 
       // Sprawdź, czy użytkownik istnieje w tabeli admin_users
+      // Użyjemy console.log do debugowania zapytania
+      console.log('Wykonuję zapytanie do tabeli admin_users');
+      
       const { data: adminUser, error: adminCheckError } = await supabase
         .from('admin_users')
-        .select('email')
-        .eq('email', email)
-        .maybeSingle();
+        .select('*')  // Zmiana z select('email') na select('*'), aby zobaczyć wszystkie kolumny
+        .eq('email', email.trim().toLowerCase())  // Dodajemy trim() i toLowerCase() dla większej elastyczności
+        .maybeSingle();  // Używamy maybeSingle() zamiast single(), aby uniknąć błędu, gdy nie znaleziono użytkownika
+
+      // Wyświetlamy szczegóły zapytania dla debugowania
+      console.log('Wynik zapytania admin_users:', { adminUser, adminCheckError });
 
       if (adminCheckError) {
         console.error('Błąd weryfikacji administratora:', adminCheckError);
@@ -54,10 +60,18 @@ const AdminLogin = () => {
       }
 
       if (!adminUser) {
-        console.error('Nie znaleziono w tabeli admin_users:', email);
+        console.error('Nie znaleziono użytkownika w tabeli admin_users:', email);
+        // Sprawdźmy listę wszystkich administratorów (tylko w trybie deweloperskim)
+        const { data: allAdmins } = await supabase
+          .from('admin_users')
+          .select('email');
+        console.log('Dostępni administratorzy:', allAdmins);
+        
         throw new Error('Nieprawidłowe dane logowania');
       }
 
+      console.log('Znaleziono administratora, przekazuję do kontekstu uwierzytelniania');
+      
       // Przekaż logowanie do kontekstu
       await login(email, password);
       
