@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -104,10 +105,28 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     }, 300);
   };
 
-  // Funkcja do obsługi ścieżek obrazów - uproszczona, aby brać dokładnie to co jest w pliku
+  // POPRAWIONA FUNKCJA: Obsługuje prawidłowo ścieżki obrazów
   const getImageUrl = (url: string) => {
     if (!url) return '';
-    return url; // Zwracamy dokładnie taką ścieżkę jaką dostajemy
+    
+    try {
+      // Jeśli URL jest już bezwzględny (http/https), zwróć go bez zmian
+      if (url.startsWith('http')) return url;
+      
+      // Sprawdź czy ścieżka zaczyna się od /lovable-uploads/
+      if (url.startsWith('/lovable-uploads/')) {
+        // Przekieruj na poprawną ścieżkę przy zachowaniu nazwy pliku
+        const fileName = url.substring('/lovable-uploads/'.length);
+        return `/images/illustrations/techniques/${fileName}`;
+      }
+      
+      // Jeśli to standardowa ścieżka /images/illustrations/techniques/, 
+      // zachowaj ją bez zmian
+      return url;
+    } catch (error) {
+      console.error("Error processing image URL:", error, "Original URL:", url);
+      return url;
+    }
   };
   
   const handleImageLoad = () => {
