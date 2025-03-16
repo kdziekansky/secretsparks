@@ -42,6 +42,9 @@ export interface SurveyContextType {
   setGameLevel: (level: GameLevel) => void;
   completeConfig: () => void;
   isInConfigurationMode: boolean;
+  showInstructions: boolean;
+  completeInstructions: () => void;
+  isPartnerSurvey: boolean;
   filteredQuestions: Question[];
   saveAnswer: (isPartnerSurvey?: boolean) => Promise<void>;
   setOrderId: (orderId: string) => void;

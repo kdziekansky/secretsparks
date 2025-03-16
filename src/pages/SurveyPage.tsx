@@ -8,6 +8,7 @@ import ProgressBar from '@/components/ProgressBar';
 import QuestionCard from '@/components/QuestionCard';
 import SurveyConfig from '@/components/SurveyConfig';
 import PartnerWelcome from '@/components/PartnerWelcome';
+import SurveyInstruction from '@/components/SurveyInstruction';
 import { Loader2, AlertTriangle, Clock } from 'lucide-react';
 import { toast, Toaster } from 'sonner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -30,6 +31,7 @@ const SurveyPage: React.FC = () => {
   const { 
     progress, 
     isInConfigurationMode,
+    showInstructions,
     setUserGender,
     setPartnerGender,
     setGameLevel,
@@ -226,13 +228,17 @@ const SurveyPage: React.FC = () => {
     <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6">
       <Toaster position={isMobile ? "bottom-center" : "top-center"} />
       
-      {!isInConfigurationMode && (
+      {/* Pasek postępu pokażemy tylko podczas pytań, nie podczas konfiguracji czy instrukcji */}
+      {!isInConfigurationMode && !showInstructions && (
         <div className={`w-full ${isMobile ? 'max-w-sm' : 'max-w-xl'} mb-6 md:mb-8`}>
           <ProgressBar progress={progress} />
         </div>
       )}
       
-      {isInConfigurationMode ? (
+      {/* Ekran z instrukcjami - widoczny tylko dla głównego użytkownika (nie partnera) i tylko przed konfiguracją */}
+      {showInstructions && !isPartnerSurvey ? (
+        <SurveyInstruction />
+      ) : isInConfigurationMode ? (
         isPartnerSurvey && orderDetails ? (
           <PartnerWelcome orderDetails={orderDetails} />
         ) : (

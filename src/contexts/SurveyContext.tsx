@@ -23,6 +23,7 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [questions] = useState<Question[]>(questionsDatabase);
+  const [showInstructions, setShowInstructions] = useState<boolean>(!partnerToken);
   const [surveyConfig, setSurveyConfig] = useState<SurveyConfig>({
     userGender: null,
     partnerGender: null,
@@ -187,13 +188,14 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const resetSurvey = useCallback(() => {
     setCurrentQuestionIndex(0);
     setAnswers({});
+    setShowInstructions(!partnerToken);
     setSurveyConfig({
       userGender: null,
       partnerGender: null,
       gameLevel: null,
       isConfigComplete: false
     });
-  }, []);
+  }, [partnerToken]);
 
   const setUserGender = useCallback((gender: Gender) => {
     setSurveyConfig(prev => ({ ...prev, userGender: gender }));
@@ -210,6 +212,10 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const completeConfig = useCallback(() => {    
     setSurveyConfig(prev => ({ ...prev, isConfigComplete: true }));
     setCurrentQuestionIndex(0);
+  }, []);
+
+  const completeInstructions = useCallback(() => {
+    setShowInstructions(false);
   }, []);
 
   const value = {
@@ -231,6 +237,9 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setGameLevel,
     completeConfig,
     isInConfigurationMode: !surveyConfig.isConfigComplete,
+    showInstructions,
+    completeInstructions,
+    isPartnerSurvey: !!partnerToken,
     filteredQuestions,
     saveAnswer,
     setOrderId: (orderId: string) => {
