@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useSurvey } from '@/contexts/SurveyContext';
-import { Heart, ExternalLink } from 'lucide-react';
+import { Heart, CheckCircle, ShieldCheck, SendHorizonal, FileText } from 'lucide-react';
 
 const SurveyInstruction: React.FC = () => {
   const { completeInstructions } = useSurvey();
@@ -14,37 +14,93 @@ const SurveyInstruction: React.FC = () => {
           <Heart className="w-8 h-8 text-pink-500" />
         </div>
         
-        <h1 className="text-3xl font-bold mb-4">Witaj w ankiecie Secret Sparks!</h1>
+        <h1 className="text-3xl font-bold mb-6">Witaj w ankiecie Secret Sparks!</h1>
         
-        <div className="my-6 max-w-2xl text-left space-y-4">
-          <p>
-            Ta ankieta pomoże Wam lepiej zrozumieć swoje potrzeby i pragnienia w relacji intymnej.
-          </p>
+        <div className="my-6 w-full space-y-6">
+          {/* Instrukcje w formie kroków */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-card/30 p-6 rounded-lg flex flex-col items-start text-left">
+              <div className="flex items-center mb-3">
+                <CheckCircle className="w-6 h-6 text-primary mr-2" />
+                <h3 className="text-xl font-semibold">1. Odpowiedz szczerze</h3>
+              </div>
+              <p>
+                Odpowiedz na pytania zgodnie ze swoimi prawdziwymi preferencjami i pragnieniami. 
+                Im bardziej szczere odpowiedzi, tym lepiej dopasowany będzie raport.
+              </p>
+            </div>
+            
+            <div className="bg-card/30 p-6 rounded-lg flex flex-col items-start text-left">
+              <div className="flex items-center mb-3">
+                <ShieldCheck className="w-6 h-6 text-primary mr-2" />
+                <h3 className="text-xl font-semibold">2. Prywatność gwarantowana</h3>
+              </div>
+              <p>
+                Twój partner/-rka nie zobaczy Twoich indywidualnych odpowiedzi. 
+                Otrzymacie wspólny raport pokazujący tylko obszary dopasowania.
+              </p>
+            </div>
+            
+            <div className="bg-card/30 p-6 rounded-lg flex flex-col items-start text-left">
+              <div className="flex items-center mb-3">
+                <SendHorizonal className="w-6 h-6 text-primary mr-2" />
+                <h3 className="text-xl font-semibold">3. Wyślij zaproszenie</h3>
+              </div>
+              <p>
+                Po wypełnieniu ankiety, otrzymasz link, który możesz wysłać do swojego partnera/-rki, 
+                aby również wypełnił(a) ankietę.
+              </p>
+            </div>
+            
+            <div className="bg-card/30 p-6 rounded-lg flex flex-col items-start text-left">
+              <div className="flex items-center mb-3">
+                <FileText className="w-6 h-6 text-primary mr-2" />
+                <h3 className="text-xl font-semibold">4. Otrzymaj raport</h3>
+              </div>
+              <p>
+                Po wypełnieniu ankiet przez Was oboje, otrzymacie szczegółowy raport 
+                pokazujący Wasze preferencje i dopasowanie.
+              </p>
+            </div>
+          </div>
           
-          <p>
-            <strong>Jak to działa:</strong>
-          </p>
+          {/* Sekcja z ceną */}
+          <div className="bg-secondary/30 p-6 rounded-lg my-6 w-full max-w-md mx-auto">
+            <h2 className="text-xl font-semibold mb-2">Koszt usługi</h2>
+            <p className="text-3xl font-bold text-primary mb-2">29 zł</p>
+            <p className="text-sm opacity-80">Jednorazowa opłata obejmuje obie ankiety i pełny raport</p>
+            
+            <div className="mt-4 text-xs text-left text-muted-foreground">
+              <p>* Płatność dokonasz po wypełnieniu ankiety.</p>
+              <p>* Raport będzie dostępny po wypełnieniu ankiet przez oboje partnerów.</p>
+            </div>
+          </div>
           
-          <ul className="list-disc list-inside space-y-2 ml-4">
-            <li>Najpierw wypełnisz krótką ankietę, odpowiadając szczerze na pytania</li>
-            <li>Wyślesz zaproszenie do swojego partnera/partnerki, aby również wypełnił(a) ankietę</li>
-            <li>Po wypełnieniu ankiet przez Was oboje, otrzymacie szczegółowy raport</li>
-            <li>Raport pokaże Wasze preferencje, podobieństwa i różnice, a także propozycje urozmaiceń</li>
-          </ul>
-          
-          <p className="mt-4">
-            <strong>Ważne:</strong> Wszystkie odpowiedzi są poufne. Partnerzy nie widzą swoich odpowiedzi przed ukończeniem obu ankiet.
-          </p>
-        </div>
-        
-        <div className="bg-secondary/30 p-6 rounded-lg my-6 w-full max-w-md">
-          <h2 className="text-xl font-semibold mb-2">Koszt usługi</h2>
-          <p className="text-3xl font-bold text-primary mb-2">29 zł</p>
-          <p className="text-sm opacity-80">Jednorazowa opłata obejmuje obie ankiety i pełny raport</p>
-          
-          <div className="mt-4 text-xs text-left text-muted-foreground">
-            <p>* Płatność dokonasz po wypełnieniu ankiety.</p>
-            <p>* Raport będzie dostępny po wypełnieniu ankiet przez oboje partnerów.</p>
+          {/* Sekcja "Co zawiera raport" */}
+          <div className="bg-card/30 p-6 rounded-lg">
+            <h2 className="text-xl font-semibold mb-4">Co zawiera raport:</h2>
+            <ul className="text-left space-y-2">
+              <li className="flex items-center">
+                <CheckCircle className="h-4 w-4 text-primary mr-2 flex-shrink-0" />
+                <span>Wspólne fascynacje i preferencje</span>
+              </li>
+              <li className="flex items-center">
+                <CheckCircle className="h-4 w-4 text-primary mr-2 flex-shrink-0" />
+                <span>Strefy odkrywania i eksperymentowania</span>
+              </li>
+              <li className="flex items-center">
+                <CheckCircle className="h-4 w-4 text-primary mr-2 flex-shrink-0" />
+                <span>Mapa komfortu z oznaczeniem obszarów idealnego dopasowania</span>
+              </li>
+              <li className="flex items-center">
+                <CheckCircle className="h-4 w-4 text-primary mr-2 flex-shrink-0" />
+                <span>Inspiracje i scenariusze na wspólne odkrywanie</span>
+              </li>
+              <li className="flex items-center">
+                <CheckCircle className="h-4 w-4 text-primary mr-2 flex-shrink-0" />
+                <span>Wskazówki jak rozpocząć rozmowę o wzajemnych pragnieniach</span>
+              </li>
+            </ul>
           </div>
         </div>
         
@@ -55,16 +111,6 @@ const SurveyInstruction: React.FC = () => {
           >
             Rozpocznij ankietę
           </Button>
-          
-          <a 
-            href="/terms" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="flex items-center text-sm mt-4 text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Regulamin usługi
-            <ExternalLink className="ml-1 h-3 w-3" />
-          </a>
         </div>
       </div>
     </div>
