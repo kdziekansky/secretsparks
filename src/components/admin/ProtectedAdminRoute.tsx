@@ -22,7 +22,6 @@ const ProtectedAdminRoute: React.FC<ProtectedAdminRouteProps> = ({ children }) =
   useEffect(() => {
     if (isAuthenticated) {
       try {
-        // Dla przykładu, ustawiamy token CSRF w meta tagu
         // W pełnym rozwiązaniu należy używać secure cookies
         const csrfToken = crypto.randomUUID();
         const metaTag = document.querySelector('meta[name="csrf-token"]');
@@ -38,6 +37,7 @@ const ProtectedAdminRoute: React.FC<ProtectedAdminRouteProps> = ({ children }) =
         
         // Zapisujemy token także w sessionStorage
         sessionStorage.setItem('csrf_token', csrfToken);
+        console.log('CSRF token ustawiony poprawnie');
       } catch (error) {
         console.error('Błąd podczas ustawiania tokenu CSRF:', error);
       }
@@ -66,6 +66,7 @@ const ProtectedAdminRoute: React.FC<ProtectedAdminRouteProps> = ({ children }) =
     });
     
     // Zapisz aktualną ścieżkę, aby po zalogowaniu wrócić na nią
+    // Użyj path spe43al-adm1n-p4nel zamiast konkretnej ścieżki, aby uniknąć pętli przekierowań
     return <Navigate to="/spe43al-adm1n-p4nel" replace state={{ from: location }} />;
   }
 

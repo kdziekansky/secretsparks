@@ -3,11 +3,15 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import * as crypto from "https://deno.land/std@0.190.0/crypto/mod.ts";
 
+// Zdefiniuj nagłówki CORS - bardzo ważne dla komunikacji cross-origin
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": "*", // W produkcji warto ograniczyć do konkretnej domeny
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Max-Age": "86400"
+  "Access-Control-Max-Age": "86400",
+  "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+  "Pragma": "no-cache",
+  "Expires": "0"
 };
 
 // Konwertuje string na ArrayBuffer
@@ -26,9 +30,9 @@ const sha256 = async (message: string): Promise<string> => {
 
 serve(async (req) => {
   console.log(`Admin verify code function called with method: ${req.method}`);
-  console.log(`Listening on ${req.url}`);
+  console.log(`URL: ${req.url}`);
   
-  // Obsługa zapytań CORS preflight
+  // Obsługa żądań CORS preflight - to jest krytyczne dla cross-origin
   if (req.method === "OPTIONS") {
     console.log("Handling CORS preflight request");
     return new Response(null, { 
@@ -38,11 +42,12 @@ serve(async (req) => {
   }
 
   try {
-    // Sprawdź nagłówek Origin, ograniczając dostęp tylko do znanej domeny
+    // Sprawdź nagłówek Origin i Content-Type
     const origin = req.headers.get("Origin") || "*";
-    console.log(`Request from origin: ${origin}`);
+    const contentType = req.headers.get("Content-Type");
+    console.log(`Request from origin: ${origin}, Content-Type: ${contentType}`);
     
-    // W produkcji powinno się ograniczyć tylko do konkretnej domeny
+    // Lista dozwolonych domen - w produkcji ograniczyć
     const allowedOrigins = [
       "http://localhost:3000", 
       "http://localhost:5173", 
@@ -51,16 +56,14 @@ serve(async (req) => {
       new URL(Deno.env.get("SUPABASE_URL") || "").origin
     ];
     
+    // Ustawienie nagłówków odpowiedzi
     const secureHeaders = {
       ...corsHeaders,
       "Access-Control-Allow-Origin": allowedOrigins.includes(origin) ? origin : allowedOrigins[0],
-      "Content-Type": "application/json",
-      "X-Content-Type-Options": "nosniff",
-      "X-Frame-Options": "DENY",
-      "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
+      "Content-Type": "application/json"
     };
 
-    // Sprawdź, czy body jest dostępne
+    // Sprawdź metodę żądania
     if (req.method !== "POST") {
       console.error("Method not allowed:", req.method);
       return new Response(
@@ -69,20 +72,20 @@ serve(async (req) => {
       );
     }
 
-    // Debugowanie body żądania
+    // Próba odczytania i parsowania ciała żądania
     let bodyText;
     try {
       bodyText = await req.text();
-      console.log("Request body text:", bodyText);
+      console.log("Raw request body:", bodyText);
     } catch (err) {
       console.error("Cannot read request body:", err);
       return new Response(
-        JSON.stringify({ error: "Cannot read request body" }),
+        JSON.stringify({ error: "Cannot read request body", details: err.message }),
         { status: 400, headers: secureHeaders }
       );
     }
     
-    // Parsuj JSON
+    // Parsowanie JSON
     let body;
     try {
       body = JSON.parse(bodyText);
@@ -90,11 +93,12 @@ serve(async (req) => {
     } catch (err) {
       console.error("Error parsing JSON:", err);
       return new Response(
-        JSON.stringify({ error: "Invalid JSON body" }),
+        JSON.stringify({ error: "Invalid JSON body", details: err.message, rawBody: bodyText }),
         { status: 400, headers: secureHeaders }
       );
     }
     
+    // Sprawdzenie kodu
     const { code } = body;
     
     if (!code) {
@@ -111,9 +115,7 @@ serve(async (req) => {
     
     console.log("Environment variables check:", { 
       saltExists: !!secretSalt, 
-      codeExists: !!correctAdminCode,
-      saltValue: secretSalt ? "EXISTS (not showing)" : "NOT EXISTS",
-      codeValue: correctAdminCode ? "EXISTS (not showing)" : "NOT EXISTS"
+      codeExists: !!correctAdminCode
     });
     
     if (!secretSalt || !correctAdminCode) {
@@ -143,26 +145,39 @@ serve(async (req) => {
     // Oblicz hash przesłanego kodu
     const inputHash = await sha256(code + currentYear + secretSalt);
     
-    // Weryfikacja kodu - używamy tylko bezpiecznej metody porównania hashy
+    // Weryfikacja kodu poprzez porównanie hashy
     const isValid = inputHash === correctHash;
     
     console.log("Weryfikacja kodu administratora:", isValid ? "Sukces" : "Niepowodzenie");
     console.log("Obliczony hash wejściowy (pierwsze 10 znaków):", inputHash.substring(0, 10)); 
     console.log("Oczekiwany hash (pierwsze 10 znaków):", correctHash.substring(0, 10));
     
-    // Zapisz próbę logowania w bazie danych, aby śledzić potencjalne ataki
-    const supabaseAdmin = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      { auth: { persistSession: false } }
-    );
-
-    // Zapisz próbę logowania w tabeli (jeśli istnieje)
+    // Dla celów rozwojowych dodajemy informacje debugowania
+    let debugInfo = {};
+    if (!isValid) {
+      debugInfo = {
+        debug: {
+          currentYear,
+          inputHashPrefix: inputHash.substring(0, 10),
+          correctHashPrefix: correctHash.substring(0, 10),
+          saltExists: !!secretSalt,
+          codeExists: !!correctAdminCode
+        }
+      };
+    }
+    
+    // Zapisz próbę logowania w bazie danych
     try {
+      const supabaseAdmin = createClient(
+        Deno.env.get("SUPABASE_URL") ?? "",
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+        { auth: { persistSession: false } }
+      );
+
       await supabaseAdmin
         .from('admin_login_attempts')
         .insert([{ 
-          code_hash: inputHash.substring(0, 10), // Zapisujemy tylko część hashu
+          code_hash: inputHash.substring(0, 10),
           successful: isValid,
           ip_hash: await sha256(req.headers.get("x-forwarded-for") || "unknown")
         }]);
@@ -174,7 +189,10 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ verified: isValid }),
+      JSON.stringify({ 
+        verified: isValid,
+        ...debugInfo
+      }),
       { status: 200, headers: secureHeaders }
     );
 
@@ -184,7 +202,8 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         error: "Wystąpił błąd podczas weryfikacji kodu",
-        details: error.message || "Nieznany błąd" 
+        details: error.message || "Nieznany błąd",
+        stack: error.stack
       }),
       { status: 500, headers: corsHeaders }
     );

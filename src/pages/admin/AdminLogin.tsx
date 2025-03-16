@@ -3,11 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Loader2, Lock, UserPlus, KeyRound, Shield } from 'lucide-react';
+import { Loader2, Lock, UserPlus, KeyRound, Shield, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -23,8 +24,9 @@ const AdminLogin: React.FC = () => {
   const [loginAttempts, setLoginAttempts] = useState(0);
   const [isLocked, setIsLocked] = useState(false);
   const [lockoutEndTime, setLockoutEndTime] = useState<Date | null>(null);
+  const [verificationError, setVerificationError] = useState<string | null>(null);
+  const [debugInfo, setDebugInfo] = useState<any>(null);
   const { login, isLoading, isAuthenticated } = useAdminAuth();
-  const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -60,13 +62,14 @@ const AdminLogin: React.FC = () => {
     }
   }, [isLocked, lockoutEndTime]);
 
-  // Przekieruj zalogowanego użytkownika jeśli wraca na stronę logowania
+  // Przekieruj zalogowanego użytkownika
   useEffect(() => {
     if (isAuthenticated) {
       console.log('Użytkownik już zalogowany, przekierowuję do dashboard');
-      navigate('/spe43al-adm1n-p4nel/dashboard');
+      const from = location.state?.from?.pathname || '/spe43al-adm1n-p4nel/dashboard';
+      navigate(from);
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, location]);
 
   // Funkcja blokująca konto po zbyt wielu nieprawidłowych próbach
   const checkAndLockAccount = () => {
@@ -82,10 +85,8 @@ const AdminLogin: React.FC = () => {
       setIsLocked(true);
       setLockoutEndTime(lockoutEndTime);
       
-      toast({
-        title: "Konto tymczasowo zablokowane",
+      toast.error("Konto tymczasowo zablokowane", {
         description: `Zbyt wiele nieudanych prób. Spróbuj ponownie za 15 minut.`,
-        variant: "destructive",
       });
     }
   };
@@ -96,39 +97,37 @@ const AdminLogin: React.FC = () => {
     // Sprawdź czy konto jest zablokowane
     if (isLocked) {
       const timeLeft = lockoutEndTime ? Math.ceil((lockoutEndTime.getTime() - new Date().getTime()) / 60000) : 15;
-      toast({
-        title: "Logowanie zablokowane",
+      toast.error("Logowanie zablokowane", {
         description: `Zbyt wiele nieudanych prób. Spróbuj ponownie za ${timeLeft} minut.`,
-        variant: "destructive",
       });
       return;
     }
     
-    // Dodatkowa walidacja przed wysłaniem
+    // Walidacja pól formularza
     if (!email) {
-      toast({
-        title: "Wprowadź adres email",
+      toast.error("Wprowadź adres email", {
         description: "Adres email jest wymagany do zalogowania się.",
-        variant: "destructive",
       });
       return;
     }
     
     if (!password) {
-      toast({
-        title: "Wprowadź hasło",
+      toast.error("Wprowadź hasło", {
         description: "Hasło jest wymagane do zalogowania się.",
-        variant: "destructive",
       });
       return;
     }
     
-    console.log('Próba logowania dla:', email);
     try {
       await login(email, password);
       // Reset licznika prób po udanym logowaniu
       setLoginAttempts(0);
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Błąd logowania:', error);
+      toast.error("Błąd logowania", {
+        description: error.message || "Nieprawidłowy email lub hasło.",
+      });
+      
       // Zwiększ licznik nieudanych prób
       checkAndLockAccount();
     }
@@ -136,11 +135,13 @@ const AdminLogin: React.FC = () => {
 
   // Bezpieczna weryfikacja kodu dostępu przy użyciu funkcji brzegowej
   const verifyRegistrationCode = async () => {
+    // Resetujemy poprzednie błędy
+    setVerificationError(null);
+    setDebugInfo(null);
+    
     if (!registrationCode) {
-      toast({
-        title: "Wprowadź kod dostępu",
+      toast.error("Wprowadź kod dostępu", {
         description: "Kod dostępu jest wymagany do utworzenia konta administratora.",
-        variant: "destructive",
       });
       return;
     }
@@ -150,47 +151,79 @@ const AdminLogin: React.FC = () => {
     try {
       console.log('Rozpoczynam weryfikację kodu dostępu:', registrationCode);
       
-      // Użyj funkcji brzegowej do weryfikacji kodu z dodatkowymi opcjami debugowania
-      const response = await supabase.functions.invoke('admin-verify-code', {
+      // Ustawienie URL funkcji brzegowej
+      const functionUrl = `${supabase.functions.url('admin-verify-code')}`;
+      console.log('Wywołuję funkcję brzegową:', functionUrl);
+      
+      // Wywołanie funkcji brzegowej ze szczegółowym logowaniem
+      toast.info("Weryfikacja kodu", {
+        description: "Trwa weryfikacja kodu administratora...",
+      });
+      
+      // Dodajemy timeout, aby zapobiec zawieszeniu się żądania
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Timeout - brak odpowiedzi z serwera')), 10000)
+      );
+      
+      // Wykorzystajmy supabase.functions.invoke zamiast fetch
+      const functionPromise = supabase.functions.invoke('admin-verify-code', {
         body: { code: registrationCode },
         headers: {
           'Content-Type': 'application/json',
         }
       });
       
+      // Wyścig między timeoutem a normalnym wykonaniem
+      const response = await Promise.race([functionPromise, timeoutPromise]) as any;
+      
       console.log('Surowa odpowiedź z funkcji weryfikacji:', response);
       
       if (response.error) {
-        console.error('Błąd podczas wywołania funkcji edge:', response.error);
-        throw new Error(`Błąd wywołania funkcji: ${response.error.message || response.error}`);
+        throw new Error(`Błąd funkcji Edge: ${response.error.message || JSON.stringify(response.error)}`);
       }
       
       if (response.data && response.data.verified) {
         setIsCodeVerified(true);
-        toast({
-          title: "Kod weryfikacyjny poprawny",
+        setVerificationError(null);
+        toast.success("Kod weryfikacyjny poprawny", {
           description: "Możesz teraz utworzyć konto administratora.",
         });
       } else if (response.data && response.data.error) {
-        // Odpowiedź zawiera błąd z funkcji brzegowej
         console.error('Błąd z funkcji brzegowej:', response.data.error);
-        throw new Error(response.data.error);
-      } else {
+        setVerificationError(response.data.error);
+        
+        if (response.data.debug) {
+          setDebugInfo(response.data.debug);
+        }
+        
+        toast.error("Błąd weryfikacji", {
+          description: response.data.error,
+        });
+        
         // Zwiększ licznik nieudanych prób
         checkAndLockAccount();
+      } else {
+        setVerificationError("Nieprawidłowy kod weryfikacyjny");
         
-        toast({
-          title: "Nieprawidłowy kod",
+        if (response.data && response.data.debug) {
+          setDebugInfo(response.data.debug);
+        }
+        
+        toast.error("Nieprawidłowy kod", {
           description: "Wprowadzony kod weryfikacyjny jest nieprawidłowy.",
-          variant: "destructive",
         });
+        
+        // Zwiększ licznik nieudanych prób
+        checkAndLockAccount();
       }
     } catch (error: any) {
       console.error('Błąd weryfikacji kodu:', error);
-      toast({
-        title: "Błąd weryfikacji",
-        description: error.message || "Wystąpił problem podczas weryfikacji kodu. Sprawdź konsolę przeglądarki.",
-        variant: "destructive",
+      
+      // Ustawienie komunikatu błędu
+      setVerificationError(error.message || "Wystąpił problem podczas weryfikacji kodu");
+      
+      toast.error("Błąd weryfikacji", {
+        description: error.message || "Wystąpił problem podczas weryfikacji kodu. Sprawdź konsolę.",
       });
     } finally {
       setIsVerifying(false);
@@ -202,47 +235,37 @@ const AdminLogin: React.FC = () => {
     
     // Walidacja formularza rejestracji
     if (!email) {
-      toast({
-        title: "Wprowadź adres email",
+      toast.error("Wprowadź adres email", {
         description: "Adres email jest wymagany do utworzenia konta.",
-        variant: "destructive",
       });
       return;
     }
     
     if (!password) {
-      toast({
-        title: "Wprowadź hasło",
+      toast.error("Wprowadź hasło", {
         description: "Hasło jest wymagane do utworzenia konta.",
-        variant: "destructive",
       });
       return;
     }
     
     if (password.length < 8) {
-      toast({
-        title: "Zbyt krótkie hasło",
+      toast.error("Zbyt krótkie hasło", {
         description: "Hasło musi zawierać co najmniej 8 znaków.",
-        variant: "destructive",
       });
       return;
     }
     
     if (password !== confirmPassword) {
-      toast({
-        title: "Hasła nie są zgodne",
+      toast.error("Hasła nie są zgodne", {
         description: "Powtórzone hasło musi być identyczne z hasłem.",
-        variant: "destructive",
       });
       return;
     }
     
-    // Sprawdzanie listy dozwolonych administratorów zostało przeniesione do logiki po stronie serwera
-    
     setIsRegistering(true);
     
     try {
-      // Najpierw sprawdzamy, czy admin już istnieje w tabeli admin_users
+      // Najpierw sprawdzamy, czy admin już istnieje
       const { data: existingAdmin, error: checkError } = await supabase
         .from('admin_users')
         .select('email')
@@ -250,10 +273,8 @@ const AdminLogin: React.FC = () => {
         .maybeSingle();
       
       if (existingAdmin) {
-        toast({
-          title: "Konto już istnieje",
+        toast.error("Konto już istnieje", {
           description: "Administrator o tym adresie email już istnieje. Możesz się zalogować.",
-          variant: "destructive",
         });
         setIsRegistering(false);
         return;
@@ -277,8 +298,7 @@ const AdminLogin: React.FC = () => {
       
       if (adminError) throw adminError;
       
-      toast({
-        title: "Konto utworzone",
+      toast.success("Konto utworzone", {
         description: "Konto administratora zostało utworzone. Możesz się teraz zalogować.",
       });
       
@@ -287,10 +307,8 @@ const AdminLogin: React.FC = () => {
       
     } catch (error: any) {
       console.error('Błąd podczas rejestracji:', error);
-      toast({
-        title: "Błąd rejestracji",
+      toast.error("Błąd rejestracji", {
         description: error.message || "Nie udało się utworzyć konta administratora.",
-        variant: "destructive",
       });
     } finally {
       setIsRegistering(false);
@@ -416,6 +434,24 @@ const AdminLogin: React.FC = () => {
                         </p>
                       </div>
                     </div>
+                    
+                    {verificationError && (
+                      <Alert variant="destructive" className="mb-4">
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertTitle>Błąd weryfikacji</AlertTitle>
+                        <AlertDescription>
+                          {verificationError}
+                          {debugInfo && (
+                            <details className="mt-2 text-xs">
+                              <summary>Informacje debugowania</summary>
+                              <pre className="mt-2 p-2 bg-muted/20 rounded text-xs overflow-auto">
+                                {JSON.stringify(debugInfo, null, 2)}
+                              </pre>
+                            </details>
+                          )}
+                        </AlertDescription>
+                      </Alert>
+                    )}
                     
                     <div className="space-y-2">
                       <Label htmlFor="registration-code" className="block text-sm font-medium">
