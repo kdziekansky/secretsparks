@@ -42,24 +42,9 @@ serve(async (req) => {
   }
 
   try {
-    // Sprawdź nagłówek Origin i Content-Type
-    const origin = req.headers.get("Origin") || "*";
-    const contentType = req.headers.get("Content-Type");
-    console.log(`Request from origin: ${origin}, Content-Type: ${contentType}`);
-    
-    // Lista dozwolonych domen - w produkcji ograniczyć
-    const allowedOrigins = [
-      "http://localhost:3000", 
-      "http://localhost:5173", 
-      "https://secretsparks.pl",
-      "https://secret-sparks.netlify.app",
-      new URL(Deno.env.get("SUPABASE_URL") || "").origin
-    ];
-    
     // Ustawienie nagłówków odpowiedzi
     const secureHeaders = {
       ...corsHeaders,
-      "Access-Control-Allow-Origin": allowedOrigins.includes(origin) ? origin : allowedOrigins[0],
       "Content-Type": "application/json"
     };
 
@@ -73,27 +58,14 @@ serve(async (req) => {
     }
 
     // Próba odczytania i parsowania ciała żądania
-    let bodyText;
-    try {
-      bodyText = await req.text();
-      console.log("Raw request body:", bodyText);
-    } catch (err) {
-      console.error("Cannot read request body:", err);
-      return new Response(
-        JSON.stringify({ error: "Cannot read request body", details: err.message }),
-        { status: 400, headers: secureHeaders }
-      );
-    }
-    
-    // Parsowanie JSON
     let body;
     try {
-      body = JSON.parse(bodyText);
-      console.log("Parsed body:", body);
+      body = await req.json();
+      console.log("Parsed request body:", body);
     } catch (err) {
       console.error("Error parsing JSON:", err);
       return new Response(
-        JSON.stringify({ error: "Invalid JSON body", details: err.message, rawBody: bodyText }),
+        JSON.stringify({ error: "Invalid JSON body", details: err.message }),
         { status: 400, headers: secureHeaders }
       );
     }

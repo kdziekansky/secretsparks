@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import { Input } from '@/components/ui/input';
@@ -151,53 +150,38 @@ const AdminLogin: React.FC = () => {
     try {
       console.log('Rozpoczynam weryfikację kodu dostępu:', registrationCode);
       
-      // Ustawienie URL funkcji brzegowej
-      const functionUrl = `${supabase.functions.url('admin-verify-code')}`;
-      console.log('Wywołuję funkcję brzegową:', functionUrl);
-      
-      // Wywołanie funkcji brzegowej ze szczegółowym logowaniem
       toast.info("Weryfikacja kodu", {
         description: "Trwa weryfikacja kodu administratora...",
       });
       
-      // Dodajemy timeout, aby zapobiec zawieszeniu się żądania
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout - brak odpowiedzi z serwera')), 10000)
-      );
-      
-      // Wykorzystajmy supabase.functions.invoke zamiast fetch
-      const functionPromise = supabase.functions.invoke('admin-verify-code', {
-        body: { code: registrationCode },
-        headers: {
-          'Content-Type': 'application/json',
-        }
+      // Poprawione wywołanie funkcji brzegowej
+      const { data, error } = await supabase.functions.invoke('admin-verify-code', {
+        method: 'POST',
+        body: { code: registrationCode }
       });
       
-      // Wyścig między timeoutem a normalnym wykonaniem
-      const response = await Promise.race([functionPromise, timeoutPromise]) as any;
+      console.log('Odpowiedź z funkcji weryfikacji:', data, error);
       
-      console.log('Surowa odpowiedź z funkcji weryfikacji:', response);
-      
-      if (response.error) {
-        throw new Error(`Błąd funkcji Edge: ${response.error.message || JSON.stringify(response.error)}`);
+      if (error) {
+        throw new Error(`Błąd funkcji Edge: ${error.message || JSON.stringify(error)}`);
       }
       
-      if (response.data && response.data.verified) {
+      if (data && data.verified) {
         setIsCodeVerified(true);
         setVerificationError(null);
         toast.success("Kod weryfikacyjny poprawny", {
           description: "Możesz teraz utworzyć konto administratora.",
         });
-      } else if (response.data && response.data.error) {
-        console.error('Błąd z funkcji brzegowej:', response.data.error);
-        setVerificationError(response.data.error);
+      } else if (data && data.error) {
+        console.error('Błąd z funkcji brzegowej:', data.error);
+        setVerificationError(data.error);
         
-        if (response.data.debug) {
-          setDebugInfo(response.data.debug);
+        if (data.debug) {
+          setDebugInfo(data.debug);
         }
         
         toast.error("Błąd weryfikacji", {
-          description: response.data.error,
+          description: data.error,
         });
         
         // Zwiększ licznik nieudanych prób
@@ -205,8 +189,8 @@ const AdminLogin: React.FC = () => {
       } else {
         setVerificationError("Nieprawidłowy kod weryfikacyjny");
         
-        if (response.data && response.data.debug) {
-          setDebugInfo(response.data.debug);
+        if (data && data.debug) {
+          setDebugInfo(data.debug);
         }
         
         toast.error("Nieprawidłowy kod", {

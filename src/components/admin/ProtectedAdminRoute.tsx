@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
-import { Loader2, AlertTriangle } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ProtectedAdminRouteProps {
@@ -68,22 +68,6 @@ const ProtectedAdminRoute: React.FC<ProtectedAdminRouteProps> = ({ children }) =
     // Zapisz aktualną ścieżkę, aby po zalogowaniu wrócić na nią
     // Użyj path spe43al-adm1n-p4nel zamiast konkretnej ścieżki, aby uniknąć pętli przekierowań
     return <Navigate to="/spe43al-adm1n-p4nel" replace state={{ from: location }} />;
-  }
-
-  // Dodatkowe sprawdzenie - czy adres email jest w domenie zaufanej
-  if (adminEmail && !adminEmail.endsWith('@secretsparks.pl') && !adminEmail.endsWith('@example.com')) {
-    console.warn('Adres email administratora nie jest w zaufanej domenie:', adminEmail);
-    // Dodatkowe logowanie dla bezpieczeństwa
-    try {
-      const logData = {
-        email: adminEmail,
-        timestamp: new Date().toISOString(),
-        path: location.pathname
-      };
-      console.warn('Nietypowy dostęp do panelu admina:', logData);
-    } catch (error) {
-      console.error('Błąd podczas logowania danych:', error);
-    }
   }
 
   console.log('Użytkownik uwierzytelniony, renderowanie chronionej zawartości');
