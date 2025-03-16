@@ -25,9 +25,6 @@ const Header = () => {
         </Link>
         
         <nav className="hidden md:flex items-center space-x-4 lg:space-x-8">
-          <Link to="/o-nas" className="nav-link">
-            O nas
-          </Link>
           <Link to="/zasady" className="nav-link">
             Zasady
           </Link>
@@ -65,9 +62,6 @@ const Header = () => {
       {isMenuOpen && (
         <div className="md:hidden p-4 pb-6 border-t border-border/40 bg-[#05050a]">
           <nav className="flex flex-col space-y-4">
-            <Link to="/o-nas" className="nav-link-mobile" onClick={() => setIsMenuOpen(false)}>
-              O nas
-            </Link>
             <Link to="/zasady" className="nav-link-mobile" onClick={() => setIsMenuOpen(false)}>
               Zasady
             </Link>

@@ -18,7 +18,6 @@ import ThankYouPage from './pages/ThankYouPage';
 import PaymentPage from './pages/PaymentPage';
 import SecretAIPage from './pages/SecretAIPage';
 import NotFound from './pages/NotFound';
-import AboutUsPage from './pages/AboutUsPage';
 import ZasadyPage from './pages/ZasadyPage';
 
 // Importowanie komponentów administracyjnych
@@ -66,7 +65,6 @@ function App() {
                     <Route path="/potwierdzenie" element={<ThankYouPage />} />
                     <Route path="/platnosc" element={<PaymentPage />} />
                     <Route path="/secretai" element={<SecretAIPage />} />
-                    <Route path="/o-nas" element={<AboutUsPage />} />
                     <Route path="/zasady" element={<ZasadyPage />} />
                     <Route path="/spe43al-adm1n-p4nel" element={<AdminLogin />} />
                     <Route path="/spe43al-adm1n-p4nel/setup" element={<FirstAdminSetup />} />
