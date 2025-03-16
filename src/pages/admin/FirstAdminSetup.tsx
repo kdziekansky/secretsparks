@@ -1,24 +1,23 @@
 
 import React, { useState, useEffect } from 'react';
-import { useAdminAuth } from '@/contexts/AdminAuthContext';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Loader2, Lock, Mail } from 'lucide-react';
+import { Loader2, Lock, User, Mail } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate, useLocation } from 'react-router-dom';
 
-const AdminLogin: React.FC = () => {
-  const [email, setEmail] = useState('');
+const FirstAdminSetup: React.FC = () => {
+  const [email, setEmail] = useState('kdziekansky@icloud.com');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasAdmins, setHasAdmins] = useState(true);
   const [isCheckingAdmins, setIsCheckingAdmins] = useState(true);
-  const { login, isLoading, isAuthenticated } = useAdminAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const location = useLocation();
 
   // Sprawdź, czy istnieją już administratorzy
   useEffect(() => {
@@ -32,67 +31,106 @@ const AdminLogin: React.FC = () => {
         // Jeśli wystąpił błąd lub count jest undefined, zakładamy że administratorzy istnieją
         if (error || count === undefined) {
           console.error('Błąd podczas sprawdzania administratorów:', error);
-          setIsCheckingAdmins(false);
+          setHasAdmins(true);
+          navigate('/spe43al-adm1n-p4nel');
           return;
         }
         
-        // Jeśli nie ma administratorów, przekieruj na stronę konfiguracji
-        if (count === 0) {
-          navigate('/spe43al-adm1n-p4nel/setup');
-          return;
-        }
+        setHasAdmins(count > 0);
         
-        setIsCheckingAdmins(false);
+        // Jeśli administratorzy już istnieją, przekieruj na stronę logowania
+        if (count > 0) {
+          navigate('/spe43al-adm1n-p4nel');
+        }
       } catch (error) {
         console.error('Wyjątek podczas sprawdzania administratorów:', error);
+        setHasAdmins(true);
+        navigate('/spe43al-adm1n-p4nel');
+      } finally {
         setIsCheckingAdmins(false);
       }
     };
 
-    // Wykonaj sprawdzenie tylko jeśli użytkownik nie jest zalogowany
-    if (!isAuthenticated) {
-      checkAdmins();
-    } else {
-      setIsCheckingAdmins(false);
-    }
-  }, [navigate, isAuthenticated]);
-
-  // Przekieruj zalogowanego użytkownika jeśli wraca na stronę logowania
-  useEffect(() => {
-    if (isAuthenticated) {
-      console.log('Użytkownik już zalogowany, przekierowuję do dashboard');
-      navigate('/spe43al-adm1n-p4nel/dashboard');
-    }
-  }, [isAuthenticated, navigate]);
+    checkAdmins();
+  }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Dodatkowa walidacja przed wysłaniem
-    if (!email) {
+    // Sprawdź, czy hasła są zgodne
+    if (password !== confirmPassword) {
       toast({
-        title: "Wprowadź adres email",
-        description: "Adres email jest wymagany do zalogowania się.",
+        title: "Hasła nie są zgodne",
+        description: "Upewnij się, że oba hasła są identyczne.",
         variant: "destructive",
       });
       return;
     }
     
-    if (!password) {
+    // Sprawdź, czy hasło ma odpowiednią długość
+    if (password.length < 8) {
       toast({
-        title: "Wprowadź hasło",
-        description: "Hasło jest wymagane do zalogowania się.",
+        title: "Hasło jest za krótkie",
+        description: "Hasło musi mieć co najmniej 8 znaków.",
         variant: "destructive",
       });
       return;
     }
     
-    console.log('Próba logowania dla:', email);
-    await login(email, password);
+    try {
+      setIsLoading(true);
+      console.log('Tworzenie pierwszego administratora:', email);
+      
+      // Wywołaj funkcję edge do utworzenia pierwszego administratora
+      const { data, error } = await supabase.functions.invoke('admin-password-setup', {
+        body: { 
+          email, 
+          password, 
+          firstAdmin: true 
+        },
+      });
+      
+      if (error) {
+        console.error('Błąd podczas tworzenia administratora:', error);
+        toast({
+          title: "Błąd podczas tworzenia administratora",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      if (data.error) {
+        console.error('Błąd zwrócony z funkcji:', data.error);
+        toast({
+          title: "Błąd podczas tworzenia administratora",
+          description: data.error,
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Sukces - pokaż powiadomienie i przekieruj do strony logowania
+      toast({
+        title: "Administrator utworzony pomyślnie",
+        description: "Możesz teraz zalogować się na konto administratora.",
+      });
+      
+      navigate('/spe43al-adm1n-p4nel');
+    } catch (error) {
+      console.error('Wyjątek podczas tworzenia administratora:', error);
+      toast({
+        title: "Błąd podczas tworzenia administratora",
+        description: "Wystąpił nieoczekiwany błąd podczas tworzenia administratora.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // Jeśli trwa sprawdzanie, wyświetl loader
-  if (isCheckingAdmins) {
+  // Jeśli trwa sprawdzanie lub administratorzy istnieją, wyświetl loader
+  if (isCheckingAdmins || hasAdmins) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
@@ -103,28 +141,16 @@ const AdminLogin: React.FC = () => {
     );
   }
 
-  // Jeśli użytkownik jest już uwierzytelniony, pokaż loader podczas przekierowania
-  if (isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
-          <p className="text-sm text-muted-foreground">Przekierowywanie do panelu administratora...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <Card className="w-full max-w-md shadow-md">
         <CardHeader className="text-center pb-6">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-4">
-            <Lock className="h-6 w-6 text-primary" />
+            <User className="h-6 w-6 text-primary" />
           </div>
-          <CardTitle className="text-2xl font-bold">Panel administracyjny</CardTitle>
+          <CardTitle className="text-2xl font-bold">Konfiguracja pierwszego administratora</CardTitle>
           <CardDescription>
-            Dostęp tylko dla autoryzowanych użytkowników
+            Utworzenie konta głównego administratora systemu
           </CardDescription>
         </CardHeader>
         
@@ -160,11 +186,34 @@ const AdminLogin: React.FC = () => {
                   id="password"
                   name="password"
                   type="password"
-                  autoComplete="current-password"
+                  autoComplete="new-password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder="Minimum 8 znaków"
+                  className="pl-10"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Hasło musi mieć co najmniej 8 znaków
+              </p>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword" className="block text-sm font-medium">
+                Potwierdź hasło
+              </Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Powtórz hasło"
                   className="pl-10"
                 />
               </div>
@@ -172,44 +221,18 @@ const AdminLogin: React.FC = () => {
 
             <Button 
               type="submit" 
-              className="w-full" 
+              className="w-full mt-6" 
               disabled={isLoading}
             >
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Logowanie...
+                  Tworzenie administratora...
                 </>
               ) : (
-                'Zaloguj się'
+                'Utwórz konto administratora'
               )}
             </Button>
-            
-            <div className="text-xs text-center text-muted-foreground mt-2">
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <button type="button" className="text-xs underline hover:text-primary">
-                    Potrzebujesz pomocy z logowaniem?
-                  </button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Pomoc z logowaniem</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      <p className="mb-2">Dla konta administracyjnego:</p>
-                      <ul className="list-disc pl-5 space-y-1 mb-4">
-                        <li>Użyj adresu email, który otrzymałeś od głównego administratora</li>
-                        <li>Jeśli nie pamiętasz hasła, skontaktuj się z głównym administratorem</li>
-                        <li>W przypadku nowego konta użyj hasła, które zostało dla Ciebie utworzone</li>
-                      </ul>
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Zamknij</AlertDialogCancel>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
           </form>
         </CardContent>
         
@@ -221,4 +244,4 @@ const AdminLogin: React.FC = () => {
   );
 };
 
-export default AdminLogin;
+export default FirstAdminSetup;

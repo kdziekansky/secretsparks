@@ -17,15 +17,6 @@ serve(async (req) => {
   try {
     // Get authorization header
     const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error: "Missing authorization header" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    // Get authorization token
-    const token = authHeader.replace('Bearer ', '');
     
     // Create Supabase client with service role key
     const supabaseAdmin = createClient(
@@ -34,19 +25,93 @@ serve(async (req) => {
       { auth: { persistSession: false } }
     );
 
+    // Get the request body
+    const requestData = await req.json();
+    const { email, password, action, firstAdmin } = requestData;
+
+    // Sprawdź, czy tabela admin_users jest pusta (brak administratorów)
+    const { count, error: countError } = await supabaseAdmin
+      .from('admin_users')
+      .select('*', { count: 'exact', head: true });
+      
+    const isEmptyAdminTable = count === 0;
+    console.log("Czy tabela admin_users jest pusta:", isEmptyAdminTable);
+    
+    // Obsługa tworzenia pierwszego administratora
+    if (firstAdmin === true && isEmptyAdminTable) {
+      console.log("Tworzenie pierwszego administratora:", email);
+      
+      if (!email || !password || typeof password !== 'string' || password.length < 8) {
+        return new Response(
+          JSON.stringify({ error: "Email wymagany i hasło musi mieć co najmniej 8 znaków" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
+      // Sprawdź, czy użytkownik istnieje w auth
+      const { data: authUserCheck, error: authUserCheckError } = await supabaseAdmin.auth.admin.getUserByEmail(email);
+      
+      if (!authUserCheck) {
+        // Utwórz użytkownika w auth jeśli nie istnieje
+        const { data: newAuthUser, error: newAuthUserError } = await supabaseAdmin.auth.admin.createUser({
+          email: email,
+          password: password,
+          email_confirm: true
+        });
+        
+        if (newAuthUserError) {
+          return new Response(
+            JSON.stringify({ error: `Nie udało się utworzyć użytkownika auth: ${newAuthUserError.message}` }),
+            { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+      }
+      
+      // Hashuj hasło do przechowywania
+      const hashedPassword = await bcrypt.hash(password);
+      
+      // Utwórz administratora
+      const { data: newAdmin, error: newAdminError } = await supabaseAdmin
+        .from('admin_users')
+        .insert([{ email: email, password: hashedPassword }]);
+        
+      if (newAdminError) {
+        return new Response(
+          JSON.stringify({ error: `Nie udało się utworzyć administratora: ${newAdminError.message}` }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          message: "Pierwszy administrator utworzony pomyślnie",
+          isFirstAdmin: true
+        }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Dla pozostałych akcji wymagamy uwierzytelnienia
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "Brakuje nagłówka autoryzacji" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Get authorization token
+    const token = authHeader.replace('Bearer ', '');
+    
     // Verify the user is authenticated and get the user from the JWT token
     const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(token);
     
     if (userError || !user) {
       return new Response(
-        JSON.stringify({ error: "Invalid authorization token" }),
+        JSON.stringify({ error: "Nieprawidłowy token autoryzacji" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
-
-    // Get the request body
-    const requestData = await req.json();
-    const { email, password, action } = requestData;
 
     // Action to create a new admin user
     if (action === "create" && email && password) {
@@ -60,7 +125,7 @@ serve(async (req) => {
         
       if (adminCheckError || !adminCheck) {
         return new Response(
-          JSON.stringify({ error: "You don't have permission to create admin users" }),
+          JSON.stringify({ error: "Nie masz uprawnień do tworzenia administratorów" }),
           { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -74,7 +139,7 @@ serve(async (req) => {
         
       if (existingAdmin) {
         return new Response(
-          JSON.stringify({ error: "Admin user already exists" }),
+          JSON.stringify({ error: "Administrator już istnieje" }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -92,7 +157,7 @@ serve(async (req) => {
         
         if (newAuthUserError) {
           return new Response(
-            JSON.stringify({ error: `Failed to create auth user: ${newAuthUserError.message}` }),
+            JSON.stringify({ error: `Nie udało się utworzyć użytkownika auth: ${newAuthUserError.message}` }),
             { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
           );
         }
@@ -108,13 +173,13 @@ serve(async (req) => {
         
       if (newAdminError) {
         return new Response(
-          JSON.stringify({ error: `Failed to create admin user: ${newAdminError.message}` }),
+          JSON.stringify({ error: `Nie udało się utworzyć administratora: ${newAdminError.message}` }),
           { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
       
       return new Response(
-        JSON.stringify({ success: true, message: "Admin user created successfully" }),
+        JSON.stringify({ success: true, message: "Administrator utworzony pomyślnie" }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -130,14 +195,14 @@ serve(async (req) => {
 
       if (adminError || !adminUser) {
         return new Response(
-          JSON.stringify({ error: "User is not an admin" }),
+          JSON.stringify({ error: "Użytkownik nie jest administratorem" }),
           { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
 
       if (!password || typeof password !== 'string' || password.length < 8) {
         return new Response(
-          JSON.stringify({ error: "Password must be at least 8 characters long" }),
+          JSON.stringify({ error: "Hasło musi mieć co najmniej 8 znaków" }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -150,7 +215,7 @@ serve(async (req) => {
       
       if (authUpdateError) {
         return new Response(
-          JSON.stringify({ error: `Failed to update auth password: ${authUpdateError.message}` }),
+          JSON.stringify({ error: `Nie udało się zaktualizować hasła auth: ${authUpdateError.message}` }),
           { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -172,13 +237,13 @@ serve(async (req) => {
       }
 
       return new Response(
-        JSON.stringify({ success: true, message: "Password updated successfully" }),
+        JSON.stringify({ success: true, message: "Hasło zaktualizowane pomyślnie" }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
     
     return new Response(
-      JSON.stringify({ error: "Invalid action or missing parameters" }),
+      JSON.stringify({ error: "Nieprawidłowa akcja lub brakujące parametry" }),
       { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
