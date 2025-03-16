@@ -21,25 +21,30 @@ const ProtectedAdminRoute: React.FC<ProtectedAdminRouteProps> = ({ children }) =
   // Sprawdź czy token HTTP CSRF został ustawiony
   useEffect(() => {
     if (isAuthenticated) {
-      // Dla przykładu, ustawiamy token CSRF w meta tagu
-      // W pełnym rozwiązaniu należy używać secure cookies
-      const csrfToken = crypto.randomUUID();
-      const metaTag = document.querySelector('meta[name="csrf-token"]');
-      
-      if (metaTag) {
-        metaTag.setAttribute('content', csrfToken);
-      } else {
-        const newMetaTag = document.createElement('meta');
-        newMetaTag.name = 'csrf-token';
-        newMetaTag.content = csrfToken;
-        document.head.appendChild(newMetaTag);
+      try {
+        // Dla przykładu, ustawiamy token CSRF w meta tagu
+        // W pełnym rozwiązaniu należy używać secure cookies
+        const csrfToken = crypto.randomUUID();
+        const metaTag = document.querySelector('meta[name="csrf-token"]');
+        
+        if (metaTag) {
+          metaTag.setAttribute('content', csrfToken);
+        } else {
+          const newMetaTag = document.createElement('meta');
+          newMetaTag.name = 'csrf-token';
+          newMetaTag.content = csrfToken;
+          document.head.appendChild(newMetaTag);
+        }
+        
+        // Zapisujemy token także w sessionStorage
+        sessionStorage.setItem('csrf_token', csrfToken);
+      } catch (error) {
+        console.error('Błąd podczas ustawiania tokenu CSRF:', error);
       }
-      
-      // Zapisujemy token także w sessionStorage
-      sessionStorage.setItem('csrf_token', csrfToken);
     }
   }, [isAuthenticated]);
 
+  // Wyświetl ładowanie podczas sprawdzania uwierzytelnienia
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -51,21 +56,33 @@ const ProtectedAdminRoute: React.FC<ProtectedAdminRouteProps> = ({ children }) =
     );
   }
 
+  // Obsługa przypadku braku uwierzytelnienia
   if (!isAuthenticated) {
     console.log('Brak uwierzytelnienia, przekierowanie do logowania z:', location.pathname);
+    
     // Powiadom użytkownika o przekierowaniu
     toast.info('Wymagane logowanie', {
       description: 'Dostęp do tej strony wymaga zalogowania jako administrator'
     });
+    
     // Zapisz aktualną ścieżkę, aby po zalogowaniu wrócić na nią
     return <Navigate to="/spe43al-adm1n-p4nel" replace state={{ from: location }} />;
   }
 
   // Dodatkowe sprawdzenie - czy adres email jest w domenie zaufanej
-  // To jest przykład; w praktyce lepiej sprawdzać role użytkownika w bazie danych
   if (adminEmail && !adminEmail.endsWith('@secretsparks.pl') && !adminEmail.endsWith('@example.com')) {
     console.warn('Adres email administratora nie jest w zaufanej domenie:', adminEmail);
-    // Tutaj można logować próby nieupoważnionego dostępu
+    // Dodatkowe logowanie dla bezpieczeństwa
+    try {
+      const logData = {
+        email: adminEmail,
+        timestamp: new Date().toISOString(),
+        path: location.pathname
+      };
+      console.warn('Nietypowy dostęp do panelu admina:', logData);
+    } catch (error) {
+      console.error('Błąd podczas logowania danych:', error);
+    }
   }
 
   console.log('Użytkownik uwierzytelniony, renderowanie chronionej zawartości');

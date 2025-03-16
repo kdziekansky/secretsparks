@@ -150,27 +150,31 @@ const AdminLogin: React.FC = () => {
     try {
       console.log('Rozpoczynam weryfikację kodu dostępu:', registrationCode);
       
-      // Użyj funkcji brzegowej do weryfikacji kodu z dodatkowymi opcjami
-      const { data, error } = await supabase.functions.invoke('admin-verify-code', {
+      // Użyj funkcji brzegowej do weryfikacji kodu z dodatkowymi opcjami debugowania
+      const response = await supabase.functions.invoke('admin-verify-code', {
         body: { code: registrationCode },
         headers: {
           'Content-Type': 'application/json',
         }
       });
       
-      console.log('Odpowiedź z funkcji weryfikacji:', { data, error });
+      console.log('Surowa odpowiedź z funkcji weryfikacji:', response);
       
-      if (error) {
-        console.error('Błąd podczas wywołania funkcji edge:', error);
-        throw new Error(`Błąd wywołania funkcji: ${error.message}`);
+      if (response.error) {
+        console.error('Błąd podczas wywołania funkcji edge:', response.error);
+        throw new Error(`Błąd wywołania funkcji: ${response.error.message || response.error}`);
       }
       
-      if (data && data.verified) {
+      if (response.data && response.data.verified) {
         setIsCodeVerified(true);
         toast({
           title: "Kod weryfikacyjny poprawny",
           description: "Możesz teraz utworzyć konto administratora.",
         });
+      } else if (response.data && response.data.error) {
+        // Odpowiedź zawiera błąd z funkcji brzegowej
+        console.error('Błąd z funkcji brzegowej:', response.data.error);
+        throw new Error(response.data.error);
       } else {
         // Zwiększ licznik nieudanych prób
         checkAndLockAccount();

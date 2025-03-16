@@ -26,6 +26,7 @@ const sha256 = async (message: string): Promise<string> => {
 
 serve(async (req) => {
   console.log(`Admin verify code function called with method: ${req.method}`);
+  console.log(`Listening on ${req.url}`);
   
   // Obsługa zapytań CORS preflight
   if (req.method === "OPTIONS") {
@@ -110,7 +111,9 @@ serve(async (req) => {
     
     console.log("Environment variables check:", { 
       saltExists: !!secretSalt, 
-      codeExists: !!correctAdminCode 
+      codeExists: !!correctAdminCode,
+      saltValue: secretSalt ? "EXISTS (not showing)" : "NOT EXISTS",
+      codeValue: correctAdminCode ? "EXISTS (not showing)" : "NOT EXISTS"
     });
     
     if (!secretSalt || !correctAdminCode) {
@@ -144,6 +147,8 @@ serve(async (req) => {
     const isValid = inputHash === correctHash;
     
     console.log("Weryfikacja kodu administratora:", isValid ? "Sukces" : "Niepowodzenie");
+    console.log("Obliczony hash wejściowy (pierwsze 10 znaków):", inputHash.substring(0, 10)); 
+    console.log("Oczekiwany hash (pierwsze 10 znaków):", correctHash.substring(0, 10));
     
     // Zapisz próbę logowania w bazie danych, aby śledzić potencjalne ataki
     const supabaseAdmin = createClient(
