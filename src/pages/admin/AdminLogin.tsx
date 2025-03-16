@@ -11,7 +11,6 @@ import { useToast } from '@/hooks/use-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import crypto from 'crypto-js';
 
 const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -20,10 +19,46 @@ const AdminLogin: React.FC = () => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [registrationCode, setRegistrationCode] = useState('');
   const [isCodeVerified, setIsCodeVerified] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [loginAttempts, setLoginAttempts] = useState(0);
+  const [isLocked, setIsLocked] = useState(false);
+  const [lockoutEndTime, setLockoutEndTime] = useState<Date | null>(null);
   const { login, isLoading, isAuthenticated } = useAdminAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Sprawdź czy konto jest zablokowane
+  useEffect(() => {
+    const lockedUntil = localStorage.getItem('admin_login_lockout');
+    if (lockedUntil) {
+      const lockoutTime = new Date(lockedUntil);
+      if (lockoutTime > new Date()) {
+        setIsLocked(true);
+        setLockoutEndTime(lockoutTime);
+      } else {
+        localStorage.removeItem('admin_login_lockout');
+        setIsLocked(false);
+        setLockoutEndTime(null);
+      }
+    }
+  }, []);
+
+  // Odliczanie czasu blokady
+  useEffect(() => {
+    if (isLocked && lockoutEndTime) {
+      const interval = setInterval(() => {
+        if (lockoutEndTime <= new Date()) {
+          setIsLocked(false);
+          setLockoutEndTime(null);
+          localStorage.removeItem('admin_login_lockout');
+          clearInterval(interval);
+        }
+      }, 1000);
+      
+      return () => clearInterval(interval);
+    }
+  }, [isLocked, lockoutEndTime]);
 
   // Przekieruj zalogowanego użytkownika jeśli wraca na stronę logowania
   useEffect(() => {
@@ -33,8 +68,41 @@ const AdminLogin: React.FC = () => {
     }
   }, [isAuthenticated, navigate]);
 
+  // Funkcja blokująca konto po zbyt wielu nieprawidłowych próbach
+  const checkAndLockAccount = () => {
+    const newAttempts = loginAttempts + 1;
+    setLoginAttempts(newAttempts);
+    
+    // Po 5 nieudanych próbach zablokuj konto na 15 minut
+    if (newAttempts >= 5) {
+      const lockoutEndTime = new Date();
+      lockoutEndTime.setMinutes(lockoutEndTime.getMinutes() + 15);
+      
+      localStorage.setItem('admin_login_lockout', lockoutEndTime.toISOString());
+      setIsLocked(true);
+      setLockoutEndTime(lockoutEndTime);
+      
+      toast({
+        title: "Konto tymczasowo zablokowane",
+        description: `Zbyt wiele nieudanych prób. Spróbuj ponownie za 15 minut.`,
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Sprawdź czy konto jest zablokowane
+    if (isLocked) {
+      const timeLeft = lockoutEndTime ? Math.ceil((lockoutEndTime.getTime() - new Date().getTime()) / 60000) : 15;
+      toast({
+        title: "Logowanie zablokowane",
+        description: `Zbyt wiele nieudanych prób. Spróbuj ponownie za ${timeLeft} minut.`,
+        variant: "destructive",
+      });
+      return;
+    }
     
     // Dodatkowa walidacja przed wysłaniem
     if (!email) {
@@ -56,42 +124,62 @@ const AdminLogin: React.FC = () => {
     }
     
     console.log('Próba logowania dla:', email);
-    await login(email, password);
+    try {
+      await login(email, password);
+      // Reset licznika prób po udanym logowaniu
+      setLoginAttempts(0);
+    } catch (error) {
+      // Zwiększ licznik nieudanych prób
+      checkAndLockAccount();
+    }
   };
 
-  // Złożony algorytm weryfikacji kodu dostępu
-  const verifyRegistrationCode = () => {
-    // Skomplikowany kod administratora z dodatkowym zabezpieczeniem
-    // Weryfikacja odbywa się na podstawie hasza (nie można podejrzeć kodu źródłowego)
-    const timeBasedSalt = new Date().getFullYear().toString() + "SecretSparks";
-    const correctCodeHash = crypto.SHA256("sparks2024secure_r3J7%#@!" + timeBasedSalt).toString();
-
-    // Weryfikacja wprowadzonego kodu
-    const inputCodeHash = crypto.SHA256(registrationCode + timeBasedSalt).toString();
-    
-    // Dodatkowe sprawdzenie ukrytego hasła
-    const hiddenKey = "Kb8@dL4#sP0w$9xZ";
-    const specialCombination = registrationCode.includes(hiddenKey.substring(3, 7)) && 
-                              registrationCode.length > 15 &&
-                              /[A-Z]/.test(registrationCode) && 
-                              /[0-9]/.test(registrationCode) && 
-                              /[!@#$%^&*]/.test(registrationCode);
-    
-    // Ostateczna weryfikacja
-    if (inputCodeHash === correctCodeHash || 
-        registrationCode === "sparks2024secure_r3J7%#@!" || 
-        specialCombination) {
-      setIsCodeVerified(true);
+  // Bezpieczna weryfikacja kodu dostępu przy użyciu funkcji brzegowej
+  const verifyRegistrationCode = async () => {
+    if (!registrationCode) {
       toast({
-        title: "Kod weryfikacyjny poprawny",
-        description: "Możesz teraz utworzyć konto administratora.",
-      });
-    } else {
-      toast({
-        title: "Nieprawidłowy kod",
-        description: "Wprowadzony kod weryfikacyjny jest nieprawidłowy.",
+        title: "Wprowadź kod dostępu",
+        description: "Kod dostępu jest wymagany do utworzenia konta administratora.",
         variant: "destructive",
       });
+      return;
+    }
+    
+    setIsVerifying(true);
+    
+    try {
+      // Użyj funkcji brzegowej do weryfikacji kodu
+      const { data, error } = await supabase.functions.invoke('admin-verify-code', {
+        body: { code: registrationCode }
+      });
+      
+      if (error) throw error;
+      
+      if (data && data.verified) {
+        setIsCodeVerified(true);
+        toast({
+          title: "Kod weryfikacyjny poprawny",
+          description: "Możesz teraz utworzyć konto administratora.",
+        });
+      } else {
+        // Zwiększ licznik nieudanych prób
+        checkAndLockAccount();
+        
+        toast({
+          title: "Nieprawidłowy kod",
+          description: "Wprowadzony kod weryfikacyjny jest nieprawidłowy.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error('Błąd weryfikacji kodu:', error);
+      toast({
+        title: "Błąd weryfikacji",
+        description: error.message || "Wystąpił problem podczas weryfikacji kodu.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsVerifying(false);
     }
   };
 
@@ -135,22 +223,7 @@ const AdminLogin: React.FC = () => {
       return;
     }
     
-    // Lista dozwolonych administratorów
-    const allowedAdmins = [
-      'admin@example.com', 
-      'szmergon@gmail.com', 
-      'contact@secretsparks.pl',
-      'kdziekansky@icloud.com'
-    ];
-    
-    if (!allowedAdmins.includes(email)) {
-      toast({
-        title: "Brak uprawnień",
-        description: "Ten adres email nie jest autoryzowany jako administrator.",
-        variant: "destructive",
-      });
-      return;
-    }
+    // Sprawdzanie listy dozwolonych administratorów zostało przeniesione do logiki po stronie serwera
     
     setIsRegistering(true);
     
@@ -210,6 +283,18 @@ const AdminLogin: React.FC = () => {
     }
   };
 
+  // Oblicz czas pozostały do odblokowania
+  const getRemainingLockoutTime = () => {
+    if (!lockoutEndTime) return '';
+    
+    const now = new Date();
+    const diff = Math.max(0, lockoutEndTime.getTime() - now.getTime());
+    const minutes = Math.floor(diff / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+    
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
   // Jeśli użytkownik jest już uwierzytelniony, pokaż loader podczas przekierowania
   if (isAuthenticated) {
     return (
@@ -236,108 +321,32 @@ const AdminLogin: React.FC = () => {
         </CardHeader>
         
         <CardContent>
-          <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="login">Logowanie</TabsTrigger>
-              <TabsTrigger value="register">Rejestracja</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="login">
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="login-email" className="block text-sm font-medium">
-                    Email
-                  </Label>
-                  <Input
-                    id="login-email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="admin@example.com"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="login-password" className="block text-sm font-medium">
-                    Hasło
-                  </Label>
-                  <Input
-                    id="login-password"
-                    name="password"
-                    type="password"
-                    autoComplete="current-password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                  />
-                </div>
-
-                <Button 
-                  type="submit" 
-                  className="w-full" 
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Logowanie...
-                    </>
-                  ) : (
-                    'Zaloguj się'
-                  )}
-                </Button>
-              </form>
-            </TabsContent>
-            
-            <TabsContent value="register">
-              {!isCodeVerified ? (
-                <div className="space-y-4">
-                  <div className="bg-muted/50 rounded-lg p-4 mb-4">
-                    <div className="flex items-start">
-                      <Shield className="h-5 w-5 text-amber-500 mt-0.5 mr-2" />
-                      <p className="text-sm text-muted-foreground">
-                        Rejestracja konta administratora wymaga podania kodu dostępu.
-                        Skontaktuj się z głównym administratorem, aby uzyskać kod.
-                      </p>
-                    </div>
-                  </div>
-                  
+          {isLocked ? (
+            <div className="space-y-4">
+              <div className="bg-destructive/10 rounded-lg p-4 text-center">
+                <Shield className="h-6 w-6 text-destructive mx-auto mb-2" />
+                <h3 className="font-medium mb-1">Konto tymczasowo zablokowane</h3>
+                <p className="text-sm text-muted-foreground">
+                  Zbyt wiele nieudanych prób logowania. 
+                  Spróbuj ponownie za {getRemainingLockoutTime()}.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <Tabs defaultValue="login" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsTrigger value="login">Logowanie</TabsTrigger>
+                <TabsTrigger value="register">Rejestracja</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="login">
+                <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="registration-code" className="block text-sm font-medium">
-                      Kod dostępu
-                    </Label>
-                    <Input
-                      id="registration-code"
-                      name="registrationCode"
-                      type="password"
-                      required
-                      value={registrationCode}
-                      onChange={(e) => setRegistrationCode(e.target.value)}
-                      placeholder="Wprowadź kod dostępu"
-                    />
-                  </div>
-                  
-                  <Button 
-                    type="button" 
-                    className="w-full" 
-                    onClick={verifyRegistrationCode}
-                  >
-                    <KeyRound className="mr-2 h-4 w-4" />
-                    Weryfikuj kod
-                  </Button>
-                </div>
-              ) : (
-                <form onSubmit={handleRegister} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="register-email" className="block text-sm font-medium">
+                    <Label htmlFor="login-email" className="block text-sm font-medium">
                       Email
                     </Label>
                     <Input
-                      id="register-email"
+                      id="login-email"
                       name="email"
                       type="email"
                       autoComplete="email"
@@ -349,33 +358,17 @@ const AdminLogin: React.FC = () => {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="register-password" className="block text-sm font-medium">
+                    <Label htmlFor="login-password" className="block text-sm font-medium">
                       Hasło
                     </Label>
                     <Input
-                      id="register-password"
+                      id="login-password"
                       name="password"
                       type="password"
-                      autoComplete="new-password"
+                      autoComplete="current-password"
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="register-confirm-password" className="block text-sm font-medium">
-                      Powtórz hasło
-                    </Label>
-                    <Input
-                      id="register-confirm-password"
-                      name="confirmPassword"
-                      type="password"
-                      autoComplete="new-password"
-                      required
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="••••••••"
                     />
                   </div>
@@ -383,28 +376,143 @@ const AdminLogin: React.FC = () => {
                   <Button 
                     type="submit" 
                     className="w-full" 
-                    disabled={isRegistering}
+                    disabled={isLoading}
                   >
-                    {isRegistering ? (
+                    {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Tworzenie konta...
+                        Logowanie...
                       </>
                     ) : (
-                      <>
-                        <UserPlus className="mr-2 h-4 w-4" />
-                        Utwórz konto administratora
-                      </>
+                      'Zaloguj się'
                     )}
                   </Button>
-                  
-                  <p className="text-xs text-center text-muted-foreground mt-2">
-                    Tylko autoryzowane adresy email mogą utworzyć konto administratora
-                  </p>
                 </form>
-              )}
-            </TabsContent>
-          </Tabs>
+              </TabsContent>
+              
+              <TabsContent value="register">
+                {!isCodeVerified ? (
+                  <div className="space-y-4">
+                    <div className="bg-muted/50 rounded-lg p-4 mb-4">
+                      <div className="flex items-start">
+                        <Shield className="h-5 w-5 text-amber-500 mt-0.5 mr-2" />
+                        <p className="text-sm text-muted-foreground">
+                          Rejestracja konta administratora wymaga podania kodu dostępu.
+                          Skontaktuj się z głównym administratorem, aby uzyskać kod.
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="registration-code" className="block text-sm font-medium">
+                        Kod dostępu
+                      </Label>
+                      <Input
+                        id="registration-code"
+                        name="registrationCode"
+                        type="password"
+                        required
+                        value={registrationCode}
+                        onChange={(e) => setRegistrationCode(e.target.value)}
+                        placeholder="Wprowadź kod dostępu"
+                      />
+                    </div>
+                    
+                    <Button 
+                      type="button" 
+                      className="w-full" 
+                      onClick={verifyRegistrationCode}
+                      disabled={isVerifying}
+                    >
+                      {isVerifying ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Weryfikacja...
+                        </>
+                      ) : (
+                        <>
+                          <KeyRound className="mr-2 h-4 w-4" />
+                          Weryfikuj kod
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleRegister} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="register-email" className="block text-sm font-medium">
+                        Email
+                      </Label>
+                      <Input
+                        id="register-email"
+                        name="email"
+                        type="email"
+                        autoComplete="email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="admin@example.com"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="register-password" className="block text-sm font-medium">
+                        Hasło
+                      </Label>
+                      <Input
+                        id="register-password"
+                        name="password"
+                        type="password"
+                        autoComplete="new-password"
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="••••••••"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="register-confirm-password" className="block text-sm font-medium">
+                        Powtórz hasło
+                      </Label>
+                      <Input
+                        id="register-confirm-password"
+                        name="confirmPassword"
+                        type="password"
+                        autoComplete="new-password"
+                        required
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="••••••••"
+                      />
+                    </div>
+
+                    <Button 
+                      type="submit" 
+                      className="w-full" 
+                      disabled={isRegistering}
+                    >
+                      {isRegistering ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Tworzenie konta...
+                        </>
+                      ) : (
+                        <>
+                          <UserPlus className="mr-2 h-4 w-4" />
+                          Utwórz konto administratora
+                        </>
+                      )}
+                    </Button>
+                    
+                    <p className="text-xs text-center text-muted-foreground mt-2">
+                      Tylko autoryzowane adresy email mogą utworzyć konto administratora
+                    </p>
+                  </form>
+                )}
+              </TabsContent>
+            </Tabs>
+          )}
           
           <div className="text-xs text-center text-muted-foreground mt-6">
             <AlertDialog>

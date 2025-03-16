@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -21,9 +22,12 @@ export const useAdminAuth = () => {
   return context;
 };
 
-// Stała do przechowywania informacji o zalogowanym administratorze w localStorage
-const DEMO_ADMIN_KEY = 'demo_admin_authenticated';
+// Stałe do przechowywania informacji w sessionStorage (bezpieczniejsze niż localStorage)
+const ADMIN_AUTH_KEY = 'admin_auth';
 const ADMIN_EMAIL_KEY = 'admin_email';
+const ADMIN_SESSION_EXPIRY = 'admin_session_expiry';
+// Czas wygaśnięcia sesji w milisekundach (2 godziny)
+const SESSION_TIMEOUT = 2 * 60 * 60 * 1000;
 
 interface AdminAuthProviderProps {
   children: ReactNode;
@@ -36,19 +40,83 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Funkcja pomocnicza do zapisu stanu uwierzytelnienia do localStorage
+  // Funkcja pomocnicza do zapisu stanu uwierzytelnienia do sessionStorage
   const persistAuthState = (email: string) => {
     console.log('Zapisywanie stanu uwierzytelnienia dla:', email);
-    localStorage.setItem(DEMO_ADMIN_KEY, 'true');
-    localStorage.setItem(ADMIN_EMAIL_KEY, email);
+    
+    // Ustaw czas wygaśnięcia sesji
+    const expiryTime = new Date().getTime() + SESSION_TIMEOUT;
+    
+    // Używamy sessionStorage zamiast localStorage dla większego bezpieczeństwa
+    sessionStorage.setItem(ADMIN_AUTH_KEY, 'true');
+    sessionStorage.setItem(ADMIN_EMAIL_KEY, email);
+    sessionStorage.setItem(ADMIN_SESSION_EXPIRY, expiryTime.toString());
   };
 
-  // Funkcja pomocnicza do usuwania stanu uwierzytelnienia z localStorage
+  // Funkcja pomocnicza do usuwania stanu uwierzytelnienia z sessionStorage
   const clearAuthState = () => {
     console.log('Czyszczenie stanu uwierzytelnienia');
-    localStorage.removeItem(DEMO_ADMIN_KEY);
-    localStorage.removeItem(ADMIN_EMAIL_KEY);
+    sessionStorage.removeItem(ADMIN_AUTH_KEY);
+    sessionStorage.removeItem(ADMIN_EMAIL_KEY);
+    sessionStorage.removeItem(ADMIN_SESSION_EXPIRY);
   };
+
+  // Funkcja sprawdzająca czy sesja wygasła
+  const isSessionExpired = (): boolean => {
+    const expiryTime = sessionStorage.getItem(ADMIN_SESSION_EXPIRY);
+    if (!expiryTime) return true;
+    
+    const expiryTimestamp = parseInt(expiryTime, 10);
+    const currentTime = new Date().getTime();
+    
+    return currentTime > expiryTimestamp;
+  };
+
+  // Funkcja odświeżająca czas wygaśnięcia sesji
+  const refreshSession = () => {
+    if (isAuthenticated && adminEmail) {
+      const expiryTime = new Date().getTime() + SESSION_TIMEOUT;
+      sessionStorage.setItem(ADMIN_SESSION_EXPIRY, expiryTime.toString());
+    }
+  };
+
+  // Słuchaj aktywności użytkownika, aby odświeżyć sesję
+  useEffect(() => {
+    const handleActivity = () => {
+      if (isAuthenticated) {
+        refreshSession();
+      }
+    };
+
+    // Dodaj nasłuchiwanie wydarzeń aktywności
+    window.addEventListener('click', handleActivity);
+    window.addEventListener('keypress', handleActivity);
+    window.addEventListener('scroll', handleActivity);
+    window.addEventListener('mousemove', handleActivity);
+
+    return () => {
+      // Usuń nasłuchiwanie przy odmontowaniu komponentu
+      window.removeEventListener('click', handleActivity);
+      window.removeEventListener('keypress', handleActivity);
+      window.removeEventListener('scroll', handleActivity);
+      window.removeEventListener('mousemove', handleActivity);
+    };
+  }, [isAuthenticated]);
+
+  // Sprawdzaj okresowo czy sesja wygasła
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isAuthenticated && isSessionExpired()) {
+        console.log('Sesja administratora wygasła');
+        logout();
+        toast.error('Sesja wygasła', {
+          description: 'Twoja sesja wygasła. Zaloguj się ponownie.'
+        });
+      }
+    }, 60000); // Sprawdzaj co minutę
+    
+    return () => clearInterval(interval);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -56,26 +124,59 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
         setIsLoading(true);
         console.log('Sprawdzanie stanu uwierzytelnienia...');
         
-        // Sprawdź czy użytkownik jest zalogowany w localStorage
-        const isAdminLoggedIn = localStorage.getItem(DEMO_ADMIN_KEY) === 'true';
-        const storedEmail = localStorage.getItem(ADMIN_EMAIL_KEY);
-        
-        if (isAdminLoggedIn && storedEmail) {
-          console.log('Znaleziono zalogowanego administratora w localStorage:', storedEmail);
-          setIsAuthenticated(true);
-          setAdminEmail(storedEmail);
+        // Sprawdź czy sesja nie wygasła
+        if (isSessionExpired()) {
+          console.log('Sesja administratora wygasła, wylogowywanie');
+          clearAuthState();
+          setIsAuthenticated(false);
+          setAdminEmail(null);
           
-          // Jeśli jesteśmy na stronie logowania, przekieruj do panelu
-          if (location.pathname === '/spe43al-adm1n-p4nel') {
-            console.log('Przekierowuję z logowania do dashboard (localStorage auth)');
-            navigate('/spe43al-adm1n-p4nel/dashboard');
+          // Przekieruj do logowania jeśli próbuje wejść na chronione strony
+          if (location.pathname.includes('spe43al-adm1n-p4nel') && 
+              location.pathname !== '/spe43al-adm1n-p4nel') {
+            console.log('Przekierowuję do strony logowania (sesja wygasła)');
+            navigate('/spe43al-adm1n-p4nel');
           }
           
           setIsLoading(false);
           return;
         }
         
-        // Jeśli nie ma w localStorage, sprawdź sesję Supabase
+        // Sprawdź czy użytkownik jest zalogowany w sessionStorage
+        const isAdminLoggedIn = sessionStorage.getItem(ADMIN_AUTH_KEY) === 'true';
+        const storedEmail = sessionStorage.getItem(ADMIN_EMAIL_KEY);
+        
+        if (isAdminLoggedIn && storedEmail) {
+          console.log('Znaleziono zalogowanego administratora w sessionStorage:', storedEmail);
+          
+          // Dodatkowa weryfikacja na podstawie bazy danych
+          const { data: adminCheck, error: adminCheckError } = await supabase
+            .from('admin_users')
+            .select('email')
+            .eq('email', storedEmail)
+            .maybeSingle();
+            
+          if (adminCheckError || !adminCheck) {
+            console.error('Błąd weryfikacji administratora:', adminCheckError);
+            clearAuthState();
+            setIsAuthenticated(false);
+            setAdminEmail(null);
+          } else {
+            setIsAuthenticated(true);
+            setAdminEmail(storedEmail);
+            
+            // Jeśli jesteśmy na stronie logowania, przekieruj do panelu
+            if (location.pathname === '/spe43al-adm1n-p4nel') {
+              console.log('Przekierowuję z logowania do dashboard (sessionStorage auth)');
+              navigate('/spe43al-adm1n-p4nel/dashboard');
+            }
+          }
+          
+          setIsLoading(false);
+          return;
+        }
+        
+        // Jeśli nie ma w sessionStorage, sprawdź sesję Supabase
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session) {
@@ -125,11 +226,11 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
         }
       } catch (error) {
         console.error('Błąd podczas sprawdzania uwierzytelnienia:', error);
-        // Sprawdź jeszcze localStorage na wypadek błędu
-        const isAdminLoggedIn = localStorage.getItem(DEMO_ADMIN_KEY) === 'true';
-        const storedEmail = localStorage.getItem(ADMIN_EMAIL_KEY);
+        // Sprawdź jeszcze sessionStorage na wypadek błędu
+        const isAdminLoggedIn = sessionStorage.getItem(ADMIN_AUTH_KEY) === 'true';
+        const storedEmail = sessionStorage.getItem(ADMIN_EMAIL_KEY);
         
-        if (isAdminLoggedIn && storedEmail) {
+        if (isAdminLoggedIn && storedEmail && !isSessionExpired()) {
           setIsAuthenticated(true);
           setAdminEmail(storedEmail);
         } else {
@@ -148,12 +249,12 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Zmiana stanu uwierzytelnienia:', event);
       
-      // Najpierw sprawdź localStorage
-      const isAdminLoggedIn = localStorage.getItem(DEMO_ADMIN_KEY) === 'true';
-      const storedEmail = localStorage.getItem(ADMIN_EMAIL_KEY);
+      // Najpierw sprawdź sessionStorage
+      const isAdminLoggedIn = sessionStorage.getItem(ADMIN_AUTH_KEY) === 'true';
+      const storedEmail = sessionStorage.getItem(ADMIN_EMAIL_KEY);
       
-      if (isAdminLoggedIn && storedEmail) {
-        console.log('Zalogowany przez localStorage:', storedEmail);
+      if (isAdminLoggedIn && storedEmail && !isSessionExpired()) {
+        console.log('Zalogowany przez sessionStorage:', storedEmail);
         setIsAuthenticated(true);
         setAdminEmail(storedEmail);
         return;
@@ -186,7 +287,7 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
           }
         }
       } else if (event === 'SIGNED_OUT') {
-        const isAdminLoggedIn = localStorage.getItem(DEMO_ADMIN_KEY) === 'true';
+        const isAdminLoggedIn = sessionStorage.getItem(ADMIN_AUTH_KEY) === 'true';
         if (!isAdminLoggedIn) {
           console.log('Wylogowano z Supabase');
           setIsAuthenticated(false);
@@ -207,20 +308,7 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
       
       console.log('Próba logowania dla:', email);
       
-      // Lista dozwolonych administratorów
-      const allowedAdmins = [
-        'admin@example.com', 
-        'szmergon@gmail.com', 
-        'contact@secretsparks.pl',
-        'kdziekansky@icloud.com'
-      ];
-      
-      if (!allowedAdmins.includes(email)) {
-        console.error('Email nie znajduje się na liście dozwolonych administratorów:', email);
-        throw new Error('Nieprawidłowe dane logowania');
-      }
-      
-      // Dla administratorów, najpierw sprawdź w tabeli admin_users
+      // Weryfikacja w bazie danych
       const { data: adminUser, error: adminCheckError } = await supabase
         .from('admin_users')
         .select('email')
@@ -256,6 +344,7 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
       toast.error('Błąd logowania', {
         description: error.message || 'Nieprawidłowy email lub hasło'
       });
+      throw error; // Rzuć błąd dalej, aby został obsłużony przez komponent logowania
     } finally {
       setIsLoading(false);
     }
@@ -271,7 +360,7 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
         await supabase.auth.signOut();
       }
       
-      // Wyczyść localStorage
+      // Wyczyść sessionStorage
       clearAuthState();
       
       setIsAuthenticated(false);
