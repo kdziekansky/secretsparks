@@ -37,6 +37,7 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [adminEmail, setAdminEmail] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [initialCheckDone, setInitialCheckDone] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -118,6 +119,7 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
     return () => clearInterval(interval);
   }, [isAuthenticated]);
 
+  // Sprawdzanie początkowego stanu uwierzytelnienia tylko raz podczas inicjalizacji
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -139,6 +141,7 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
           }
           
           setIsLoading(false);
+          setInitialCheckDone(true);
           return;
         }
         
@@ -169,6 +172,7 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
           }
           
           setIsLoading(false);
+          setInitialCheckDone(true);
           return;
         }
         
@@ -208,11 +212,17 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
         clearAuthState();
       } finally {
         setIsLoading(false);
+        setInitialCheckDone(true);
       }
     };
 
-    checkAuth();
+    if (!initialCheckDone) {
+      checkAuth();
+    }
+  }, [navigate, location.pathname, initialCheckDone]);
 
+  // Oddzielny efekt do nasłuchiwania zmian uwierzytelnienia Supabase
+  useEffect(() => {
     // Nasłuchuj zmian stanu uwierzytelnienia
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Zmiana stanu uwierzytelnienia:', event);
@@ -242,7 +252,7 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
     });
 
     return () => {
-      authListener.subscription.unsubscribe();
+      authListener?.subscription?.unsubscribe();
     };
   }, [navigate, location.pathname]);
 
@@ -296,9 +306,11 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
         console.error('Błąd zapisywania logowania:', err);
       }
       
-      navigate('/spe43al-adm1n-p4nel/dashboard');
     } catch (error: any) {
       console.error('Błąd podczas logowania:', error);
+      setIsAuthenticated(false);
+      setAdminEmail(null);
+      clearAuthState();
       toast.error('Błąd logowania', {
         description: error.message || 'Nieprawidłowy email lub hasło'
       });
@@ -313,14 +325,22 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
       setIsLoading(true);
       
       // Wyloguj z Supabase Auth
-      await supabase.auth.signOut();
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Błąd wylogowania z Supabase:', error);
+      }
       
       // Wyczyść sessionStorage
       clearAuthState();
       
       setIsAuthenticated(false);
       setAdminEmail(null);
-      navigate('/spe43al-adm1n-p4nel');
+      
+      // Przekieruj do strony logowania tylko jeśli jesteśmy na stronie administracyjnej
+      if (location.pathname.includes('spe43al-adm1n-p4nel') && 
+          location.pathname !== '/spe43al-adm1n-p4nel') {
+        navigate('/spe43al-adm1n-p4nel');
+      }
     } catch (error) {
       console.error('Błąd podczas wylogowywania:', error);
       toast.error('Błąd wylogowania');

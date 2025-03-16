@@ -66,7 +66,6 @@ const ProtectedAdminRoute: React.FC<ProtectedAdminRouteProps> = ({ children }) =
     });
     
     // Zapisz aktualną ścieżkę, aby po zalogowaniu wrócić na nią
-    // Użyj path spe43al-adm1n-p4nel zamiast konkretnej ścieżki, aby uniknąć pętli przekierowań
     return <Navigate to="/spe43al-adm1n-p4nel" replace state={{ from: location }} />;
   }
 

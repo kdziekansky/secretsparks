@@ -47,9 +47,7 @@ const AdminLogin = () => {
       // Pomyślne logowanie jest obsługiwane przez useEffect z isAuthenticated
     } catch (error: any) {
       console.error('Błąd logowania:', error);
-      toast.error('Błąd logowania', {
-        description: error.message || 'Nieprawidłowy email lub hasło'
-      });
+      // Toast jest już wyświetlany w kontekście
     } finally {
       setLoginInProgress(false);
     }
