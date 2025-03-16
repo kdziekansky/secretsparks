@@ -1,10 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
-import { supabase } from '@/integrations/supabase/client';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Loader2, Lock, Mail } from 'lucide-react';
+import { Loader2, Lock } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
@@ -14,48 +13,10 @@ import { useNavigate, useLocation } from 'react-router-dom';
 const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isCheckingAdmins, setIsCheckingAdmins] = useState(true);
   const { login, isLoading, isAuthenticated } = useAdminAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
-
-  // Sprawdź, czy istnieją już administratorzy
-  useEffect(() => {
-    const checkAdmins = async () => {
-      try {
-        setIsCheckingAdmins(true);
-        const { count, error } = await supabase
-          .from('admin_users')
-          .select('*', { count: 'exact', head: true });
-        
-        // Jeśli wystąpił błąd lub count jest undefined, zakładamy że administratorzy istnieją
-        if (error || count === undefined) {
-          console.error('Błąd podczas sprawdzania administratorów:', error);
-          setIsCheckingAdmins(false);
-          return;
-        }
-        
-        // Jeśli nie ma administratorów, przekieruj na stronę konfiguracji
-        if (count === 0) {
-          navigate('/spe43al-adm1n-p4nel/setup');
-          return;
-        }
-        
-        setIsCheckingAdmins(false);
-      } catch (error) {
-        console.error('Wyjątek podczas sprawdzania administratorów:', error);
-        setIsCheckingAdmins(false);
-      }
-    };
-
-    // Wykonaj sprawdzenie tylko jeśli użytkownik nie jest zalogowany
-    if (!isAuthenticated) {
-      checkAdmins();
-    } else {
-      setIsCheckingAdmins(false);
-    }
-  }, [navigate, isAuthenticated]);
 
   // Przekieruj zalogowanego użytkownika jeśli wraca na stronę logowania
   useEffect(() => {
@@ -91,18 +52,6 @@ const AdminLogin: React.FC = () => {
     await login(email, password);
   };
 
-  // Jeśli trwa sprawdzanie, wyświetl loader
-  if (isCheckingAdmins) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
-          <p className="text-sm text-muted-foreground">Sprawdzanie konfiguracji administratora...</p>
-        </div>
-      </div>
-    );
-  }
-
   // Jeśli użytkownik jest już uwierzytelniony, pokaż loader podczas przekierowania
   if (isAuthenticated) {
     return (
@@ -134,40 +83,32 @@ const AdminLogin: React.FC = () => {
               <Label htmlFor="email" className="block text-sm font-medium">
                 Email
               </Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@example.com"
-                  className="pl-10"
-                />
-              </div>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="admin@example.com"
+              />
             </div>
             
             <div className="space-y-2">
               <Label htmlFor="password" className="block text-sm font-medium">
                 Hasło
               </Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="pl-10"
-                />
-              </div>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+              />
             </div>
 
             <Button 
@@ -198,9 +139,9 @@ const AdminLogin: React.FC = () => {
                     <AlertDialogDescription>
                       <p className="mb-2">Dla konta administracyjnego:</p>
                       <ul className="list-disc pl-5 space-y-1 mb-4">
-                        <li>Użyj adresu email, który otrzymałeś od głównego administratora</li>
+                        <li>Użyj adresu email, który otrzymałeś od administratora</li>
                         <li>Jeśli nie pamiętasz hasła, skontaktuj się z głównym administratorem</li>
-                        <li>W przypadku nowego konta użyj hasła, które zostało dla Ciebie utworzone</li>
+                        <li>W przypadku nowego konta użyj hasła tymczasowego, które zostało dla Ciebie utworzone</li>
                       </ul>
                     </AlertDialogDescription>
                   </AlertDialogHeader>

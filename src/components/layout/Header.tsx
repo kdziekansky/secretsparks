@@ -25,6 +25,9 @@ const Header = () => {
         </Link>
         
         <nav className="hidden md:flex items-center space-x-4 lg:space-x-8">
+          <Link to="/o-nas" className="nav-link">
+            O nas
+          </Link>
           <Link to="/zasady" className="nav-link">
             Zasady
           </Link>
@@ -50,7 +53,7 @@ const Header = () => {
         </div>
         
         <div className="hidden md:block">
-          <Link to="/ankieta">
+          <Link to="/survey">
             <Button className="btn-primary text-sm">
               Zamów raport
             </Button>
@@ -62,6 +65,9 @@ const Header = () => {
       {isMenuOpen && (
         <div className="md:hidden p-4 pb-6 border-t border-border/40 bg-[#05050a]">
           <nav className="flex flex-col space-y-4">
+            <Link to="/o-nas" className="nav-link-mobile" onClick={() => setIsMenuOpen(false)}>
+              O nas
+            </Link>
             <Link to="/zasady" className="nav-link-mobile" onClick={() => setIsMenuOpen(false)}>
               Zasady
             </Link>
@@ -77,7 +83,7 @@ const Header = () => {
             <Link to="/regulamin" className="nav-link-mobile" onClick={() => setIsMenuOpen(false)}>
               Regulamin
             </Link>
-            <Link to="/ankieta" onClick={() => setIsMenuOpen(false)}>
+            <Link to="/survey" onClick={() => setIsMenuOpen(false)}>
               <Button className="w-full rounded-full bg-primary hover:bg-primary/80 mt-2 text-sm">
                 Zamów raport
               </Button>

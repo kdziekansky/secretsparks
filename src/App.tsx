@@ -1,97 +1,92 @@
 
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ThemeProvider } from '@/components/theme-provider';
-import { Toaster } from '@/components/ui/toaster';
-import { useFont } from '@/hooks/use-font';
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { SurveyProvider } from "./contexts/SurveyContext";
+import { useState } from "react";
+import Index from "./pages/Index";
+import SurveyPage from "./pages/SurveyPage";
+import NotFound from "./pages/NotFound";
+import PaymentPage from "./pages/PaymentPage";
+import ThankYouPage from "./pages/ThankYouPage";
+import FAQPage from "./pages/FAQPage";
+import SecurityPage from "./pages/SecurityPage";
+import SecretAIPage from "./pages/SecretAIPage";
+import RulesPage from "./pages/RulesPage";
+import TermsPage from "./pages/TermsPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import ContactPage from "./pages/ContactPage";
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminOrders from "./pages/admin/AdminOrders";
+import { AdminAuthProvider } from "./contexts/AdminAuthContext";
+import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute";
+import ScrollToTop from "./components/ScrollToTop";
 
-// Importowanie stron
-import Index from './pages/Index';
-import SurveyPage from './pages/SurveyPage';
-import ContactPage from './pages/ContactPage';
-import FAQPage from './pages/FAQPage';
-import PrivacyPage from './pages/PrivacyPage';
-import RulesPage from './pages/RulesPage';
-import SecurityPage from './pages/SecurityPage';
-import ThankYouPage from './pages/ThankYouPage';
-import PaymentPage from './pages/PaymentPage';
-import SecretAIPage from './pages/SecretAIPage';
-import NotFound from './pages/NotFound';
-import ZasadyPage from './pages/ZasadyPage';
+const App = () => {
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: 1,
+        refetchOnWindowFocus: false,
+      },
+    },
+  }));
 
-// Importowanie komponentów administracyjnych
-import AdminLogin from './pages/admin/AdminLogin';
-import AdminDashboard from './pages/admin/AdminDashboard';
-import AdminOrders from './pages/admin/AdminOrders';
-import AdminLayout from './components/admin/AdminLayout';
-import ProtectedAdminRoute from './components/admin/ProtectedAdminRoute';
-
-// Importowanie kontekstów
-import { AdminAuthProvider } from '@/contexts/AdminAuthContext';
-import { SurveyProvider } from '@/contexts/SurveyContext';
-
-// Importowanie komponentu przewijania do góry
-import ScrollToTop from './components/ScrollToTop';
-
-// Inicjalizacja klienta react-query
-const queryClient = new QueryClient();
-
-// Dodaj import dla nowego komponentu
-import FirstAdminSetup from './pages/admin/FirstAdminSetup';
-
-function App() {
-  // Użyj niestandardowego hooka do obsługi czcionek
-  const fontVariables = useFont();
+  console.log("Rendering App component");
 
   return (
-    <div className={`app min-h-screen flex flex-col ${fontVariables}`}>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-          <Router>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <ScrollToTop />
+          <SurveyProvider>
             <AdminAuthProvider>
-              <SurveyProvider>
-                <main className="flex-1">
-                  <ScrollToTop />
-                  <Toaster />
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/ankieta" element={<SurveyPage />} />
-                    <Route path="/kontakt" element={<ContactPage />} />
-                    <Route path="/faq" element={<FAQPage />} />
-                    <Route path="/prywatnosc" element={<PrivacyPage />} />
-                    <Route path="/regulamin" element={<RulesPage />} />
-                    <Route path="/bezpieczenstwo" element={<SecurityPage />} />
-                    <Route path="/potwierdzenie" element={<ThankYouPage />} />
-                    <Route path="/platnosc" element={<PaymentPage />} />
-                    <Route path="/secretai" element={<SecretAIPage />} />
-                    <Route path="/zasady" element={<ZasadyPage />} />
-                    <Route path="/spe43al-adm1n-p4nel" element={<AdminLogin />} />
-                    <Route path="/spe43al-adm1n-p4nel/setup" element={<FirstAdminSetup />} />
-                    <Route path="/spe43al-adm1n-p4nel/dashboard" element={
+              <div className="dark">
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/idea" element={<Index />} />
+                  <Route path="/zasady" element={<RulesPage />} />
+                  <Route path="/regulamin" element={<TermsPage />} />
+                  <Route path="/polityka-prywatnosci" element={<PrivacyPage />} />
+                  <Route path="/kontakt" element={<ContactPage />} />
+                  <Route path="/o-nas" element={<Index />} />
+                  <Route path="/faq" element={<FAQPage />} />
+                  <Route path="/bezpieczenstwo" element={<SecurityPage />} />
+                  <Route path="/secretai" element={<SecretAIPage />} />
+                  <Route path="/survey" element={<SurveyPage />} />
+                  <Route path="/payment" element={<PaymentPage />} />
+                  <Route path="/thank-you" element={<ThankYouPage />} />
+                  <Route path="/spe43al-adm1n-p4nel" element={<AdminLogin />} />
+                  <Route 
+                    path="/spe43al-adm1n-p4nel/dashboard" 
+                    element={
                       <ProtectedAdminRoute>
-                        <AdminLayout>
-                          <AdminDashboard />
-                        </AdminLayout>
+                        <AdminDashboard />
                       </ProtectedAdminRoute>
-                    } />
-                    <Route path="/spe43al-adm1n-p4nel/orders" element={
+                    } 
+                  />
+                  <Route 
+                    path="/spe43al-adm1n-p4nel/orders" 
+                    element={
                       <ProtectedAdminRoute>
-                        <AdminLayout>
-                          <AdminOrders />
-                        </AdminLayout>
+                        <AdminOrders />
                       </ProtectedAdminRoute>
-                    } />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </main>
-              </SurveyProvider>
+                    } 
+                  />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </div>
             </AdminAuthProvider>
-          </Router>
-        </ThemeProvider>
-      </QueryClientProvider>
-    </div>
+          </SurveyProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
   );
-}
+};
 
 export default App;
