@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Loader2, Lock, UserPlus } from 'lucide-react';
+import { Loader2, Lock, UserPlus, KeyRound, Shield } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
@@ -12,11 +12,16 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
+// Kod dostępu wymagany do rejestracji administratora
+const ADMIN_REGISTRATION_CODE = "sparks2024secure";
+
 const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
+  const [registrationCode, setRegistrationCode] = useState('');
+  const [isCodeVerified, setIsCodeVerified] = useState(false);
   const { login, isLoading, isAuthenticated } = useAdminAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -54,6 +59,22 @@ const AdminLogin: React.FC = () => {
     
     console.log('Próba logowania dla:', email);
     await login(email, password);
+  };
+
+  const verifyRegistrationCode = () => {
+    if (registrationCode === ADMIN_REGISTRATION_CODE) {
+      setIsCodeVerified(true);
+      toast({
+        title: "Kod weryfikacyjny poprawny",
+        description: "Możesz teraz utworzyć konto administratora.",
+      });
+    } else {
+      toast({
+        title: "Nieprawidłowy kod",
+        description: "Wprowadzony kod weryfikacyjny jest nieprawidłowy.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -255,77 +276,115 @@ const AdminLogin: React.FC = () => {
             </TabsContent>
             
             <TabsContent value="register">
-              <form onSubmit={handleRegister} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="register-email" className="block text-sm font-medium">
-                    Email
-                  </Label>
-                  <Input
-                    id="register-email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="admin@example.com"
-                  />
+              {!isCodeVerified ? (
+                <div className="space-y-4">
+                  <div className="bg-muted/50 rounded-lg p-4 mb-4">
+                    <div className="flex items-start">
+                      <Shield className="h-5 w-5 text-amber-500 mt-0.5 mr-2" />
+                      <p className="text-sm text-muted-foreground">
+                        Rejestracja konta administratora wymaga podania kodu dostępu.
+                        Skontaktuj się z głównym administratorem, aby uzyskać kod.
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="registration-code" className="block text-sm font-medium">
+                      Kod dostępu
+                    </Label>
+                    <Input
+                      id="registration-code"
+                      name="registrationCode"
+                      type="password"
+                      required
+                      value={registrationCode}
+                      onChange={(e) => setRegistrationCode(e.target.value)}
+                      placeholder="Wprowadź kod dostępu"
+                    />
+                  </div>
+                  
+                  <Button 
+                    type="button" 
+                    className="w-full" 
+                    onClick={verifyRegistrationCode}
+                  >
+                    <KeyRound className="mr-2 h-4 w-4" />
+                    Weryfikuj kod
+                  </Button>
                 </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="register-password" className="block text-sm font-medium">
-                    Hasło
-                  </Label>
-                  <Input
-                    id="register-password"
-                    name="password"
-                    type="password"
-                    autoComplete="new-password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="register-confirm-password" className="block text-sm font-medium">
-                    Powtórz hasło
-                  </Label>
-                  <Input
-                    id="register-confirm-password"
-                    name="confirmPassword"
-                    type="password"
-                    autoComplete="new-password"
-                    required
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="••••••••"
-                  />
-                </div>
+              ) : (
+                <form onSubmit={handleRegister} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="register-email" className="block text-sm font-medium">
+                      Email
+                    </Label>
+                    <Input
+                      id="register-email"
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="admin@example.com"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="register-password" className="block text-sm font-medium">
+                      Hasło
+                    </Label>
+                    <Input
+                      id="register-password"
+                      name="password"
+                      type="password"
+                      autoComplete="new-password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="register-confirm-password" className="block text-sm font-medium">
+                      Powtórz hasło
+                    </Label>
+                    <Input
+                      id="register-confirm-password"
+                      name="confirmPassword"
+                      type="password"
+                      autoComplete="new-password"
+                      required
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="••••••••"
+                    />
+                  </div>
 
-                <Button 
-                  type="submit" 
-                  className="w-full" 
-                  disabled={isRegistering}
-                >
-                  {isRegistering ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Tworzenie konta...
-                    </>
-                  ) : (
-                    <>
-                      <UserPlus className="mr-2 h-4 w-4" />
-                      Utwórz konto administratora
-                    </>
-                  )}
-                </Button>
-                
-                <p className="text-xs text-center text-muted-foreground mt-2">
-                  Tylko autoryzowane adresy email mogą utworzyć konto administratora
-                </p>
-              </form>
+                  <Button 
+                    type="submit" 
+                    className="w-full" 
+                    disabled={isRegistering}
+                  >
+                    {isRegistering ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Tworzenie konta...
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus className="mr-2 h-4 w-4" />
+                        Utwórz konto administratora
+                      </>
+                    )}
+                  </Button>
+                  
+                  <p className="text-xs text-center text-muted-foreground mt-2">
+                    Tylko autoryzowane adresy email mogą utworzyć konto administratora
+                  </p>
+                </form>
+              )}
             </TabsContent>
           </Tabs>
           
@@ -345,7 +404,7 @@ const AdminLogin: React.FC = () => {
                       <li>Użyj adresu email, który otrzymałeś od administratora</li>
                       <li>Jeśli nie pamiętasz hasła, skontaktuj się z głównym administratorem</li>
                       <li>W przypadku nowego konta użyj zakładki "Rejestracja" by utworzyć swoje konto</li>
-                      <li>Tylko autoryzowane adresy email mogą utworzyć konto administratora</li>
+                      <li>Do rejestracji wymagany jest kod dostępu i autoryzowany adres email</li>
                     </ul>
                   </AlertDialogDescription>
                 </AlertDialogHeader>
