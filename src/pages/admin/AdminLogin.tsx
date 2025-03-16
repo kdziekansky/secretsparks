@@ -7,12 +7,14 @@ import { Label } from '@/components/ui/label';
 import { LockIcon, EyeIcon, EyeOffIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 const AdminLogin = () => {
   const { login, isAuthenticated, isLoading } = useAdminAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loginInProgress, setLoginInProgress] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,12 +38,37 @@ const AdminLogin = () => {
     }
 
     try {
+      setLoginInProgress(true);
+      console.log('Próba logowania z danymi:', { email });
+
+      // Sprawdź, czy użytkownik istnieje w tabeli admin_users
+      const { data: adminUser, error: adminCheckError } = await supabase
+        .from('admin_users')
+        .select('email')
+        .eq('email', email)
+        .maybeSingle();
+
+      if (adminCheckError) {
+        console.error('Błąd weryfikacji administratora:', adminCheckError);
+        throw new Error('Problem z weryfikacją danych administratora');
+      }
+
+      if (!adminUser) {
+        console.error('Nie znaleziono w tabeli admin_users:', email);
+        throw new Error('Nieprawidłowe dane logowania');
+      }
+
+      // Przekaż logowanie do kontekstu
       await login(email, password);
+      
+      // Pomyślne logowanie jest obsługiwane przez useEffect z isAuthenticated
     } catch (error: any) {
       console.error('Błąd logowania:', error);
       toast.error('Błąd logowania', {
         description: error.message || 'Nieprawidłowy email lub hasło'
       });
+    } finally {
+      setLoginInProgress(false);
     }
   };
 
@@ -65,7 +92,7 @@ const AdminLogin = () => {
               className="bg-gray-900 border-gray-700 text-white"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              disabled={isLoading}
+              disabled={loginInProgress || isLoading}
               placeholder="twój@email.com"
             />
           </div>
@@ -79,7 +106,7 @@ const AdminLogin = () => {
                 className="bg-gray-900 border-gray-700 text-white pr-10"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                disabled={isLoading}
+                disabled={loginInProgress || isLoading}
                 placeholder="••••••••••••"
               />
               <button
@@ -96,9 +123,9 @@ const AdminLogin = () => {
             type="submit"
             variant="default"
             className="w-full"
-            disabled={isLoading}
+            disabled={loginInProgress || isLoading}
           >
-            {isLoading ? 'Logowanie...' : 'Zaloguj się'}
+            {loginInProgress || isLoading ? 'Logowanie...' : 'Zaloguj się'}
           </Button>
 
           <div className="text-center text-sm mt-4">
