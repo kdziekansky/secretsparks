@@ -1,4 +1,3 @@
-
 {
   "header": {
     "about": "About us",
@@ -183,5 +182,66 @@
   "slogan": {
     "line1": "A map of your sex life that will",
     "line2": "bring new energy"
+  },
+  "rulesPage": {
+    "title": "Secret Sparks",
+    "whatIs": {
+      "title": "What is Secret Sparks?",
+      "description": "Secret Sparks is an application created for couples who want to safely and discreetly explore new areas of their intimate life. Each partner completes a short, anonymous questionnaire – ensuring that no personal answers are shared with the other person. Secret AI analyzes sexual preferences, relationship map, and then presents a personalized report and practical suggestions on how to improve your sex life."
+    },
+    "howToUse": {
+      "title": "How to use Secret Sparks?",
+      "step1": {
+        "title": "Complete the survey",
+        "description": "Each partner individually completes the survey, rating on a scale from 1 to 4 their excitement and willingness to compromise with various types of intimate activities."
+      },
+      "step2": {
+        "title": "Invite your partner",
+        "description": "After completing the survey, you'll receive a link to send to your partner so they can complete their part. This enables Secret AI to create the report."
+      },
+      "step3": {
+        "title": "Receive your report",
+        "description": "After both surveys are completed, you'll receive a report with an analysis of your sex life and suggestions. It only includes activities that both of you are interested in."
+      },
+      "step4": {
+        "title": "Rediscover sex",
+        "description": "Consider this as a starting point to diversify your intimate life. By implementing the suggestions from the report, you can raise the level of satisfaction and closeness in your relationship."
+      }
+    },
+    "gameLevels": {
+      "title": "Game levels",
+      "description": "Secret Sparks offers three levels of advancement, tailored to your preferences and readiness to explore:",
+      "discover": {
+        "title": "Discover",
+        "description": "For couples who want to discover basic fantasies and diversify their intimate relationship."
+      },
+      "explore": {
+        "title": "Explore",
+        "description": "For couples who are ready for deeper exploration of their fantasies and desires."
+      },
+      "exceed": {
+        "title": "Exceed",
+        "description": "For brave couples who want to push boundaries and discover unusual experiences."
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "question1": {
+        "question": "Will my partner see my answers?",
+        "answer": "No, your individual answers remain completely private. Your partner will never see your specific choices. In the report, we only present common areas of interest, without revealing individual preferences."
+      },
+      "question2": {
+        "question": "How long does it take to complete the survey?",
+        "answer": "Completing the survey takes an average of 5-10 minutes. It depends on the chosen level (Discover, Explore, or Exceed) and how much time you spend considering each question. It's worth dedicating appropriate time to this task to get the most precise results."
+      },
+      "question3": {
+        "question": "Can I change my answers after saving them?",
+        "answer": "Yes, while filling out the survey, you can freely go back to previous questions and change your answers. However, after completing the survey and generating the report, the answers are locked and cannot be changed. If needed, you can always fill out a new survey."
+      },
+      "question4": {
+        "question": "How long do I have access to the report?",
+        "answer": "After generating the report, you have unlimited access to it. The report is sent to the provided email address, so you can return to it whenever you want. For your security and privacy, all survey data is deleted from our servers 7 days after generating the report, but the report itself remains available to you."
+      }
+    }
   }
 }

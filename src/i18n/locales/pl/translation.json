@@ -1,4 +1,3 @@
-
 {
   "header": {
     "about": "O nas",
@@ -183,5 +182,66 @@
   "slogan": {
     "line1": "Mapa waszego życia seksualnego, która",
     "line2": "wniesie nową energię"
+  },
+  "rulesPage": {
+    "title": "Secret Sparks",
+    "whatIs": {
+      "title": "Na czym polega Secret Sparks?",
+      "description": "Secret Sparks to aplikacja stworzona z myślą o parach, które chcą bezpiecznie i dyskretnie odkrywać nowe obszary swojego życia intymnego. Każdy z partnerów wypełnia krótki, anonimowy kwestionariusz – dzięki temu żadne osobiste odpowiedzi nie są udostępniane drugiej osobie. Secret AI analizuje preferencje seksualne, mapę związku, a następnie prezentuje spersonalizowany raport i praktyczne podpowiedzi, jak ulepszyć Wasze życie seksualne."
+    },
+    "howToUse": {
+      "title": "Jak korzystać z Secret Sparks?",
+      "step1": {
+        "title": "Wypełnij ankietę",
+        "description": "Każdy z partnerów samodzielnie wypełnia ankietę, oceniając na skali od 1 do 4 swoją ekscytację i zgodność do kompromisu różnymi rodzajami aktywności intymnych."
+      },
+      "step2": {
+        "title": "Zaproś partnera",
+        "description": "Po wypełnieniu ankiety otrzymasz link do wysłania partnerce/partnerowi, aby mógł wypełnić swoją część. Dzięki temu Secret AI stworzy raport."
+      },
+      "step3": {
+        "title": "Otrzymacie raport",
+        "description": "Po zakończeniu obu ankiet otrzymacie raport z analizą Waszego życia seksualnego i wskazówkami. Zawiera on tylko te aktywności, którymi oboje będziecie zainteresowani."
+      },
+      "step4": {
+        "title": "Odkryjcie seks na nowo",
+        "description": "Potraktujcie to jako punkt wyjścia do urozmaicenia życia intymnego. Wdrażając sugestie z raportu, możecie podnieść poziom satysfakcji i bliskości w związku."
+      }
+    },
+    "gameLevels": {
+      "title": "Poziomy gry",
+      "description": "Secret Sparks oferuje trzy poziomy zaawansowania, dopasowane do Waszych preferencji i gotowości do eksploracji:",
+      "discover": {
+        "title": "Discover",
+        "description": "Dla par, które chcą odkryć podstawowe fantazje i urozmaicić swoją relację intymną."
+      },
+      "explore": {
+        "title": "Explore",
+        "description": "Dla par, które są gotowe na głębsze eksplorowanie swoich fantazji i pragnień."
+      },
+      "exceed": {
+        "title": "Exceed",
+        "description": "Dla odważnych par, które chcą przekraczać granice i odkrywać nietypowe doznania."
+      }
+    },
+    "faq": {
+      "title": "Najczęściej zadawane pytania",
+      "question1": {
+        "question": "Czy mój partner/partnerka zobaczy moje odpowiedzi?",
+        "answer": "Nie, Twoje indywidualne odpowiedzi pozostają całkowicie prywatne. Partner/partnerka nigdy nie zobaczy Twoich konkretnych wyborów. W raporcie przedstawiamy jedynie wspólne obszary zainteresowań, bez ujawniania indywidualnych preferencji."
+      },
+      "question2": {
+        "question": "Jak długo trwa wypełnianie ankiety?",
+        "answer": "Wypełnienie ankiety zajmuje średnio 5-10 minut. Zależy to od wybranego poziomu (Discover, Explore lub Exceed) oraz od tego, ile czasu poświęcisz na przemyślenie każdego pytania. Warto poświęcić na to zadanie odpowiednią ilość czasu, aby uzyskać jak najbardziej precyzyjne wyniki."
+      },
+      "question3": {
+        "question": "Czy mogę zmienić swoje odpowiedzi po ich zapisaniu?",
+        "answer": "Tak, podczas wypełniania ankiety możesz swobodnie wracać do poprzednich pytań i zmieniać swoje odpowiedzi. Jednak po zakończeniu ankiety i wygenerowaniu raportu, odpowiedzi zostają zablokowane i nie ma możliwości ich zmiany. W razie potrzeby, zawsze możesz wypełnić nową ankietę."
+      },
+      "question4": {
+        "question": "Jak długo mam dostęp do raportu?",
+        "answer": "Po wygenerowaniu raportu, masz do niego bezterminowy dostęp. Raport jest przesyłany na podany adres email, dzięki czemu możesz do niego wracać kiedy tylko chcesz. Dla Twojego bezpieczeństwa i prywatności, wszystkie dane ankietowe są usuwane z naszych serwerów po 7 dniach od wygenerowania raportu, ale sam raport pozostaje dostępny dla Ciebie."
+      }
+    }
   }
 }
