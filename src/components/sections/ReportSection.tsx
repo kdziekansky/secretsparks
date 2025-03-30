@@ -3,21 +3,18 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Check, Users, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useTranslation } from 'react-i18next';
 
 const ReportSection = () => {
-  const { t } = useTranslation();
-  
   return (
     <section className="py-16 bg-[#0B0B0E]">
       <div className="container mx-auto px-4">
-        <h2 className="text-4xl md:text-5xl font-bold mb-16 text-left">{t('home.report.title')}</h2>
+        <h2 className="text-4xl md:text-5xl font-bold mb-16 text-left">Nasz raport</h2>
         
         {/* Two-column layout with consistent height */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-20 mb-16">
           {/* Left column */}
           <div className="flex flex-col h-full">
-            <h3 className="text-3xl font-bold mb-8 text-left">{t('home.report.description')}</h3>
+            <h3 className="text-3xl font-bold mb-8 text-left">Co zawiera raport</h3>
             
             <div className="space-y-8 flex-grow">
               <div className="flex items-start">
@@ -127,7 +124,7 @@ const ReportSection = () => {
           </p>
           <Link to="/survey" className="w-full max-w-sm">
             <Button className="btn-primary btn-large w-full text-lg py-6">
-              {t('survey.instruction.startSurvey')}
+              Wypełnij ankietę
             </Button>
           </Link>
         </div>

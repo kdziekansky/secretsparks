@@ -1,3 +1,4 @@
+
 export default {
   common: {
     orderReport: "Zamów raport",
@@ -17,13 +18,6 @@ export default {
       subscriptionText: "Zapisz się, otrzymuj porady za darmo oraz dowiedz się o naszych promocjach jako pierwszy.",
       copyright: "© 2025 Secret Sparks. Wszelkie prawa zastrzeżone."
     }
-  },
-  ratings: {
-    dislike: "Nie lubię tego",
-    mixed: "Mam mieszane uczucia",
-    like: "Lubię to",
-    veryInterested: "Bardzo mnie to interesuje",
-    favorite: "Ulubione"
   },
   home: {
     hero: {

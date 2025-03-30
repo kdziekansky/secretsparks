@@ -1,13 +1,19 @@
 
+export type Gender = 'male' | 'female' | null;
+export type GameLevel = 'discover' | 'explore' | 'exceed' | null;
+
+export interface SurveyConfig {
+  userGender: Gender;
+  partnerGender: Gender;
+  gameLevel: GameLevel;
+  isConfigComplete: boolean;
+}
+
 export interface Question {
   id: string;
-  title?: string; // Zmieniamy na opcjonalne, ponieważ istniejące pytania używają 'text' zamiast 'title'
+  text: string;
   description?: string;
-  image?: string;
-  adultContent?: boolean;
-  // Dodatkowe pola używane w istniejących pytaniach
-  text?: string; // Kompatybilność wsteczna z istniejącymi pytaniami
-  illustration?: string; // Dodane pole dla kompatybilności z danymi pytań
+  illustration?: string;
   forConfig?: {
     userGender?: Gender;
     partnerGender?: Gender;
@@ -17,27 +23,13 @@ export interface Question {
   pairPriority?: number;
 }
 
-// Podstawowe typy używane w ankiecie
-export type Gender = 'male' | 'female';
-export type GameLevel = 'discover' | 'explore' | 'exceed';
-
-// Konfiguracja ankiety
-export interface SurveyConfig {
-  userGender: Gender | null;
-  partnerGender: Gender | null;
-  gameLevel: GameLevel | null;
-  isConfigComplete: boolean;
-}
-
-// Typ kontekstu ankiety
 export interface SurveyContextType {
   currentQuestionIndex: number;
-  totalQuestions: number;
-  questions: Question[];
-  filteredQuestions: Question[];
   answers: Record<string, number>;
+  questions: Question[];
+  surveyConfig: SurveyConfig;
+  totalQuestions: number;
   setAnswer: (questionId: string, value: number) => void;
-  saveAnswer: (isPartnerSurvey?: boolean) => Promise<void>;
   nextQuestion: () => void;
   prevQuestion: () => void;
   isFirstQuestion: boolean;
@@ -50,16 +42,11 @@ export interface SurveyContextType {
   setGameLevel: (level: GameLevel) => void;
   completeConfig: () => void;
   isInConfigurationMode: boolean;
-  surveyConfig: SurveyConfig;
   showInstructions: boolean;
   completeInstructions: () => void;
   isPartnerSurvey: boolean;
-  setOrderId: (orderId: string) => string;
-  getOrderId: () => string | undefined;
-  
-  // Dodajemy brakujące właściwości, do których odwołuje się SurveyPage
-  isConfigCompleted?: boolean;
-  isPartnerMode?: boolean;
-  isSurveyCompleted?: boolean;
-  completeSurvey?: () => void;
+  filteredQuestions: Question[];
+  saveAnswer: (isPartnerSurvey?: boolean) => Promise<void>;
+  setOrderId: (orderId: string) => void;
+  getOrderId: () => string | null;
 }

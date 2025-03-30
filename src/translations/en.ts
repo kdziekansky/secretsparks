@@ -1,3 +1,4 @@
+
 export default {
   common: {
     orderReport: "Order report",
@@ -134,13 +135,6 @@ export default {
       inviteMessage1: "has invited you to the most exciting game in the universe.",
       inviteMessage2: "Click the button below and answer the questions honestly. We guarantee that your partner will not see your answers. With the help of artificial intelligence, we will analyze your answers and prepare a game report for you."
     }
-  },
-  ratings: {
-    dislike: "I dislike this",
-    mixed: "I have mixed feelings",
-    like: "I like this",
-    veryInterested: "I'm very interested",
-    favorite: "Favorite"
   },
   pages: {
     contact: {

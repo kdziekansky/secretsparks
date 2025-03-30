@@ -1,3 +1,4 @@
+
 export default {
   common: {
     orderReport: "Bericht bestellen",
@@ -17,13 +18,6 @@ export default {
       subscriptionText: "Abonnieren Sie, um kostenlose Beratung zu erhalten und als Erster von unseren Angeboten zu erfahren.",
       copyright: "© 2025 Secret Sparks. Alle Rechte vorbehalten."
     }
-  },
-  ratings: {
-    dislike: "Ich mag das nicht",
-    mixed: "Ich habe gemischte Gefühle",
-    like: "Ich mag das",
-    veryInterested: "Ich bin sehr interessiert",
-    favorite: "Favorit"
   },
   home: {
     hero: {

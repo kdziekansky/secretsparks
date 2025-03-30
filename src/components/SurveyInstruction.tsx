@@ -1,111 +1,121 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Check, SendIcon, FileTextIcon, Info } from 'lucide-react';
+import { useSurvey } from '@/contexts/SurveyContext';
+import { Heart, CheckCircle, Shield, SendHorizonal, FileText, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-interface SurveyInstructionProps {
-  onStart: () => void;
-}
-
-const SurveyInstruction: React.FC<SurveyInstructionProps> = ({ onStart }) => {
+const SurveyInstruction: React.FC = () => {
+  const { completeInstructions } = useSurvey();
   const { t } = useTranslation();
   
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="glass-card p-8 md:p-12 flex flex-col items-center">
-        <h1 className="text-3xl font-bold mb-12 text-center">
-          {t('survey.instruction.title')}
-        </h1>
+    <div className="glass-panel w-full max-w-4xl p-6 md:p-8 animate-slide-up">
+      <div className="flex flex-col items-center text-center">
+        <div className="flex items-center justify-center w-14 h-14 md:w-16 md:h-16 bg-pink-100 rounded-full mb-4">
+          <Heart className="w-7 h-7 md:w-8 md:h-8 text-pink-500" />
+        </div>
         
-        <div className="grid md:grid-cols-2 gap-8 w-full mb-12">
-          <div className="glass-card bg-card/30 p-6 rounded-xl">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary">
-                <Check className="w-5 h-5" />
+        <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">{t('survey.instruction.title')}</h1>
+        
+        <div className="my-4 md:my-6 w-full space-y-4 md:space-y-6">
+          {/* Instrukcje w formie kroków */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <div className="bg-card/30 p-4 md:p-6 rounded-lg flex flex-col items-start text-left shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div className="flex items-center mb-2 md:mb-3">
+                <CheckCircle className="w-5 h-5 md:w-6 md:h-6 text-primary mr-2" />
+                <h3 className="text-lg md:text-xl font-semibold">{t('survey.instruction.honest.title')}</h3>
               </div>
-              <h3 className="text-xl font-medium">{t('survey.instruction.honest.title')}</h3>
+              <p className="text-sm md:text-base text-muted-foreground">
+                {t('survey.instruction.honest.description')}
+              </p>
             </div>
-            <p className="text-muted-foreground">
-              {t('survey.instruction.honest.description')}
-            </p>
+            
+            <div className="bg-card/30 p-4 md:p-6 rounded-lg flex flex-col items-start text-left shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div className="flex items-center mb-2 md:mb-3">
+                <Shield className="w-5 h-5 md:w-6 md:h-6 text-primary mr-2" />
+                <h3 className="text-lg md:text-xl font-semibold">{t('survey.instruction.discretion.title')}</h3>
+              </div>
+              <p className="text-sm md:text-base text-muted-foreground">
+                {t('survey.instruction.discretion.description')}
+              </p>
+            </div>
+            
+            <div className="bg-card/30 p-4 md:p-6 rounded-lg flex flex-col items-start text-left shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div className="flex items-center mb-2 md:mb-3">
+                <SendHorizonal className="w-5 h-5 md:w-6 md:h-6 text-primary mr-2" />
+                <h3 className="text-lg md:text-xl font-semibold">{t('survey.instruction.invite.title')}</h3>
+              </div>
+              <p className="text-sm md:text-base text-muted-foreground">
+                {t('survey.instruction.invite.description')}
+              </p>
+            </div>
+            
+            <div className="bg-card/30 p-4 md:p-6 rounded-lg flex flex-col items-start text-left shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div className="flex items-center mb-2 md:mb-3">
+                <FileText className="w-5 h-5 md:w-6 md:h-6 text-primary mr-2" />
+                <h3 className="text-lg md:text-xl font-semibold">{t('survey.instruction.report.title')}</h3>
+              </div>
+              <p className="text-sm md:text-base text-muted-foreground">
+                {t('survey.instruction.report.description')}
+              </p>
+            </div>
           </div>
           
-          <div className="glass-card bg-card/30 p-6 rounded-xl">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary">
-                <Info className="w-5 h-5" />
+          {/* Sekcja z ceną - przeprojektowana dla spójności z sekcją instrukcji */}
+          <div className="bg-gradient-to-br from-primary/20 to-primary/5 p-4 md:p-6 rounded-2xl my-4 md:my-6 w-full mx-auto shadow-lg border border-primary/10 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/40 to-transparent"></div>
+            <div className="relative z-10">
+              <h2 className="text-lg md:text-xl font-bold mb-2 text-gradient-primary text-center">{t('survey.instruction.serviceCost')}</h2>
+              
+              <div className="flex items-center justify-center mb-4">
+                <span className="text-2xl md:text-4xl font-bold text-primary">29 zł</span>
+                <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-primary ml-2 opacity-80" />
               </div>
-              <h3 className="text-xl font-medium">{t('survey.instruction.discretion.title')}</h3>
-            </div>
-            <p className="text-muted-foreground">
-              {t('survey.instruction.discretion.description')}
-            </p>
-          </div>
-          
-          <div className="glass-card bg-card/30 p-6 rounded-xl">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary">
-                <SendIcon className="w-5 h-5" />
+              
+              <p className="text-xs md:text-sm opacity-90 text-center font-medium mb-4">
+                {t('survey.instruction.oneTimePayment')}
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
+                <div className="flex items-start bg-card/30 p-2 md:p-3 rounded-lg">
+                  <CheckCircle className="h-4 w-4 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                  <span className="text-xs text-muted-foreground text-left">{t('survey.instruction.features.paymentAfterSurvey')}</span>
+                </div>
+                <div className="flex items-start bg-card/30 p-2 md:p-3 rounded-lg">
+                  <CheckCircle className="h-4 w-4 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                  <span className="text-xs text-muted-foreground text-left">{t('survey.instruction.features.personalizedReport')}</span>
+                </div>
+                <div className="flex items-start bg-card/30 p-2 md:p-3 rounded-lg">
+                  <CheckCircle className="h-4 w-4 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                  <span className="text-xs text-muted-foreground text-left">{t('survey.instruction.features.commonFascinations')}</span>
+                </div>
+                <div className="flex items-start bg-card/30 p-2 md:p-3 rounded-lg">
+                  <CheckCircle className="h-4 w-4 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                  <span className="text-xs text-muted-foreground text-left">{t('survey.instruction.features.scenarios')}</span>
+                </div>
+                <div className="flex items-start bg-card/30 p-2 md:p-3 rounded-lg">
+                  <CheckCircle className="h-4 w-4 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                  <span className="text-xs text-muted-foreground text-left">{t('survey.instruction.features.comfortMap')}</span>
+                </div>
+                <div className="flex items-start bg-card/30 p-2 md:p-3 rounded-lg">
+                  <CheckCircle className="h-4 w-4 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                  <span className="text-xs text-muted-foreground text-left">{t('survey.instruction.features.betterSexLife')}</span>
+                </div>
               </div>
-              <h3 className="text-xl font-medium">{t('survey.instruction.invite.title')}</h3>
             </div>
-            <p className="text-muted-foreground">
-              {t('survey.instruction.invite.description')}
-            </p>
-          </div>
-          
-          <div className="glass-card bg-card/30 p-6 rounded-xl">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary">
-                <FileTextIcon className="w-5 h-5" />
-              </div>
-              <h3 className="text-xl font-medium">{t('survey.instruction.report.title')}</h3>
-            </div>
-            <p className="text-muted-foreground">
-              {t('survey.instruction.report.description')}
-            </p>
           </div>
         </div>
         
-        <div className="w-full p-6 rounded-xl bg-card/20 mb-12">
-          <h3 className="text-xl font-medium mb-4">{t('survey.instruction.serviceCost')}</h3>
-          <div className="flex justify-between items-center">
-            <div className="text-4xl md:text-5xl font-bold text-primary">49 PLN</div>
-            <div className="text-muted-foreground">{t('survey.instruction.oneTimePayment')}</div>
-          </div>
+        <div className="mt-6 md:mt-8 flex flex-col items-center">
+          <Button 
+            onClick={completeInstructions} 
+            className="px-6 py-2 md:px-8 md:py-6 text-base md:text-lg bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-200"
+            size="lg"
+          >
+            {t('survey.instruction.startSurvey')}
+          </Button>
         </div>
-        
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-12 w-full">
-          <div className="flex items-center gap-2">
-            <Check className="w-4 h-4 text-primary" />
-            <span className="text-sm">{t('survey.instruction.features.paymentAfterSurvey')}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Check className="w-4 h-4 text-primary" />
-            <span className="text-sm">{t('survey.instruction.features.personalizedReport')}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Check className="w-4 h-4 text-primary" />
-            <span className="text-sm">{t('survey.instruction.features.commonFascinations')}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Check className="w-4 h-4 text-primary" />
-            <span className="text-sm">{t('survey.instruction.features.scenarios')}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Check className="w-4 h-4 text-primary" />
-            <span className="text-sm">{t('survey.instruction.features.comfortMap')}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Check className="w-4 h-4 text-primary" />
-            <span className="text-sm">{t('survey.instruction.features.betterSexLife')}</span>
-          </div>
-        </div>
-        
-        <Button className="rounded-full px-8 py-6" size="lg" onClick={onStart}>
-          {t('survey.instruction.startSurvey')}
-        </Button>
       </div>
     </div>
   );
