@@ -3,7 +3,6 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Heart, User, UserCircle2 } from 'lucide-react';
 import { useSurvey } from '@/contexts/SurveyContext';
-import { useTranslation } from 'react-i18next';
 
 interface PartnerWelcomeProps {
   orderDetails: {
@@ -14,7 +13,6 @@ interface PartnerWelcomeProps {
 
 const PartnerWelcome: React.FC<PartnerWelcomeProps> = ({ orderDetails }) => {
   const { completeConfig } = useSurvey();
-  const { t } = useTranslation();
   
   return (
     <div className="glass-panel w-full max-w-4xl p-8 animate-slide-up">
@@ -23,10 +21,10 @@ const PartnerWelcome: React.FC<PartnerWelcomeProps> = ({ orderDetails }) => {
           <Heart className="w-8 h-8 text-pink-500" />
         </div>
         
-        <h1 className="text-3xl font-bold mb-4">{t('survey.partnerWelcome.welcome')}, {orderDetails.partnerName}!</h1>
+        <h1 className="text-3xl font-bold mb-4">Witaj, {orderDetails.partnerName}!</h1>
         
         <p className="text-xl mb-8">
-          <strong>{orderDetails.userName}</strong> {t('survey.partnerWelcome.invitedYou')}.
+          <strong>{orderDetails.userName}</strong> zaprosił(a) Cię do wspólnego wypełnienia ankiety.
         </p>
         
         <div className="flex items-center justify-center space-x-4 p-4 mb-8 bg-gray-50 rounded-lg">
@@ -48,14 +46,15 @@ const PartnerWelcome: React.FC<PartnerWelcomeProps> = ({ orderDetails }) => {
         </div>
         
         <p className="text-gray-600 mb-8 max-w-lg">
-          {t('survey.partnerWelcome.helpExplanation')}
+          Ta ankieta pomoże Wam lepiej zrozumieć swoje potrzeby i pragnienia. 
+          Po wypełnieniu, otrzymacie wnikliwy raport, który otworzy przed Wami nowe możliwości.
         </p>
         
         <Button 
           onClick={completeConfig} 
           className="px-8 py-6 text-lg"
         >
-          {t('survey.partnerWelcome.startSurvey')}
+          Rozpocznij ankietę
         </Button>
       </div>
     </div>
