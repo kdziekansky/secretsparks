@@ -1,157 +1,378 @@
+
 {
-  "index": {
-    "heroSection": {
-      "title": "Unlock Deeper Intimacy with Your Partner",
-      "subtitle": "Discover personalized insights and activities to strengthen your relationship and enhance your love life.",
-      "button": "Start Your Journey"
+  "header": {
+    "about": "About us",
+    "rules": "Rules",
+    "faq": "FAQ",
+    "security": "Security",
+    "secretai": "Secret AI",
+    "order": "Order report"
+  },
+  "hero": {
+    "tag": "A NEW DIMENSION OF INTIMATE COMMUNICATION",
+    "title1": "Understanding without words.",
+    "title2": "Sex life at a higher level",
+    "description": "In every relationship, there are desires that are difficult to express aloud. Secret Sparks is a space where your unspoken thoughts meet your partner's desires, creating a map for shared pleasures.",
+    "orderButton": "Order report",
+    "learnMore": "Learn more"
+  },
+  "stats": {
+    "stat1": {
+      "number": "250+",
+      "text": "Unique scenarios and ideas to enrich your intimate relationship"
     },
-    "stepsSection": {
-      "title": "How It Works",
-      "step1": {
-        "title": "Answer Questions Together",
-        "description": "Both you and your partner complete a fun, intimate survey."
+    "stat2": {
+      "number": "100%",
+      "text": "Guarantee of data security and complete anonymity for each survey"
+    },
+    "stat3": {
+      "number": "5min",
+      "text": "A quick survey that will change your relationship forever"
+    }
+  },
+  "features": {
+    "feature1": {
+      "title": "Discover yourselves",
+      "description": "See each other in a new light. We reveal the desires that connect you, creating a map of shared fascinations and opening doors to deeper intimacy. Discover together dimensions of your relationship you didn't know existed."
+    },
+    "feature2": {
+      "title": "Ignite each other",
+      "description": "Bring excitement into your relationship. Our application will help you break routine and build deeper intimacy based on mutual understanding and authentic desire."
+    },
+    "feature3": {
+      "title": "Explore desires",
+      "description": "Create new memories in a safe space of mutual trust. From subtle suggestions to bold proposals - discover how exciting it can be to explore desires together."
+    }
+  },
+  "steps": {
+    "title": "Step by step",
+    "step1": {
+      "number": "1",
+      "title": "Discover yourself",
+      "description": "Answer survey questions honestly in complete privacy, without fear of judgment or pressure."
+    },
+    "step2": {
+      "number": "2",
+      "title": "Invite your partner",
+      "description": "We will send an invitation to the person you indicate, who will also complete the survey with a guarantee of confidentiality."
+    },
+    "step3": {
+      "number": "3",
+      "title": "Receive your report",
+      "description": "Get a unique report and a map to shared pleasures that you won't forget for a long time."
+    },
+    "step4": {
+      "number": "4",
+      "title": "Begin the adventure",
+      "description": "Use the provided tips to introduce a new dimension of pleasure into your relationship."
+    }
+  },
+  "research": {
+    "title": "What research says",
+    "mainCard": {
+      "title": "The power of authentic conversation",
+      "paragraph1": "Research by Mallory et al. (2022) showed that open communication in the intimate sphere significantly increases relationship satisfaction. Regular dialogues about needs and fantasies allow partners to build lasting emotional bonds.",
+      "paragraph2": "Secret Sparks facilitates these conversations, enabling safe sharing of desires and discovering common interests without fear of misunderstandings. It's an effective way to deepen mutual understanding and build an intimate relationship based on authentic communication."
+    },
+    "sideCard": {
+      "title": "Communication and desire",
+      "description": "A study by Montesi et al. (2011) proved that honest conversation about sex enhances satisfaction and bond. Secret Sparks facilitates such dialogue through anonymous surveys and personalized reports that identify common interests without pressuring partners, leading to a deeper and more satisfying relationship."
+    },
+    "feature1": {
+      "title": "Hormones of closeness",
+      "description": "Feldman et al. (2012) showed that frequent physical contact increases oxytocin levels, strengthening trust and sense of security in a relationship. Secret Sparks offers rituals and activity suggestions that promote the production of this \"love hormone\" and build lasting attachment."
+    },
+    "feature2": {
+      "title": "Satisfaction and happiness",
+      "description": "Schmiedeberg et al. (2017) demonstrated a significant relationship between frequency of intercourse and overall feeling of happiness and life satisfaction. Secret Sparks inspires the discovery of new sensations and maintaining enthusiasm in a relationship, which directly translates to overall life satisfaction."
+    },
+    "feature3": {
+      "title": "Balance in relationship",
+      "description": "Gola's study (2019) indicates that higher sexual satisfaction promotes better well-being and increases the level of commitment in a relationship. Secret Sparks helps couples better understand each other's needs and desires, leading to balance and harmony in an intimate relationship."
+    }
+  },
+  "report": {
+    "title": "Our report",
+    "section1": {
+      "title": "What the report contains",
+      "feature1": {
+        "title": "Shared fascinations",
+        "description": "Discover activities and fantasies that you both found intriguing and worth trying."
       },
-      "step2": {
-        "title": "AI-Powered Analysis",
-        "description": "Our Secret AI analyzes your combined responses."
+      "feature2": {
+        "title": "Discovery zones",
+        "description": "Areas where your interests overlap and are worth exploring together."
       },
-      "step3": {
-        "title": "Receive Personalized Insights",
-        "description": "Get a custom report with tailored activities and suggestions."
+      "feature3": {
+        "title": "Inspirations and scenarios",
+        "description": "Practical suggestions and ready-made scenarios based on your shared preferences."
+      },
+      "feature4": {
+        "title": "Comfort map",
+        "description": "Visualization of your comfort zones with indication of areas of perfect match."
+      },
+      "feature5": {
+        "title": "Conversation guide",
+        "description": "Suggestions on how to start an honest conversation about your desires without embarrassment."
       }
     },
-    "researchSection": {
-      "title": "Backed by Science",
-      "description": "Our approach is based on extensive research in relationship psychology and intimacy.",
-      "point1": "Proven methodologies for relationship enhancement",
-      "point2": "Insights from leading relationship experts",
-      "point3": "Data-driven approach for personalized results"
+    "section2": {
+      "title": "Get a personalized report",
+      "description": "You won't see each other's answers. Instead, you'll receive a personalized report."
     },
-    "reportSection": {
-      "title": "What You'll Discover",
-      "point1": "Shared Desires",
-      "description1": "Uncover your common passions and fantasies.",
-      "point2": "Hidden Needs",
-      "description2": "Identify unspoken desires and areas for growth.",
-      "point3": "Actionable Steps",
-      "description3": "Get practical tips to spice up your love life."
+    "cta": {
+      "title": "DISCOVER SHARED DESIRES TODAY!",
+      "description": "Complete the survey and receive a detailed report that will help you better understand each other and become closer.",
+      "button": "Complete the survey"
+    }
+  },
+  "footer": {
+    "mission": "Our goal is to increase your satisfaction",
+    "newsletter": {
+      "title": "Subscribe",
+      "description": "Subscribe to receive free advice and be the first to know about our promotions.",
+      "placeholder": "Enter your email"
+    },
+    "links": {
+      "privacy": "Privacy policy",
+      "terms": "Terms of use",
+      "contact": "Contact"
+    },
+    "copyright": "© 2025 Secret Sparks. All rights reserved."
+  },
+  "languageSwitcher": {
+    "label": "Choose language",
+    "pl": "Polski",
+    "en": "English",
+    "de": "Deutsch"
+  },
+  "emailPreview": {
+    "notificationToPartner": "THIS MESSAGE WILL BE SENT TO YOUR PARTNER",
+    "from": "From",
+    "to": "To",
+    "subject": "Subject",
+    "invitationEmail": "Invitation email",
+    "confirmationEmail": "Confirmation email",
+    "invitationSubject": "Someone invites you to a game",
+    "confirmationSubject": "Thank you for your purchase!",
+    "invitation": {
+      "title": "Invitation to a unique game",
+      "greeting": "Hello,",
+      "paragraph1": "has invited you to the Secret Sparks game - a unique experience that will help you",
+      "highlight": "discover shared desires and fantasies",
+      "paragraph2": "that you might not even know existed.",
+      "howItWorks": "How it works?",
+      "howItWorksText": "You answer a few questions about your preferences and interests. has already completed their survey. Based on your answers, we will create a personalized report showing only those activities and fantasies that you both found attractive.",
+      "confidentiality": "Your answers are completely confidential - will never see your individual choices, only the common matches in the final report.",
+      "button": "Begin the survey",
+      "footer": "Best regards,\nSecret Sparks Team"
+    },
+    "confirmation": {
+      "title": "Thank you for your purchase!",
+      "greeting": "Hello",
+      "paragraph1": "Thank you for ordering the Secret Sparks report. This is the first step to discovering a completely new dimension of your relationship!",
+      "whatsNext": "What happens now?",
+      "whatsNextText": "We have just sent an invitation to the survey to. When they complete their part of the survey, our AI system will analyze your answers and prepare a personalized report that will help you discover shared desires.",
+      "orderNumber": "Your order number:",
+      "footer": "With warm regards,\nSecret Sparks Team"
+    },
+    "fillSurvey": "Click \"Complete the survey\" to receive your personalized report...",
+    "yourReport": "Your Secret Sparks report",
+    "youAndPartner": "You and your partner"
+  },
+  "slogan": {
+    "line1": "A map of your sex life that will",
+    "line2": "bring new energy"
+  },
+  "rulesPage": {
+    "title": "Secret Sparks",
+    "whatIs": {
+      "title": "What is Secret Sparks?",
+      "description": "Secret Sparks is an application created for couples who want to safely and discreetly explore new areas of their intimate life. Each partner completes a short, anonymous questionnaire – ensuring that no personal answers are shared with the other person. Secret AI analyzes sexual preferences, relationship map, and then presents a personalized report and practical suggestions on how to improve your sex life."
+    },
+    "howToUse": {
+      "title": "How to use Secret Sparks?",
+      "step1": {
+        "title": "Complete the survey",
+        "description": "Each partner individually completes the survey, rating on a scale from 1 to 4 their excitement and willingness to compromise with various types of intimate activities."
+      },
+      "step2": {
+        "title": "Invite your partner",
+        "description": "After completing the survey, you'll receive a link to send to your partner so they can complete their part. This enables Secret AI to create the report."
+      },
+      "step3": {
+        "title": "Receive your report",
+        "description": "After both surveys are completed, you'll receive a report with an analysis of your sex life and suggestions. It only includes activities that both of you are interested in."
+      },
+      "step4": {
+        "title": "Rediscover sex",
+        "description": "Consider this as a starting point to diversify your intimate life. By implementing the suggestions from the report, you can raise the level of satisfaction and closeness in your relationship."
+      }
+    },
+    "gameLevels": {
+      "title": "Game levels",
+      "description": "Secret Sparks offers three levels of advancement, tailored to your preferences and readiness to explore:",
+      "discover": {
+        "title": "Discover",
+        "description": "For couples who want to discover basic fantasies and diversify their intimate relationship."
+      },
+      "explore": {
+        "title": "Explore",
+        "description": "For couples who are ready for deeper exploration of their fantasies and desires."
+      },
+      "exceed": {
+        "title": "Exceed",
+        "description": "For brave couples who want to push boundaries and discover unusual experiences."
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "question1": {
+        "question": "Will my partner see my answers?",
+        "answer": "No, your individual answers remain completely private. Your partner will never see your specific choices. In the report, we only present common areas of interest, without revealing individual preferences."
+      },
+      "question2": {
+        "question": "How long does it take to complete the survey?",
+        "answer": "Completing the survey takes an average of 5-10 minutes. It depends on the chosen level (Discover, Explore, or Exceed) and how much time you spend considering each question. It's worth dedicating appropriate time to this task to get the most precise results."
+      },
+      "question3": {
+        "question": "Can I change my answers after saving them?",
+        "answer": "Yes, while filling out the survey you can freely go back to previous questions and change your answers. However, after completing the survey and generating the report, the answers are locked and cannot be changed. In case of need, you can always fill out a new survey."
+      },
+      "question4": {
+        "question": "How long do I have access to the report?",
+        "answer": "After generating the report, you have unlimited access to it. The report is sent to the provided email address, so you can return to it whenever you want. For your security and privacy, all survey data is deleted from our servers 7 days after generating the report, but the report itself remains available to you."
+      }
     }
   },
   "faqPage": {
     "title": "Frequently Asked Questions",
-    "question1": "What is this all about?",
-    "answer1": "This platform is designed to help couples improve their intimacy and communication through personalized insights and activities.",
-    "question2": "How does the survey work?",
-    "answer2": "You and your partner will each answer a series of questions about your relationship, preferences, and desires. Our AI then analyzes your responses to provide tailored recommendations.",
-    "question3": "Is my data secure?",
-    "answer3": "Yes, we take your privacy very seriously. All data is encrypted and anonymized to ensure your information remains confidential.",
-    "question4": "What kind of activities will be suggested?",
-    "answer4": "The activities are tailored to your specific needs and preferences, and may include communication exercises, date night ideas, and intimacy-building techniques.",
-    "question5": "How long does it take to complete the survey?",
-    "answer5": "The survey typically takes about 20-30 minutes to complete for each partner.",
-    "question6": "Can I use this platform if I'm not in a traditional relationship?",
-    "answer6": "Yes, our platform is designed to be inclusive and can be used by couples of all types, regardless of gender, sexual orientation, or relationship structure."
+    "privacy": {
+      "title": "Privacy and security",
+      "question1": {
+        "question": "Will my partner see my answers from the survey?",
+        "answer": "Absolutely not. Secret Sparks guarantees complete anonymity and privacy of your answers. Your partner will never see your individual choices - only those activities that you both rated positively will be available. This way, you can be completely honest in your answers without fear of judgment or pressure."
+      },
+      "question2": {
+        "question": "How long do you store my data?",
+        "answer": "We care about your privacy. All survey data is automatically deleted from our servers 7 days after generating the report. We don't store data longer than necessary to provide the service. The report itself is sent to your email address, giving you permanent access to it."
+      },
+      "question3": {
+        "question": "Are my answers secure?",
+        "answer": "Yes, all data is encrypted and stored with the highest security standards. We use end-to-end encryption, and our infrastructure is regularly tested for security. We never share your data with third parties or use it for marketing purposes without your consent."
+      }
+    },
+    "survey": {
+      "title": "Survey and report",
+      "question1": {
+        "question": "What will I find in the Secret Sparks report?",
+        "answer": "The Secret Sparks report includes: an analysis of your common preferences, a map of compatibility and diversity in your approach to sexuality, specific scenarios and activities that can enhance your intimate closeness, and practical tips on how to implement them. The report is completely personalized - based solely on your shared interests."
+      },
+      "question2": {
+        "question": "What if my preferences don't match my partner's?",
+        "answer": "This is completely normal - every couple has differences in preferences. Secret Sparks focuses on areas where your interests meet, even if there are few. In such cases, the report will focus on these common points and suggest ways to develop that part of your intimate life. Sometimes discovering even a few common areas can open a completely new chapter in the relationship."
+      },
+      "question3": {
+        "question": "How long does it take to complete the survey?",
+        "answer": "Completing the survey takes an average of 5-10 minutes, depending on the chosen level (Discover, Explore, or Exceed). There is no time limit; you can take as long as you need to think about each question. We recommend finding a quiet moment when no one is disturbing you so that your answers can be as honest and thoughtful as possible."
+      },
+      "question4": {
+        "question": "Can I pause the survey and finish it later?",
+        "answer": "Yes, you can pause the survey at any time and come back to it later. Your answers are automatically saved after each question. Simply use the same device and browser to continue from where you left off."
+      }
+    },
+    "payment": {
+      "title": "Payments and logistics",
+      "question1": {
+        "question": "How much does Secret Sparks cost and what does the price include?",
+        "answer": "Secret Sparks is a one-time fee of $7.99. The price includes access to the survey for both partners, generation of a personalized report, and permanent access to the results. There are no hidden fees or subscriptions - you pay once and use the full functionality."
+      },
+      "question2": {
+        "question": "What payment methods are accepted?",
+        "answer": "We accept various payment methods, including: credit and debit cards (Visa, Mastercard), BLIK (in Poland), online transfers through most banks, and electronic wallets (Google Pay, Apple Pay). All payments are secure and encrypted."
+      },
+      "question3": {
+        "question": "What happens if my partner doesn't complete their survey?",
+        "answer": "To generate a report, both partners must complete the survey. If your partner doesn't complete their part, the report won't be generated. In such a case, you can resend the invitation or contact our support team, who will help resolve the issue. Your payment is valid for 30 days, which gives both partners enough time to complete the survey."
+      },
+      "question4": {
+        "question": "Do you offer refunds?",
+        "answer": "Due to the digital nature of our product, we generally don't offer refunds after purchase and report generation. However, if you have technical issues or the report was not generated due to a system error, please contact our support team - we will review each case individually and try to find a satisfactory solution."
+      }
+    },
+    "other": {
+      "title": "Other questions",
+      "question1": {
+        "question": "Can I complete the survey without a partner?",
+        "answer": "Yes, you can complete your part of the survey on your own. However, to receive a full, personalized report, your partner also needs to complete their part. If you're not currently in a relationship, you can visit our site when you're ready for a shared experience."
+      },
+      "question2": {
+        "question": "Is Secret Sparks suitable for LGBT+ couples?",
+        "answer": "Yes, Secret Sparks is designed with all types of couples in mind. Our surveys and reports are created in an inclusive and gender-neutral way so that every couple can find valuable guidance for their relationship. During configuration, you can select the appropriate gender preferences."
+      },
+      "question3": {
+        "question": "Can I use Secret Sparks as a gift for my partner?",
+        "answer": "Absolutely! Secret Sparks is an excellent and original gift for couples - for anniversaries, Valentine's Day, or just because. When ordering, you can choose the \"wrap as a gift\" option to receive a special code and instructions on how to give this unique adventure to your partner."
+      },
+      "question4": {
+        "question": "How can I contact the support team?",
+        "answer": "Our support team is available at the email address: contact@secretsparks.com. We usually respond within 24 hours on business days. In your message, please provide the email address that was used for the purchase (if applicable) to identify your order more quickly."
+      }
+    }
   },
   "securityPage": {
-    "title": "Security and Privacy",
-    "subtitle": "We are committed to protecting your data and ensuring your privacy.",
+    "title": "Security and privacy",
+    "subtitle": "Your trust and privacy are our top priorities. Learn about our security measures.",
     "dataProtection": {
-      "title": "Data Protection",
-      "description": "We use industry-standard security measures to protect your data from unauthorized access.",
-      "point1": "Encryption of all sensitive data",
-      "point2": "Regular security audits and assessments",
-      "point3": "Compliance with data protection regulations"
+      "title": "Data protection",
+      "description": "How we protect your personal data and survey responses",
+      "point1": "Database is encrypted, and transmission occurs through SSL connection",
+      "point2": "Responses are encrypted and not linked to your personal data",
+      "point3": "We securely send you the report and don't store its contents long-term"
     },
     "uniqueTokens": {
-      "title": "Unique Tokens",
-      "description": "We use unique tokens to ensure that only you and your partner can access your survey results.",
-      "point1": "Each survey is assigned a unique token",
-      "point2": "Tokens are securely stored and managed",
-      "point3": "Access to survey results requires a valid token"
+      "title": "Unique tokens",
+      "description": "Secure invitation system for your partner",
+      "point1": "One-time links with tokens for partners",
+      "point2": "No possibility to access the survey without a valid token",
+      "point3": "Automatic verification of partner identity"
     },
     "dataSecuritySummary": {
-      "title": "How We Protect Your Data",
-      "description": "We take data security seriously and implement various measures to protect your information.",
+      "title": "Brief summary of data security",
+      "description": "Transparency in managing your data",
       "whatData": {
-        "title": "What Data We Collect",
-        "description": "We collect data about your relationship, preferences, and desires to provide personalized insights and activities."
+        "title": "What data do we collect?",
+        "description": "We only collect data that is essential for the application to function: your and your partner's name/pseudonym, email addresses, survey question responses, and game level preferences. We do not collect personal data such as last name, address, or national ID."
       },
       "howWeUse": {
-        "title": "How We Use Your Data",
-        "description": "We use your data to analyze your relationship dynamics and provide tailored recommendations.",
-        "point1": "Personalized insights and activities",
-        "point2": "Relationship analysis and assessment",
-        "point3": "Improvement of our platform and services"
+        "title": "How do we use the data?",
+        "description": "We use the collected data exclusively for:",
+        "point1": "Generating a personalized report for you and your partner",
+        "point2": "Improving the quality of our services and product development",
+        "point3": "Anonymous statistical analyses (without the ability to identify individuals)"
       },
       "weDoNotShare": {
-        "title": "We Do Not Share Your Data",
-        "description": "We do not share your data with third parties without your explicit consent."
+        "title": "We do not share data",
+        "description": "We do not share your personal data or survey responses with third parties. Your responses are visible only to you; even your partner won't see them."
       },
       "transmissionSecurity": {
-        "title": "Transmission Security",
-        "description": "We use secure transmission protocols to protect your data during transmission."
+        "title": "Transmission security",
+        "description": "All connections to our application are encrypted using HTTPS protocol. We use security headers such as Content-Security-Policy, X-Content-Type-Options, and others to protect against XSS and clickjacking attacks."
       }
     },
     "features": {
       "anonymity": {
         "title": "Anonymity",
-        "description": "Your responses are anonymized to protect your privacy."
+        "description": "We don't require login or full personal data. You can use pseudonyms for yourself and your partner."
       },
       "encryption": {
         "title": "Encryption",
-        "description": "All data is encrypted to prevent unauthorized access."
+        "description": "Our database has implemented security procedures, is encrypted, and we don't link responses with personal data."
       },
       "reporting": {
-        "title": "Reporting",
-        "description": "We provide detailed reports on your relationship dynamics."
+        "title": "Reporting issues",
+        "description": "Noticed a security vulnerability? Contact us immediately at: contact@secretsparks.pl"
       }
-    }
-  },
-  "secretAIPage": {
-    "title": "Secret AI",
-    "subtitle": "Technology that helps build intimacy.",
-    "whatIs": {
-      "title": "What is Secret AI?",
-      "description": "Advanced artificial intelligence designed specifically for couples",
-      "paragraph1": "Secret AI is our proprietary technology based on advanced artificial intelligence models, created specifically to analyze and understand relationship dynamics, sexual preferences, sexual satisfaction, and health.",
-      "paragraph2": "Unlike general AI models, ours has been specifically trained based on:",
-      "listItem1": "Psychological research on closeness and intimacy",
-      "listItem2": "Research in sexology, sociology, and neurobiology",
-      "listItem3": "Consultations with sexologists and couple therapists",
-      "listItem4": "Anonymous data on preferences and desires in relationships"
-    },
-    "security": {
-      "title": "Security",
-      "description": "Secret AI treats your privacy as an absolute priority. All data is processed with the highest security standards:",
-      "point1": "Full end-to-end data encryption",
-      "point2": "Anonymization of all personal information",
-      "point3": "No storage of sensitive data after report generation"
-    },
-    "howItWorks": {
-      "title": "How does it work?",
-      "description": "Secret AI analyzes the responses of both partners, identifying areas of agreement, divergence, and potential for exploration:",
-      "step1": "Identifies common desires and fantasies",
-      "step2": "Detects unspoken needs",
-      "step3": "Suggests personalized activities and techniques",
-      "step4": "Takes into account the boundaries and limits of each partner"
-    },
-    "personalization": {
-      "title": "Personalization",
-      "description": "Secret AI adapts to the unique character of each relationship:",
-      "point1": "Creates personalized reports based on your answers",
-      "point2": "Takes into account the comfort level and experience of both partners",
-      "point3": "Suggests activities tailored to your level of play"
-    },
-    "communication": {
-      "title": "Empathetic communication",
-      "description": "Secret AI has been designed to communicate in an empathetic and sensitive way:",
-      "point1": "Uses language full of respect and acceptance",
-      "point2": "Avoids judging and evaluating",
-      "point3": "Helps build open communication between partners"
-    },
-    "cta": {
-      "title": "Ready to discover a new dimension of intimacy?",
-      "button": "Fill out the survey with Secret AI"
     }
   }
 }
