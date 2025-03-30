@@ -6,8 +6,11 @@ import Footer from '@/components/layout/Footer';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const SecretAIPage = () => {
+  const { t } = useTranslation();
+  
   return (
     <div className="min-h-screen flex flex-col bg-[#05050a]">
       <Header />
@@ -17,39 +20,37 @@ const SecretAIPage = () => {
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center justify-center mb-8">
               <Bot className="h-10 w-10 text-primary mr-3" />
-              <h1 className="text-3xl md:text-4xl font-bold">Secret AI</h1>
+              <h1 className="text-3xl md:text-4xl font-bold">{t('secretAI.title')}</h1>
             </div>
             
             <p className="text-lg text-muted-foreground mb-12 text-center">
-              Technologia, która pomaga budować bliskość.
+              {t('secretAI.subtitle')}
             </p>
             
             <Card className="border-accent/20 bg-card/40 backdrop-blur mb-12">
               <CardHeader>
                 <div className="flex items-center mb-2">
                   <Sparkles className="h-8 w-8 text-primary mr-3" />
-                  <CardTitle className="text-xl">Czym jest Secret AI?</CardTitle>
+                  <CardTitle className="text-xl">{t('secretAI.whatIs.title')}</CardTitle>
                 </div>
                 <CardDescription>
-                  Zaawansowana sztuczna inteligencja zaprojektowana specjalnie dla par
+                  {t('secretAI.whatIs.description')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <p className="text-muted-foreground">
-                  Secret AI to nasza autorska technologia oparta na zaawansowanych modelach sztucznej inteligencji, 
-                  która została stworzona specjalnie z myślą o analizie i zrozumieniu dynamiki związku,
-                  preferencji seksualnych, satysfakcji seksualnej i zdrowia.
+                  {t('secretAI.whatIs.paragraph1')}
                 </p>
                 
                 <p className="text-muted-foreground">
-                  W przeciwieństwie do ogólnych modeli AI, nasz został specjalnie wytrenowany na podstawie:
+                  {t('secretAI.whatIs.paragraph2')}
                 </p>
                 
                 <ul className="list-disc pl-6 text-muted-foreground">
-                  <li>Badań psychologicznych dotyczących bliskości i intymności</li>
-                  <li>Badań z zakresu seksuologii, socjologii i neurobiologii</li>
-                  <li>Konsultacji z seksuologami i terapeutami par</li>
-                  <li>Anonimowych danych o preferencjach i pragnieniach w związkach</li>
+                  <li>{t('secretAI.whatIs.bulletPoints.1')}</li>
+                  <li>{t('secretAI.whatIs.bulletPoints.2')}</li>
+                  <li>{t('secretAI.whatIs.bulletPoints.3')}</li>
+                  <li>{t('secretAI.whatIs.bulletPoints.4')}</li>
                 </ul>
               </CardContent>
             </Card>
@@ -59,26 +60,25 @@ const SecretAIPage = () => {
                 <CardHeader className="space-y-1">
                   <div className="flex items-center mb-2">
                     <ShieldCheck className="h-8 w-8 text-primary mr-3" />
-                    <CardTitle className="text-xl">Bezpieczeństwo</CardTitle>
+                    <CardTitle className="text-xl">{t('secretAI.security.title')}</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground mb-4">
-                    Secret AI traktuje Twoją prywatność jako absolutny priorytet. Wszystkie dane są przetwarzane 
-                    z zachowaniem najwyższych standardów bezpieczeństwa:
+                    {t('secretAI.security.paragraph')}
                   </p>
                   <ul className="space-y-2">
                     <li className="flex items-start">
                       <span className="bg-primary/20 p-1 rounded text-primary mr-3 mt-0.5">✓</span>
-                      <span>Pełne szyfrowanie danych end-to-end</span>
+                      <span>{t('secretAI.security.bulletPoints.1')}</span>
                     </li>
                     <li className="flex items-start">
                       <span className="bg-primary/20 p-1 rounded text-primary mr-3 mt-0.5">✓</span>
-                      <span>Anonimizacja wszystkich informacji osobistych</span>
+                      <span>{t('secretAI.security.bulletPoints.2')}</span>
                     </li>
                     <li className="flex items-start">
                       <span className="bg-primary/20 p-1 rounded text-primary mr-3 mt-0.5">✓</span>
-                      <span>Brak przechowywania wrażliwych danych po wygenerowaniu raportu</span>
+                      <span>{t('secretAI.security.bulletPoints.3')}</span>
                     </li>
                   </ul>
                 </CardContent>
@@ -88,30 +88,29 @@ const SecretAIPage = () => {
                 <CardHeader className="space-y-1">
                   <div className="flex items-center mb-2">
                     <Lightbulb className="h-8 w-8 text-primary mr-3" />
-                    <CardTitle className="text-xl">Jak działa?</CardTitle>
+                    <CardTitle className="text-xl">{t('secretAI.howItWorks.title')}</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground mb-4">
-                    Secret AI analizuje odpowiedzi obu partnerów, identyfikując obszary zgodności, 
-                    rozbieżności i potencjału do eksploracji:
+                    {t('secretAI.howItWorks.paragraph')}
                   </p>
                   <ul className="space-y-2">
                     <li className="flex items-start">
                       <span className="bg-primary/20 p-1 rounded text-primary mr-3 mt-0.5">1</span>
-                      <span>Identyfikuje wspólne pragnienia i fantazje</span>
+                      <span>{t('secretAI.howItWorks.bulletPoints.1')}</span>
                     </li>
                     <li className="flex items-start">
                       <span className="bg-primary/20 p-1 rounded text-primary mr-3 mt-0.5">2</span>
-                      <span>Wykrywa niewypowiedziane potrzeby</span>
+                      <span>{t('secretAI.howItWorks.bulletPoints.2')}</span>
                     </li>
                     <li className="flex items-start">
                       <span className="bg-primary/20 p-1 rounded text-primary mr-3 mt-0.5">3</span>
-                      <span>Proponuje spersonalizowane aktywności i techniki</span>
+                      <span>{t('secretAI.howItWorks.bulletPoints.3')}</span>
                     </li>
                     <li className="flex items-start">
                       <span className="bg-primary/20 p-1 rounded text-primary mr-3 mt-0.5">4</span>
-                      <span>Uwzględnia granice i limity każdego z partnerów</span>
+                      <span>{t('secretAI.howItWorks.bulletPoints.4')}</span>
                     </li>
                   </ul>
                 </CardContent>
@@ -123,25 +122,25 @@ const SecretAIPage = () => {
                 <CardHeader className="space-y-1">
                   <div className="flex items-center mb-2">
                     <Users className="h-8 w-8 text-primary mr-3" />
-                    <CardTitle className="text-xl">Personalizacja</CardTitle>
+                    <CardTitle className="text-xl">{t('secretAI.personalization.title')}</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground mb-4">
-                    Secret AI dostosowuje się do unikalnego charakteru każdego związku:
+                    {t('secretAI.personalization.paragraph')}
                   </p>
                   <ul className="space-y-2">
                     <li className="flex items-start">
                       <span className="bg-primary/20 p-1 rounded text-primary mr-3 mt-0.5">✓</span>
-                      <span>Tworzy spersonalizowane raporty oparte na Waszych odpowiedziach</span>
+                      <span>{t('secretAI.personalization.bulletPoints.1')}</span>
                     </li>
                     <li className="flex items-start">
                       <span className="bg-primary/20 p-1 rounded text-primary mr-3 mt-0.5">✓</span>
-                      <span>Uwzględnia poziom komfortu i doświadczenia obu partnerów</span>
+                      <span>{t('secretAI.personalization.bulletPoints.2')}</span>
                     </li>
                     <li className="flex items-start">
                       <span className="bg-primary/20 p-1 rounded text-primary mr-3 mt-0.5">✓</span>
-                      <span>Proponuje aktywności dopasowane do Waszego poziomu gry</span>
+                      <span>{t('secretAI.personalization.bulletPoints.3')}</span>
                     </li>
                   </ul>
                 </CardContent>
@@ -151,25 +150,25 @@ const SecretAIPage = () => {
                 <CardHeader className="space-y-1">
                   <div className="flex items-center mb-2">
                     <Heart className="h-8 w-8 text-primary mr-3" />
-                    <CardTitle className="text-xl">Empatyczna komunikacja</CardTitle>
+                    <CardTitle className="text-xl">{t('secretAI.communication.title')}</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground mb-4">
-                    Secret AI została zaprojektowana, aby komunikować się w sposób empatyczny i wrażliwy:
+                    {t('secretAI.communication.paragraph')}
                   </p>
                   <ul className="space-y-2">
                     <li className="flex items-start">
                       <span className="bg-primary/20 p-1 rounded text-primary mr-3 mt-0.5">✓</span>
-                      <span>Używa języka pełnego szacunku i akceptacji</span>
+                      <span>{t('secretAI.communication.bulletPoints.1')}</span>
                     </li>
                     <li className="flex items-start">
                       <span className="bg-primary/20 p-1 rounded text-primary mr-3 mt-0.5">✓</span>
-                      <span>Unika oceniania i wartościowania</span>
+                      <span>{t('secretAI.communication.bulletPoints.2')}</span>
                     </li>
                     <li className="flex items-start">
                       <span className="bg-primary/20 p-1 rounded text-primary mr-3 mt-0.5">✓</span>
-                      <span>Pomaga w budowaniu otwartej komunikacji między partnerami</span>
+                      <span>{t('secretAI.communication.bulletPoints.3')}</span>
                     </li>
                   </ul>
                 </CardContent>
@@ -177,10 +176,10 @@ const SecretAIPage = () => {
             </div>
             
             <div className="text-center">
-              <h2 className="text-2xl font-bold mb-6">Gotowi odkryć nowy wymiar bliskości?</h2>
+              <h2 className="text-2xl font-bold mb-6">{t('secretAI.cta.title')}</h2>
               <Link to="/survey">
                 <Button className="btn-primary px-8 py-6 text-lg">
-                  Wypełnij ankietę ze Secret AI
+                  {t('secretAI.cta.button')}
                 </Button>
               </Link>
             </div>

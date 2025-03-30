@@ -1,4 +1,3 @@
-
 {
   "header": {
     "about": "About us",
@@ -373,6 +372,63 @@
         "title": "Reporting issues",
         "description": "Noticed a security vulnerability? Contact us immediately at: contact@secretsparks.pl"
       }
+    }
+  },
+  "secretAI": {
+    "title": "Secret AI",
+    "subtitle": "Technology that helps build closeness.",
+    "whatIs": {
+      "title": "What is Secret AI?",
+      "description": "Advanced artificial intelligence designed specifically for couples",
+      "paragraph1": "Secret AI is our proprietary technology based on advanced artificial intelligence models, which was created specifically to analyze and understand relationship dynamics, sexual preferences, sexual satisfaction, and health.",
+      "paragraph2": "Unlike general AI models, ours has been specially trained based on:",
+      "bulletPoints": {
+        "1": "Psychological research on closeness and intimacy",
+        "2": "Research in sexology, sociology, and neurobiology",
+        "3": "Consultations with sexologists and couple therapists",
+        "4": "Anonymous data on preferences and desires in relationships"
+      }
+    },
+    "security": {
+      "title": "Security",
+      "paragraph": "Secret AI treats your privacy as an absolute priority. All data is processed with the highest security standards:",
+      "bulletPoints": {
+        "1": "Full end-to-end data encryption",
+        "2": "Anonymization of all personal information",
+        "3": "No storage of sensitive data after generating the report"
+      }
+    },
+    "howItWorks": {
+      "title": "How does it work?",
+      "paragraph": "Secret AI analyzes both partners' responses, identifying areas of agreement, divergence, and potential for exploration:",
+      "bulletPoints": {
+        "1": "Identifies shared desires and fantasies",
+        "2": "Detects unspoken needs",
+        "3": "Suggests personalized activities and techniques",
+        "4": "Takes into account the boundaries and limits of each partner"
+      }
+    },
+    "personalization": {
+      "title": "Personalization",
+      "paragraph": "Secret AI adapts to the unique character of each relationship:",
+      "bulletPoints": {
+        "1": "Creates personalized reports based on your answers",
+        "2": "Takes into account the comfort level and experience of both partners",
+        "3": "Suggests activities tailored to your level of play"
+      }
+    },
+    "communication": {
+      "title": "Empathetic communication",
+      "paragraph": "Secret AI has been designed to communicate in an empathetic and sensitive way:",
+      "bulletPoints": {
+        "1": "Uses language full of respect and acceptance",
+        "2": "Avoids judgment and evaluation",
+        "3": "Helps in building open communication between partners"
+      }
+    },
+    "cta": {
+      "title": "Ready to discover a new dimension of closeness?",
+      "button": "Complete the survey with Secret AI"
     }
   }
 }

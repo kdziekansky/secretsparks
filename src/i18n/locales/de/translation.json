@@ -243,5 +243,123 @@
         "answer": "Nach der Generierung des Berichts haben Sie unbegrenzten Zugriff darauf. Der Bericht wird an die angegebene E-Mail-Adresse gesendet, sodass Sie jederzeit darauf zurückgreifen können. Zu Ihrer Sicherheit und Privatsphäre werden alle Umfragedaten 7 Tage nach der Generierung des Berichts von unseren Servern gelöscht, aber der Bericht selbst bleibt für Sie verfügbar."
       }
     }
+  },
+  "secretAI": {
+    "title": "Secret AI",
+    "subtitle": "Technologie, die hilft, Nähe aufzubauen.",
+    "whatIs": {
+      "title": "Was ist Secret AI?",
+      "description": "Fortschrittliche künstliche Intelligenz, speziell für Paare entwickelt",
+      "paragraph1": "Secret AI ist unsere proprietäre Technologie, die auf fortschrittlichen Modellen künstlicher Intelligenz basiert und speziell entwickelt wurde, um die Beziehungsdynamik, sexuelle Vorlieben, sexuelle Zufriedenheit und Gesundheit zu analysieren und zu verstehen.",
+      "paragraph2": "Im Gegensatz zu allgemeinen KI-Modellen wurde unseres speziell trainiert auf Basis von:",
+      "bulletPoints": {
+        "1": "Psychologische Forschung zu Nähe und Intimität",
+        "2": "Forschung in Sexualwissenschaft, Soziologie und Neurobiologie",
+        "3": "Beratungen mit Sexologen und Paartherapeuten",
+        "4": "Anonyme Daten über Vorlieben und Wünsche in Beziehungen"
+      }
+    },
+    "security": {
+      "title": "Sicherheit",
+      "paragraph": "Secret AI behandelt Ihre Privatsphäre als absolute Priorität. Alle Daten werden mit höchsten Sicherheitsstandards verarbeitet:",
+      "bulletPoints": {
+        "1": "Vollständige End-to-End-Datenverschlüsselung",
+        "2": "Anonymisierung aller persönlichen Informationen",
+        "3": "Keine Speicherung sensibler Daten nach der Berichtserstellung"
+      }
+    },
+    "howItWorks": {
+      "title": "Wie funktioniert es?",
+      "paragraph": "Secret AI analysiert die Antworten beider Partner und identifiziert Bereiche der Übereinstimmung, Abweichung und des Potenzials für Erkundung:",
+      "bulletPoints": {
+        "1": "Identifiziert gemeinsame Wünsche und Fantasien",
+        "2": "Erkennt unausgesprochene Bedürfnisse",
+        "3": "Schlägt personalisierte Aktivitäten und Techniken vor",
+        "4": "Berücksichtigt die Grenzen und Limits jedes Partners"
+      }
+    },
+    "personalization": {
+      "title": "Personalisierung",
+      "paragraph": "Secret AI passt sich dem einzigartigen Charakter jeder Beziehung an:",
+      "bulletPoints": {
+        "1": "Erstellt personalisierte Berichte basierend auf Ihren Antworten",
+        "2": "Berücksichtigt das Komfortniveau und die Erfahrung beider Partner",
+        "3": "Schlägt Aktivitäten vor, die auf Ihr Spielniveau zugeschnitten sind"
+      }
+    },
+    "communication": {
+      "title": "Einfühlsame Kommunikation",
+      "paragraph": "Secret AI wurde entwickelt, um auf einfühlsame und sensible Weise zu kommunizieren:",
+      "bulletPoints": {
+        "1": "Verwendet eine Sprache voller Respekt und Akzeptanz",
+        "2": "Vermeidet Beurteilung und Bewertung",
+        "3": "Hilft beim Aufbau offener Kommunikation zwischen Partnern"
+      }
+    },
+    "cta": {
+      "title": "Bereit, eine neue Dimension der Nähe zu entdecken?",
+      "button": "Füllen Sie die Umfrage mit Secret AI aus"
+    }
+  },
+  "rulesPage": {
+    "title": "Secret Sparks",
+    "whatIs": {
+      "title": "Was ist Secret Sparks?",
+      "description": "Secret Sparks ist eine Anwendung für Paare, die sicher und diskret neue Bereiche ihres Intimlebens erkunden möchten. Jeder Partner füllt einen kurzen, anonymen Fragebogen aus – so werden keine persönlichen Antworten mit der anderen Person geteilt. Secret AI analysiert sexuelle Vorlieben, die Beziehungskarte und präsentiert dann einen personalisierten Bericht mit praktischen Vorschlägen zur Verbesserung Ihres Sexuallebens."
+    },
+    "howToUse": {
+      "title": "Wie verwendet man Secret Sparks?",
+      "step1": {
+        "title": "Umfrage ausfüllen",
+        "description": "Jeder Partner füllt die Umfrage individuell aus und bewertet auf einer Skala von 1 bis 4 seine Begeisterung und Kompromissbereitschaft für verschiedene Arten intimer Aktivitäten."
+      },
+      "step2": {
+        "title": "Partner einladen",
+        "description": "Nach dem Ausfüllen der Umfrage erhalten Sie einen Link, den Sie an Ihren Partner senden können, damit dieser seinen Teil ausfüllen kann. Dies ermöglicht Secret AI, den Bericht zu erstellen."
+      },
+      "step3": {
+        "title": "Bericht erhalten",
+        "description": "Nach Abschluss beider Umfragen erhalten Sie einen Bericht mit einer Analyse Ihres Sexuallebens und Vorschlägen. Er enthält nur Aktivitäten, an denen Sie beide interessiert sind."
+      },
+      "step4": {
+        "title": "Sex neu entdecken",
+        "description": "Betrachten Sie dies als Ausgangspunkt zur Diversifizierung Ihres Intimlebens. Durch die Umsetzung der Vorschläge aus dem Bericht können Sie das Niveau der Zufriedenheit und Nähe in Ihrer Beziehung steigern."
+      }
+    },
+    "gameLevels": {
+      "title": "Spielstufen",
+      "description": "Secret Sparks bietet drei Fortschrittsstufen, die auf Ihre Vorlieben und Bereitschaft zur Erkundung zugeschnitten sind:",
+      "discover": {
+        "title": "Discover",
+        "description": "Für Paare, die grundlegende Fantasien entdecken und ihre intime Beziehung diversifizieren möchten."
+      },
+      "explore": {
+        "title": "Explore",
+        "description": "Für Paare, die bereit sind, ihre Fantasien und Wünsche tiefer zu erforschen."
+      },
+      "exceed": {
+        "title": "Exceed",
+        "description": "Für mutige Paare, die Grenzen überschreiten und ungewöhnliche Erfahrungen entdecken möchten."
+      }
+    },
+    "faq": {
+      "title": "Häufig gestellte Fragen",
+      "question1": {
+        "question": "Wird mein Partner meine Antworten sehen?",
+        "answer": "Nein, Ihre individuellen Antworten bleiben völlig privat. Ihr Partner wird Ihre spezifischen Entscheidungen niemals sehen. Im Bericht präsentieren wir nur gemeinsame Interessengebiete, ohne individuelle Vorlieben zu enthüllen."
+      },
+      "question2": {
+        "question": "Wie lange dauert es, die Umfrage auszufüllen?",
+        "answer": "Das Ausfüllen der Umfrage dauert durchschnittlich 5-10 Minuten. Es hängt von der gewählten Stufe (Discover, Explore oder Exceed) und davon ab, wie viel Zeit Sie für die Überlegung jeder Frage aufwenden. Es lohnt sich, dieser Aufgabe angemessene Zeit zu widmen, um die präzisesten Ergebnisse zu erhalten."
+      },
+      "question3": {
+        "question": "Kann ich meine Antworten nach dem Speichern ändern?",
+        "answer": "Ja, während Sie die Umfrage ausfüllen, können Sie frei zu vorherigen Fragen zurückkehren und Ihre Antworten ändern. Nach Abschluss der Umfrage und Generierung des Berichts werden die Antworten jedoch gesperrt und können nicht mehr geändert werden. Bei Bedarf können Sie jederzeit eine neue Umfrage ausfüllen."
+      },
+      "question4": {
+        "question": "Wie lange habe ich Zugriff auf den Bericht?",
+        "answer": "Nach der Generierung des Berichts haben Sie unbegrenzten Zugriff darauf. Der Bericht wird an die angegebene E-Mail-Adresse gesendet, sodass Sie jederzeit darauf zurückgreifen können. Zu Ihrer Sicherheit und Privatsphäre werden alle Umfragedaten 7 Tage nach der Generierung des Berichts von unseren Servern gelöscht, aber der Bericht selbst bleibt für Sie verfügbar."
+      }
+    }
   }
 }
