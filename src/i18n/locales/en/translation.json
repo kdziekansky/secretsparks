@@ -430,5 +430,102 @@
       "title": "Ready to discover a new dimension of closeness?",
       "button": "Complete the survey with Secret AI"
     }
+  },
+  "survey": {
+    "loading": "Loading survey...",
+    "errors": {
+      "general": "An error occurred while loading the survey.",
+      "partnerSurveyFirst": "The ordering person must first complete their survey before the partner can complete theirs.",
+      "contactSender": "Contact the person who sent you the invitation to get a new link."
+    },
+    "waitingForQuestions": {
+      "title": "Waiting for questions",
+      "description": "We are waiting for data from the ordering person's survey. Please wait a moment..."
+    }
+  },
+  "surveyInstruction": {
+    "title": "Welcome to the Secret Sparks survey!",
+    "steps": {
+      "honest": {
+        "title": "Answer honestly",
+        "description": "Answer the questions according to your true preferences and desires. The more honest your answers, the better the result."
+      },
+      "discretion": {
+        "title": "Complete discretion",
+        "description": "Your partner will not see your individual answers. You will receive a shared report showing only matching areas."
+      },
+      "invite": {
+        "title": "Send invitation",
+        "description": "After completing the survey and paying for the order, we will send a link to your partner to also complete the survey."
+      },
+      "report": {
+        "title": "Receive report",
+        "description": "After both of you complete the surveys, you will receive a detailed report and ready-made scenarios. Rediscover yourselves."
+      }
+    },
+    "price": {
+      "title": "Service cost",
+      "amount": "$7.99",
+      "oneTime": "One-time fee for a time-unlimited report",
+      "features": {
+        "payAfter": "Payment after completing the survey",
+        "personalizedReport": "Personalized practical report",
+        "sharedFascinations": "Common fascinations and preferences",
+        "scenarios": "Scenarios to discover",
+        "comfortMap": "Comfort map with markings",
+        "betterSexLife": "Sex life at a new level"
+      }
+    },
+    "startButton": "Start the survey"
+  },
+  "partnerWelcome": {
+    "title": "Welcome to Secret Sparks!",
+    "subtitle": "You have been invited to complete a survey that will help you discover shared desires.",
+    "invitedBy": "Invitation from",
+    "relationship": "Relationship type",
+    "intimate": "Intimate relationship",
+    "level": "Survey level",
+    "levels": {
+      "discover": "Discover",
+      "explore": "Explore",
+      "exceed": "Exceed"
+    },
+    "instructions": {
+      "title": "How does it work?",
+      "step1": "Answer all survey questions honestly.",
+      "step2": "Your answers will remain confidential - your partner will only see matches.",
+      "step3": "Once completed, you will both receive a report analyzing your shared desires."
+    },
+    "privacy": "Your privacy is our priority. All data is encrypted and will never be shared with third parties.",
+    "startButton": "Start the survey"
+  },
+  "surveyConfig": {
+    "title": "Configure your survey",
+    "userGender": {
+      "title": "Choose your gender",
+      "male": "Male",
+      "female": "Female"
+    },
+    "partnerGender": {
+      "title": "Choose your partner's gender",
+      "male": "Male",
+      "female": "Female"
+    },
+    "gameLevel": {
+      "title": "Choose survey level",
+      "discover": {
+        "title": "Discover (basic)",
+        "description": "For couples who want to discover their basic desires and preferences."
+      },
+      "explore": {
+        "title": "Explore (intermediate)",
+        "description": "For couples who want to explore deeper aspects of their sexuality."
+      },
+      "exceed": {
+        "title": "Exceed (advanced)",
+        "description": "For brave couples who want to discover their most intimate fantasies."
+      }
+    },
+    "continueButton": "Continue"
   }
 }

@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useSurvey } from '@/contexts/SurveyContext';
 import { supabase, fetchFromSupabase } from '@/integrations/supabase/client';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useTranslation } from 'react-i18next';
 import ProgressBar from '@/components/ProgressBar';
 import QuestionCard from '@/components/QuestionCard';
 import SurveyConfig from '@/components/SurveyConfig';
@@ -24,6 +25,7 @@ interface OrderDetails {
 }
 
 const SurveyPage: React.FC = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const partnerToken = searchParams.get('token');
   const isMobile = useIsMobile();
@@ -173,7 +175,7 @@ const SurveyPage: React.FC = () => {
         <Toaster position="top-center" />
         <div className="flex flex-col items-center">
           <Loader2 className="w-12 h-12 animate-spin text-primary mb-4" />
-          <p className="text-lg">Ładowanie ankiety...</p>
+          <p className="text-lg">{t('survey.loading')}</p>
         </div>
       </div>
     );
@@ -193,13 +195,13 @@ const SurveyPage: React.FC = () => {
           
           <p className="mb-4">
             {partnerToken ? 
-              'Zamawiający musi najpierw wypełnić swoją ankietę, zanim partner będzie mógł wypełnić swoją.' : 
-              'Wystąpił błąd podczas ładowania ankiety.'
+              t('survey.errors.partnerSurveyFirst') : 
+              t('survey.errors.general')
             }
           </p>
           
           <p className="text-sm text-gray-500">
-            Skontaktuj się z osobą, która wysłała Ci zaproszenie, aby otrzymać nowy link.
+            {t('survey.errors.contactSender')}
           </p>
         </div>
       </div>
@@ -212,9 +214,9 @@ const SurveyPage: React.FC = () => {
         <Toaster position="top-center" />
         <div className="glass-panel w-full max-w-md p-6 text-center">
           <Clock className="w-12 h-12 text-amber-500 mx-auto mb-4" />
-          <h2 className="text-xl font-medium mb-2">Oczekiwanie na pytania</h2>
+          <h2 className="text-xl font-medium mb-2">{t('survey.waitingForQuestions.title')}</h2>
           <p className="mb-6">
-            Oczekujemy na dane z ankiety zamawiającego. Proszę odczekać chwilę...
+            {t('survey.waitingForQuestions.description')}
           </p>
           <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
             <div className="h-full bg-amber-500 animate-pulse" style={{ width: '100%' }}></div>

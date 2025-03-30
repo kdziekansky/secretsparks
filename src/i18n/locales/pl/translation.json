@@ -83,7 +83,7 @@
     },
     "feature2": {
       "title": "Satysfakcja a szczęście",
-      "description": "Schmiedeberg i in. (2017) wykazali istotny związek między częstotliwością współżycia a ogólnym poczuciem szczęścia i satysfakcji z życia. Secret Sparks inspiruje do odkrywania nowych doznań i utrzymania entuzjazmu w relacji, co bezpośrednio przekłada się na ogólne zadowolenie z życia."
+      "description": "Schmiedeberg i in. (2017) wykazali istotny związek między częstotliwości współżycia a ogólnym poczuciem szczęścia i satysfakcji z życia. Secret Sparks inspiruje do odkrywania nowych doznań i utrzymania entuzjazmu w relacji, co bezpośrednio przekłada się na ogólne zadowolenie z życia."
     },
     "feature3": {
       "title": "Równowaga w relacji",
@@ -319,6 +319,61 @@
       }
     }
   },
+  "securityPage": {
+    "title": "Bezpieczeństwo i prywatność",
+    "subtitle": "Twoje zaufanie i prywatność są naszymi najwyższymi priorytetami. Poznaj nasze środki bezpieczeństwa.",
+    "dataProtection": {
+      "title": "Ochrona danych",
+      "description": "Jak chronimy Twoje dane osobowe i odpowiedzi z ankiety",
+      "point1": "Baza danych jest zaszyfrowana, a transmisja odbywa się przez połączenie SSL",
+      "point2": "Odpowiedzi są szyfrowane i nie są powiązane z Twoimi danymi osobowymi",
+      "point3": "Bezpiecznie wysyłamy Ci raport i nie przechowujemy jego zawartości długoterminowo"
+    },
+    "uniqueTokens": {
+      "title": "Unikalne tokeny",
+      "description": "Bezpieczny system zaproszeń dla Twojego partnera",
+      "point1": "Jednorazowe linki z tokenami dla partnerów",
+      "point2": "Brak możliwości dostępu do ankiety bez ważnego tokenu",
+      "point3": "Automatyczna weryfikacja tożsamości partnera"
+    },
+    "dataSecuritySummary": {
+      "title": "Krótkie podsumowanie bezpieczeństwa danych",
+      "description": "Przejrzystość w zarządzaniu Twoimi danymi",
+      "whatData": {
+        "title": "Jakie dane zbieramy?",
+        "description": "Zbieramy tylko dane niezbędne do funkcjonowania aplikacji: Twoje i Twojego partnera imię/pseudonim, adresy e-mail, odpowiedzi na pytania ankiety i preferencje poziomu gry. Nie zbieramy danych osobowych takich jak nazwisko, adres czy PESEL."
+      },
+      "howWeUse": {
+        "title": "Jak wykorzystujemy dane?",
+        "description": "Zebrane dane wykorzystujemy wyłącznie do:",
+        "point1": "Generowania spersonalizowanego raportu dla Ciebie i Twojego partnera",
+        "point2": "Poprawy jakości naszych usług i rozwoju produktu",
+        "point3": "Anonimowych analiz statystycznych (bez możliwości identyfikacji osób)"
+      },
+      "weDoNotShare": {
+        "title": "Nie udostępniamy danych",
+        "description": "Nie udostępniamy Twoich danych osobowych ani odpowiedzi z ankiety stronom trzecim. Twoje odpowiedzi są widoczne tylko dla Ciebie; nawet Twój partner ich nie zobaczy."
+      },
+      "transmissionSecurity": {
+        "title": "Bezpieczeństwo transmisji",
+        "description": "Wszystkie połączenia z naszą aplikacją są szyfrowane przy użyciu protokołu HTTPS. Używamy nagłówków bezpieczeństwa takich jak Content-Security-Policy, X-Content-Type-Options i innych, aby chronić przed atakami XSS i clickjacking."
+      }
+    },
+    "features": {
+      "anonymity": {
+        "title": "Anonimowość",
+        "description": "Nie wymagamy logowania ani pełnych danych osobowych. Możesz używać pseudonimów dla siebie i partnera."
+      },
+      "encryption": {
+        "title": "Szyfrowanie",
+        "description": "Nasza baza danych ma wdrożone procedury bezpieczeństwa, jest zaszyfrowana i nie łączymy odpowiedzi z danymi osobowymi."
+      },
+      "reporting": {
+        "title": "Zgłaszanie problemów",
+        "description": "Zauważyłeś lukę w zabezpieczeniach? Natychmiast skontaktuj się z nami: kontakt@secretsparks.pl"
+      }
+    }
+  },
   "secretAI": {
     "title": "Secret AI",
     "subtitle": "Technologia, która pomaga budować bliskość.",
@@ -375,5 +430,55 @@
       "title": "Gotowi odkryć nowy wymiar bliskości?",
       "button": "Wypełnij ankietę ze Secret AI"
     }
-  }
-}
+  },
+  "survey": {
+    "loading": "Ładowanie ankiety...",
+    "errors": {
+      "general": "Wystąpił błąd podczas ładowania ankiety.",
+      "partnerSurveyFirst": "Zamawiający musi najpierw wypełnić swoją ankietę, zanim partner będzie mógł wypełnić swoją.",
+      "contactSender": "Skontaktuj się z osobą, która wysłała Ci zaproszenie, aby otrzymać nowy link."
+    },
+    "waitingForQuestions": {
+      "title": "Oczekiwanie na pytania",
+      "description": "Oczekujemy na dane z ankiety zamawiającego. Proszę odczekać chwilę..."
+    }
+  },
+  "surveyInstruction": {
+    "title": "Witaj w ankiecie Secret Sparks!",
+    "steps": {
+      "honest": {
+        "title": "Odpowiedz szczerze",
+        "description": "Odpowiedz na pytania zgodnie ze swoimi prawdziwymi preferencjami i pragnieniami. Im bardziej szczere odpowiedzi, tym lepszy rezultat."
+      },
+      "discretion": {
+        "title": "Pełna dyskrecja",
+        "description": "Twój partner/-rka nie zobaczy Twoich indywidualnych odpowiedzi. Otrzymacie wspólny raport pokazujący tylko obszary dopasowania."
+      },
+      "invite": {
+        "title": "Wyślij zaproszenie",
+        "description": "Po wypełnieniu ankiety i opłaceniu zamówienia, wyślemy link do Twojego partnera/-rki, aby również wypełnił(a) ankietę."
+      },
+      "report": {
+        "title": "Otrzymaj raport",
+        "description": "Po wypełnieniu ankiet przez Was oboje, otrzymacie szczegółowy raport i gotowe scenariusze. Odkryjcie się na nowo."
+      }
+    },
+    "price": {
+      "title": "Koszt usługi",
+      "amount": "29 zł",
+      "oneTime": "Jednorazowa opłata za raport nieograniczony czasowo",
+      "features": {
+        "payAfter": "Płatność po wypełnieniu ankiety",
+        "personalizedReport": "Spersonalizowany praktyczny raport",
+        "sharedFascinations": "Wspólne fascynacje i preferencje",
+        "scenarios": "Scenariusze do odkrycia",
+        "comfortMap": "Mapa komfortu z oznaczeniami",
+        "betterSexLife": "Życie seksualne na nowym poziomie"
+      }
+    },
+    "startButton": "Rozpocznij ankietę"
+  },
+  "partnerWelcome": {
+    "title": "Witaj w Secret Sparks!",
+    "subtitle": "Zostałeś zaproszony do wypełnienia ankiety, która pomoże Wam odkryć wspólne pragnienia.",
+    "invitedBy": "Zapros

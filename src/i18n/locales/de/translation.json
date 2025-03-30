@@ -301,65 +301,101 @@
       "button": "Füllen Sie die Umfrage mit Secret AI aus"
     }
   },
-  "rulesPage": {
-    "title": "Secret Sparks",
-    "whatIs": {
-      "title": "Was ist Secret Sparks?",
-      "description": "Secret Sparks ist eine Anwendung für Paare, die sicher und diskret neue Bereiche ihres Intimlebens erkunden möchten. Jeder Partner füllt einen kurzen, anonymen Fragebogen aus – so werden keine persönlichen Antworten mit der anderen Person geteilt. Secret AI analysiert sexuelle Vorlieben, die Beziehungskarte und präsentiert dann einen personalisierten Bericht mit praktischen Vorschlägen zur Verbesserung Ihres Sexuallebens."
+  "survey": {
+    "loading": "Umfrage wird geladen...",
+    "errors": {
+      "general": "Beim Laden der Umfrage ist ein Fehler aufgetreten.",
+      "partnerSurveyFirst": "Die bestellende Person muss zuerst ihre Umfrage ausfüllen, bevor der Partner seine ausfüllen kann.",
+      "contactSender": "Kontaktieren Sie die Person, die Ihnen die Einladung geschickt hat, um einen neuen Link zu erhalten."
     },
-    "howToUse": {
-      "title": "Wie verwendet man Secret Sparks?",
-      "step1": {
-        "title": "Umfrage ausfüllen",
-        "description": "Jeder Partner füllt die Umfrage individuell aus und bewertet auf einer Skala von 1 bis 4 seine Begeisterung und Kompromissbereitschaft für verschiedene Arten intimer Aktivitäten."
+    "waitingForQuestions": {
+      "title": "Warten auf Fragen",
+      "description": "Wir warten auf Daten aus der Umfrage der bestellenden Person. Bitte warten Sie einen Moment..."
+    }
+  },
+  "surveyInstruction": {
+    "title": "Willkommen bei der Secret Sparks Umfrage!",
+    "steps": {
+      "honest": {
+        "title": "Ehrlich antworten",
+        "description": "Beantworten Sie die Fragen gemäß Ihren wahren Vorlieben und Wünschen. Je ehrlicher Ihre Antworten, desto besser das Ergebnis."
       },
-      "step2": {
-        "title": "Partner einladen",
-        "description": "Nach dem Ausfüllen der Umfrage erhalten Sie einen Link, den Sie an Ihren Partner senden können, damit dieser seinen Teil ausfüllen kann. Dies ermöglicht Secret AI, den Bericht zu erstellen."
+      "discretion": {
+        "title": "Vollständige Diskretion",
+        "description": "Ihr Partner wird Ihre individuellen Antworten nicht sehen. Sie erhalten einen gemeinsamen Bericht, der nur übereinstimmende Bereiche zeigt."
       },
-      "step3": {
+      "invite": {
+        "title": "Einladung senden",
+        "description": "Nach dem Ausfüllen der Umfrage und der Bezahlung der Bestellung senden wir einen Link an Ihren Partner, damit auch er die Umfrage ausfüllen kann."
+      },
+      "report": {
         "title": "Bericht erhalten",
-        "description": "Nach Abschluss beider Umfragen erhalten Sie einen Bericht mit einer Analyse Ihres Sexuallebens und Vorschlägen. Er enthält nur Aktivitäten, an denen Sie beide interessiert sind."
-      },
-      "step4": {
-        "title": "Sex neu entdecken",
-        "description": "Betrachten Sie dies als Ausgangspunkt zur Diversifizierung Ihres Intimlebens. Durch die Umsetzung der Vorschläge aus dem Bericht können Sie das Niveau der Zufriedenheit und Nähe in Ihrer Beziehung steigern."
+        "description": "Nachdem Sie beide die Umfragen ausgefüllt haben, erhalten Sie einen detaillierten Bericht und fertige Szenarien. Entdecken Sie sich neu."
       }
     },
-    "gameLevels": {
-      "title": "Spielstufen",
-      "description": "Secret Sparks bietet drei Fortschrittsstufen, die auf Ihre Vorlieben und Bereitschaft zur Erkundung zugeschnitten sind:",
+    "price": {
+      "title": "Servicekosten",
+      "amount": "7,99 €",
+      "oneTime": "Einmalige Gebühr für einen zeitlich unbegrenzten Bericht",
+      "features": {
+        "payAfter": "Zahlung nach Abschluss der Umfrage",
+        "personalizedReport": "Personalisierter praktischer Bericht",
+        "sharedFascinations": "Gemeinsame Faszinationen und Vorlieben",
+        "scenarios": "Zu entdeckende Szenarien",
+        "comfortMap": "Komfortkarte mit Markierungen",
+        "betterSexLife": "Sexualleben auf neuem Niveau"
+      }
+    },
+    "startButton": "Umfrage starten"
+  },
+  "partnerWelcome": {
+    "title": "Willkommen bei Secret Sparks!",
+    "subtitle": "Sie wurden eingeladen, eine Umfrage auszufüllen, die Ihnen hilft, gemeinsame Wünsche zu entdecken.",
+    "invitedBy": "Einladung von",
+    "relationship": "Beziehungstyp",
+    "intimate": "Intime Beziehung",
+    "level": "Umfragestufe",
+    "levels": {
+      "discover": "Entdecken",
+      "explore": "Erforschen",
+      "exceed": "Übertreffen"
+    },
+    "instructions": {
+      "title": "Wie funktioniert es?",
+      "step1": "Beantworten Sie alle Umfragefragen ehrlich.",
+      "step2": "Ihre Antworten bleiben vertraulich - Ihr Partner sieht nur Übereinstimmungen.",
+      "step3": "Nach Abschluss erhalten Sie beide einen Bericht, der Ihre gemeinsamen Wünsche analysiert."
+    },
+    "privacy": "Ihre Privatsphäre hat für uns Priorität. Alle Daten werden verschlüsselt und niemals an Dritte weitergegeben.",
+    "startButton": "Umfrage starten"
+  },
+  "surveyConfig": {
+    "title": "Konfigurieren Sie Ihre Umfrage",
+    "userGender": {
+      "title": "Wählen Sie Ihr Geschlecht",
+      "male": "Männlich",
+      "female": "Weiblich"
+    },
+    "partnerGender": {
+      "title": "Wählen Sie das Geschlecht Ihres Partners",
+      "male": "Männlich",
+      "female": "Weiblich"
+    },
+    "gameLevel": {
+      "title": "Wählen Sie die Umfragestufe",
       "discover": {
-        "title": "Discover",
-        "description": "Für Paare, die grundlegende Fantasien entdecken und ihre intime Beziehung diversifizieren möchten."
+        "title": "Entdecken (grundlegend)",
+        "description": "Für Paare, die ihre grundlegenden Wünsche und Vorlieben entdecken möchten."
       },
       "explore": {
-        "title": "Explore",
-        "description": "Für Paare, die bereit sind, ihre Fantasien und Wünsche tiefer zu erforschen."
+        "title": "Erforschen (mittelstufe)",
+        "description": "Für Paare, die tiefere Aspekte ihrer Sexualität erforschen möchten."
       },
       "exceed": {
-        "title": "Exceed",
-        "description": "Für mutige Paare, die Grenzen überschreiten und ungewöhnliche Erfahrungen entdecken möchten."
+        "title": "Übertreffen (fortgeschritten)",
+        "description": "Für mutige Paare, die ihre intimsten Fantasien entdecken möchten."
       }
     },
-    "faq": {
-      "title": "Häufig gestellte Fragen",
-      "question1": {
-        "question": "Wird mein Partner meine Antworten sehen?",
-        "answer": "Nein, Ihre individuellen Antworten bleiben völlig privat. Ihr Partner wird Ihre spezifischen Entscheidungen niemals sehen. Im Bericht präsentieren wir nur gemeinsame Interessengebiete, ohne individuelle Vorlieben zu enthüllen."
-      },
-      "question2": {
-        "question": "Wie lange dauert es, die Umfrage auszufüllen?",
-        "answer": "Das Ausfüllen der Umfrage dauert durchschnittlich 5-10 Minuten. Es hängt von der gewählten Stufe (Discover, Explore oder Exceed) und davon ab, wie viel Zeit Sie für die Überlegung jeder Frage aufwenden. Es lohnt sich, dieser Aufgabe angemessene Zeit zu widmen, um die präzisesten Ergebnisse zu erhalten."
-      },
-      "question3": {
-        "question": "Kann ich meine Antworten nach dem Speichern ändern?",
-        "answer": "Ja, während Sie die Umfrage ausfüllen, können Sie frei zu vorherigen Fragen zurückkehren und Ihre Antworten ändern. Nach Abschluss der Umfrage und Generierung des Berichts werden die Antworten jedoch gesperrt und können nicht mehr geändert werden. Bei Bedarf können Sie jederzeit eine neue Umfrage ausfüllen."
-      },
-      "question4": {
-        "question": "Wie lange habe ich Zugriff auf den Bericht?",
-        "answer": "Nach der Generierung des Berichts haben Sie unbegrenzten Zugriff darauf. Der Bericht wird an die angegebene E-Mail-Adresse gesendet, sodass Sie jederzeit darauf zurückgreifen können. Zu Ihrer Sicherheit und Privatsphäre werden alle Umfragedaten 7 Tage nach der Generierung des Berichts von unseren Servern gelöscht, aber der Bericht selbst bleibt für Sie verfügbar."
-      }
-    }
+    "continueButton": "Fortfahren"
   }
 }
