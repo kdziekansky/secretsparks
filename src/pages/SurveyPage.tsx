@@ -11,9 +11,10 @@ import QuestionCard from '@/components/QuestionCard';
 import ThankYou from '@/components/ThankYou';
 import { useSurvey } from '@/contexts/SurveyContext';
 import { cn } from '@/lib/utils';
+import { Question } from '@/types/survey';
 
 // Dane przykładowe dla demonstracji
-const demoQuestions = [
+const demoQuestions: Question[] = [
   {
     id: "q1",
     title: "Czy lubisz eksperymentować z nowymi pozycjami?",
@@ -148,7 +149,7 @@ const SurveyPage = () => {
 
 // Komponent obsługujący pytania ankiety
 const SurveyQuestions = () => {
-  const { currentQuestionIndex, goToNextQuestion, goToPrevQuestion, totalQuestions, completeSurvey } = useSurvey();
+  const { currentQuestionIndex, nextQuestion: goToNextQuestion, prevQuestion: goToPrevQuestion, totalQuestions, completeSurvey } = useSurvey();
   
   const handleNext = () => {
     if (currentQuestionIndex < demoQuestions.length - 1) {
