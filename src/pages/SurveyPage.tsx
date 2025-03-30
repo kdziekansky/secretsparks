@@ -37,7 +37,13 @@ const SurveyPage: React.FC = () => {
     setGameLevel,
     setOrderId,
     filteredQuestions,
-    resetSurvey
+    resetSurvey,
+    currentQuestionIndex,
+    nextQuestion,
+    prevQuestion,
+    isFirstQuestion,
+    isLastQuestion,
+    currentQuestion
   } = useSurvey();
   
   const [isPartnerSurvey, setIsPartnerSurvey] = useState<boolean>(!!partnerToken);
@@ -245,7 +251,15 @@ const SurveyPage: React.FC = () => {
           <SurveyConfig />
         )
       ) : (
-        <QuestionCard isPartnerSurvey={isPartnerSurvey} />
+        currentQuestion && (
+          <QuestionCard 
+            question={currentQuestion}
+            onNext={nextQuestion}
+            onPrev={prevQuestion}
+            isLast={isLastQuestion}
+            isFirst={isFirstQuestion}
+          />
+        )
       )}
     </div>
   );

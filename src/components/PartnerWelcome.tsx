@@ -3,14 +3,34 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
+import { useSurvey } from '@/contexts/SurveyContext';
 
 interface PartnerWelcomeProps {
-  onStart: () => void;
   partnerName?: string;
 }
 
-const PartnerWelcome: React.FC<PartnerWelcomeProps> = ({ onStart, partnerName = "Twoj partner" }) => {
+interface OrderDetailsProps {
+  userName: string;
+  partnerName: string;
+  userGender: 'male' | 'female';
+  partnerGender: 'male' | 'female';
+  gameLevel: string;
+  orderId?: string;
+}
+
+const PartnerWelcome: React.FC<PartnerWelcomeProps | { orderDetails: OrderDetailsProps }> = (props) => {
   const { t } = useTranslation();
+  const { completeConfig } = useSurvey();
+  
+  // Sprawdzenie czy props zawiera orderDetails
+  const isOrderProps = 'orderDetails' in props;
+  const partnerName = isOrderProps 
+    ? props.orderDetails.partnerName 
+    : (props as PartnerWelcomeProps).partnerName || "Twój partner";
+  
+  const onStart = () => {
+    completeConfig();
+  };
   
   return (
     <div className="container mx-auto max-w-4xl px-4 py-12">

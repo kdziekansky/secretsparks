@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeftIcon, ArrowRightIcon, InfoIcon, EyeIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { RatingScale } from '@/components/RatingScale';
+import RatingScale from '@/components/RatingScale';
 import { useSurvey } from '@/contexts/SurveyContext';
 import { Question } from '@/types/survey';
 
@@ -22,9 +23,9 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   isFirst 
 }) => {
   const { t } = useTranslation();
-  const { answers, setAnswer, currentStep, totalSteps } = useSurvey();
+  const { answers, setAnswer, currentQuestionIndex, totalQuestions } = useSurvey();
   const [showDescription, setShowDescription] = useState(false);
-  const [imageVisible, setImageVisible] = useState(!question.adultContent);
+  const [imageVisible, setImageVisible] = useState(question.image && !question.adultContent);
   const answer = answers[question.id] || 3;
 
   useEffect(() => {
@@ -47,13 +48,15 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
     console.error("Failed to load image:", question.image);
   };
 
+  const currentStep = currentQuestionIndex + 1;
+
   return (
     <div className="glass-card p-6 sm:p-8 md:p-10 w-full max-w-4xl mx-auto flex flex-col">
       <div className="flex flex-col space-y-4">
         
         {/* Question number and progress */}
         <div className="text-sm text-muted-foreground">
-          {currentStep} / {totalSteps}
+          {currentStep} / {totalQuestions}
         </div>
         
         {/* Question title */}
