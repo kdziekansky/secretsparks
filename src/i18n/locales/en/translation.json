@@ -236,11 +236,86 @@
       },
       "question3": {
         "question": "Can I change my answers after saving them?",
-        "answer": "Yes, while filling out the survey, you can freely go back to previous questions and change your answers. However, after completing the survey and generating the report, the answers are locked and cannot be changed. If needed, you can always fill out a new survey."
+        "answer": "Yes, while filling out the survey you can freely go back to previous questions and change your answers. However, after completing the survey and generating the report, the answers are locked and cannot be changed. In case of need, you can always fill out a new survey."
       },
       "question4": {
         "question": "How long do I have access to the report?",
         "answer": "After generating the report, you have unlimited access to it. The report is sent to the provided email address, so you can return to it whenever you want. For your security and privacy, all survey data is deleted from our servers 7 days after generating the report, but the report itself remains available to you."
+      }
+    }
+  },
+  "faqPage": {
+    "title": "Frequently Asked Questions",
+    "privacy": {
+      "title": "Privacy and security",
+      "question1": {
+        "question": "Will my partner see my answers from the survey?",
+        "answer": "Absolutely not. Secret Sparks guarantees complete anonymity and privacy of your answers. Your partner will never see your individual choices - only those activities that you both rated positively will be available. This way, you can be completely honest in your answers without fear of judgment or pressure."
+      },
+      "question2": {
+        "question": "How long do you store my data?",
+        "answer": "We care about your privacy. All survey data is automatically deleted from our servers 7 days after generating the report. We don't store data longer than necessary to provide the service. The report itself is sent to your email address, giving you permanent access to it."
+      },
+      "question3": {
+        "question": "Are my answers secure?",
+        "answer": "Yes, all data is encrypted and stored with the highest security standards. We use end-to-end encryption, and our infrastructure is regularly tested for security. We never share your data with third parties or use it for marketing purposes without your consent."
+      }
+    },
+    "survey": {
+      "title": "Survey and report",
+      "question1": {
+        "question": "What will I find in the Secret Sparks report?",
+        "answer": "The Secret Sparks report includes: an analysis of your common preferences, a map of compatibility and diversity in your approach to sexuality, specific scenarios and activities that can enhance your intimate closeness, and practical tips on how to implement them. The report is completely personalized - based solely on your shared interests."
+      },
+      "question2": {
+        "question": "What if my preferences don't match my partner's?",
+        "answer": "This is completely normal - every couple has differences in preferences. Secret Sparks focuses on areas where your interests meet, even if there are few. In such cases, the report will focus on these common points and suggest ways to develop that part of your intimate life. Sometimes discovering even a few common areas can open a completely new chapter in the relationship."
+      },
+      "question3": {
+        "question": "How long does it take to complete the survey?",
+        "answer": "Completing the survey takes an average of 5-10 minutes, depending on the chosen level (Discover, Explore, or Exceed). There is no time limit; you can take as long as you need to think about each question. We recommend finding a quiet moment when no one is disturbing you so that your answers can be as honest and thoughtful as possible."
+      },
+      "question4": {
+        "question": "Can I pause the survey and finish it later?",
+        "answer": "Yes, you can pause the survey at any time and come back to it later. Your answers are automatically saved after each question. Simply use the same device and browser to continue from where you left off."
+      }
+    },
+    "payment": {
+      "title": "Payments and logistics",
+      "question1": {
+        "question": "How much does Secret Sparks cost and what does the price include?",
+        "answer": "Secret Sparks is a one-time fee of $7.99. The price includes access to the survey for both partners, generation of a personalized report, and permanent access to the results. There are no hidden fees or subscriptions - you pay once and use the full functionality."
+      },
+      "question2": {
+        "question": "What payment methods are accepted?",
+        "answer": "We accept various payment methods, including: credit and debit cards (Visa, Mastercard), BLIK (in Poland), online transfers through most banks, and electronic wallets (Google Pay, Apple Pay). All payments are secure and encrypted."
+      },
+      "question3": {
+        "question": "What happens if my partner doesn't complete their survey?",
+        "answer": "To generate a report, both partners must complete the survey. If your partner doesn't complete their part, the report won't be generated. In such a case, you can resend the invitation or contact our support team, who will help resolve the issue. Your payment is valid for 30 days, which gives both partners enough time to complete the survey."
+      },
+      "question4": {
+        "question": "Do you offer refunds?",
+        "answer": "Due to the digital nature of our product, we generally don't offer refunds after purchase and report generation. However, if you have technical issues or the report was not generated due to a system error, please contact our support team - we will review each case individually and try to find a satisfactory solution."
+      }
+    },
+    "other": {
+      "title": "Other questions",
+      "question1": {
+        "question": "Can I complete the survey without a partner?",
+        "answer": "Yes, you can complete your part of the survey on your own. However, to receive a full, personalized report, your partner also needs to complete their part. If you're not currently in a relationship, you can visit our site when you're ready for a shared experience."
+      },
+      "question2": {
+        "question": "Is Secret Sparks suitable for LGBT+ couples?",
+        "answer": "Yes, Secret Sparks is designed with all types of couples in mind. Our surveys and reports are created in an inclusive and gender-neutral way so that every couple can find valuable guidance for their relationship. During configuration, you can select the appropriate gender preferences."
+      },
+      "question3": {
+        "question": "Can I use Secret Sparks as a gift for my partner?",
+        "answer": "Absolutely! Secret Sparks is an excellent and original gift for couples - for anniversaries, Valentine's Day, or just because. When ordering, you can choose the \"wrap as a gift\" option to receive a special code and instructions on how to give this unique adventure to your partner."
+      },
+      "question4": {
+        "question": "How can I contact the support team?",
+        "answer": "Our support team is available at the email address: contact@secretsparks.com. We usually respond within 24 hours on business days. In your message, please provide the email address that was used for the purchase (if applicable) to identify your order more quickly."
       }
     }
   }

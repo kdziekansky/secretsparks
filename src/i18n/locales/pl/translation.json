@@ -243,5 +243,80 @@
         "answer": "Po wygenerowaniu raportu, masz do niego bezterminowy dostęp. Raport jest przesyłany na podany adres email, dzięki czemu możesz do niego wracać kiedy tylko chcesz. Dla Twojego bezpieczeństwa i prywatności, wszystkie dane ankietowe są usuwane z naszych serwerów po 7 dniach od wygenerowania raportu, ale sam raport pozostaje dostępny dla Ciebie."
       }
     }
+  },
+  "faqPage": {
+    "title": "Najczęściej zadawane pytania",
+    "privacy": {
+      "title": "Prywatność i bezpieczeństwo",
+      "question1": {
+        "question": "Czy mój partner/partnerka zobaczy moje odpowiedzi z ankiety?",
+        "answer": "Absolutnie nie. Secret Sparks gwarantuje pełną anonimowość i prywatność Twoich odpowiedzi. Twój partner nigdy nie zobaczy Twoich indywidualnych wyborów - dostępne będą tylko te aktywności, które oboje oceniliście pozytywnie. Dzięki temu możesz być całkowicie szczery/a w swoich odpowiedziach bez obaw o ocenę czy presję."
+      },
+      "question2": {
+        "question": "Jak długo przechowujecie moje dane?",
+        "answer": "Dbamy o Twoją prywatność. Wszystkie dane ankietowe są automatycznie usuwane z naszych serwerów po 7 dniach od wygenerowania raportu. Nie przechowujemy danych dłużej niż to konieczne do realizacji usługi. Sam raport zostaje wysłany na Twój adres email, dzięki czemu masz do niego bezterminowy dostęp."
+      },
+      "question3": {
+        "question": "Czy moje odpowiedzi są bezpieczne?",
+        "answer": "Tak, wszystkie dane są szyfrowane i przechowywane z najwyższymi standardami bezpieczeństwa. Stosujemy szyfrowanie end-to-end, a nasza infrastruktura jest regularnie testowana pod kątem bezpieczeństwa. Nigdy nie udostępniamy Twoich danych stronom trzecim ani nie wykorzystujemy ich do celów marketingowych bez Twojej zgody."
+      }
+    },
+    "survey": {
+      "title": "Ankieta i raport",
+      "question1": {
+        "question": "Co znajdę w raporcie Secret Sparks?",
+        "answer": "Raport Secret Sparks zawiera: analizę Waszych wspólnych preferencji, mapę dopasowania i zróżnicowania w podejściu do seksualności, konkretne scenariusze i aktywności, które mogą podnieść Waszą intymną bliskość, oraz praktyczne wskazówki jak wprowadzić je w życie. Raport jest całkowicie spersonalizowany - oparty wyłącznie na Waszych wspólnych zainteresowaniach."
+      },
+      "question2": {
+        "question": "Co jeśli moje preferencje nie pokrywają się z preferencjami partnera/ki?",
+        "answer": "To całkowicie normalne - każda para ma różnice w preferencjach. Secret Sparks koncentruje się na obszarach, gdzie Wasze zainteresowania się spotykają, nawet jeśli jest ich niewiele. W takim przypadku raport skupi się na tych wspólnych punktach i zaproponuje sposoby na rozwijanie tej części Waszego życia intymnego. Czasem odkrycie nawet kilku wspólnych obszarów może otworzyć zupełnie nowy rozdział w relacji."
+      },
+      "question3": {
+        "question": "Jak długo trwa wypełnianie ankiety?",
+        "answer": "Wypełnienie ankiety zajmuje średnio 5-10 minut, w zależności od wybranego poziomu (Discover, Explore lub Exceed). Nie ma ograniczenia czasowego, możesz przemyśleć każde pytanie tak długo, jak potrzebujesz. Zalecamy znalezienie spokojnego momentu, kiedy nikt Ci nie przeszkadza, aby Twoje odpowiedzi były jak najbardziej szczere i przemyślane."
+      },
+      "question4": {
+        "question": "Czy mogę przerwać ankietę i dokończyć ją później?",
+        "answer": "Tak, możesz przerwać wypełnianie ankiety w dowolnym momencie i wrócić do niej później. Twoje odpowiedzi są automatycznie zapisywane po każdym pytaniu. Po prostu użyj tego samego urządzenia i przeglądarki, aby kontynuować od miejsca, w którym skończyłeś/aś."
+      }
+    },
+    "payment": {
+      "title": "Płatności i logistyka",
+      "question1": {
+        "question": "Ile kosztuje Secret Sparks i co zawiera cena?",
+        "answer": "Secret Sparks to jednorazowa opłata w wysokości 29 zł. W cenę wliczony jest dostęp do ankiety dla obojga partnerów, generowanie spersonalizowanego raportu oraz bezterminowy dostęp do wyników. Nie ma żadnych ukrytych opłat ani abonamentów - płacisz raz i korzystasz z pełnej funkcjonalności."
+      },
+      "question2": {
+        "question": "Jakie metody płatności są akceptowane?",
+        "answer": "Akceptujemy różnorodne metody płatności, w tym: karty kredytowe i debetowe (Visa, Mastercard), BLIK, przelewy internetowe przez większość polskich banków oraz portfele elektroniczne (Google Pay, Apple Pay). Wszystkie płatności są zabezpieczone i szyfrowane."
+      },
+      "question3": {
+        "question": "Co się stanie, jeśli mój partner/ka nie wypełni swojej ankiety?",
+        "answer": "Aby wygenerować raport, oboje partnerzy muszą wypełnić ankietę. Jeśli Twój partner nie wypełni swojej części, raport nie zostanie wygenerowany. W takim przypadku możesz ponownie przesłać zaproszenie lub skontaktować się z naszym zespołem wsparcia, który pomoże rozwiązać problem. Twoja płatność jest ważna przez 30 dni, co daje wystarczająco dużo czasu na wypełnienie ankiety przez oboje partnerów."
+      },
+      "question4": {
+        "question": "Czy oferujecie zwroty pieniędzy?",
+        "answer": "Ze względu na cyfrowy charakter naszego produktu, co do zasady nie oferujemy zwrotów po dokonaniu zakupu i wygenerowaniu raportu. Jeśli jednak masz problemy techniczne lub raport nie został wygenerowany z powodu błędu systemu, prosimy o kontakt z naszym zespołem wsparcia - rozpatrzymy każdy przypadek indywidualnie i postaramy się znaleźć satysfakcjonujące rozwiązanie."
+      }
+    },
+    "other": {
+      "title": "Inne pytania",
+      "question1": {
+        "question": "Czy mogę wypełnić ankietę bez partnera/ki?",
+        "answer": "Tak, możesz wypełnić swoją część ankiety samodzielnie. Jednak aby otrzymać pełny, spersonalizowany raport, Twój partner/ka również musi wypełnić swoją część. Jeśli obecnie nie jesteś w związku, możesz odwiedzić naszą stronę, gdy będziesz gotowy/a na wspólne doświadczenie."
+      },
+      "question2": {
+        "question": "Czy Secret Sparks jest odpowiedni dla par LGBT+?",
+        "answer": "Tak, Secret Sparks jest zaprojektowany z myślą o wszystkich rodzajach par. Nasze ankiety i raporty są tworzone w sposób inkluzywny i neutralny płciowo, aby każda para mogła znaleźć wartościowe wskazówki dla swojego związku. Podczas konfiguracji możesz wybrać odpowiednie preferencje płciowe."
+      },
+      "question3": {
+        "question": "Czy mogę wykorzystać Secret Sparks jako prezent dla mojej pary?",
+        "answer": "Oczywiście! Secret Sparks to doskonały i oryginalny prezent dla par - zarówno na rocznice, walentynki jak i bez okazji. Podczas zamawiania możesz wybrać opcję \"zapakuj na prezent\", aby otrzymać specjalny kod i instrukcję, jak podarować tę wyjątkową przygodę swojemu partnerowi/partnerce."
+      },
+      "question4": {
+        "question": "Jak mogę skontaktować się z zespołem wsparcia?",
+        "answer": "Nasz zespół wsparcia jest dostępny pod adresem email: kontakt@secretsparks.pl. Zazwyczaj odpowiadamy w ciągu 24 godzin w dni robocze. W wiadomości prosimy o podanie adresu email, który został użyty przy zakupie (jeśli dotyczy), aby szybciej zidentyfikować Twoje zamówienie."
+      }
+    }
   }
 }
