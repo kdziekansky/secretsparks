@@ -1,3 +1,4 @@
+
 {
   "header": {
     "about": "About us",
@@ -316,6 +317,61 @@
       "question4": {
         "question": "How can I contact the support team?",
         "answer": "Our support team is available at the email address: contact@secretsparks.com. We usually respond within 24 hours on business days. In your message, please provide the email address that was used for the purchase (if applicable) to identify your order more quickly."
+      }
+    }
+  },
+  "securityPage": {
+    "title": "Security and privacy",
+    "subtitle": "Your trust and privacy are our top priorities. Learn about our security measures.",
+    "dataProtection": {
+      "title": "Data protection",
+      "description": "How we protect your personal data and survey responses",
+      "point1": "Database is encrypted, and transmission occurs through SSL connection",
+      "point2": "Responses are encrypted and not linked to your personal data",
+      "point3": "We securely send you the report and don't store its contents long-term"
+    },
+    "uniqueTokens": {
+      "title": "Unique tokens",
+      "description": "Secure invitation system for your partner",
+      "point1": "One-time links with tokens for partners",
+      "point2": "No possibility to access the survey without a valid token",
+      "point3": "Automatic verification of partner identity"
+    },
+    "dataSecuritySummary": {
+      "title": "Brief summary of data security",
+      "description": "Transparency in managing your data",
+      "whatData": {
+        "title": "What data do we collect?",
+        "description": "We only collect data that is essential for the application to function: your and your partner's name/pseudonym, email addresses, survey question responses, and game level preferences. We do not collect personal data such as last name, address, or national ID."
+      },
+      "howWeUse": {
+        "title": "How do we use the data?",
+        "description": "We use the collected data exclusively for:",
+        "point1": "Generating a personalized report for you and your partner",
+        "point2": "Improving the quality of our services and product development",
+        "point3": "Anonymous statistical analyses (without the ability to identify individuals)"
+      },
+      "weDoNotShare": {
+        "title": "We do not share data",
+        "description": "We do not share your personal data or survey responses with third parties. Your responses are visible only to you; even your partner won't see them."
+      },
+      "transmissionSecurity": {
+        "title": "Transmission security",
+        "description": "All connections to our application are encrypted using HTTPS protocol. We use security headers such as Content-Security-Policy, X-Content-Type-Options, and others to protect against XSS and clickjacking attacks."
+      }
+    },
+    "features": {
+      "anonymity": {
+        "title": "Anonymity",
+        "description": "We don't require login or full personal data. You can use pseudonyms for yourself and your partner."
+      },
+      "encryption": {
+        "title": "Encryption",
+        "description": "Our database has implemented security procedures, is encrypted, and we don't link responses with personal data."
+      },
+      "reporting": {
+        "title": "Reporting issues",
+        "description": "Noticed a security vulnerability? Contact us immediately at: contact@secretsparks.pl"
       }
     }
   }
