@@ -145,5 +145,43 @@
     "pl": "Polski",
     "en": "English",
     "de": "Deutsch"
+  },
+  "emailPreview": {
+    "notificationToPartner": "DIESE NACHRICHT WIRD AN IHREN PARTNER GESENDET",
+    "from": "Von",
+    "to": "An",
+    "subject": "Betreff",
+    "invitationEmail": "Einladungs-E-Mail",
+    "confirmationEmail": "Bestätigungs-E-Mail",
+    "invitationSubject": "Jemand lädt Sie zu einem Spiel ein",
+    "confirmationSubject": "Vielen Dank für Ihren Kauf!",
+    "invitation": {
+      "title": "Einladung zu einem einzigartigen Spiel",
+      "greeting": "Hallo,",
+      "paragraph1": "hat Sie zum Secret Sparks-Spiel eingeladen - einem einzigartigen Erlebnis, das Ihnen hilft,",
+      "highlight": "gemeinsame Wünsche und Fantasien zu entdecken",
+      "paragraph2": "von denen Sie vielleicht nicht einmal wussten, dass sie existieren.",
+      "howItWorks": "Wie funktioniert es?",
+      "howItWorksText": "Sie beantworten einige Fragen zu Ihren Vorlieben und Interessen. hat seine Umfrage bereits ausgefüllt. Basierend auf Ihren Antworten erstellen wir einen personalisierten Bericht, der nur die Aktivitäten und Fantasien zeigt, die Sie beide attraktiv fanden.",
+      "confidentiality": "Ihre Antworten sind völlig vertraulich - wird niemals Ihre individuellen Entscheidungen sehen, sondern nur die gemeinsamen Übereinstimmungen im Abschlussbericht.",
+      "button": "Umfrage starten",
+      "footer": "Mit freundlichen Grüßen,\nDas Secret Sparks Team"
+    },
+    "confirmation": {
+      "title": "Vielen Dank für Ihren Kauf!",
+      "greeting": "Hallo",
+      "paragraph1": "Vielen Dank für die Bestellung des Secret Sparks-Berichts. Dies ist der erste Schritt zur Entdeckung einer völlig neuen Dimension Ihrer Beziehung!",
+      "whatsNext": "Was passiert jetzt?",
+      "whatsNextText": "Wir haben gerade eine Einladung zur Umfrage an gesendet. Wenn er/sie seinen Teil der Umfrage ausfüllt, wird unser KI-System Ihre Antworten analysieren und einen personalisierten Bericht erstellen, der Ihnen hilft, gemeinsame Wünsche zu entdecken.",
+      "orderNumber": "Ihre Bestellnummer:",
+      "footer": "Mit herzlichen Grüßen,\nDas Secret Sparks Team"
+    },
+    "fillSurvey": "Klicken Sie auf \"Umfrage ausfüllen\", um Ihren personalisierten Bericht zu erhalten...",
+    "yourReport": "Ihr Secret Sparks Bericht",
+    "youAndPartner": "Sie und Ihr Partner"
+  },
+  "slogan": {
+    "line1": "Eine Karte Ihres Sexuallebens, die",
+    "line2": "neue Energie bringt"
   }
 }

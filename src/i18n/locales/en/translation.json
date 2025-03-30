@@ -145,5 +145,43 @@
     "pl": "Polski",
     "en": "English",
     "de": "Deutsch"
+  },
+  "emailPreview": {
+    "notificationToPartner": "THIS MESSAGE WILL BE SENT TO YOUR PARTNER",
+    "from": "From",
+    "to": "To",
+    "subject": "Subject",
+    "invitationEmail": "Invitation email",
+    "confirmationEmail": "Confirmation email",
+    "invitationSubject": "Someone invites you to a game",
+    "confirmationSubject": "Thank you for your purchase!",
+    "invitation": {
+      "title": "Invitation to a unique game",
+      "greeting": "Hello,",
+      "paragraph1": "has invited you to the Secret Sparks game - a unique experience that will help you",
+      "highlight": "discover shared desires and fantasies",
+      "paragraph2": "that you might not even know existed.",
+      "howItWorks": "How it works?",
+      "howItWorksText": "You answer a few questions about your preferences and interests. has already completed their survey. Based on your answers, we will create a personalized report showing only those activities and fantasies that you both found attractive.",
+      "confidentiality": "Your answers are completely confidential - will never see your individual choices, only the common matches in the final report.",
+      "button": "Begin the survey",
+      "footer": "Best regards,\nSecret Sparks Team"
+    },
+    "confirmation": {
+      "title": "Thank you for your purchase!",
+      "greeting": "Hello",
+      "paragraph1": "Thank you for ordering the Secret Sparks report. This is the first step to discovering a completely new dimension of your relationship!",
+      "whatsNext": "What happens now?",
+      "whatsNextText": "We have just sent an invitation to the survey to. When they complete their part of the survey, our AI system will analyze your answers and prepare a personalized report that will help you discover shared desires.",
+      "orderNumber": "Your order number:",
+      "footer": "With warm regards,\nSecret Sparks Team"
+    },
+    "fillSurvey": "Click \"Complete the survey\" to receive your personalized report...",
+    "yourReport": "Your Secret Sparks report",
+    "youAndPartner": "You and your partner"
+  },
+  "slogan": {
+    "line1": "A map of your sex life that will",
+    "line2": "bring new energy"
   }
 }
