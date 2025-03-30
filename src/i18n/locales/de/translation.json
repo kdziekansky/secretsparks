@@ -1,247 +1,156 @@
 {
-  "header": {
-    "about": "Über uns",
-    "rules": "Regeln",
-    "faq": "FAQ",
-    "security": "Sicherheit",
-    "secretai": "Secret AI",
-    "order": "Bericht bestellen"
-  },
-  "hero": {
-    "tag": "EINE NEUE DIMENSION DER INTIMEN KOMMUNIKATION",
-    "title1": "Verständnis ohne Worte.",
-    "title2": "Sexleben auf höherem Niveau",
-    "description": "In jeder Beziehung gibt es Wünsche, die schwer laut auszusprechen sind. Secret Sparks ist ein Raum, in dem Ihre unausgesprochenen Gedanken auf die Wünsche Ihres Partners treffen und eine Karte gemeinsamer Freuden schaffen.",
-    "orderButton": "Bericht bestellen",
-    "learnMore": "Mehr erfahren"
-  },
-  "stats": {
-    "stat1": {
-      "number": "250+",
-      "text": "Einzigartige Szenarien und Ideen zur Bereicherung Ihrer intimen Beziehung"
+  "index": {
+    "heroSection": {
+      "title": "Entdecken Sie Ihre intimen Wünsche",
+      "subtitle": "Beantworten Sie anonyme Fragen und entdecken Sie, was Sie und Ihren Partner wirklich antörnt.",
+      "button": "Starte jetzt",
+      "feature1": "100% anonym",
+      "feature2": "Datenschutz-fokussiert",
+      "feature3": "Für Paare"
     },
-    "stat2": {
-      "number": "100%",
-      "text": "Garantie für Datensicherheit und vollständige Anonymität für jede Umfrage"
+    "stepsSection": {
+      "title": "Wie es funktioniert",
+      "step1Title": "Beantworten Sie Fragen",
+      "step1Description": "Beantworten Sie Fragen einzeln oder als Paar.",
+      "step2Title": "KI-Analyse",
+      "step2Description": "Unsere KI analysiert Ihre Antworten.",
+      "step3Title": "Erhalten Sie Einblicke",
+      "step3Description": "Entdecken Sie Ihre tiefsten Wünsche."
     },
-    "stat3": {
-      "number": "5min",
-      "text": "Eine schnelle Umfrage, die Ihre Beziehung für immer verändern wird"
+    "researchSection": {
+      "title": "Basierend auf wissenschaftlicher Forschung",
+      "description": "Unsere Technologie basiert auf jahrelanger Forschung in den Bereichen Sexologie, Psychologie und künstliche Intelligenz.",
+      "study1Title": "Sexuelle Wünsche",
+      "study1Description": "Studien zeigen, dass offene Kommunikation über sexuelle Wünsche die Beziehungszufriedenheit erhöht.",
+      "study2Title": "Beziehungspflege",
+      "study2Description": "Regelmäßige Gespräche und gemeinsames Entdecken neuer Erfahrungen stärken die Bindung zwischen Partnern.",
+      "study3Title": "Emotionale Intelligenz",
+      "study3Description": "Das Verständnis der eigenen Emotionen und der des Partners ist entscheidend für eine erfüllende Beziehung."
+    },
+    "reportSection": {
+      "title": "Erhalten Sie Ihren persönlichen Bericht",
+      "description": "Unser Bericht bietet Ihnen detaillierte Einblicke in Ihre sexuellen Vorlieben und die Ihres Partners.",
+      "feature1": "Detaillierte Analyse",
+      "feature2": "Personalisierte Empfehlungen",
+      "feature3": "Paar-Vergleich",
+      "button": "Bericht ansehen"
     }
   },
-  "features": {
-    "feature1": {
-      "title": "Entdecken Sie sich",
-      "description": "Sehen Sie sich in einem neuen Licht. Wir enthüllen die Wünsche, die Sie verbinden, erstellen eine Karte gemeinsamer Faszinationen und öffnen Türen zu tieferer Intimität. Entdecken Sie gemeinsam Dimensionen Ihrer Beziehung, von denen Sie nicht wussten, dass sie existieren."
-    },
-    "feature2": {
-      "title": "Entzünden Sie sich gegenseitig",
-      "description": "Bringen Sie Aufregung in Ihre Beziehung. Unsere Anwendung hilft Ihnen, Routine zu durchbrechen und tiefere Intimität auf der Grundlage gegenseitigen Verständnisses und authentischen Verlangens aufzubauen."
-    },
-    "feature3": {
-      "title": "Erkunden Sie Wünsche",
-      "description": "Schaffen Sie neue Erinnerungen in einem sicheren Raum gegenseitigen Vertrauens. Von subtilen Vorschlägen bis hin zu kühnen Angeboten - entdecken Sie, wie aufregend es sein kann, gemeinsam Wünsche zu erkunden."
-    }
+  "faqPage": {
+    "title": "Häufig gestellte Fragen",
+    "faq1Question": "Was ist [Name der Seite]?",
+    "faq1Answer": "[Name der Seite] ist eine Plattform, die Paaren hilft, ihre sexuellen Wünsche und Vorlieben auf spielerische und anonyme Weise zu entdecken.",
+    "faq2Question": "Wie funktioniert es?",
+    "faq2Answer": "Sie und Ihr Partner beantworten eine Reihe von Fragen. Unsere KI analysiert die Antworten und erstellt einen personalisierten Bericht.",
+    "faq3Question": "Ist es wirklich anonym?",
+    "faq3Answer": "Ja, wir speichern keine persönlichen Daten. Ihre Antworten werden verschlüsselt und anonymisiert.",
+    "faq4Question": "Kostet es etwas?",
+    "faq4Answer": "Die Teilnahme an der Umfrage ist kostenlos. Für den detaillierten Bericht erheben wir eine Gebühr.",
+    "faq5Question": "Wie lange dauert die Umfrage?",
+    "faq5Answer": "Die Umfrage dauert etwa 15-20 Minuten.",
+    "faq6Question": "Was mache ich, wenn ich technische Probleme habe?",
+    "faq6Answer": "Kontaktieren Sie unseren Support unter [E-Mail-Adresse]. Wir helfen Ihnen gerne weiter."
   },
-  "steps": {
-    "title": "Schritt für Schritt",
-    "step1": {
-      "number": "1",
-      "title": "Entdecken Sie sich selbst",
-      "description": "Beantworten Sie die Umfragefragen ehrlich in völliger Privatsphäre, ohne Angst vor Verurteilung oder Druck."
+  "securityPage": {
+    "title": "Sicherheit und Datenschutz",
+    "subtitle": "Ihre Daten sind bei uns sicher.",
+    "dataProtection": {
+      "title": "Datenschutz",
+      "description": "Wir nehmen den Schutz Ihrer persönlichen Daten sehr ernst.",
+      "point1": "Verschlüsselte Datenübertragung",
+      "point2": "Anonyme Speicherung",
+      "point3": "Keine Weitergabe an Dritte"
     },
-    "step2": {
-      "number": "2",
-      "title": "Laden Sie Ihren Partner ein",
-      "description": "Wir senden eine Einladung an die von Ihnen angegebene Person, die ebenfalls die Umfrage mit Garantie der Vertraulichkeit ausfüllen wird."
+    "uniqueTokens": {
+      "title": "Einmalige Tokens",
+      "description": "Jeder Benutzer erhält einen einmaligen Token für den Zugriff auf die Umfrage.",
+      "point1": "Sicherer Zugriff",
+      "point2": "Verhindert Missbrauch",
+      "point3": "Einfache Handhabung"
     },
-    "step3": {
-      "number": "3",
-      "title": "Erhalten Sie Ihren Bericht",
-      "description": "Erhalten Sie einen einzigartigen Bericht und eine Karte zu gemeinsamen Freuden, die Sie lange nicht vergessen werden."
-    },
-    "step4": {
-      "number": "4",
-      "title": "Beginnen Sie das Abenteuer",
-      "description": "Nutzen Sie die bereitgestellten Tipps, um eine neue Dimension der Freude in Ihre Beziehung einzuführen."
-    }
-  },
-  "research": {
-    "title": "Was die Forschung sagt",
-    "mainCard": {
-      "title": "Die Kraft authentischer Konversation",
-      "paragraph1": "Forschungen von Mallory et al. (2022) zeigten, dass offene Kommunikation im intimen Bereich die Beziehungszufriedenheit erheblich steigert. Regelmäßige Dialoge über Bedürfnisse und Fantasien ermöglichen es Partnern, dauerhafte emotionale Bindungen aufzubauen.",
-      "paragraph2": "Secret Sparks erleichtert diese Gespräche, ermöglicht ein sicheres Teilen von Wünschen und die Entdeckung gemeinsamer Interessen ohne Angst vor Missverständnissen. Es ist eine effektive Methode, um das gegenseitige Verständnis zu vertiefen und eine intime Beziehung auf der Grundlage authentischer Kommunikation aufzubauen."
-    },
-    "sideCard": {
-      "title": "Kommunikation und Verlangen",
-      "description": "Eine Studie von Montesi et al. (2011) bewies, dass ehrliche Gespräche über Sex die Zufriedenheit und Bindung verbessern. Secret Sparks erleichtert einen solchen Dialog durch anonyme Umfragen und personalisierte Berichte, die gemeinsame Interessen identifizieren, ohne die Partner unter Druck zu setzen, was zu einer tieferen und befriedigenderen Beziehung führt."
-    },
-    "feature1": {
-      "title": "Hormone der Nähe",
-      "description": "Feldman et al. (2012) zeigten, dass häufiger körperlicher Kontakt den Oxytocinspiegel erhöht, was Vertrauen und Sicherheitsgefühl in einer Beziehung stärkt. Secret Sparks bietet Rituale und Aktivitätsvorschläge, die die Produktion dieses \"Liebeshormons\" fördern und dauerhafte Bindungen aufbauen."
-    },
-    "feature2": {
-      "title": "Zufriedenheit und Glück",
-      "description": "Schmiedeberg et al. (2017) zeigten einen signifikanten Zusammenhang zwischen der Häufigkeit des Geschlechtsverkehrs und dem allgemeinen Gefühl von Glück und Lebenszufriedenheit. Secret Sparks inspiriert zur Entdeckung neuer Empfindungen und zur Aufrechterhaltung der Begeisterung in einer Beziehung, was sich direkt auf die allgemeine Lebenszufriedenheit auswirkt."
-    },
-    "feature3": {
-      "title": "Gleichgewicht in der Beziehung",
-      "description": "Golas Studie (2019) zeigt, dass höhere sexuelle Zufriedenheit das Wohlbefinden fördert und das Engagement in einer Beziehung erhöht. Secret Sparks hilft Paaren, die Bedürfnisse und Wünsche des anderen besser zu verstehen, was zu Gleichgewicht und Harmonie in einer intimen Beziehung führt."
-    }
-  },
-  "report": {
-    "title": "Unser Bericht",
-    "section1": {
-      "title": "Was der Bericht enthält",
-      "feature1": {
-        "title": "Gemeinsame Faszinationen",
-        "description": "Entdecken Sie Aktivitäten und Fantasien, die Sie beide als interessant und ausprobierenswert empfunden haben."
+    "dataSecuritySummary": {
+      "title": "Zusammenfassung der Datensicherheit",
+      "description": "Wir setzen auf modernste Technologien, um Ihre Daten zu schützen.",
+      "whatData": {
+        "title": "Welche Daten erfassen wir?",
+        "description": "Wir erfassen nur die Antworten auf die Umfragefragen."
       },
-      "feature2": {
-        "title": "Entdeckungszonen",
-        "description": "Bereiche, in denen sich Ihre Interessen überschneiden und die es wert sind, gemeinsam erkundet zu werden."
+      "howWeUse": {
+        "title": "Wie verwenden wir Ihre Daten?",
+        "description": "Wir verwenden Ihre Daten, um den personalisierten Bericht zu erstellen.",
+        "point1": "Analyse der sexuellen Vorlieben",
+        "point2": "Erstellung von Empfehlungen",
+        "point3": "Vergleich mit anderen Paaren (anonymisiert)"
       },
-      "feature3": {
-        "title": "Inspirationen und Szenarien",
-        "description": "Praktische Vorschläge und fertige Szenarien basierend auf Ihren gemeinsamen Vorlieben."
+      "weDoNotShare": {
+        "title": "Wir geben Ihre Daten nicht weiter",
+        "description": "Ihre Daten werden nicht an Dritte weitergegeben."
       },
-      "feature4": {
-        "title": "Komfortkarte",
-        "description": "Visualisierung Ihrer Komfortzonen mit Angabe der Bereiche perfekter Übereinstimmung."
-      },
-      "feature5": {
-        "title": "Gesprächsführer",
-        "description": "Vorschläge, wie Sie ein ehrliches Gespräch über Ihre Wünsche ohne Verlegenheit beginnen können."
+      "transmissionSecurity": {
+        "title": "Übertragungssicherheit",
+        "description": "Die Datenübertragung erfolgt verschlüsselt."
       }
     },
-    "section2": {
-      "title": "Erhalten Sie einen personalisierten Bericht",
-      "description": "Sie werden die Antworten des anderen nicht sehen. Stattdessen erhalten Sie einen personalisierten Bericht."
+    "features": {
+      "anonymity": {
+        "title": "Anonymität",
+        "description": "Ihre Identität bleibt geheim."
+      },
+      "encryption": {
+        "title": "Verschlüsselung",
+        "description": "Alle Daten werden verschlüsselt gespeichert."
+      },
+      "reporting": {
+        "title": "Berichterstattung",
+        "description": "Wir erstellen detaillierte Berichte."
+      }
+    }
+  },
+  "secretAIPage": {
+    "title": "Secret AI",
+    "subtitle": "Technologie, die hilft, Nähe aufzubauen.",
+    "whatIs": {
+      "title": "Was ist Secret AI?",
+      "description": "Fortschrittliche künstliche Intelligenz, speziell für Paare entwickelt",
+      "paragraph1": "Secret AI ist unsere proprietäre Technologie, die auf fortschrittlichen Modellen künstlicher Intelligenz basiert und speziell entwickelt wurde, um die Dynamik von Beziehungen, sexuelle Vorlieben, sexuelle Zufriedenheit und Gesundheit zu analysieren und zu verstehen.",
+      "paragraph2": "Im Gegensatz zu allgemeinen KI-Modellen wurde unser Modell speziell auf Basis folgender Faktoren trainiert:",
+      "listItem1": "Psychologische Forschung zu Nähe und Intimität",
+      "listItem2": "Forschung in den Bereichen Sexologie, Soziologie und Neurobiologie",
+      "listItem3": "Beratungen mit Sexologen und Paartherapeuten",
+      "listItem4": "Anonyme Daten zu Vorlieben und Wünschen in Beziehungen"
+    },
+    "security": {
+      "title": "Sicherheit",
+      "description": "Secret AI behandelt Ihre Privatsphäre als absolute Priorität. Alle Daten werden mit höchsten Sicherheitsstandards verarbeitet:",
+      "point1": "Vollständige Ende-zu-Ende-Datenverschlüsselung",
+      "point2": "Anonymisierung aller persönlichen Informationen",
+      "point3": "Keine Speicherung sensibler Daten nach der Berichtserstellung"
+    },
+    "howItWorks": {
+      "title": "Wie funktioniert es?",
+      "description": "Secret AI analysiert die Antworten beider Partner, identifiziert Bereiche der Übereinstimmung, Divergenz und des Potenzials zur Erkundung:",
+      "step1": "Identifiziert gemeinsame Wünsche und Fantasien",
+      "step2": "Erkennt unausgesprochene Bedürfnisse",
+      "step3": "Schlägt personalisierte Aktivitäten und Techniken vor",
+      "step4": "Berücksichtigt die Grenzen und Limits jedes Partners"
+    },
+    "personalization": {
+      "title": "Personalisierung",
+      "description": "Secret AI passt sich dem einzigartigen Charakter jeder Beziehung an:",
+      "point1": "Erstellt personalisierte Berichte basierend auf Ihren Antworten",
+      "point2": "Berücksichtigt das Komfortniveau und die Erfahrung beider Partner",
+      "point3": "Schlägt Aktivitäten vor, die auf Ihre Spielebene zugeschnitten sind"
+    },
+    "communication": {
+      "title": "Empathische Kommunikation",
+      "description": "Secret AI wurde entwickelt, um auf empathische und sensible Weise zu kommunizieren:",
+      "point1": "Verwendet eine Sprache voller Respekt und Akzeptanz",
+      "point2": "Vermeidet Urteile und Bewertungen",
+      "point3": "Hilft, eine offene Kommunikation zwischen Partnern aufzubauen"
     },
     "cta": {
-      "title": "ENTDECKEN SIE GEMEINSAME WÜNSCHE HEUTE!",
-      "description": "Füllen Sie die Umfrage aus und erhalten Sie einen detaillierten Bericht, der Ihnen hilft, sich besser zu verstehen und näher zu kommen.",
-      "button": "Umfrage ausfüllen"
-    }
-  },
-  "footer": {
-    "mission": "Unser Ziel ist es, Ihre Zufriedenheit zu steigern",
-    "newsletter": {
-      "title": "Abonnieren",
-      "description": "Abonnieren Sie, um kostenlose Ratschläge zu erhalten und als Erster von unseren Aktionen zu erfahren.",
-      "placeholder": "E-Mail eingeben"
-    },
-    "links": {
-      "privacy": "Datenschutzrichtlinie",
-      "terms": "Nutzungsbedingungen",
-      "contact": "Kontakt"
-    },
-    "copyright": "© 2025 Secret Sparks. Alle Rechte vorbehalten."
-  },
-  "languageSwitcher": {
-    "label": "Sprache wählen",
-    "pl": "Polski",
-    "en": "English",
-    "de": "Deutsch"
-  },
-  "emailPreview": {
-    "notificationToPartner": "DIESE NACHRICHT WIRD AN IHREN PARTNER GESENDET",
-    "from": "Von",
-    "to": "An",
-    "subject": "Betreff",
-    "invitationEmail": "Einladungs-E-Mail",
-    "confirmationEmail": "Bestätigungs-E-Mail",
-    "invitationSubject": "Jemand lädt Sie zu einem Spiel ein",
-    "confirmationSubject": "Vielen Dank für Ihren Kauf!",
-    "invitation": {
-      "title": "Einladung zu einem einzigartigen Spiel",
-      "greeting": "Hallo,",
-      "paragraph1": "hat Sie zum Secret Sparks-Spiel eingeladen - einem einzigartigen Erlebnis, das Ihnen hilft,",
-      "highlight": "gemeinsame Wünsche und Fantasien zu entdecken",
-      "paragraph2": "von denen Sie vielleicht nicht einmal wussten, dass sie existieren.",
-      "howItWorks": "Wie funktioniert es?",
-      "howItWorksText": "Sie beantworten einige Fragen zu Ihren Vorlieben und Interessen. hat seine Umfrage bereits ausgefüllt. Basierend auf Ihren Antworten erstellen wir einen personalisierten Bericht, der nur die Aktivitäten und Fantasien zeigt, die Sie beide attraktiv fanden.",
-      "confidentiality": "Ihre Antworten sind völlig vertraulich - wird niemals Ihre individuellen Entscheidungen sehen, sondern nur die gemeinsamen Übereinstimmungen im Abschlussbericht.",
-      "button": "Umfrage starten",
-      "footer": "Mit freundlichen Grüßen,\nDas Secret Sparks Team"
-    },
-    "confirmation": {
-      "title": "Vielen Dank für Ihren Kauf!",
-      "greeting": "Hallo",
-      "paragraph1": "Vielen Dank für die Bestellung des Secret Sparks-Berichts. Dies ist der erste Schritt zur Entdeckung einer völlig neuen Dimension Ihrer Beziehung!",
-      "whatsNext": "Was passiert jetzt?",
-      "whatsNextText": "Wir haben gerade eine Einladung zur Umfrage an gesendet. Wenn er/sie seinen Teil der Umfrage ausfüllt, wird unser KI-System Ihre Antworten analysieren und einen personalisierten Bericht erstellen, der Ihnen hilft, gemeinsame Wünsche zu entdecken.",
-      "orderNumber": "Ihre Bestellnummer:",
-      "footer": "Mit herzlichen Grüßen,\nDas Secret Sparks Team"
-    },
-    "fillSurvey": "Klicken Sie auf \"Umfrage ausfüllen\", um Ihren personalisierten Bericht zu erhalten...",
-    "yourReport": "Ihr Secret Sparks Bericht",
-    "youAndPartner": "Sie und Ihr Partner"
-  },
-  "slogan": {
-    "line1": "Eine Karte Ihres Sexuallebens, die",
-    "line2": "neue Energie bringt"
-  },
-  "rulesPage": {
-    "title": "Secret Sparks",
-    "whatIs": {
-      "title": "Was ist Secret Sparks?",
-      "description": "Secret Sparks ist eine Anwendung für Paare, die sicher und diskret neue Bereiche ihres Intimlebens erkunden möchten. Jeder Partner füllt einen kurzen, anonymen Fragebogen aus – so werden keine persönlichen Antworten mit der anderen Person geteilt. Secret AI analysiert sexuelle Vorlieben, die Beziehungskarte und präsentiert dann einen personalisierten Bericht mit praktischen Vorschlägen zur Verbesserung Ihres Sexuallebens."
-    },
-    "howToUse": {
-      "title": "Wie verwendet man Secret Sparks?",
-      "step1": {
-        "title": "Umfrage ausfüllen",
-        "description": "Jeder Partner füllt die Umfrage individuell aus und bewertet auf einer Skala von 1 bis 4 seine Begeisterung und Kompromissbereitschaft für verschiedene Arten intimer Aktivitäten."
-      },
-      "step2": {
-        "title": "Partner einladen",
-        "description": "Nach dem Ausfüllen der Umfrage erhalten Sie einen Link, den Sie an Ihren Partner senden können, damit dieser seinen Teil ausfüllen kann. Dies ermöglicht Secret AI, den Bericht zu erstellen."
-      },
-      "step3": {
-        "title": "Bericht erhalten",
-        "description": "Nach Abschluss beider Umfragen erhalten Sie einen Bericht mit einer Analyse Ihres Sexuallebens und Vorschlägen. Er enthält nur Aktivitäten, an denen Sie beide interessiert sind."
-      },
-      "step4": {
-        "title": "Sex neu entdecken",
-        "description": "Betrachten Sie dies als Ausgangspunkt zur Diversifizierung Ihres Intimlebens. Durch die Umsetzung der Vorschläge aus dem Bericht können Sie das Niveau der Zufriedenheit und Nähe in Ihrer Beziehung steigern."
-      }
-    },
-    "gameLevels": {
-      "title": "Spielstufen",
-      "description": "Secret Sparks bietet drei Fortschrittsstufen, die auf Ihre Vorlieben und Bereitschaft zur Erkundung zugeschnitten sind:",
-      "discover": {
-        "title": "Discover",
-        "description": "Für Paare, die grundlegende Fantasien entdecken und ihre intime Beziehung diversifizieren möchten."
-      },
-      "explore": {
-        "title": "Explore",
-        "description": "Für Paare, die bereit sind, ihre Fantasien und Wünsche tiefer zu erforschen."
-      },
-      "exceed": {
-        "title": "Exceed",
-        "description": "Für mutige Paare, die Grenzen überschreiten und ungewöhnliche Erfahrungen entdecken möchten."
-      }
-    },
-    "faq": {
-      "title": "Häufig gestellte Fragen",
-      "question1": {
-        "question": "Wird mein Partner meine Antworten sehen?",
-        "answer": "Nein, Ihre individuellen Antworten bleiben völlig privat. Ihr Partner wird Ihre spezifischen Entscheidungen niemals sehen. Im Bericht präsentieren wir nur gemeinsame Interessengebiete, ohne individuelle Vorlieben zu enthüllen."
-      },
-      "question2": {
-        "question": "Wie lange dauert es, die Umfrage auszufüllen?",
-        "answer": "Das Ausfüllen der Umfrage dauert durchschnittlich 5-10 Minuten. Es hängt von der gewählten Stufe (Discover, Explore oder Exceed) und davon ab, wie viel Zeit Sie für die Überlegung jeder Frage aufwenden. Es lohnt sich, dieser Aufgabe angemessene Zeit zu widmen, um die präzisesten Ergebnisse zu erhalten."
-      },
-      "question3": {
-        "question": "Kann ich meine Antworten nach dem Speichern ändern?",
-        "answer": "Ja, während Sie die Umfrage ausfüllen, können Sie frei zu vorherigen Fragen zurückkehren und Ihre Antworten ändern. Nach Abschluss der Umfrage und Generierung des Berichts werden die Antworten jedoch gesperrt und können nicht mehr geändert werden. Bei Bedarf können Sie jederzeit eine neue Umfrage ausfüllen."
-      },
-      "question4": {
-        "question": "Wie lange habe ich Zugriff auf den Bericht?",
-        "answer": "Nach der Generierung des Berichts haben Sie unbegrenzten Zugriff darauf. Der Bericht wird an die angegebene E-Mail-Adresse gesendet, sodass Sie jederzeit darauf zurückgreifen können. Zu Ihrer Sicherheit und Privatsphäre werden alle Umfragedaten 7 Tage nach der Generierung des Berichts von unseren Servern gelöscht, aber der Bericht selbst bleibt für Sie verfügbar."
-      }
+      "title": "Bereit, eine neue Dimension der Intimität zu entdecken?",
+      "button": "Füllen Sie die Umfrage mit Secret AI aus"
     }
   }
 }
