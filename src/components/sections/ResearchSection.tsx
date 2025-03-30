@@ -1,12 +1,16 @@
+
 import React from 'react';
 import { BookOpen, Sparkles, HeartHandshake, Smile } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const ResearchSection = () => {
+  const { t } = useTranslation();
+  
   return (
     <section className="py-12">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold mb-8 text-left">Co mówią badania</h2>
+        <h2 className="text-3xl md:text-4xl font-bold mb-8 text-left">{t('research.title')}</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
           {/* Main content - spans 2 columns */}
@@ -14,15 +18,12 @@ const ResearchSection = () => {
             <div className="px-5 py-2 rounded-full bg-accent inline-block mb-4">
               <BookOpen className="h-5 w-5 text-primary" />
             </div>
-            <h3 className="text-2xl font-bold mb-4">Siła autentycznej rozmowy</h3>
+            <h3 className="text-2xl font-bold mb-4">{t('research.mainCard.title')}</h3>
             <p className="text-base mb-4">
-              Badania Mallory i współpracowników (2022) wykazały, że otwarta komunikacja w sferze intymnej 
-              znacząco zwiększa satysfakcję z relacji. Regularne dialogi o potrzebach i fantazjach pozwalają 
-              partnerom zbudować trwałe więzi emocjonalne.
+              {t('research.mainCard.paragraph1')}
             </p>
             <p className="text-base mb-4">
-              Secret Sparks ułatwia te rozmowy, umożliwiając bezpieczne dzielenie się pragnieniami 
-              i odkrywanie wspólnych zainteresowań bez obaw o nieporozumienia. To skuteczny sposób na pogłębienie wzajemnego zrozumienia i budowanie intymnej relacji opartej na autentycznej komunikacji.
+              {t('research.mainCard.paragraph2')}
             </p>
             <div className="text-xs text-muted-foreground">
               <a 
@@ -41,10 +42,9 @@ const ResearchSection = () => {
             <div className="px-5 py-2 rounded-full bg-accent inline-block mb-4">
               <Sparkles className="h-5 w-5 text-primary" />
             </div>
-            <h3 className="text-2xl font-bold mb-4">Komunikacja a pożądanie</h3>
+            <h3 className="text-2xl font-bold mb-4">{t('research.sideCard.title')}</h3>
             <p className="text-base mb-4">
-              Badanie Montesi i in. (2011) dowiodło, że szczera rozmowa o seksie podnosi satysfakcję i więź. 
-              Secret Sparks ułatwia taki dialog przez anonimowe ankiety i personalizowane raporty, które identyfikują wspólne zainteresowania bez wywierania presji na partnerów, co prowadzi do głębszego i bardziej satysfakcjonującego związku.
+              {t('research.sideCard.description')}
             </p>
             <div className="text-xs text-muted-foreground">
               <a 
@@ -65,10 +65,9 @@ const ResearchSection = () => {
             <div className="px-5 py-2 rounded-full bg-accent inline-block mb-3">
               <HeartHandshake className="h-5 w-5 text-primary" />
             </div>
-            <h3 className="text-xl font-bold mb-3">Hormony bliskości</h3>
+            <h3 className="text-xl font-bold mb-3">{t('research.feature1.title')}</h3>
             <p className="text-sm mb-3">
-              Feldman i in. (2012) wykazali, że częste kontakty fizyczne zwiększają poziom oksytocyny, 
-              wzmacniając zaufanie i poczucie bezpieczeństwa w związku. Secret Sparks oferuje rytuały i propozycje aktywności, które sprzyjają wytwarzaniu tego "hormonu miłości" i budowaniu trwałego przywiązania.
+              {t('research.feature1.description')}
             </p>
             <div className="text-xs text-muted-foreground">
               <a 
@@ -86,10 +85,9 @@ const ResearchSection = () => {
             <div className="px-5 py-2 rounded-full bg-accent inline-block mb-3">
               <Smile className="h-5 w-5 text-primary" />
             </div>
-            <h3 className="text-xl font-bold mb-3">Satysfakcja a szczęście</h3>
+            <h3 className="text-xl font-bold mb-3">{t('research.feature2.title')}</h3>
             <p className="text-sm mb-3">
-              Schmiedeberg i in. (2017) wykazali istotny związek między częstotliwością współżycia 
-              a ogólnym poczuciem szczęścia i satysfakcji z życia. Secret Sparks inspiruje do odkrywania nowych doznań i utrzymania entuzjazmu w relacji, co bezpośrednio przekłada się na ogólne zadowolenie z życia.
+              {t('research.feature2.description')}
             </p>
             <div className="text-xs text-muted-foreground">
               <a 
@@ -107,10 +105,9 @@ const ResearchSection = () => {
             <div className="px-5 py-2 rounded-full bg-accent inline-block mb-3">
               <BookOpen className="h-5 w-5 text-primary" />
             </div>
-            <h3 className="text-xl font-bold mb-3">Równowaga w relacji</h3>
+            <h3 className="text-xl font-bold mb-3">{t('research.feature3.title')}</h3>
             <p className="text-sm mb-3">
-              Badanie Goli (2019) wskazuje, że wyższa satysfakcja seksualna sprzyja lepszemu dobrostanowi 
-              i zwiększa poziom zaangażowania w związku. Secret Sparks pomaga parom lepiej poznać swoje wzajemne potrzeby i pragnienia, co prowadzi do równowagi i harmonii w relacji intymnej.
+              {t('research.feature3.description')}
             </p>
             <div className="text-xs text-muted-foreground">
               <a 

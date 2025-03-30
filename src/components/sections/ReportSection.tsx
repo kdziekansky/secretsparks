@@ -3,18 +3,21 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Check, Users, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 const ReportSection = () => {
+  const { t } = useTranslation();
+  
   return (
     <section className="py-16 bg-[#0B0B0E]">
       <div className="container mx-auto px-4">
-        <h2 className="text-4xl md:text-5xl font-bold mb-16 text-left">Nasz raport</h2>
+        <h2 className="text-4xl md:text-5xl font-bold mb-16 text-left">{t('report.title')}</h2>
         
         {/* Two-column layout with consistent height */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-20 mb-16">
           {/* Left column */}
           <div className="flex flex-col h-full">
-            <h3 className="text-3xl font-bold mb-8 text-left">Co zawiera raport</h3>
+            <h3 className="text-3xl font-bold mb-8 text-left">{t('report.section1.title')}</h3>
             
             <div className="space-y-8 flex-grow">
               <div className="flex items-start">
@@ -22,8 +25,8 @@ const ReportSection = () => {
                   <Check className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h4 className="text-xl font-semibold mb-3">Wspólne fascynacje</h4>
-                  <p className="text-muted-foreground text-lg">Odkryj aktywności i fantazje, które oboje uznaliście za intrygujące i warte wypróbowania.</p>
+                  <h4 className="text-xl font-semibold mb-3">{t('report.section1.feature1.title')}</h4>
+                  <p className="text-muted-foreground text-lg">{t('report.section1.feature1.description')}</p>
                 </div>
               </div>
               
@@ -32,8 +35,8 @@ const ReportSection = () => {
                   <Check className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h4 className="text-xl font-semibold mb-3">Strefy odkrywania</h4>
-                  <p className="text-muted-foreground text-lg">Obszary, w których Wasze zainteresowania się pokrywają i które warto wspólnie eksplorować.</p>
+                  <h4 className="text-xl font-semibold mb-3">{t('report.section1.feature2.title')}</h4>
+                  <p className="text-muted-foreground text-lg">{t('report.section1.feature2.description')}</p>
                 </div>
               </div>
               
@@ -42,8 +45,8 @@ const ReportSection = () => {
                   <Check className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h4 className="text-xl font-semibold mb-3">Inspiracje i scenariusze</h4>
-                  <p className="text-muted-foreground text-lg">Praktyczne podpowiedzi i gotowe scenariusze oparte na Waszych wspólnych preferencjach.</p>
+                  <h4 className="text-xl font-semibold mb-3">{t('report.section1.feature3.title')}</h4>
+                  <p className="text-muted-foreground text-lg">{t('report.section1.feature3.description')}</p>
                 </div>
               </div>
               
@@ -52,8 +55,8 @@ const ReportSection = () => {
                   <Check className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h4 className="text-xl font-semibold mb-3">Mapa komfortu</h4>
-                  <p className="text-muted-foreground text-lg">Wizualizacja Waszych stref komfortu z oznaczeniem obszarów idealnego dopasowania.</p>
+                  <h4 className="text-xl font-semibold mb-3">{t('report.section1.feature4.title')}</h4>
+                  <p className="text-muted-foreground text-lg">{t('report.section1.feature4.description')}</p>
                 </div>
               </div>
               
@@ -62,8 +65,8 @@ const ReportSection = () => {
                   <Check className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h4 className="text-xl font-semibold mb-3">Przewodnik rozmowy</h4>
-                  <p className="text-muted-foreground text-lg">Sugestie jak rozpocząć szczerą rozmowę o Waszych pragnieniach bez skrępowania.</p>
+                  <h4 className="text-xl font-semibold mb-3">{t('report.section1.feature5.title')}</h4>
+                  <p className="text-muted-foreground text-lg">{t('report.section1.feature5.description')}</p>
                 </div>
               </div>
             </div>
@@ -71,9 +74,9 @@ const ReportSection = () => {
           
           {/* Right column - Email editor mockup */}
           <div className="flex flex-col h-full">
-            <h3 className="text-3xl font-bold mb-8 text-center">Otrzymaj spersonalizowany raport</h3>
+            <h3 className="text-3xl font-bold mb-8 text-center">{t('report.section2.title')}</h3>
             <p className="text-lg text-muted-foreground text-center mb-8">
-              Nie poznacie swoich odpowiedzi nawzajem. Za to otrzymacie spersonalizowany raport.
+              {t('report.section2.description')}
             </p>
             
             {/* Email editor interface - dostosowane wymiary */}
@@ -118,13 +121,13 @@ const ReportSection = () => {
         </div>
         
         <div className="glass-card p-10 flex flex-col items-center justify-center text-center bg-gradient-to-br from-primary/20 to-accent/30 mt-10 md:mt-0">
-          <h3 className="text-2xl font-bold mb-6">ODKRYJ WSPÓLNE PRAGNIENIA JUŻ DZIŚ!</h3>
+          <h3 className="text-2xl font-bold mb-6">{t('report.cta.title')}</h3>
           <p className="text-lg mb-8 max-w-2xl">
-            Wypełnij ankietę i otrzymaj szczegółowy raport, który pomoże Wam lepiej się zrozumieć i zbliżyć do siebie.
+            {t('report.cta.description')}
           </p>
           <Link to="/survey" className="w-full max-w-sm">
             <Button className="btn-primary btn-large w-full text-lg py-6">
-              Wypełnij ankietę
+              {t('report.cta.button')}
             </Button>
           </Link>
         </div>

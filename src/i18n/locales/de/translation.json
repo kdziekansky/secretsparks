@@ -1,0 +1,149 @@
+
+{
+  "header": {
+    "about": "Über uns",
+    "rules": "Regeln",
+    "faq": "FAQ",
+    "security": "Sicherheit",
+    "secretai": "Secret AI",
+    "order": "Bericht bestellen"
+  },
+  "hero": {
+    "tag": "EINE NEUE DIMENSION DER INTIMEN KOMMUNIKATION",
+    "title1": "Verständnis ohne Worte.",
+    "title2": "Sexleben auf höherem Niveau",
+    "description": "In jeder Beziehung gibt es Wünsche, die schwer laut auszusprechen sind. Secret Sparks ist ein Raum, in dem Ihre unausgesprochenen Gedanken auf die Wünsche Ihres Partners treffen und eine Karte gemeinsamer Freuden schaffen.",
+    "orderButton": "Bericht bestellen",
+    "learnMore": "Mehr erfahren"
+  },
+  "stats": {
+    "stat1": {
+      "number": "250+",
+      "text": "Einzigartige Szenarien und Ideen zur Bereicherung Ihrer intimen Beziehung"
+    },
+    "stat2": {
+      "number": "100%",
+      "text": "Garantie für Datensicherheit und vollständige Anonymität für jede Umfrage"
+    },
+    "stat3": {
+      "number": "5min",
+      "text": "Eine schnelle Umfrage, die Ihre Beziehung für immer verändern wird"
+    }
+  },
+  "features": {
+    "feature1": {
+      "title": "Entdecken Sie sich",
+      "description": "Sehen Sie sich in einem neuen Licht. Wir enthüllen die Wünsche, die Sie verbinden, erstellen eine Karte gemeinsamer Faszinationen und öffnen Türen zu tieferer Intimität. Entdecken Sie gemeinsam Dimensionen Ihrer Beziehung, von denen Sie nicht wussten, dass sie existieren."
+    },
+    "feature2": {
+      "title": "Entzünden Sie sich gegenseitig",
+      "description": "Bringen Sie Aufregung in Ihre Beziehung. Unsere Anwendung hilft Ihnen, Routine zu durchbrechen und tiefere Intimität auf der Grundlage gegenseitigen Verständnisses und authentischen Verlangens aufzubauen."
+    },
+    "feature3": {
+      "title": "Erkunden Sie Wünsche",
+      "description": "Schaffen Sie neue Erinnerungen in einem sicheren Raum gegenseitigen Vertrauens. Von subtilen Vorschlägen bis hin zu kühnen Angeboten - entdecken Sie, wie aufregend es sein kann, gemeinsam Wünsche zu erkunden."
+    }
+  },
+  "steps": {
+    "title": "Schritt für Schritt",
+    "step1": {
+      "number": "1",
+      "title": "Entdecken Sie sich selbst",
+      "description": "Beantworten Sie die Umfragefragen ehrlich in völliger Privatsphäre, ohne Angst vor Verurteilung oder Druck."
+    },
+    "step2": {
+      "number": "2",
+      "title": "Laden Sie Ihren Partner ein",
+      "description": "Wir senden eine Einladung an die von Ihnen angegebene Person, die ebenfalls die Umfrage mit Garantie der Vertraulichkeit ausfüllen wird."
+    },
+    "step3": {
+      "number": "3",
+      "title": "Erhalten Sie Ihren Bericht",
+      "description": "Erhalten Sie einen einzigartigen Bericht und eine Karte zu gemeinsamen Freuden, die Sie lange nicht vergessen werden."
+    },
+    "step4": {
+      "number": "4",
+      "title": "Beginnen Sie das Abenteuer",
+      "description": "Nutzen Sie die bereitgestellten Tipps, um eine neue Dimension der Freude in Ihre Beziehung einzuführen."
+    }
+  },
+  "research": {
+    "title": "Was die Forschung sagt",
+    "mainCard": {
+      "title": "Die Kraft authentischer Konversation",
+      "paragraph1": "Forschungen von Mallory et al. (2022) zeigten, dass offene Kommunikation im intimen Bereich die Beziehungszufriedenheit erheblich steigert. Regelmäßige Dialoge über Bedürfnisse und Fantasien ermöglichen es Partnern, dauerhafte emotionale Bindungen aufzubauen.",
+      "paragraph2": "Secret Sparks erleichtert diese Gespräche, ermöglicht ein sicheres Teilen von Wünschen und die Entdeckung gemeinsamer Interessen ohne Angst vor Missverständnissen. Es ist eine effektive Methode, um das gegenseitige Verständnis zu vertiefen und eine intime Beziehung auf der Grundlage authentischer Kommunikation aufzubauen."
+    },
+    "sideCard": {
+      "title": "Kommunikation und Verlangen",
+      "description": "Eine Studie von Montesi et al. (2011) bewies, dass ehrliche Gespräche über Sex die Zufriedenheit und Bindung verbessern. Secret Sparks erleichtert einen solchen Dialog durch anonyme Umfragen und personalisierte Berichte, die gemeinsame Interessen identifizieren, ohne die Partner unter Druck zu setzen, was zu einer tieferen und befriedigenderen Beziehung führt."
+    },
+    "feature1": {
+      "title": "Hormone der Nähe",
+      "description": "Feldman et al. (2012) zeigten, dass häufiger körperlicher Kontakt den Oxytocinspiegel erhöht, was Vertrauen und Sicherheitsgefühl in einer Beziehung stärkt. Secret Sparks bietet Rituale und Aktivitätsvorschläge, die die Produktion dieses \"Liebeshormons\" fördern und dauerhafte Bindungen aufbauen."
+    },
+    "feature2": {
+      "title": "Zufriedenheit und Glück",
+      "description": "Schmiedeberg et al. (2017) zeigten einen signifikanten Zusammenhang zwischen der Häufigkeit des Geschlechtsverkehrs und dem allgemeinen Gefühl von Glück und Lebenszufriedenheit. Secret Sparks inspiriert zur Entdeckung neuer Empfindungen und zur Aufrechterhaltung der Begeisterung in einer Beziehung, was sich direkt auf die allgemeine Lebenszufriedenheit auswirkt."
+    },
+    "feature3": {
+      "title": "Gleichgewicht in der Beziehung",
+      "description": "Golas Studie (2019) zeigt, dass höhere sexuelle Zufriedenheit das Wohlbefinden fördert und das Engagement in einer Beziehung erhöht. Secret Sparks hilft Paaren, die Bedürfnisse und Wünsche des anderen besser zu verstehen, was zu Gleichgewicht und Harmonie in einer intimen Beziehung führt."
+    }
+  },
+  "report": {
+    "title": "Unser Bericht",
+    "section1": {
+      "title": "Was der Bericht enthält",
+      "feature1": {
+        "title": "Gemeinsame Faszinationen",
+        "description": "Entdecken Sie Aktivitäten und Fantasien, die Sie beide als interessant und ausprobierenswert empfunden haben."
+      },
+      "feature2": {
+        "title": "Entdeckungszonen",
+        "description": "Bereiche, in denen sich Ihre Interessen überschneiden und die es wert sind, gemeinsam erkundet zu werden."
+      },
+      "feature3": {
+        "title": "Inspirationen und Szenarien",
+        "description": "Praktische Vorschläge und fertige Szenarien basierend auf Ihren gemeinsamen Vorlieben."
+      },
+      "feature4": {
+        "title": "Komfortkarte",
+        "description": "Visualisierung Ihrer Komfortzonen mit Angabe der Bereiche perfekter Übereinstimmung."
+      },
+      "feature5": {
+        "title": "Gesprächsführer",
+        "description": "Vorschläge, wie Sie ein ehrliches Gespräch über Ihre Wünsche ohne Verlegenheit beginnen können."
+      }
+    },
+    "section2": {
+      "title": "Erhalten Sie einen personalisierten Bericht",
+      "description": "Sie werden die Antworten des anderen nicht sehen. Stattdessen erhalten Sie einen personalisierten Bericht."
+    },
+    "cta": {
+      "title": "ENTDECKEN SIE GEMEINSAME WÜNSCHE HEUTE!",
+      "description": "Füllen Sie die Umfrage aus und erhalten Sie einen detaillierten Bericht, der Ihnen hilft, sich besser zu verstehen und näher zu kommen.",
+      "button": "Umfrage ausfüllen"
+    }
+  },
+  "footer": {
+    "mission": "Unser Ziel ist es, Ihre Zufriedenheit zu steigern",
+    "newsletter": {
+      "title": "Abonnieren",
+      "description": "Abonnieren Sie, um kostenlose Ratschläge zu erhalten und als Erster von unseren Aktionen zu erfahren.",
+      "placeholder": "E-Mail eingeben"
+    },
+    "links": {
+      "privacy": "Datenschutzrichtlinie",
+      "terms": "Nutzungsbedingungen",
+      "contact": "Kontakt"
+    },
+    "copyright": "© 2025 Secret Sparks. Alle Rechte vorbehalten."
+  },
+  "languageSwitcher": {
+    "label": "Sprache wählen",
+    "pl": "Polski",
+    "en": "English",
+    "de": "Deutsch"
+  }
+}

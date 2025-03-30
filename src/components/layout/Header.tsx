@@ -4,10 +4,13 @@ import { Link } from 'react-router-dom';
 import { X, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '@/components/ui/language-switcher';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
   
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -26,24 +29,25 @@ const Header = () => {
         
         <nav className="hidden md:flex items-center space-x-4 lg:space-x-8">
           <Link to="/o-nas" className="nav-link">
-            O nas
+            {t('header.about')}
           </Link>
           <Link to="/zasady" className="nav-link">
-            Zasady
+            {t('header.rules')}
           </Link>
           <Link to="/faq" className="nav-link">
-            FAQ
+            {t('header.faq')}
           </Link>
           <Link to="/bezpieczenstwo" className="nav-link">
-            Bezpieczeństwo
+            {t('header.security')}
           </Link>
           <Link to="/secretai" className="nav-link">
-            Secret AI
+            {t('header.secretai')}
           </Link>
         </nav>
         
         {/* Mobile menu button */}
-        <div className="md:hidden flex items-center">
+        <div className="md:hidden flex items-center gap-2">
+          <LanguageSwitcher />
           <button 
             onClick={toggleMenu}
             className="text-foreground p-2"
@@ -52,10 +56,11 @@ const Header = () => {
           </button>
         </div>
         
-        <div className="hidden md:block">
+        <div className="hidden md:flex items-center gap-2">
+          <LanguageSwitcher />
           <Link to="/survey">
             <Button className="btn-primary text-sm">
-              Zamów raport
+              {t('header.order')}
             </Button>
           </Link>
         </div>
@@ -66,26 +71,26 @@ const Header = () => {
         <div className="md:hidden p-4 pb-6 border-t border-border/40 bg-[#05050a]">
           <nav className="flex flex-col space-y-4">
             <Link to="/o-nas" className="nav-link-mobile" onClick={() => setIsMenuOpen(false)}>
-              O nas
+              {t('header.about')}
             </Link>
             <Link to="/zasady" className="nav-link-mobile" onClick={() => setIsMenuOpen(false)}>
-              Zasady
+              {t('header.rules')}
             </Link>
             <Link to="/faq" className="nav-link-mobile" onClick={() => setIsMenuOpen(false)}>
-              FAQ
+              {t('header.faq')}
             </Link>
             <Link to="/bezpieczenstwo" className="nav-link-mobile" onClick={() => setIsMenuOpen(false)}>
-              Bezpieczeństwo
+              {t('header.security')}
             </Link>
             <Link to="/secretai" className="nav-link-mobile" onClick={() => setIsMenuOpen(false)}>
-              Secret AI
+              {t('header.secretai')}
             </Link>
             <Link to="/regulamin" className="nav-link-mobile" onClick={() => setIsMenuOpen(false)}>
-              Regulamin
+              {t('header.terms')}
             </Link>
             <Link to="/survey" onClick={() => setIsMenuOpen(false)}>
               <Button className="w-full rounded-full bg-primary hover:bg-primary/80 mt-2 text-sm">
-                Zamów raport
+                {t('header.order')}
               </Button>
             </Link>
           </nav>

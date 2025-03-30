@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Heart, User, UserCircle2 } from 'lucide-react';
 import { useSurvey } from '@/contexts/SurveyContext';
+import { useTranslation } from 'react-i18next';
 
 interface PartnerWelcomeProps {
   orderDetails: {
@@ -13,6 +14,7 @@ interface PartnerWelcomeProps {
 
 const PartnerWelcome: React.FC<PartnerWelcomeProps> = ({ orderDetails }) => {
   const { completeConfig } = useSurvey();
+  const { t, i18n } = useTranslation();
   
   return (
     <div className="glass-panel w-full max-w-4xl p-8 animate-slide-up">

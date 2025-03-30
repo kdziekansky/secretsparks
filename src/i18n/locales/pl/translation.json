@@ -1,0 +1,149 @@
+
+{
+  "header": {
+    "about": "O nas",
+    "rules": "Zasady",
+    "faq": "FAQ",
+    "security": "Bezpieczeństwo",
+    "secretai": "Secret AI",
+    "order": "Zamów raport"
+  },
+  "hero": {
+    "tag": "NOWY WYMIAR INTYMNEJ KOMUNIKACJI",
+    "title1": "Porozumienie bez słów.",
+    "title2": "Życie seksualne na wyższym poziomie",
+    "description": "W każdym związku istnieją pragnienia, które trudno wyrazić na głos. Secret Sparks to przestrzeń, gdzie Twoje niewypowiedziane myśli spotykają się z pragnieniami partnera, tworząc mapę wspólnych uniesień.",
+    "orderButton": "Zamów raport",
+    "learnMore": "Dowiedz się więcej"
+  },
+  "stats": {
+    "stat1": {
+      "number": "250+",
+      "text": "Unikalnych scenariuszy i pomysłów na wzbogacenie Waszej intymnej relacji"
+    },
+    "stat2": {
+      "number": "100%",
+      "text": "Gwarancja bezpieczeństwa danych i pełnej anonimowości każdej ankiety"
+    },
+    "stat3": {
+      "number": "5min",
+      "text": "Szybka ankieta, której rezultaty zmienią Waszą relację na zawsze"
+    }
+  },
+  "features": {
+    "feature1": {
+      "title": "Odkryjcie siebie",
+      "description": "Poznajcie siebie w nowym świetle. Ujawniamy te pragnienia, które Was łączą, tworząc mapę wspólnych fascynacji i otwierając drzwi do głębszej bliskości. Odkryjcie razem wymiary Waszej relacji, o których istnieniu nie wiedzieliście."
+    },
+    "feature2": {
+      "title": "Rozpalcie siebie nawzajem",
+      "description": "Wprowadźcie element ekscytacji do swojego związku. Nasza aplikacja pomoże Wam przełamać rutynę i zbudować głębszą intymność opartą na wzajemnym zrozumieniu i autentycznym pożądaniu."
+    },
+    "feature3": {
+      "title": "Eksplorujcie pragnienia",
+      "description": "Twórzcie nowe wspomnienia w bezpiecznej przestrzeni wzajemnego zaufania. Od subtelnych sugestii po odważne propozycje – odkryjcie, jak ekscytująca może być wspólna eksploracja pragnień."
+    }
+  },
+  "steps": {
+    "title": "Krok po kroku",
+    "step1": {
+      "number": "1",
+      "title": "Odkryj siebie",
+      "description": "Odpowiedz szczerze na pytania ankiety w całkowitej prywatności, bez obaw o ocenę czy presję."
+    },
+    "step2": {
+      "number": "2",
+      "title": "Zaproś partnera/-kę",
+      "description": "Prześlemy zaproszenie do wskazanej osoby, która wypełni ankietę, również z gwarancją poufności."
+    },
+    "step3": {
+      "number": "3",
+      "title": "Otrzymajcie raport",
+      "description": "Otrzymaj unikalny raport i mapę do wspólnych uniesień, których nie zapomnicie na długo."
+    },
+    "step4": {
+      "number": "4",
+      "title": "Rozpocznij przygodę",
+      "description": "Wykorzystaj otrzymane wskazówki, by wprowadzić nowy wymiar przyjemności do Waszej relacji."
+    }
+  },
+  "research": {
+    "title": "Co mówią badania",
+    "mainCard": {
+      "title": "Siła autentycznej rozmowy",
+      "paragraph1": "Badania Mallory i współpracowników (2022) wykazały, że otwarta komunikacja w sferze intymnej znacząco zwiększa satysfakcję z relacji. Regularne dialogi o potrzebach i fantazjach pozwalają partnerom zbudować trwałe więzi emocjonalne.",
+      "paragraph2": "Secret Sparks ułatwia te rozmowy, umożliwiając bezpieczne dzielenie się pragnieniami i odkrywanie wspólnych zainteresowań bez obaw o nieporozumienia. To skuteczny sposób na pogłębienie wzajemnego zrozumienia i budowanie intymnej relacji opartej na autentycznej komunikacji."
+    },
+    "sideCard": {
+      "title": "Komunikacja a pożądanie",
+      "description": "Badanie Montesi i in. (2011) dowiodło, że szczera rozmowa o seksie podnosi satysfakcję i więź. Secret Sparks ułatwia taki dialog przez anonimowe ankiety i personalizowane raporty, które identyfikują wspólne zainteresowania bez wywierania presji na partnerów, co prowadzi do głębszego i bardziej satysfakcjonującego związku."
+    },
+    "feature1": {
+      "title": "Hormony bliskości",
+      "description": "Feldman i in. (2012) wykazali, że częste kontakty fizyczne zwiększają poziom oksytocyny, wzmacniając zaufanie i poczucie bezpieczeństwa w związku. Secret Sparks oferuje rytuały i propozycje aktywności, które sprzyjają wytwarzaniu tego \"hormonu miłości\" i budowaniu trwałego przywiązania."
+    },
+    "feature2": {
+      "title": "Satysfakcja a szczęście",
+      "description": "Schmiedeberg i in. (2017) wykazali istotny związek między częstotliwością współżycia a ogólnym poczuciem szczęścia i satysfakcji z życia. Secret Sparks inspiruje do odkrywania nowych doznań i utrzymania entuzjazmu w relacji, co bezpośrednio przekłada się na ogólne zadowolenie z życia."
+    },
+    "feature3": {
+      "title": "Równowaga w relacji",
+      "description": "Badanie Goli (2019) wskazuje, że wyższa satysfakcja seksualna sprzyja lepszemu dobrostanowi i zwiększa poziom zaangażowania w związku. Secret Sparks pomaga parom lepiej poznać swoje wzajemne potrzeby i pragnienia, co prowadzi do równowagi i harmonii w relacji intymnej."
+    }
+  },
+  "report": {
+    "title": "Nasz raport",
+    "section1": {
+      "title": "Co zawiera raport",
+      "feature1": {
+        "title": "Wspólne fascynacje",
+        "description": "Odkryj aktywności i fantazje, które oboje uznaliście za intrygujące i warte wypróbowania."
+      },
+      "feature2": {
+        "title": "Strefy odkrywania",
+        "description": "Obszary, w których Wasze zainteresowania się pokrywają i które warto wspólnie eksplorować."
+      },
+      "feature3": {
+        "title": "Inspiracje i scenariusze",
+        "description": "Praktyczne podpowiedzi i gotowe scenariusze oparte na Waszych wspólnych preferencjach."
+      },
+      "feature4": {
+        "title": "Mapa komfortu",
+        "description": "Wizualizacja Waszych stref komfortu z oznaczeniem obszarów idealnego dopasowania."
+      },
+      "feature5": {
+        "title": "Przewodnik rozmowy",
+        "description": "Sugestie jak rozpocząć szczerą rozmowę o Waszych pragnieniach bez skrępowania."
+      }
+    },
+    "section2": {
+      "title": "Otrzymaj spersonalizowany raport",
+      "description": "Nie poznacie swoich odpowiedzi nawzajem. Za to otrzymacie spersonalizowany raport."
+    },
+    "cta": {
+      "title": "ODKRYJ WSPÓLNE PRAGNIENIA JUŻ DZIŚ!",
+      "description": "Wypełnij ankietę i otrzymaj szczegółowy raport, który pomoże Wam lepiej się zrozumieć i zbliżyć do siebie.",
+      "button": "Wypełnij ankietę"
+    }
+  },
+  "footer": {
+    "mission": "Naszym celem jest zwiększenie Waszej satysfakcji",
+    "newsletter": {
+      "title": "Zapisz się",
+      "description": "Zapisz się, otrzymuj porady za darmo oraz dowiedz się o naszych promocjach jako pierwszy.",
+      "placeholder": "Wpisz swój e-mail"
+    },
+    "links": {
+      "privacy": "Polityka prywatności",
+      "terms": "Warunki korzystania",
+      "contact": "Kontakt"
+    },
+    "copyright": "© 2025 Secret Sparks. Wszelkie prawa zastrzeżone."
+  },
+  "languageSwitcher": {
+    "label": "Wybierz język",
+    "pl": "Polski",
+    "en": "English",
+    "de": "Deutsch"
+  }
+}

@@ -1,0 +1,149 @@
+
+{
+  "header": {
+    "about": "About us",
+    "rules": "Rules",
+    "faq": "FAQ",
+    "security": "Security",
+    "secretai": "Secret AI",
+    "order": "Order report"
+  },
+  "hero": {
+    "tag": "A NEW DIMENSION OF INTIMATE COMMUNICATION",
+    "title1": "Understanding without words.",
+    "title2": "Sex life at a higher level",
+    "description": "In every relationship, there are desires that are difficult to express aloud. Secret Sparks is a space where your unspoken thoughts meet your partner's desires, creating a map for shared pleasures.",
+    "orderButton": "Order report",
+    "learnMore": "Learn more"
+  },
+  "stats": {
+    "stat1": {
+      "number": "250+",
+      "text": "Unique scenarios and ideas to enrich your intimate relationship"
+    },
+    "stat2": {
+      "number": "100%",
+      "text": "Guarantee of data security and complete anonymity for each survey"
+    },
+    "stat3": {
+      "number": "5min",
+      "text": "A quick survey that will change your relationship forever"
+    }
+  },
+  "features": {
+    "feature1": {
+      "title": "Discover yourselves",
+      "description": "See each other in a new light. We reveal the desires that connect you, creating a map of shared fascinations and opening doors to deeper intimacy. Discover together dimensions of your relationship you didn't know existed."
+    },
+    "feature2": {
+      "title": "Ignite each other",
+      "description": "Bring excitement into your relationship. Our application will help you break routine and build deeper intimacy based on mutual understanding and authentic desire."
+    },
+    "feature3": {
+      "title": "Explore desires",
+      "description": "Create new memories in a safe space of mutual trust. From subtle suggestions to bold proposals - discover how exciting it can be to explore desires together."
+    }
+  },
+  "steps": {
+    "title": "Step by step",
+    "step1": {
+      "number": "1",
+      "title": "Discover yourself",
+      "description": "Answer survey questions honestly in complete privacy, without fear of judgment or pressure."
+    },
+    "step2": {
+      "number": "2",
+      "title": "Invite your partner",
+      "description": "We will send an invitation to the person you indicate, who will also complete the survey with a guarantee of confidentiality."
+    },
+    "step3": {
+      "number": "3",
+      "title": "Receive your report",
+      "description": "Get a unique report and a map to shared pleasures that you won't forget for a long time."
+    },
+    "step4": {
+      "number": "4",
+      "title": "Begin the adventure",
+      "description": "Use the provided tips to introduce a new dimension of pleasure into your relationship."
+    }
+  },
+  "research": {
+    "title": "What research says",
+    "mainCard": {
+      "title": "The power of authentic conversation",
+      "paragraph1": "Research by Mallory et al. (2022) showed that open communication in the intimate sphere significantly increases relationship satisfaction. Regular dialogues about needs and fantasies allow partners to build lasting emotional bonds.",
+      "paragraph2": "Secret Sparks facilitates these conversations, enabling safe sharing of desires and discovering common interests without fear of misunderstandings. It's an effective way to deepen mutual understanding and build an intimate relationship based on authentic communication."
+    },
+    "sideCard": {
+      "title": "Communication and desire",
+      "description": "A study by Montesi et al. (2011) proved that honest conversation about sex enhances satisfaction and bond. Secret Sparks facilitates such dialogue through anonymous surveys and personalized reports that identify common interests without pressuring partners, leading to a deeper and more satisfying relationship."
+    },
+    "feature1": {
+      "title": "Hormones of closeness",
+      "description": "Feldman et al. (2012) showed that frequent physical contact increases oxytocin levels, strengthening trust and sense of security in a relationship. Secret Sparks offers rituals and activity suggestions that promote the production of this \"love hormone\" and build lasting attachment."
+    },
+    "feature2": {
+      "title": "Satisfaction and happiness",
+      "description": "Schmiedeberg et al. (2017) demonstrated a significant relationship between frequency of intercourse and overall feeling of happiness and life satisfaction. Secret Sparks inspires the discovery of new sensations and maintaining enthusiasm in a relationship, which directly translates to overall life satisfaction."
+    },
+    "feature3": {
+      "title": "Balance in relationship",
+      "description": "Gola's study (2019) indicates that higher sexual satisfaction promotes better well-being and increases the level of commitment in a relationship. Secret Sparks helps couples better understand each other's needs and desires, leading to balance and harmony in an intimate relationship."
+    }
+  },
+  "report": {
+    "title": "Our report",
+    "section1": {
+      "title": "What the report contains",
+      "feature1": {
+        "title": "Shared fascinations",
+        "description": "Discover activities and fantasies that you both found intriguing and worth trying."
+      },
+      "feature2": {
+        "title": "Discovery zones",
+        "description": "Areas where your interests overlap and are worth exploring together."
+      },
+      "feature3": {
+        "title": "Inspirations and scenarios",
+        "description": "Practical suggestions and ready-made scenarios based on your shared preferences."
+      },
+      "feature4": {
+        "title": "Comfort map",
+        "description": "Visualization of your comfort zones with indication of areas of perfect match."
+      },
+      "feature5": {
+        "title": "Conversation guide",
+        "description": "Suggestions on how to start an honest conversation about your desires without embarrassment."
+      }
+    },
+    "section2": {
+      "title": "Get a personalized report",
+      "description": "You won't see each other's answers. Instead, you'll receive a personalized report."
+    },
+    "cta": {
+      "title": "DISCOVER SHARED DESIRES TODAY!",
+      "description": "Complete the survey and receive a detailed report that will help you better understand each other and become closer.",
+      "button": "Complete the survey"
+    }
+  },
+  "footer": {
+    "mission": "Our goal is to increase your satisfaction",
+    "newsletter": {
+      "title": "Subscribe",
+      "description": "Subscribe to receive free advice and be the first to know about our promotions.",
+      "placeholder": "Enter your email"
+    },
+    "links": {
+      "privacy": "Privacy policy",
+      "terms": "Terms of use",
+      "contact": "Contact"
+    },
+    "copyright": "© 2025 Secret Sparks. All rights reserved."
+  },
+  "languageSwitcher": {
+    "label": "Choose language",
+    "pl": "Polski",
+    "en": "English",
+    "de": "Deutsch"
+  }
+}
