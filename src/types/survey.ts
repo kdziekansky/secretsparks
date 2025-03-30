@@ -1,7 +1,7 @@
 
 export interface Question {
   id: string;
-  title: string;
+  title?: string; // Zmieniamy na opcjonalne, ponieważ istniejące pytania używają 'text' zamiast 'title'
   description?: string;
   image?: string;
   adultContent?: boolean;

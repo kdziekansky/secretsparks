@@ -28,6 +28,12 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   const [imageVisible, setImageVisible] = useState(question.image && !question.adultContent);
   const answer = answers[question.id] || 3;
 
+  // Używamy title lub text w zależności od tego, co jest dostępne
+  const questionTitle = question.title || question.text;
+  
+  // Określamy obrazek z image lub illustration
+  const questionImage = question.image || question.illustration;
+
   useEffect(() => {
     console.log(`Question ${question.id} mounted`);
     return () => {
@@ -45,7 +51,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   };
   
   const handleImageError = () => {
-    console.error("Failed to load image:", question.image);
+    console.error("Failed to load image:", questionImage);
   };
 
   const currentStep = currentQuestionIndex + 1;
@@ -60,7 +66,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         </div>
         
         {/* Question title */}
-        <h2 className="text-xl md:text-2xl font-bold mb-2">{question.title}</h2>
+        <h2 className="text-xl md:text-2xl font-bold mb-2">{questionTitle}</h2>
         
         {/* Question description toggle */}
         {question.description && (
@@ -82,13 +88,13 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         )}
         
         {/* Question image */}
-        {question.image && (
+        {questionImage && (
           <div className="mb-6 flex justify-center">
             {imageVisible ? (
               <div className="max-h-64 overflow-hidden rounded-lg">
                 <img 
-                  src={question.image} 
-                  alt={question.title} 
+                  src={questionImage} 
+                  alt={questionTitle} 
                   className="w-full object-cover"
                   onError={handleImageError}
                 />
