@@ -5,7 +5,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SurveyProvider } from "./contexts/SurveyContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { LanguageProvider } from "./contexts/LanguageContext";
 import Index from "./pages/Index";
 import SurveyPage from "./pages/SurveyPage";
 import NotFound from "./pages/NotFound";
@@ -25,6 +26,9 @@ import { AdminAuthProvider } from "./contexts/AdminAuthContext";
 import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute";
 import ScrollToTop from "./components/ScrollToTop";
 
+// Import konfiguracji i18n
+import './i18n';
+
 const App = () => {
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
@@ -42,48 +46,50 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
-          <SurveyProvider>
-            <AdminAuthProvider>
-              <div className="dark">
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/idea" element={<Index />} />
-                  <Route path="/zasady" element={<RulesPage />} />
-                  <Route path="/regulamin" element={<TermsPage />} />
-                  <Route path="/polityka-prywatnosci" element={<PrivacyPage />} />
-                  <Route path="/kontakt" element={<ContactPage />} />
-                  <Route path="/o-nas" element={<Index />} />
-                  <Route path="/faq" element={<FAQPage />} />
-                  <Route path="/bezpieczenstwo" element={<SecurityPage />} />
-                  <Route path="/secretai" element={<SecretAIPage />} />
-                  <Route path="/survey" element={<SurveyPage />} />
-                  <Route path="/payment" element={<PaymentPage />} />
-                  <Route path="/thank-you" element={<ThankYouPage />} />
-                  <Route path="/spe43al-adm1n-p4nel" element={<AdminLogin />} />
-                  <Route 
-                    path="/spe43al-adm1n-p4nel/dashboard" 
-                    element={
-                      <ProtectedAdminRoute>
-                        <AdminDashboard />
-                      </ProtectedAdminRoute>
-                    } 
-                  />
-                  <Route 
-                    path="/spe43al-adm1n-p4nel/orders" 
-                    element={
-                      <ProtectedAdminRoute>
-                        <AdminOrders />
-                      </ProtectedAdminRoute>
-                    } 
-                  />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </div>
-            </AdminAuthProvider>
-          </SurveyProvider>
-        </BrowserRouter>
+        <LanguageProvider>
+          <BrowserRouter>
+            <ScrollToTop />
+            <SurveyProvider>
+              <AdminAuthProvider>
+                <div className="dark">
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/idea" element={<Index />} />
+                    <Route path="/zasady" element={<RulesPage />} />
+                    <Route path="/regulamin" element={<TermsPage />} />
+                    <Route path="/polityka-prywatnosci" element={<PrivacyPage />} />
+                    <Route path="/kontakt" element={<ContactPage />} />
+                    <Route path="/o-nas" element={<Index />} />
+                    <Route path="/faq" element={<FAQPage />} />
+                    <Route path="/bezpieczenstwo" element={<SecurityPage />} />
+                    <Route path="/secretai" element={<SecretAIPage />} />
+                    <Route path="/survey" element={<SurveyPage />} />
+                    <Route path="/payment" element={<PaymentPage />} />
+                    <Route path="/thank-you" element={<ThankYouPage />} />
+                    <Route path="/spe43al-adm1n-p4nel" element={<AdminLogin />} />
+                    <Route 
+                      path="/spe43al-adm1n-p4nel/dashboard" 
+                      element={
+                        <ProtectedAdminRoute>
+                          <AdminDashboard />
+                        </ProtectedAdminRoute>
+                      } 
+                    />
+                    <Route 
+                      path="/spe43al-adm1n-p4nel/orders" 
+                      element={
+                        <ProtectedAdminRoute>
+                          <AdminOrders />
+                        </ProtectedAdminRoute>
+                      } 
+                    />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </div>
+              </AdminAuthProvider>
+            </SurveyProvider>
+          </BrowserRouter>
+        </LanguageProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

@@ -7,6 +7,7 @@ import { useSurvey } from '@/contexts/SurveyContext';
 import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, Image as ImageIcon, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from './ui/button';
+import { useTranslation } from 'react-i18next';
 
 interface QuestionCardProps {
   isPartnerSurvey?: boolean;
@@ -17,6 +18,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
   const navigate = useNavigate();
   const partnerToken = searchParams.get('token');
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
   
   const {
     currentQuestion,
@@ -133,8 +135,8 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
   
   // Adjusted button text based on whether it's a partner survey
   const nextButtonText = isLastQuestion 
-    ? (isPartnerSurvey ? 'Zakończ ankietę' : 'Przejdź do płatności') 
-    : 'Zapisz odpowiedź';
+    ? (isPartnerSurvey ? t('survey.question.finishSurvey') : t('survey.question.proceedToPayment')) 
+    : t('survey.question.saveAnswer');
   
   return (
     <div className={`glass-panel w-full max-w-4xl transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100 animate-slide-up'}`}>
@@ -151,7 +153,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
               {!imageLoaded && (
                 <div className="w-full h-full bg-accent/20 flex flex-col items-center justify-center text-muted-foreground">
                   <ImageIcon className="h-8 w-8 md:h-12 md:w-12 mb-2 opacity-50" />
-                  <span>Ładowanie...</span>
+                  <span>{t('survey.question.loading')}</span>
                 </div>
               )}
               
@@ -181,7 +183,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
                       </div>
                       <p className="text-white font-bold text-lg sm:text-xl">18+</p>
                       <p className="text-white text-xs sm:text-sm px-4 text-center max-w-xs">
-                        Kliknij, aby wyświetlić. Uwaga - może zawierać treści pornograficzne
+                        {t('survey.question.adultContent')}
                       </p>
                     </div>
                   )}
@@ -206,7 +208,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
                       </div>
                       <p className="text-white font-bold text-lg sm:text-xl">18+</p>
                       <p className="text-white text-xs sm:text-sm px-4 text-center max-w-xs">
-                        Kliknij, aby wyświetlić. Uwaga - może zawierać treści pornograficzne
+                        {t('survey.question.adultContent')}
                       </p>
                     </div>
                   )}
@@ -228,7 +230,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
         <div className={`${isMobile ? 'w-full' : 'md:w-3/5'} p-4 sm:p-6 md:p-8 flex flex-col`}>
           <div className="mb-4 sm:mb-6">
             <h2 className="text-lg sm:text-xl md:text-2xl font-medium mb-1 sm:mb-2">
-              Co o tym myślisz?
+              {t('survey.question.whatDoYouThink')}
             </h2>
             <h3 className="text-base sm:text-lg md:text-xl font-bold text-primary">
               {currentQuestion.text}
@@ -250,12 +252,12 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
                 >
                   {showFullDescription ? (
                     <>
-                      <span>Zwiń</span>
+                      <span>{t('survey.question.collapse')}</span>
                       <ChevronUp className="h-3 w-3 sm:h-4 sm:w-4 ml-1" />
                     </>
                   ) : (
                     <>
-                      <span>czytaj więcej</span>
+                      <span>{t('survey.question.readMore')}</span>
                       <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4 ml-1" />
                     </>
                   )}
@@ -281,7 +283,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
                 aria-hidden={isFirstQuestion}
               >
                 <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span>Wstecz</span>
+                <span>{t('survey.question.back')}</span>
               </button>
               
               <Button
