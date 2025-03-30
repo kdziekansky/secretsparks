@@ -1,131 +1,175 @@
 
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
-import { useSurvey } from '@/contexts/SurveyContext';
+import { useSurvey, type Gender, type GameLevel } from '@/contexts/SurveyContext';
+import { useTranslation } from 'react-i18next';
 
-interface SurveyConfigProps {
-  onStart?: () => void;
-}
-
-const SurveyConfig: React.FC<SurveyConfigProps> = () => {
+const SurveyConfig: React.FC = () => {
   const { t } = useTranslation();
-  const { setUserGender, setPartnerGender, setGameLevel, completeConfig } = useSurvey();
-  const [loading, setLoading] = useState(false);
-  const [gender, setGender] = useState('female');
-  const [orientation, setOrientation] = useState('hetero');
-  
-  const handleStart = () => {
-    setLoading(true);
-    
-    // Ustaw wybrane opcje w kontekście
-    setUserGender(gender as 'male' | 'female');
-    
-    // Ustaw płeć partnera na podstawie orientacji i płci użytkownika
-    if (orientation === 'hetero') {
-      setPartnerGender(gender === 'male' ? 'female' : 'male');
-    } else if (orientation === 'homo') {
-      setPartnerGender(gender as 'male' | 'female');
-    } else {
-      // Dla biseksualistów możemy domyślnie ustawić na płeć przeciwną
-      setPartnerGender(gender === 'male' ? 'female' : 'male');
-    }
-    
-    // Ustaw poziom gry na 'discover' (domyślny)
-    setGameLevel('discover');
-    
-    setTimeout(() => {
-      completeConfig();
-      setLoading(false);
-    }, 800);
+  const { 
+    setUserGender, 
+    setPartnerGender, 
+    setGameLevel, 
+    completeConfig,
+    surveyConfig 
+  } = useSurvey();
+
+  const handleUserGenderSelect = (gender: Gender) => {
+    setUserGender(gender);
   };
+
+  const handlePartnerGenderSelect = (gender: Gender) => {
+    setPartnerGender(gender);
+  };
+
+  const handleGameLevelSelect = (level: GameLevel) => {
+    setGameLevel(level);
+  };
+
+  const handleStartSurvey = () => {
+    completeConfig();
+  };
+
+  const isButtonDisabled = !surveyConfig.userGender || !surveyConfig.partnerGender || !surveyConfig.gameLevel;
   
   return (
-    <div className="glass-card p-8 md:p-10 max-w-md mx-auto">
-      <h2 className="text-2xl font-bold mb-6">{t('survey.config.title')}</h2>
-      
-      <div className="space-y-6">
-        <div>
-          <label className="block text-sm font-medium mb-2">{t('survey.config.iAm')}:</label>
+    <div className="max-w-3xl mx-auto text-center">
+      <div className="glass-card p-8 md:p-12 flex flex-col items-center">
+        <h1 className="text-3xl font-bold mb-12 text-center">
+          Kim jesteście?
+        </h1>
+        
+        <div className="w-full mb-8">
+          <h2 className="text-lg mb-4 text-left">Twoja płeć</h2>
           <div className="grid grid-cols-2 gap-4">
             <button
-              type="button"
-              onClick={() => setGender('female')}
-              className={`p-3 rounded-md border ${
-                gender === 'female' 
-                  ? 'border-primary bg-primary/10 text-primary' 
-                  : 'border-border bg-card text-muted-foreground'
+              className={`flex items-center gap-3 p-4 rounded-xl border ${
+                surveyConfig.userGender === 'female' 
+                  ? 'border-primary bg-primary/10' 
+                  : 'border-border/40 hover:border-primary/50'
               }`}
+              onClick={() => handleUserGenderSelect('female')}
             >
-              {t('survey.config.female')}
+              <div className="w-10 h-10 rounded-full bg-pink-500/20 flex items-center justify-center">
+                <span className="text-pink-500">♀</span>
+              </div>
+              <span>Kobieta</span>
             </button>
+            
             <button
-              type="button"
-              onClick={() => setGender('male')}
-              className={`p-3 rounded-md border ${
-                gender === 'male' 
-                  ? 'border-primary bg-primary/10 text-primary' 
-                  : 'border-border bg-card text-muted-foreground'
+              className={`flex items-center gap-3 p-4 rounded-xl border ${
+                surveyConfig.userGender === 'male' 
+                  ? 'border-primary bg-primary/10' 
+                  : 'border-border/40 hover:border-primary/50'
               }`}
+              onClick={() => handleUserGenderSelect('male')}
             >
-              {t('survey.config.male')}
+              <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
+                <span className="text-blue-500">♂</span>
+              </div>
+              <span>Mężczyzna</span>
             </button>
           </div>
         </div>
         
-        <div>
-          <label className="block text-sm font-medium mb-2">{t('survey.config.orientation')}:</label>
-          <div className="grid grid-cols-1 gap-2">
+        <div className="w-full mb-8">
+          <h2 className="text-lg mb-4 text-left">Płeć partnerki/partnera</h2>
+          <div className="grid grid-cols-2 gap-4">
             <button
-              type="button"
-              onClick={() => setOrientation('hetero')}
-              className={`p-3 rounded-md border ${
-                orientation === 'hetero' 
-                  ? 'border-primary bg-primary/10 text-primary' 
-                  : 'border-border bg-card text-muted-foreground'
+              className={`flex items-center gap-3 p-4 rounded-xl border ${
+                surveyConfig.partnerGender === 'female' 
+                  ? 'border-primary bg-primary/10' 
+                  : 'border-border/40 hover:border-primary/50'
               }`}
+              onClick={() => handlePartnerGenderSelect('female')}
             >
-              {t('survey.config.hetero')}
+              <div className="w-10 h-10 rounded-full bg-pink-500/20 flex items-center justify-center">
+                <span className="text-pink-500">♀</span>
+              </div>
+              <span>Kobieta</span>
             </button>
+            
             <button
-              type="button"
-              onClick={() => setOrientation('homo')}
-              className={`p-3 rounded-md border ${
-                orientation === 'homo' 
-                  ? 'border-primary bg-primary/10 text-primary' 
-                  : 'border-border bg-card text-muted-foreground'
+              className={`flex items-center gap-3 p-4 rounded-xl border ${
+                surveyConfig.partnerGender === 'male' 
+                  ? 'border-primary bg-primary/10' 
+                  : 'border-border/40 hover:border-primary/50'
               }`}
+              onClick={() => handlePartnerGenderSelect('male')}
             >
-              {t('survey.config.homo')}
-            </button>
-            <button
-              type="button"
-              onClick={() => setOrientation('bi')}
-              className={`p-3 rounded-md border ${
-                orientation === 'bi' 
-                  ? 'border-primary bg-primary/10 text-primary' 
-                  : 'border-border bg-card text-muted-foreground'
-              }`}
-            >
-              {t('survey.config.bi')}
+              <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
+                <span className="text-blue-500">♂</span>
+              </div>
+              <span>Mężczyzna</span>
             </button>
           </div>
+        </div>
+        
+        <div className="w-full mb-12">
+          <h2 className="text-lg mb-4 text-left">Poziom gry</h2>
+          <div className="grid grid-cols-3 gap-4">
+            <button
+              className={`flex flex-col items-center gap-3 p-4 rounded-xl border ${
+                surveyConfig.gameLevel === 'discover' 
+                  ? 'border-primary bg-primary/10' 
+                  : 'border-border/40 hover:border-primary/50'
+              }`}
+              onClick={() => handleGameLevelSelect('discover')}
+            >
+              <div className="w-12 h-12 rounded-full bg-yellow-500/20 flex items-center justify-center">
+                <span className="text-xl text-yellow-500">☺</span>
+              </div>
+              <span>Odkrywaj intymność</span>
+            </button>
+            
+            <button
+              className={`flex flex-col items-center gap-3 p-4 rounded-xl border ${
+                surveyConfig.gameLevel === 'explore' 
+                  ? 'border-primary bg-primary/10' 
+                  : 'border-border/40 hover:border-primary/50'
+              }`}
+              onClick={() => handleGameLevelSelect('explore')}
+            >
+              <div className="w-12 h-12 rounded-full bg-orange-500/20 flex items-center justify-center">
+                <span className="text-xl text-orange-500">🔥</span>
+              </div>
+              <span>Eksploruj pragnienia</span>
+            </button>
+            
+            <button
+              className={`flex flex-col items-center gap-3 p-4 rounded-xl border ${
+                surveyConfig.gameLevel === 'exceed' 
+                  ? 'border-primary bg-primary/10' 
+                  : 'border-border/40 hover:border-primary/50'
+              }`}
+              onClick={() => handleGameLevelSelect('exceed')}
+            >
+              <div className="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center">
+                <span className="text-xl text-purple-500">⚡</span>
+              </div>
+              <span>Przekraczaj granice</span>
+            </button>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-4 mb-6">
+          <input 
+            type="checkbox" 
+            id="age-confirmation" 
+            className="rounded border-border/40 bg-card/30"
+          />
+          <label htmlFor="age-confirmation" className="text-sm">
+            Oświadczam, że ukończyłem/-am 18 rok życia
+          </label>
         </div>
         
         <Button 
-          onClick={handleStart} 
-          disabled={loading}
-          className="w-full py-6 mt-4"
+          onClick={handleStartSurvey} 
+          className="rounded-full px-8 py-6" 
+          size="lg"
+          disabled={isButtonDisabled}
         >
-          {loading ? (
-            <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              {t('survey.question.loading')}
-            </>
-          ) : (
-            t('survey.instruction.startSurvey')
-          )}
+          Wypełnij ankietę
         </Button>
       </div>
     </div>
