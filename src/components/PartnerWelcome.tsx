@@ -1,61 +1,40 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Heart, User, UserCircle2 } from 'lucide-react';
-import { useSurvey } from '@/contexts/SurveyContext';
 import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
+import { ChevronRight } from 'lucide-react';
 
 interface PartnerWelcomeProps {
-  orderDetails: {
-    userName: string;
-    partnerName: string;
-  };
+  onStart: () => void;
+  partnerName?: string;
 }
 
-const PartnerWelcome: React.FC<PartnerWelcomeProps> = ({ orderDetails }) => {
-  const { completeConfig } = useSurvey();
+const PartnerWelcome: React.FC<PartnerWelcomeProps> = ({ onStart, partnerName = "Twoj partner" }) => {
   const { t } = useTranslation();
   
   return (
-    <div className="glass-panel w-full max-w-4xl p-8 animate-slide-up">
-      <div className="flex flex-col items-center text-center">
-        <div className="flex items-center justify-center w-16 h-16 bg-pink-100 rounded-full mb-4">
-          <Heart className="w-8 h-8 text-pink-500" />
-        </div>
+    <div className="container mx-auto max-w-4xl px-4 py-12">
+      <div className="glass-card p-8 md:p-12 flex flex-col items-center text-center">
+        <h1 className="text-3xl md:text-4xl font-bold mb-4">
+          {t('survey.partnerWelcome.welcome')}!
+        </h1>
         
-        <h1 className="text-3xl font-bold mb-4">{t('survey.partnerWelcome.welcome')}, {orderDetails.partnerName}!</h1>
-        
-        <p className="text-xl mb-8">
-          <strong>{orderDetails.userName}</strong> {t('survey.partnerWelcome.invitedYou')}.
+        <p className="text-xl mb-10">
+          <span className="text-primary font-semibold">{partnerName}</span> {t('survey.partnerWelcome.invitedYou')}
         </p>
         
-        <div className="flex items-center justify-center space-x-4 p-4 mb-8 bg-gray-50 rounded-lg">
-          <div className="flex flex-col items-center">
-            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-2">
-              <UserCircle2 className="w-6 h-6 text-blue-500" />
-            </div>
-            <span className="text-sm">{orderDetails.userName}</span>
-          </div>
-          
-          <div className="w-8 h-0.5 bg-gray-300"></div>
-          
-          <div className="flex flex-col items-center">
-            <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mb-2">
-              <User className="w-6 h-6 text-purple-500" />
-            </div>
-            <span className="text-sm">{orderDetails.partnerName}</span>
-          </div>
+        <div className="mb-10 max-w-xl">
+          <p className="text-muted-foreground text-lg">
+            {t('survey.partnerWelcome.helpExplanation')}
+          </p>
         </div>
-        
-        <p className="text-gray-600 mb-8 max-w-lg">
-          {t('survey.partnerWelcome.helpExplanation')}
-        </p>
         
         <Button 
-          onClick={completeConfig} 
-          className="px-8 py-6 text-lg"
+          onClick={onStart} 
+          className="rounded-full px-8 py-6 text-lg"
         >
           {t('survey.partnerWelcome.startSurvey')}
+          <ChevronRight className="ml-2 h-5 w-5" />
         </Button>
       </div>
     </div>
