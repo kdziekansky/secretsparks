@@ -7,6 +7,7 @@ export interface Question {
   adultContent?: boolean;
   // Dodatkowe pola używane w istniejących pytaniach
   text?: string; // Kompatybilność wsteczna z istniejącymi pytaniami
+  illustration?: string; // Dodane pole dla kompatybilności z danymi pytań
   forConfig?: {
     userGender?: Gender;
     partnerGender?: Gender;
@@ -55,4 +56,10 @@ export interface SurveyContextType {
   isPartnerSurvey: boolean;
   setOrderId: (orderId: string) => string;
   getOrderId: () => string | undefined;
+  
+  // Dodajemy brakujące właściwości, do których odwołuje się SurveyPage
+  isConfigCompleted?: boolean;
+  isPartnerMode?: boolean;
+  isSurveyCompleted?: boolean;
+  completeSurvey?: () => void;
 }

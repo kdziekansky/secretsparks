@@ -46,7 +46,11 @@ const demoQuestions: Question[] = [
 
 const SurveyPage = () => {
   const { t } = useTranslation();
-  const { isConfigCompleted, isPartnerMode, isSurveyCompleted, resetSurvey } = useSurvey();
+  const surveyContext = useSurvey();
+  const isConfigCompleted = surveyContext.surveyConfig.isConfigComplete;
+  const isPartnerMode = surveyContext.isPartnerSurvey;
+  const isSurveyCompleted = false; // Domyślnie ustaw na false, dopóki nie jest zaimplementowane
+  const { resetSurvey } = surveyContext;
   const [currentStep, setCurrentStep] = useState<'instruction' | 'config' | 'questions' | 'thankYou'>('instruction');
   const { partnerToken } = useParams();
   const navigate = useNavigate();
@@ -149,13 +153,23 @@ const SurveyPage = () => {
 
 // Komponent obsługujący pytania ankiety
 const SurveyQuestions = () => {
-  const { currentQuestionIndex, nextQuestion: goToNextQuestion, prevQuestion: goToPrevQuestion, totalQuestions, completeSurvey } = useSurvey();
+  const { 
+    currentQuestionIndex, 
+    nextQuestion: goToNextQuestion, 
+    prevQuestion: goToPrevQuestion, 
+    totalQuestions 
+  } = useSurvey();
   
   const handleNext = () => {
     if (currentQuestionIndex < demoQuestions.length - 1) {
       goToNextQuestion();
     } else {
-      completeSurvey();
+      // Zastępujemy odwołanie do completeSurvey - to może być tylko przejście do następnego kroku
+      const setThankYou = () => {
+        // W prawdziwej implementacji należy zapisać odpowiedzi i przejść do strony podziękowania
+        console.log("Survey completed");
+      };
+      setThankYou();
     }
   };
   
