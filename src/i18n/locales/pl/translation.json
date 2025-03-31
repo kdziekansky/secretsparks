@@ -1,3 +1,4 @@
+
 {
   "header": {
     "about": "O nas",
@@ -481,4 +482,22 @@
   "partnerWelcome": {
     "title": "Witaj w Secret Sparks!",
     "subtitle": "Zostałeś zaproszony do wypełnienia ankiety, która pomoże Wam odkryć wspólne pragnienia.",
-    "invitedBy": "Zapros
+    "invitedBy": "Zaprosił(a) Cię",
+    "relationship": "Wasza relacja",
+    "intimate": "Intymna",
+    "level": "Poziom gry",
+    "levels": {
+      "discover": "Odkrywanie",
+      "explore": "Eksploracja",
+      "exceed": "Przekraczanie granic"
+    },
+    "instructions": {
+      "title": "Co teraz?",
+      "step1": "Wypełnij krótką ankietę o swoich preferencjach",
+      "step2": "Twój partner już wypełnił swoją część",
+      "step3": "Po zakończeniu otrzymacie wspólny raport"
+    },
+    "privacy": "Twoje odpowiedzi są całkowicie anonimowe. Twój partner nigdy nie zobaczy Twoich indywidualnych wyborów.",
+    "startButton": "Rozpocznij ankietę"
+  }
+}
