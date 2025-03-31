@@ -9,19 +9,18 @@ import {
 import { Label } from '@/components/ui/label';
 import { useTranslation } from 'react-i18next';
 
-import { Male, Female, Sparkles, ScrollText, Scan } from 'lucide-react';
+import { User, UserRound, Sparkles, ScrollText, Scan } from 'lucide-react';
 
 const SurveyConfig: React.FC = () => {
   const { 
-    userGender, 
+    surveyConfig,
     setUserGender, 
-    partnerGender, 
     setPartnerGender, 
-    gameLevel, 
     setGameLevel, 
-    completeConfiguration 
+    completeConfig 
   } = useSurvey();
   
+  const { userGender, partnerGender, gameLevel } = surveyConfig;
   const { t } = useTranslation();
   
   return (
@@ -55,7 +54,7 @@ const SurveyConfig: React.FC = () => {
                     ${userGender === 'male' ? 'bg-blue-100 border-blue-400' : 'bg-card/30 border-transparent hover:bg-card/50'}
                   `}
                 >
-                  <Male className={`w-10 h-10 ${userGender === 'male' ? 'text-blue-500' : 'text-muted-foreground'}`} />
+                  <User className={`w-10 h-10 ${userGender === 'male' ? 'text-blue-500' : 'text-muted-foreground'}`} />
                   <span className={userGender === 'male' ? 'font-medium text-blue-700' : 'text-muted-foreground'}>
                     {t('surveyConfig.userGender.male')}
                   </span>
@@ -71,7 +70,7 @@ const SurveyConfig: React.FC = () => {
                     ${userGender === 'female' ? 'bg-pink-100 border-pink-400' : 'bg-card/30 border-transparent hover:bg-card/50'}
                   `}
                 >
-                  <Female className={`w-10 h-10 ${userGender === 'female' ? 'text-pink-500' : 'text-muted-foreground'}`} />
+                  <UserRound className={`w-10 h-10 ${userGender === 'female' ? 'text-pink-500' : 'text-muted-foreground'}`} />
                   <span className={userGender === 'female' ? 'font-medium text-pink-700' : 'text-muted-foreground'}>
                     {t('surveyConfig.userGender.female')}
                   </span>
@@ -100,7 +99,7 @@ const SurveyConfig: React.FC = () => {
                     ${partnerGender === 'male' ? 'bg-blue-100 border-blue-400' : 'bg-card/30 border-transparent hover:bg-card/50'}
                   `}
                 >
-                  <Male className={`w-10 h-10 ${partnerGender === 'male' ? 'text-blue-500' : 'text-muted-foreground'}`} />
+                  <User className={`w-10 h-10 ${partnerGender === 'male' ? 'text-blue-500' : 'text-muted-foreground'}`} />
                   <span className={partnerGender === 'male' ? 'font-medium text-blue-700' : 'text-muted-foreground'}>
                     {t('surveyConfig.partnerGender.male')}
                   </span>
@@ -116,7 +115,7 @@ const SurveyConfig: React.FC = () => {
                     ${partnerGender === 'female' ? 'bg-pink-100 border-pink-400' : 'bg-card/30 border-transparent hover:bg-card/50'}
                   `}
                 >
-                  <Female className={`w-10 h-10 ${partnerGender === 'female' ? 'text-pink-500' : 'text-muted-foreground'}`} />
+                  <UserRound className={`w-10 h-10 ${partnerGender === 'female' ? 'text-pink-500' : 'text-muted-foreground'}`} />
                   <span className={partnerGender === 'female' ? 'font-medium text-pink-700' : 'text-muted-foreground'}>
                     {t('surveyConfig.partnerGender.female')}
                   </span>
@@ -180,7 +179,7 @@ const SurveyConfig: React.FC = () => {
         </div>
         
         <Button 
-          onClick={completeConfiguration}
+          onClick={completeConfig}
           className="mt-8 bg-primary text-white px-8 py-2 rounded-full hover:bg-primary/90 transition-colors"
           size="lg"
         >

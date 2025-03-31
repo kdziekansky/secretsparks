@@ -20,7 +20,7 @@ interface PartnerWelcomeProps {
 }
 
 const PartnerWelcome: React.FC<PartnerWelcomeProps> = ({ orderDetails }) => {
-  const { completeConfiguration } = useSurvey();
+  const { completeConfig } = useSurvey();
   const { t } = useTranslation();
   
   return (
@@ -99,7 +99,7 @@ const PartnerWelcome: React.FC<PartnerWelcomeProps> = ({ orderDetails }) => {
         </div>
         
         <Button 
-          onClick={completeConfiguration}
+          onClick={completeConfig}
           className="bg-primary text-white px-8 py-2 rounded-full hover:bg-primary/90 transition-colors"
           size="lg"
         >
