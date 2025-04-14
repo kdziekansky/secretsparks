@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { usePaymentForm } from '@/hooks/usePaymentForm';
@@ -33,7 +32,7 @@ const PaymentPage: React.FC = () => {
           <div className="p-5 space-y-4 bg-transparent">
             <div className="flex items-center gap-2 mb-4">
               <CheckCircle2 className="h-6 w-6 text-primary" />
-              <h2 className="text-xl font-medium text-white">Co zawiera raport:</h2>
+              <h2 className="text-xl font-medium text-white">Wnieście swoją relację na nowy poziom</h2>
             </div>
             
             <div className="grid grid-cols-2 gap-4">
