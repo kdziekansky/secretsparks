@@ -30,7 +30,7 @@ const Testimonials: React.FC = () => {
             </div>
           </div>
         </div>
-        <p className="text-gray-300 text-sm italic">&quot;Świetne urozmaicenie, bez skrępowania odmieniliśmy swój seks na lepszy.&quot;</p>
+        <p className="text-gray-300 text-sm italic">&quot;Świetne urozmaicenie, bez skrępowania wnieśliśmy nowości do sypialni. Większość nowości mamy już zaplanowane&quot;</p>
       </div>
     </div>;
 };
