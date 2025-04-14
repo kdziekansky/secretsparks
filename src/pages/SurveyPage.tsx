@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSurvey } from '@/contexts/SurveyContext';
@@ -50,13 +51,39 @@ const SurveyPage: React.FC = () => {
   const [orderFetched, setOrderFetched] = useState<boolean>(false);
   const [waitingForQuestions, setWaitingForQuestions] = useState<boolean>(false);
   
+  // Logujemy stan przy pierwszym ładowaniu
+  useEffect(() => {
+    console.log('SurveyPage: Stan początkowy', {
+      isPartnerSurvey,
+      partnerToken,
+      surveyConfig,
+      isInConfigurationMode,
+      showInstructions,
+      answers: Object.keys(answers).length,
+    });
+  }, []);
+  
   // Reset survey on component mount, but only for standard survey (not partner survey)
   // and only if there's no saved session in localStorage
   useEffect(() => {
-    if (!isPartnerSurvey) {
+    try {
+      // Sprawdzamy, czy mamy tokena partnera
+      if (partnerToken) {
+        console.log('Wykryto token partnera, ustawianie trybu ankiety partnera');
+        setIsPartnerSurvey(true);
+        return; // Skip resetting for partner survey
+      }
+      
+      // Sprawdzenie, czy mamy zapisaną sesję
       const savedConfig = localStorage.getItem('survey_config_autosave');
       const savedAnswers = localStorage.getItem('survey_answers_autosave');
       const configCompleted = localStorage.getItem('survey_config_completed');
+      
+      console.log('Sprawdzanie zapisanego stanu:', { 
+        savedConfig: !!savedConfig, 
+        savedAnswers: !!savedAnswers, 
+        configCompleted 
+      });
       
       // Resetujemy ankietę tylko gdy nie ma zapisanej sesji lub gdy konfiguracja nie została zakończona
       if (!savedConfig && !savedAnswers) {
@@ -65,8 +92,10 @@ const SurveyPage: React.FC = () => {
       } else {
         console.log('Znaleziono zapisaną sesję, przywracanie...');
       }
+    } catch (e) {
+      console.error('Błąd podczas sprawdzania/resetowania sesji:', e);
     }
-  }, [resetSurvey, isPartnerSurvey]);
+  }, [resetSurvey, partnerToken]);
   
   // Dodaj ostrzeżenie przed opuszczeniem strony, jeśli użytkownik nie zakończył ankiety
   // i nie jest na stronie konfiguracji ani instrukcji

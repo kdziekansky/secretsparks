@@ -24,33 +24,59 @@ export const SurveyProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   // Stan główny ankiety
   const [surveyConfig, setSurveyConfig] = useState<SurveyConfig>(() => {
     // Próba załadowania zapisanej konfiguracji z localStorage
-    const savedConfig = localStorage.getItem('survey_config_autosave');
-    return savedConfig ? JSON.parse(savedConfig) : defaultConfig;
+    try {
+      const savedConfig = localStorage.getItem('survey_config_autosave');
+      return savedConfig ? JSON.parse(savedConfig) : defaultConfig;
+    } catch (e) {
+      console.error('Błąd podczas odczytu konfiguracji z localStorage:', e);
+      return defaultConfig;
+    }
   });
   
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [answers, setAnswers] = useState<Record<string, number>>(() => {
     // Próba załadowania zapisanych odpowiedzi z localStorage
-    const savedAnswers = localStorage.getItem('survey_answers_autosave');
-    return savedAnswers ? JSON.parse(savedAnswers) : {};
+    try {
+      const savedAnswers = localStorage.getItem('survey_answers_autosave');
+      return savedAnswers ? JSON.parse(savedAnswers) : {};
+    } catch (e) {
+      console.error('Błąd podczas odczytu odpowiedzi z localStorage:', e);
+      return {};
+    }
   });
   
   const [isInConfigurationMode, setIsInConfigurationMode] = useState<boolean>(() => {
     if (surveyConfig.isConfigComplete) {
       return false;
     }
-    const configCompleted = localStorage.getItem('survey_config_completed');
-    return configCompleted !== 'true';
+    
+    try {
+      const configCompleted = localStorage.getItem('survey_config_completed');
+      return configCompleted !== 'true';
+    } catch (e) {
+      console.error('Błąd podczas odczytu stanu konfiguracji z localStorage:', e);
+      return true;
+    }
   });
   
   const [showInstructions, setShowInstructions] = useState<boolean>(() => {
-    const instructionsShown = localStorage.getItem('survey_instructions_shown');
-    return instructionsShown !== 'true';
+    try {
+      const instructionsShown = localStorage.getItem('survey_instructions_shown');
+      return instructionsShown !== 'true';
+    } catch (e) {
+      console.error('Błąd podczas odczytu stanu instrukcji z localStorage:', e);
+      return true;
+    }
   });
   
   const [orderId, setOrderIdState] = useState<string | null>(() => {
-    const savedOrderId = localStorage.getItem('survey_order_id');
-    return savedOrderId || null;
+    try {
+      const savedOrderId = localStorage.getItem('survey_order_id');
+      return savedOrderId || null;
+    } catch (e) {
+      console.error('Błąd podczas odczytu orderId z localStorage:', e);
+      return null;
+    }
   });
   
   const [questions, setQuestions] = useState<Question[]>(questionsData);
@@ -100,29 +126,50 @@ export const SurveyProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   
   // Zapisywanie konfiguracji i odpowiedzi do localStorage przy każdej zmianie
   useEffect(() => {
-    localStorage.setItem('survey_config_autosave', JSON.stringify(surveyConfig));
-    
-    // Ustawianie flagi ukończenia konfiguracji
-    if (surveyConfig.isConfigComplete) {
-      localStorage.setItem('survey_config_completed', 'true');
+    try {
+      localStorage.setItem('survey_config_autosave', JSON.stringify(surveyConfig));
+      
+      // Ustawianie flagi ukończenia konfiguracji
+      if (surveyConfig.isConfigComplete) {
+        localStorage.setItem('survey_config_completed', 'true');
+      }
+      
+      console.log('Zapisano konfigurację do localStorage:', surveyConfig);
+    } catch (e) {
+      console.error('Błąd podczas zapisywania konfiguracji do localStorage:', e);
     }
   }, [surveyConfig]);
   
   useEffect(() => {
-    localStorage.setItem('survey_answers_autosave', JSON.stringify(answers));
+    try {
+      localStorage.setItem('survey_answers_autosave', JSON.stringify(answers));
+      console.log('Zapisano odpowiedzi do localStorage:', answers);
+    } catch (e) {
+      console.error('Błąd podczas zapisywania odpowiedzi do localStorage:', e);
+    }
   }, [answers]);
   
   // Zapisywanie orderId do localStorage
   useEffect(() => {
     if (orderId) {
-      localStorage.setItem('survey_order_id', orderId);
+      try {
+        localStorage.setItem('survey_order_id', orderId);
+        console.log('Zapisano orderId do localStorage:', orderId);
+      } catch (e) {
+        console.error('Błąd podczas zapisywania orderId do localStorage:', e);
+      }
     }
   }, [orderId]);
   
   // Zapisywanie statusu instrukcji
   useEffect(() => {
     if (!showInstructions) {
-      localStorage.setItem('survey_instructions_shown', 'true');
+      try {
+        localStorage.setItem('survey_instructions_shown', 'true');
+        console.log('Zapisano status instrukcji do localStorage');
+      } catch (e) {
+        console.error('Błąd podczas zapisywania statusu instrukcji do localStorage:', e);
+      }
     }
   }, [showInstructions]);
   
@@ -171,9 +218,14 @@ export const SurveyProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     setIsInConfigurationMode(true);
     
     // Czyszczenie localStorage
-    localStorage.removeItem('survey_config_autosave');
-    localStorage.removeItem('survey_answers_autosave');
-    localStorage.removeItem('survey_config_completed');
+    try {
+      localStorage.removeItem('survey_config_autosave');
+      localStorage.removeItem('survey_answers_autosave');
+      localStorage.removeItem('survey_config_completed');
+      console.log('Ankieta zresetowana, localStorage wyczyszczone');
+    } catch (e) {
+      console.error('Błąd podczas czyszczenia localStorage:', e);
+    }
     
     // Zachowujemy orderId i status instrukcji
     console.log('Ankieta zresetowana');
@@ -181,10 +233,22 @@ export const SurveyProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   
   // Ustawienie pojedynczej odpowiedzi
   const setAnswer = (questionId: string, value: number) => {
-    setAnswers(prev => ({
-      ...prev,
-      [questionId]: value
-    }));
+    setAnswers(prev => {
+      const newAnswers = {
+        ...prev,
+        [questionId]: value
+      };
+      
+      try {
+        // Natychmiastowy zapis do localStorage po każdej zmianie odpowiedzi
+        localStorage.setItem('survey_answers_autosave', JSON.stringify(newAnswers));
+        console.log(`Zapisano odpowiedź dla pytania ${questionId}: ${value}`);
+      } catch (e) {
+        console.error('Błąd podczas zapisywania odpowiedzi do localStorage:', e);
+      }
+      
+      return newAnswers;
+    });
   };
   
   // Zapisanie odpowiedzi do bazy danych
@@ -247,31 +311,75 @@ export const SurveyProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   
   // Settery dla konfiguracji
   const setUserGender = (gender: Gender) => {
-    setSurveyConfig(prev => ({ ...prev, userGender: gender }));
+    setSurveyConfig(prev => {
+      const newConfig = { ...prev, userGender: gender };
+      try {
+        localStorage.setItem('survey_config_autosave', JSON.stringify(newConfig));
+      } catch (e) {
+        console.error('Błąd podczas zapisywania konfiguracji płci użytkownika:', e);
+      }
+      return newConfig;
+    });
   };
   
   const setPartnerGender = (gender: Gender) => {
-    setSurveyConfig(prev => ({ ...prev, partnerGender: gender }));
+    setSurveyConfig(prev => {
+      const newConfig = { ...prev, partnerGender: gender };
+      try {
+        localStorage.setItem('survey_config_autosave', JSON.stringify(newConfig));
+      } catch (e) {
+        console.error('Błąd podczas zapisywania konfiguracji płci partnera:', e);
+      }
+      return newConfig;
+    });
   };
   
   const setGameLevel = (level: GameLevel) => {
-    setSurveyConfig(prev => ({ ...prev, gameLevel: level }));
+    setSurveyConfig(prev => {
+      const newConfig = { ...prev, gameLevel: level };
+      try {
+        localStorage.setItem('survey_config_autosave', JSON.stringify(newConfig));
+      } catch (e) {
+        console.error('Błąd podczas zapisywania konfiguracji poziomu gry:', e);
+      }
+      return newConfig;
+    });
   };
   
   // Zakończenie etapu konfiguracji
   const completeConfig = () => {
-    setSurveyConfig(prev => ({ ...prev, isConfigComplete: true }));
+    setSurveyConfig(prev => {
+      const newConfig = { ...prev, isConfigComplete: true };
+      try {
+        localStorage.setItem('survey_config_autosave', JSON.stringify(newConfig));
+        localStorage.setItem('survey_config_completed', 'true');
+      } catch (e) {
+        console.error('Błąd podczas zapisywania zakończonej konfiguracji:', e);
+      }
+      return newConfig;
+    });
+    
     setIsInConfigurationMode(false);
   };
   
   // Zakończenie etapu instrukcji
   const completeInstructions = () => {
     setShowInstructions(false);
+    try {
+      localStorage.setItem('survey_instructions_shown', 'true');
+    } catch (e) {
+      console.error('Błąd podczas zapisywania statusu instrukcji:', e);
+    }
   };
   
   // Ustawienie ID zamówienia
   const setOrderId = (id: string) => {
     setOrderIdState(id);
+    try {
+      localStorage.setItem('survey_order_id', id);
+    } catch (e) {
+      console.error('Błąd podczas zapisywania orderId:', e);
+    }
   };
   
   // Pobranie ID zamówienia
