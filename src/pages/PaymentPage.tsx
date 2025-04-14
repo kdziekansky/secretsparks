@@ -9,6 +9,7 @@ import OrderSummaryStep from '@/components/payment/OrderSummaryStep';
 import EmailPreview from '@/components/payment/EmailPreview';
 import { CheckCircle2 } from 'lucide-react';
 import Testimonials from '@/components/payment/Testimonials';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const PRODUCT_PRICE = 29;
 const REGULAR_PRICE = 39;
@@ -17,6 +18,8 @@ const CURRENCY = 'zł';
 const PaymentPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get('orderId');
+  const isMobile = useIsMobile();
+  
   const {
     formData,
     formStep,
@@ -30,16 +33,16 @@ const PaymentPage: React.FC = () => {
 
   const renderRightColumn = () => {
     if (formStep === 3) {
-      return <div className="space-y-6 px-0 md:px-4">
-        <div className="p-5 space-y-4 bg-transparent">
-          <div className="flex items-center gap-2 mb-4">
-            <CheckCircle2 className="h-6 w-6 text-primary" />
-            <h2 className="text-xl font-medium text-white">Wnieście swoją relację na nowy poziom</h2>
+      return <div className="space-y-4 px-0 md:px-4">
+        <div className="p-4 space-y-3 bg-transparent">
+          <div className="flex items-center gap-2 mb-2">
+            <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
+            <h2 className="text-lg font-medium text-white">Wnieście swoją relację na nowy poziom</h2>
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <ul className="list-disc pl-5 text-gray-300 space-y-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <ul className="list-disc pl-5 text-gray-300 space-y-1.5 text-sm">
                 <li>Wspólne fascynacje</li>
                 <li>Gotowe scenariusze</li>
                 <li>Konkretne wskazówki</li>
@@ -47,8 +50,8 @@ const PaymentPage: React.FC = () => {
               </ul>
             </div>
             
-            <div className="space-y-2">
-              <ul className="list-disc pl-5 text-gray-300 space-y-2">
+            <div>
+              <ul className="list-disc pl-5 text-gray-300 space-y-1.5 text-sm">
                 <li>Przewodnik rozmowy</li>
                 <li>Plan gry wstępnej</li>
                 <li>Pomysł na wieczór</li>
@@ -67,16 +70,16 @@ const PaymentPage: React.FC = () => {
   };
 
   return <div className="min-h-screen bg-[#05050a] flex flex-col items-center justify-start">
-    <div className="container mx-auto py-12 px-4 w-full max-w-7xl">
-      <div className="flex justify-center mb-8">
-        <img src="/lovable-uploads/0537e49e-f4b0-49a8-bedb-41f3876d6f50.png" alt="Secret Sparks Logo" className="h-28" />
+    <div className="container mx-auto py-6 sm:py-12 px-4 w-full max-w-7xl">
+      <div className="flex justify-center mb-6 sm:mb-8">
+        <img src="/lovable-uploads/0537e49e-f4b0-49a8-bedb-41f3876d6f50.png" alt="Secret Sparks Logo" className="h-20 sm:h-28" />
       </div>
       
-      <div className="mx-auto max-w-6xl px-4">
+      <div className="mx-auto max-w-6xl px-2 sm:px-4">
         <PaymentSteps currentStep={formStep} />
         
-        <div className="flex flex-col lg:flex-row gap-8">
-          <div className="w-full lg:w-1/2">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+          <div className="w-full lg:w-1/2 order-2 lg:order-1">
             <form onSubmit={handleSubmit} className="space-y-5">
               {formStep === 1 && <Step1Form data={{
                 userName: formData.userName,
@@ -99,7 +102,7 @@ const PaymentPage: React.FC = () => {
             </form>
           </div>
           
-          <div className="w-full lg:w-1/2">
+          <div className={`w-full lg:w-1/2 ${isMobile && formStep !== 3 ? 'hidden' : ''} order-1 lg:order-2 mb-4 lg:mb-0`}>
             {renderRightColumn()}
           </div>
         </div>

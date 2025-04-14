@@ -1,9 +1,12 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Loader2, ArrowRightCircle, CheckCircle2, FileText, Shield } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Link } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
+
 interface OrderSummaryStepProps {
   userData: {
     userName: string;
@@ -18,6 +21,7 @@ interface OrderSummaryStepProps {
   regularPrice: number;
   currency: string;
 }
+
 const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
   userData,
   onPrevStep,
@@ -28,6 +32,8 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
   currency
 }) => {
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const isMobile = useIsMobile();
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!termsAccepted) {
@@ -36,87 +42,98 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
     }
     onSubmit(e);
   };
+  
   return <div className="space-y-5 animate-fade-in">
-      <div className="mb-6">
-        <h1 className="text-3xl sm:text-4xl font-bold mb-3 text-white flex items-center">
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 text-white flex items-center">
           Podsumowanie <span className="text-red-500 ml-2">❤️</span>
         </h1>
-        <p className="text-gray-300 mb-3">
+        <p className="text-gray-300 text-sm sm:text-base">
           Sprawdź poprawność danych przed przejściem do płatności
         </p>
       </div>
 
-      <div className="bg-[#111] border border-[#333] rounded-md p-5 space-y-4">
-        <div className="flex items-center gap-2 mb-4">
-          <FileText className="h-6 w-6 text-primary" />
-          <h2 className="text-xl font-medium text-white">Dane zamówienia</h2>
+      <div className="bg-[#111] border border-[#333] rounded-md p-4 space-y-3 sm:space-y-4">
+        <div className="flex items-center gap-2 mb-2 sm:mb-4">
+          <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-primary flex-shrink-0" />
+          <h2 className="text-lg sm:text-xl font-medium text-white">Dane zamówienia</h2>
         </div>
         
-        <div className="grid gap-3">
+        <div className="grid gap-2 sm:gap-3">
           <div>
-            <p className="text-gray-400 text-sm">Twoje imię:</p>
-            <p className="text-white">{userData.userName}</p>
+            <p className="text-gray-400 text-xs sm:text-sm">Twoje imię:</p>
+            <p className="text-white text-sm sm:text-base">{userData.userName}</p>
           </div>
           
           <div>
-            <p className="text-gray-400 text-sm">Twój email:</p>
-            <p className="text-white">{userData.userEmail}</p>
+            <p className="text-gray-400 text-xs sm:text-sm">Twój email:</p>
+            <p className="text-white text-sm sm:text-base break-all">{userData.userEmail}</p>
           </div>
           
           <div>
-            <p className="text-gray-400 text-sm">Imię partnera/ki:</p>
-            <p className="text-white">{userData.partnerName}</p>
+            <p className="text-gray-400 text-xs sm:text-sm">Imię partnera/ki:</p>
+            <p className="text-white text-sm sm:text-base">{userData.partnerName}</p>
           </div>
           
           <div>
-            <p className="text-gray-400 text-sm">Email partnera/ki:</p>
-            <p className="text-white">{userData.partnerEmail}</p>
+            <p className="text-gray-400 text-xs sm:text-sm">Email partnera/ki:</p>
+            <p className="text-white text-sm sm:text-base break-all">{userData.partnerEmail}</p>
           </div>
         </div>
         
-        <div className="pt-4 border-t border-[#333] mt-4">
+        <div className="pt-3 sm:pt-4 border-t border-[#333] mt-3 sm:mt-4">
           <div className="flex justify-between items-center">
-            <p className="text-white font-medium">Do zapłaty:</p>
-            <p className="text-xl font-bold text-primary">{productPrice} {currency}</p>
+            <p className="text-white font-medium text-sm sm:text-base">Do zapłaty:</p>
+            <p className="text-lg sm:text-xl font-bold text-primary">{productPrice} {currency}</p>
           </div>
         </div>
       </div>
 
       <div className="mb-4 p-3 border border-green-600/20 bg-green-600/10 rounded-lg">
         <div className="flex items-start gap-2">
-          <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0 mt-1" />
+          <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
           <div>
-            <h3 className="font-medium text-green-400 text-base mb-1">100% satysfakcji lub zwrot pieniędzy</h3>
+            <h3 className="font-medium text-green-400 text-sm sm:text-base mb-0.5">100% satysfakcji lub zwrot pieniędzy</h3>
           </div>
         </div>
       </div>
       
       {/* Checkbox do akceptacji regulaminu */}
-      <div className="flex items-center gap-3 pt-3 mb-4">
-        <Checkbox id="ageConfirmation" checked={termsAccepted} onCheckedChange={checked => setTermsAccepted(!!checked)} className="h-4 w-4 border-white/40" />
-        <Label htmlFor="ageConfirmation" className="text-gray-300 text-sm cursor-pointer">
+      <div className="flex items-start gap-2 pt-2 mb-4">
+        <Checkbox 
+          id="ageConfirmation" 
+          checked={termsAccepted} 
+          onCheckedChange={checked => setTermsAccepted(!!checked)} 
+          className="h-4 w-4 border-white/40 mt-1" 
+        />
+        <Label htmlFor="ageConfirmation" className="text-gray-300 text-xs sm:text-sm cursor-pointer">
           Grając, akceptujesz przyjazny <Link to="/regulamin" className="text-primary hover:underline">Regulamin</Link> i <Link to="/polityka-prywatnosci" className="text-primary hover:underline">Politykę Prywatności</Link>, która gwarantuje bezpieczeństwo Waszych danych. Usuwamy je po 7 dniach.
         </Label>
       </div>
       
-      <div className="grid grid-cols-2 gap-4">
-        <Button onClick={onPrevStep} variant="outline" className="bg-transparent border border-gray-700 text-white hover:bg-gray-800">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4">
+        <Button onClick={onPrevStep} variant="outline" className="bg-transparent border border-gray-700 text-white hover:bg-gray-800 text-xs sm:text-sm py-2 h-auto">
           Wstecz
         </Button>
         
         <div className="flex flex-col items-end">
-          <Button type="submit" disabled={isProcessing} onClick={handleSubmit} className="bg-primary hover:bg-primary/90 text-white flex items-center justify-center gap-2 w-full">
+          <Button 
+            type="submit" 
+            disabled={isProcessing} 
+            onClick={handleSubmit} 
+            className="bg-primary hover:bg-primary/90 text-white flex items-center justify-center gap-1 sm:gap-2 w-full text-xs sm:text-sm py-2 h-auto"
+          >
             {isProcessing ? <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                Przetwarzanie...
+                <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
+                <span>Przetwarzanie...</span>
               </> : <>
                 <span>Odkryj raport</span>
-                <ArrowRightCircle className="h-5 w-5" />
+                <ArrowRightCircle className="h-4 w-4 sm:h-5 sm:w-5" />
               </>}
           </Button>
-          
         </div>
       </div>
     </div>;
 };
+
 export default OrderSummaryStep;
