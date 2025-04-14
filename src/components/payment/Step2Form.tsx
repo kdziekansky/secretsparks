@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -7,7 +6,6 @@ import { Label } from '@/components/ui/label';
 import { Link } from 'react-router-dom';
 import { PartnerFormData } from './types';
 import { Loader2, ArrowRightCircle, Star } from 'lucide-react';
-
 interface Step2FormProps {
   data: PartnerFormData;
   onChange: (field: keyof PartnerFormData, value: any) => void;
@@ -16,7 +14,6 @@ interface Step2FormProps {
   isValid: boolean;
   isProcessing: boolean;
 }
-
 const Step2Form: React.FC<Step2FormProps> = ({
   data,
   onChange,
@@ -54,9 +51,7 @@ const Step2Form: React.FC<Step2FormProps> = ({
             <div>
               <p className="text-white text-sm font-medium">Marek i Kasia</p>
               <div className="flex items-center">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                ))}
+                {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />)}
               </div>
             </div>
           </div>
@@ -69,9 +64,7 @@ const Step2Form: React.FC<Step2FormProps> = ({
             <div>
               <p className="text-white text-sm font-medium">Daniel i Magda</p>
               <div className="flex items-center">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                ))}
+                {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />)}
               </div>
             </div>
           </div>
@@ -94,10 +87,9 @@ const Step2Form: React.FC<Step2FormProps> = ({
                 <ArrowRightCircle className="h-5 w-5" />
               </>}
           </Button>
-          <span className="text-primary font-medium text-sm mt-1">tylko 29 zł</span>
+          
         </div>
       </div>
     </div>;
 };
-
 export default Step2Form;
