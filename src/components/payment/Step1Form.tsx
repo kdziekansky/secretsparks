@@ -4,7 +4,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ArrowRightCircle } from 'lucide-react';
 import { UserFormData } from './types';
-import PromotionBadge from './PromotionBadge';
 import BenefitsSection from './BenefitsSection';
 import { Shield, CheckCircle2 } from 'lucide-react';
 
@@ -37,8 +36,6 @@ const Step1Form: React.FC<Step1FormProps> = ({
           Najpierw potrzebujemy Twoich danych, aby wysłać Ci raport po zakończeniu.
         </p>
       </div>
-
-      <PromotionBadge regularPrice={regularPrice} currentPrice={productPrice} currency={currency} />
       
       <Input 
         placeholder="Twoje imię" 
