@@ -1,9 +1,12 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Loader2, ArrowRightCircle, CheckCircle2, FileText, Check, Star } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Link } from 'react-router-dom';
+import Testimonials from './Testimonials';
+
 interface OrderSummaryStepProps {
   userData: {
     userName: string;
@@ -91,18 +94,17 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
         </div>
         
         <div className="flex items-start gap-3">
-          
-          
-        </div>
-        
-        <div className="flex items-start gap-3">
-          
-          
-        </div>
-        
-        <div className="flex items-start gap-3">
-          
-          
+          <CheckCircle2 className="h-6 w-6 text-green-500 flex-shrink-0 mt-1" />
+          <div>
+            <h3 className="font-medium text-green-400 text-lg mb-1">Co zawiera raport:</h3>
+            <ul className="list-disc pl-5 text-gray-300 space-y-1">
+              <li>Wspólne fascynacje</li>
+              <li>Strefy odkrywania</li>
+              <li>Inspiracje i scenariusze</li>
+              <li>Mapa komfortu</li>
+              <li>Przewodnik rozmowy</li>
+            </ul>
+          </div>
         </div>
       </div>
       
@@ -115,19 +117,7 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
       </div>
       
       {/* Testimonials */}
-      <div className="space-y-4 mb-6">
-        
-        
-        {/* Pierwsza nowa opinia */}
-        
-        
-        {/* Druga nowa opinia */}
-        
-        
-        
-        
-        
-      </div>
+      <Testimonials />
       
       <div className="grid grid-cols-2 gap-4">
         <Button onClick={onPrevStep} variant="outline" className="bg-transparent border border-gray-700 text-white hover:bg-gray-800">
