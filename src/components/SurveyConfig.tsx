@@ -1,190 +1,253 @@
 
-import React from 'react';
-import { Button } from '@/components/ui/button';
+import React, { useState, useEffect } from 'react';
 import { useSurvey } from '@/contexts/SurveyContext';
-import { 
-  RadioGroup, 
-  RadioGroupItem 
-} from '@/components/ui/radio-group';
+import { Button } from '@/components/ui/button';
+import { User, UserCircle, Smile, Zap, SmilePlus, X } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { useTranslation } from 'react-i18next';
-
-import { User, UserRound, Sparkles, ScrollText, Scan } from 'lucide-react';
+import { toast } from 'sonner';
+import type { Gender } from '@/types/survey';
 
 const SurveyConfig: React.FC = () => {
   const { 
-    surveyConfig,
+    surveyConfig, 
     setUserGender, 
     setPartnerGender, 
     setGameLevel, 
     completeConfig 
   } = useSurvey();
-  
+
   const { userGender, partnerGender, gameLevel } = surveyConfig;
-  const { t } = useTranslation();
-  
+  const [ageConfirmed, setAgeConfirmed] = useState(false);
+
+  const canContinue = userGender !== null && partnerGender !== null && gameLevel !== null && ageConfirmed;
+
+  // Dodajemy funkcję sprawdzającą dostępność kombinacji płci
+  const checkGenderCombination = (userGender: Gender | null, partnerGender: Gender | null) => {
+    if (userGender === 'female' && partnerGender === 'female') {
+      toast.error('Ankieta dla par kobiet nie jest jeszcze aktywna');
+      return false;
+    }
+    if (userGender === 'male' && partnerGender === 'male') {
+      toast.error('Ankieta dla par mężczyzn nie jest jeszcze aktywna');
+      return false;
+    }
+    return true;
+  };
+
+  // Modyfikujemy funkcje ustawiające płeć, dodając możliwość cofnięcia wyboru
+  const handleSetPartnerGender = (gender: Gender) => {
+    // Jeśli ta sama płeć jest już wybrana, usuwamy wybór
+    if (partnerGender === gender) {
+      setPartnerGender(null);
+      return;
+    }
+    
+    if (checkGenderCombination(userGender, gender)) {
+      setPartnerGender(gender);
+    }
+  };
+
+  const handleSetUserGender = (gender: Gender) => {
+    // Jeśli ta sama płeć jest już wybrana, usuwamy wybór
+    if (userGender === gender) {
+      setUserGender(null);
+      return;
+    }
+    
+    if (checkGenderCombination(gender, partnerGender)) {
+      setUserGender(gender);
+    }
+  };
+
   return (
-    <div className="glass-panel w-full max-w-xl p-6 md:p-8 animate-slide-up">
-      <div className="flex flex-col items-center">
-        <div className="flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-5">
-          <Scan className="w-8 h-8 text-primary" />
-        </div>
-        
-        <h1 className="text-2xl md:text-3xl font-bold mb-6 text-center">
-          {t('surveyConfig.title')}
-        </h1>
-        
-        <div className="w-full space-y-8">
-          {/* Wybór płci użytkownika */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">
-              {t('surveyConfig.userGender.title')}
-            </h2>
-            
-            <RadioGroup 
-              value={userGender} 
-              onValueChange={(value) => setUserGender(value as 'male' | 'female')}
-              className="flex space-x-4"
+    <div className="glass-panel w-full max-w-4xl p-8 animate-slide-up">
+      <h1 className="text-3xl font-bold mb-8 text-center">Kim jesteście?</h1>
+      
+      <div className="space-y-10">
+        {/* User Gender Selection */}
+        <div>
+          <h2 className="text-xl font-medium mb-4">Twoja płeć</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button
+              type="button"
+              onClick={() => handleSetUserGender('female')}
+              className={`flex items-center p-4 rounded-lg border transition-all ${
+                userGender === 'female' 
+                  ? 'border-primary bg-primary/10 font-medium' 
+                  : 'border-border hover:bg-secondary'
+              } ${partnerGender === 'female' ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={partnerGender === 'female'}
             >
-              <div className="flex flex-col items-center space-y-2">
-                <Label 
-                  htmlFor="user-male" 
-                  className={`
-                    w-24 h-24 rounded-xl flex flex-col items-center justify-center cursor-pointer border
-                    ${userGender === 'male' ? 'bg-blue-100 border-blue-400' : 'bg-card/30 border-transparent hover:bg-card/50'}
-                  `}
-                >
-                  <User className={`w-10 h-10 ${userGender === 'male' ? 'text-blue-500' : 'text-muted-foreground'}`} />
-                  <span className={userGender === 'male' ? 'font-medium text-blue-700' : 'text-muted-foreground'}>
-                    {t('surveyConfig.userGender.male')}
-                  </span>
-                </Label>
-                <RadioGroupItem value="male" id="user-male" className="sr-only" />
+              <div className="flex items-center justify-center w-12 h-12 bg-pink-100 rounded-full mr-4">
+                <User className="w-6 h-6 text-pink-500" />
               </div>
-              
-              <div className="flex flex-col items-center space-y-2">
-                <Label 
-                  htmlFor="user-female" 
-                  className={`
-                    w-24 h-24 rounded-xl flex flex-col items-center justify-center cursor-pointer border
-                    ${userGender === 'female' ? 'bg-pink-100 border-pink-400' : 'bg-card/30 border-transparent hover:bg-card/50'}
-                  `}
-                >
-                  <UserRound className={`w-10 h-10 ${userGender === 'female' ? 'text-pink-500' : 'text-muted-foreground'}`} />
-                  <span className={userGender === 'female' ? 'font-medium text-pink-700' : 'text-muted-foreground'}>
-                    {t('surveyConfig.userGender.female')}
-                  </span>
-                </Label>
-                <RadioGroupItem value="female" id="user-female" className="sr-only" />
-              </div>
-            </RadioGroup>
-          </div>
-          
-          {/* Wybór płci partnera/partnerki */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">
-              {t('surveyConfig.partnerGender.title')}
-            </h2>
-            
-            <RadioGroup 
-              value={partnerGender} 
-              onValueChange={(value) => setPartnerGender(value as 'male' | 'female')}
-              className="flex space-x-4"
+              <span>Kobieta</span>
+              {userGender === 'female' && (
+                <X className="w-5 h-5 ml-auto text-gray-500 hover:text-red-500" />
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSetUserGender('male')}
+              className={`flex items-center p-4 rounded-lg border transition-all ${
+                userGender === 'male' 
+                  ? 'border-primary bg-primary/10 font-medium' 
+                  : 'border-border hover:bg-secondary'
+              } ${partnerGender === 'male' ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={partnerGender === 'male'}
             >
-              <div className="flex flex-col items-center space-y-2">
-                <Label 
-                  htmlFor="partner-male" 
-                  className={`
-                    w-24 h-24 rounded-xl flex flex-col items-center justify-center cursor-pointer border
-                    ${partnerGender === 'male' ? 'bg-blue-100 border-blue-400' : 'bg-card/30 border-transparent hover:bg-card/50'}
-                  `}
-                >
-                  <User className={`w-10 h-10 ${partnerGender === 'male' ? 'text-blue-500' : 'text-muted-foreground'}`} />
-                  <span className={partnerGender === 'male' ? 'font-medium text-blue-700' : 'text-muted-foreground'}>
-                    {t('surveyConfig.partnerGender.male')}
-                  </span>
-                </Label>
-                <RadioGroupItem value="male" id="partner-male" className="sr-only" />
+              <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mr-4">
+                <UserCircle className="w-6 h-6 text-blue-500" />
               </div>
-              
-              <div className="flex flex-col items-center space-y-2">
-                <Label 
-                  htmlFor="partner-female" 
-                  className={`
-                    w-24 h-24 rounded-xl flex flex-col items-center justify-center cursor-pointer border
-                    ${partnerGender === 'female' ? 'bg-pink-100 border-pink-400' : 'bg-card/30 border-transparent hover:bg-card/50'}
-                  `}
-                >
-                  <UserRound className={`w-10 h-10 ${partnerGender === 'female' ? 'text-pink-500' : 'text-muted-foreground'}`} />
-                  <span className={partnerGender === 'female' ? 'font-medium text-pink-700' : 'text-muted-foreground'}>
-                    {t('surveyConfig.partnerGender.female')}
-                  </span>
-                </Label>
-                <RadioGroupItem value="female" id="partner-female" className="sr-only" />
-              </div>
-            </RadioGroup>
-          </div>
-          
-          {/* Wybór poziomu gry */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">
-              {t('surveyConfig.gameLevel.title')}
-            </h2>
-            
-            <RadioGroup 
-              value={gameLevel} 
-              onValueChange={(value) => setGameLevel(value as 'discover' | 'explore' | 'exceed')}
-              className="space-y-3"
-            >
-              <div className="flex items-center">
-                <RadioGroupItem value="discover" id="discover" className="mr-3" />
-                <Label htmlFor="discover" className="flex-grow cursor-pointer">
-                  <div className="flex items-center">
-                    <Sparkles className="w-5 h-5 text-amber-500 mr-2" />
-                    <span className="font-medium">{t('surveyConfig.gameLevel.discover.title')}</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {t('surveyConfig.gameLevel.discover.description')}
-                  </p>
-                </Label>
-              </div>
-              
-              <div className="flex items-center">
-                <RadioGroupItem value="explore" id="explore" className="mr-3" />
-                <Label htmlFor="explore" className="flex-grow cursor-pointer">
-                  <div className="flex items-center">
-                    <ScrollText className="w-5 h-5 text-purple-500 mr-2" />
-                    <span className="font-medium">{t('surveyConfig.gameLevel.explore.title')}</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {t('surveyConfig.gameLevel.explore.description')}
-                  </p>
-                </Label>
-              </div>
-              
-              <div className="flex items-center">
-                <RadioGroupItem value="exceed" id="exceed" className="mr-3" />
-                <Label htmlFor="exceed" className="flex-grow cursor-pointer">
-                  <div className="flex items-center">
-                    <Sparkles className="w-5 h-5 text-red-500 mr-2" />
-                    <span className="font-medium">{t('surveyConfig.gameLevel.exceed.title')}</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {t('surveyConfig.gameLevel.exceed.description')}
-                  </p>
-                </Label>
-              </div>
-            </RadioGroup>
+              <span>Mężczyzna</span>
+              {userGender === 'male' && (
+                <X className="w-5 h-5 ml-auto text-gray-500 hover:text-red-500" />
+              )}
+            </button>
           </div>
         </div>
+
+        {/* Partner Gender Selection */}
+        <div>
+          <h2 className="text-xl font-medium mb-4">Płeć partnerki/partnera</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button
+              type="button"
+              onClick={() => handleSetPartnerGender('female')}
+              className={`flex items-center p-4 rounded-lg border transition-all ${
+                partnerGender === 'female' 
+                  ? 'border-primary bg-primary/10 font-medium' 
+                  : 'border-border hover:bg-secondary'
+              } ${userGender === 'female' ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={userGender === 'female'}
+            >
+              <div className="flex items-center justify-center w-12 h-12 bg-pink-100 rounded-full mr-4">
+                <User className="w-6 h-6 text-pink-500" />
+              </div>
+              <span>Kobieta</span>
+              {partnerGender === 'female' && (
+                <X className="w-5 h-5 ml-auto text-gray-500 hover:text-red-500" />
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSetPartnerGender('male')}
+              className={`flex items-center p-4 rounded-lg border transition-all ${
+                partnerGender === 'male' 
+                  ? 'border-primary bg-primary/10 font-medium' 
+                  : 'border-border hover:bg-secondary'
+              } ${userGender === 'male' ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={userGender === 'male'}
+            >
+              <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mr-4">
+                <UserCircle className="w-6 h-6 text-blue-500" />
+              </div>
+              <span>Mężczyzna</span>
+              {partnerGender === 'male' && (
+                <X className="w-5 h-5 ml-auto text-gray-500 hover:text-red-500" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Game Level Selection */}
+        <div>
+          <h2 className="text-xl font-medium mb-4">Poziom gry</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button
+              type="button"
+              onClick={() => setGameLevel(gameLevel === 'discover' ? null : 'discover')}
+              className={`flex items-center p-4 rounded-lg border transition-all ${
+                gameLevel === 'discover' 
+                  ? 'border-primary bg-primary/10 font-medium' 
+                  : 'border-border hover:bg-secondary'
+              }`}
+            >
+              <div className="flex items-center justify-center w-12 h-12 bg-yellow-100 rounded-full mr-4">
+                <Smile className="w-6 h-6 text-yellow-500" />
+              </div>
+              <div>
+                <span>Odkrywaj intymność</span>
+              </div>
+              {gameLevel === 'discover' && (
+                <X className="w-5 h-5 ml-auto text-gray-500 hover:text-red-500" />
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => setGameLevel(gameLevel === 'explore' ? null : 'explore')}
+              className={`flex items-center p-4 rounded-lg border transition-all ${
+                gameLevel === 'explore' 
+                  ? 'border-primary bg-primary/10 font-medium' 
+                  : 'border-border hover:bg-secondary'
+              }`}
+            >
+              <div className="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-full mr-4">
+                <SmilePlus className="w-6 h-6 text-orange-500" />
+              </div>
+              <div>
+                <span>Eksploruj pragnienia</span>
+              </div>
+              {gameLevel === 'explore' && (
+                <X className="w-5 h-5 ml-auto text-gray-500 hover:text-red-500" />
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => setGameLevel(gameLevel === 'exceed' ? null : 'exceed')}
+              className={`flex items-center p-4 rounded-lg border transition-all ${
+                gameLevel === 'exceed' 
+                  ? 'border-primary bg-primary/10 font-medium' 
+                  : 'border-border hover:bg-secondary'
+              }`}
+            >
+              <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full mr-4">
+                <Zap className="w-6 h-6 text-purple-500" />
+              </div>
+              <div>
+                <span>Przekraczaj granice</span>
+              </div>
+              {gameLevel === 'exceed' && (
+                <X className="w-5 h-5 ml-auto text-gray-500 hover:text-red-500" />
+              )}
+            </button>
+          </div>
+        </div>
         
+        {/* Age Confirmation */}
+        <div className="flex justify-center">
+          <div className="flex items-center space-x-3 border border-accent/40 bg-accent/10 rounded-lg p-5 hover:border-accent/60 transition-all max-w-md">
+            <Checkbox 
+              id="ageConfirmation" 
+              checked={ageConfirmed}
+              onCheckedChange={(checked) => setAgeConfirmed(checked as boolean)}
+              className="h-5 w-5 data-[state=checked]:bg-accent"
+            />
+            <Label 
+              htmlFor="ageConfirmation" 
+              className="text-foreground font-medium cursor-pointer"
+            >
+              Oświadczam, że ukończyłem/-am 18 rok życia
+            </Label>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-10 flex flex-col items-center">
         <Button 
-          onClick={completeConfig}
-          className="mt-8 bg-primary text-white px-8 py-2 rounded-full hover:bg-primary/90 transition-colors"
-          size="lg"
+          onClick={completeConfig} 
+          disabled={!canContinue}
+          className="px-8 py-6 text-lg"
         >
-          {t('surveyConfig.continueButton')}
+          Wypełnij ankietę
         </Button>
+        
+        {!ageConfirmed && userGender !== null && partnerGender !== null && gameLevel !== null && (
+          <p className="text-muted-foreground text-sm mt-4 text-center">
+            Aby kontynuować, musisz potwierdzić że ukończyłeś/-aś 18 lat
+          </p>
+        )}
       </div>
     </div>
   );

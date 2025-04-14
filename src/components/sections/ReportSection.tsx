@@ -86,23 +86,23 @@ const ReportSection = () => {
                 <div className="bg-[#111118] rounded-lg p-4 shadow-sm flex-grow flex flex-col">
                   {/* From field */}
                   <div className="mb-4 flex items-center border-b border-gray-700 pb-3">
-                    <div className="w-24 text-gray-400 text-sm">{t('emailPreview.from')}:</div>
+                    <div className="w-24 text-gray-400 text-sm">Od:</div>
                     <div className="text-gray-300">team@secretsparks.pl</div>
                   </div>
                   
                   {/* To field */}
                   <div className="mb-4 flex items-center border-b border-gray-700 pb-3">
-                    <div className="w-24 text-gray-400 text-sm">{t('emailPreview.to')}:</div>
+                    <div className="w-24 text-gray-400 text-sm">Do:</div>
                     <div className="flex items-center bg-gray-700/30 rounded-full px-3 py-1 text-sm">
                       <Users className="h-3.5 w-3.5 mr-1.5" />
-                      <span>{t('emailPreview.youAndPartner')}</span>
+                      <span>Ty i Twój partner</span>
                     </div>
                   </div>
                   
                   {/* Subject field */}
                   <div className="mb-4 flex items-center border-b border-gray-700 pb-3">
-                    <div className="w-24 text-gray-400 text-sm">{t('emailPreview.subject')}:</div>
-                    <div className="text-gray-300">{t('emailPreview.yourReport')}</div>
+                    <div className="w-24 text-gray-400 text-sm">Temat:</div>
+                    <div className="text-gray-300">Wasz raport Secret Sparks</div>
                   </div>
                   
                   {/* Email content preview */}
@@ -111,7 +111,7 @@ const ReportSection = () => {
                       <div className="bg-gray-700/40 h-14 w-14 rounded-full flex items-center justify-center mb-4">
                         <Sparkles className="h-7 w-7 text-white/70" />
                       </div>
-                      <p className="text-gray-400 text-sm italic">{t('emailPreview.fillSurvey')}</p>
+                      <p className="text-gray-400 text-sm italic">Naciśnij "Wypełnij ankietę", aby otrzymać swój spersonalizowany raport...</p>
                     </div>
                   </div>
                 </div>
