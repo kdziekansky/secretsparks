@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -9,7 +8,6 @@ import { PartnerFormData } from './types';
 import PromotionBadge from './PromotionBadge';
 import Testimonials from './Testimonials';
 import { CheckCircle2, Loader2, ArrowRightCircle } from 'lucide-react';
-
 interface Step2FormProps {
   data: PartnerFormData;
   onChange: (field: keyof PartnerFormData, value: any) => void;
@@ -21,7 +19,6 @@ interface Step2FormProps {
   regularPrice: number;
   currency: string;
 }
-
 const Step2Form: React.FC<Step2FormProps> = ({
   data,
   onChange,
@@ -33,19 +30,13 @@ const Step2Form: React.FC<Step2FormProps> = ({
   regularPrice,
   currency
 }) => {
-  return (
-    <div className="space-y-5 animate-fade-in">
+  return <div className="space-y-5 animate-fade-in">
       <div className="mb-6">
         <h1 className="text-3xl sm:text-4xl font-bold mb-3 text-white flex items-center">
           Dane partnera <span className="text-red-500 ml-2">❤️</span>
         </h1>
-        <p className="text-gray-300 mb-3">
-          Czas zaprosić swoją partnerkę/-ra. Nie poznacie swoich odpowiedzi, ale odkryjecie siebie na nowo.
-        </p>
-        <p className="text-gray-400 text-sm flex items-center">
-          <span className="mr-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></span>
-          Wszystkie dane są bezpieczne. Zostaną usunięte po 7 dniach
-        </p>
+        <p className="text-gray-300 mb-3">Czas zaprosić swoją partnerkę/-ra. Nawet on/ona nie pozna Twoich odpowiedzi. Otrzymacie spersonalizowany raport</p>
+        
       </div>
       
       <PromotionBadge regularPrice={regularPrice} currentPrice={productPrice} currency={currency} />
@@ -63,49 +54,23 @@ const Step2Form: React.FC<Step2FormProps> = ({
         </div>
       </div>
 
-      <Input 
-        placeholder="Imię Twojej partnerki/partnera" 
-        value={data.partnerName} 
-        onChange={(e) => onChange('partnerName', e.target.value)} 
-        className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500" 
-        autoFocus
-      />
+      <Input placeholder="Imię Twojej partnerki/partnera" value={data.partnerName} onChange={e => onChange('partnerName', e.target.value)} className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500" autoFocus />
       
-      <Input 
-        placeholder="E-mail partnerki/partnera (tam wyślemy zaproszenie)" 
-        type="email" 
-        value={data.partnerEmail} 
-        onChange={(e) => onChange('partnerEmail', e.target.value)} 
-        className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500" 
-      />
+      <Input placeholder="E-mail partnerki/partnera (tam wyślemy zaproszenie)" type="email" value={data.partnerEmail} onChange={e => onChange('partnerEmail', e.target.value)} className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500" />
 
       <div className="flex items-center gap-3 pt-3">
-        <Checkbox 
-          id="ageConfirmation" 
-          checked={data.ageConfirmed} 
-          onCheckedChange={(checked) => onChange('ageConfirmed', !!checked)} 
-          className="h-4 w-4 border-white/40" 
-        />
+        <Checkbox id="ageConfirmation" checked={data.ageConfirmed} onCheckedChange={checked => onChange('ageConfirmed', !!checked)} className="h-4 w-4 border-white/40" />
         <Label htmlFor="ageConfirmation" className="text-gray-300 text-sm cursor-pointer">
           Grając, akceptujesz przyjazny <Link to="/regulamin" className="text-primary hover:underline">Regulamin</Link> i <Link to="/polityka-prywatnosci" className="text-primary hover:underline">Politykę Prywatności</Link>, która gwarantuje bezpieczeństwo Waszych danych. Usuwamy je po 7 dniach.
         </Label>
       </div>
       
       <div className="grid grid-cols-2 gap-4">
-        <Button 
-          onClick={onPrevStep} 
-          variant="outline" 
-          className="bg-transparent border border-gray-700 text-white hover:bg-gray-800"
-        >
+        <Button onClick={onPrevStep} variant="outline" className="bg-transparent border border-gray-700 text-white hover:bg-gray-800">
           Wstecz
         </Button>
         
-        <Button 
-          type="submit" 
-          disabled={isProcessing || !isValid} 
-          onClick={onSubmit}
-          className="bg-primary hover:bg-primary/90 text-white flex items-center justify-center gap-2"
-        >
+        <Button type="submit" disabled={isProcessing || !isValid} onClick={onSubmit} className="bg-primary hover:bg-primary/90 text-white flex items-center justify-center gap-2">
           {isProcessing ? <>
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
               Przetwarzanie...
@@ -121,8 +86,6 @@ const Step2Form: React.FC<Step2FormProps> = ({
       </p>
       
       <Testimonials />
-    </div>
-  );
+    </div>;
 };
-
 export default Step2Form;
