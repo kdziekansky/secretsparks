@@ -1,11 +1,10 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Loader2, ArrowRightCircle, CheckCircle2, FileText, Check, Star } from 'lucide-react';
+import { Loader2, ArrowRightCircle, CheckCircle2, FileText, Shield } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Link } from 'react-router-dom';
-import Testimonials from './Testimonials';
 
 interface OrderSummaryStepProps {
   userData: {
@@ -21,6 +20,7 @@ interface OrderSummaryStepProps {
   regularPrice: number;
   currency: string;
 }
+
 const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
   userData,
   onPrevStep,
@@ -31,6 +31,7 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
   currency
 }) => {
   const [termsAccepted, setTermsAccepted] = useState(false);
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!termsAccepted) {
@@ -39,7 +40,9 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
     }
     onSubmit(e);
   };
-  return <div className="space-y-5 animate-fade-in">
+  
+  return (
+    <div className="space-y-5 animate-fade-in">
       <div className="mb-6">
         <h1 className="text-3xl sm:text-4xl font-bold mb-3 text-white flex items-center">
           Podsumowanie <span className="text-red-500 ml-2">❤️</span>
@@ -85,39 +88,27 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
         </div>
       </div>
 
-      <div className="mb-6 p-4 border border-green-600/30 bg-green-600/10 rounded-lg space-y-3">
+      <div className="mb-6 p-4 border border-green-600/30 bg-green-600/10 rounded-lg">
         <div className="flex items-start gap-3">
           <CheckCircle2 className="h-6 w-6 text-green-500 flex-shrink-0 mt-1" />
           <div>
             <h3 className="font-medium text-green-400 text-lg mb-1">100% satysfakcji lub zwrot pieniędzy</h3>
           </div>
         </div>
-        
-        <div className="flex items-start gap-3">
-          <CheckCircle2 className="h-6 w-6 text-green-500 flex-shrink-0 mt-1" />
-          <div>
-            <h3 className="font-medium text-green-400 text-lg mb-1">Co zawiera raport:</h3>
-            <ul className="list-disc pl-5 text-gray-300 space-y-1">
-              <li>Wspólne fascynacje</li>
-              <li>Strefy odkrywania</li>
-              <li>Inspiracje i scenariusze</li>
-              <li>Mapa komfortu</li>
-              <li>Przewodnik rozmowy</li>
-            </ul>
-          </div>
-        </div>
       </div>
       
       {/* Checkbox do akceptacji regulaminu */}
       <div className="flex items-center gap-3 pt-3 mb-4">
-        <Checkbox id="ageConfirmation" checked={termsAccepted} onCheckedChange={checked => setTermsAccepted(!!checked)} className="h-4 w-4 border-white/40" />
+        <Checkbox 
+          id="ageConfirmation" 
+          checked={termsAccepted} 
+          onCheckedChange={checked => setTermsAccepted(!!checked)} 
+          className="h-4 w-4 border-white/40" 
+        />
         <Label htmlFor="ageConfirmation" className="text-gray-300 text-sm cursor-pointer">
           Grając, akceptujesz przyjazny <Link to="/regulamin" className="text-primary hover:underline">Regulamin</Link> i <Link to="/polityka-prywatnosci" className="text-primary hover:underline">Politykę Prywatności</Link>, która gwarantuje bezpieczeństwo Waszych danych. Usuwamy je po 7 dniach.
         </Label>
       </div>
-      
-      {/* Testimonials */}
-      <Testimonials />
       
       <div className="grid grid-cols-2 gap-4">
         <Button onClick={onPrevStep} variant="outline" className="bg-transparent border border-gray-700 text-white hover:bg-gray-800">
@@ -125,18 +116,29 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
         </Button>
         
         <div className="flex flex-col items-end">
-          <Button type="submit" disabled={isProcessing} onClick={handleSubmit} className="bg-primary hover:bg-primary/90 text-white flex items-center justify-center gap-2 w-full">
-            {isProcessing ? <>
+          <Button 
+            type="submit" 
+            disabled={isProcessing} 
+            onClick={handleSubmit} 
+            className="bg-primary hover:bg-primary/90 text-white flex items-center justify-center gap-2 w-full"
+          >
+            {isProcessing ? (
+              <>
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                 Przetwarzanie...
-              </> : <>
+              </>
+            ) : (
+              <>
                 <span>Odkryj wasze pragnienia</span>
                 <ArrowRightCircle className="h-5 w-5" />
-              </>}
+              </>
+            )}
           </Button>
           <p className="text-right text-gray-400 text-xs mt-1">Za jedyne {productPrice} {currency}</p>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default OrderSummaryStep;

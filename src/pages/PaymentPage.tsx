@@ -7,6 +7,8 @@ import Step1Form from '@/components/payment/Step1Form';
 import Step2Form from '@/components/payment/Step2Form';
 import OrderSummaryStep from '@/components/payment/OrderSummaryStep';
 import EmailPreview from '@/components/payment/EmailPreview';
+import { CheckCircle2 } from 'lucide-react';
+import Testimonials from '@/components/payment/Testimonials';
 
 // Fixed product price at 29 zł, gift wrapping is free
 const PRODUCT_PRICE = 29;
@@ -27,6 +29,47 @@ const PaymentPage: React.FC = () => {
     handlePrevStep,
     handleSubmit
   } = usePaymentForm(orderId);
+
+  const renderRightColumn = () => {
+    if (formStep === 3) {
+      return (
+        <div className="space-y-6">
+          <div className="bg-[#111] border border-[#333] rounded-md p-5 space-y-4">
+            <div className="flex items-center gap-2 mb-4">
+              <CheckCircle2 className="h-6 w-6 text-primary" />
+              <h2 className="text-xl font-medium text-white">Co zawiera raport:</h2>
+            </div>
+            
+            <ul className="list-disc pl-5 text-gray-300 space-y-2">
+              <li>Wspólne fascynacje</li>
+              <li>Strefy odkrywania</li>
+              <li>Inspiracje i scenariusze</li>
+              <li>Mapa komfortu</li>
+              <li>Przewodnik rozmowy</li>
+            </ul>
+            
+            <div className="pt-4 border-t border-[#333] mt-4">
+              <div className="flex justify-between items-center">
+                <p className="text-white font-medium">Wartość raportu:</p>
+                <p className="text-xl font-bold text-primary">{PRODUCT_PRICE} {CURRENCY}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <h3 className="text-lg font-medium text-white mb-4">Co mówią inni:</h3>
+            <Testimonials />
+          </div>
+        </div>
+      );
+    }
+    
+    return <EmailPreview
+      partnerName={formData.partnerName}
+      partnerEmail={formData.partnerEmail}
+      userName={formData.userName}
+    />;
+  };
 
   return (
     <div className="min-h-screen bg-[#05050a] flex flex-col items-center justify-start">
@@ -94,13 +137,9 @@ const PaymentPage: React.FC = () => {
               </form>
             </div>
             
-            {/* Email Preview Section */}
+            {/* Right Column - Email Preview or Report Content & Testimonials */}
             <div className="w-full lg:w-1/2">
-              <EmailPreview
-                partnerName={formData.partnerName}
-                partnerEmail={formData.partnerEmail}
-                userName={formData.userName}
-              />
+              {renderRightColumn()}
             </div>
           </div>
         </div>
