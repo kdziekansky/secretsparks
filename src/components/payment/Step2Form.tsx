@@ -45,11 +45,8 @@ const Step2Form: React.FC<Step2FormProps> = ({
         <div className="flex items-start gap-3">
           <CheckCircle2 className="h-6 w-6 text-green-500 flex-shrink-0 mt-1" />
           <div>
-            <h3 className="font-medium text-green-400 text-lg mb-1">100% Gwarancja Satysfakcji</h3>
-            <p className="text-gray-300 text-sm">
-              Jeśli raport nie spełni Twoich oczekiwań, zwrócimy Ci pieniądze w ciągu 14 dni. 
-              Bez zbędnych pytań. To my podejmujemy całe ryzyko.
-            </p>
+            <h3 className="font-medium text-green-400 text-lg mb-1">100% satysfakcji lub zwrot pieniędzy</h3>
+            
           </div>
         </div>
       </div>
