@@ -20,6 +20,7 @@ const SurveyContext = createContext<SurveyContextType | undefined>(undefined);
 const LOCAL_STORAGE_KEY = 'survey_answers_autosave';
 const LOCAL_STORAGE_QUESTION_INDEX_KEY = 'survey_question_index_autosave';
 const LOCAL_STORAGE_CONFIG_KEY = 'survey_config_autosave';
+const LOCAL_STORAGE_CONFIG_COMPLETED_KEY = 'survey_config_completed';
 
 export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [searchParams] = useSearchParams();
@@ -53,12 +54,20 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (partnerToken) return;
     
     try {
+      // Sprawdź czy ankieta była wcześniej zakończona
+      const configCompleted = localStorage.getItem(LOCAL_STORAGE_CONFIG_COMPLETED_KEY) === 'true';
+      
       // Przywracanie konfiguracji ankiety
       const savedConfig = localStorage.getItem(LOCAL_STORAGE_CONFIG_KEY);
       if (savedConfig) {
         const parsedConfig = JSON.parse(savedConfig) as SurveyConfig;
         setSurveyConfig(parsedConfig);
         console.log('Przywrócono konfigurację ankiety z localStorage:', parsedConfig);
+        
+        // Jeśli konfiguracja była zakończona, ustaw również flagę isConfigComplete
+        if (configCompleted) {
+          setShowInstructions(false);
+        }
       }
       
       // Przywracanie odpowiedzi
@@ -69,22 +78,24 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         console.log('Przywrócono odpowiedzi z localStorage:', parsedAnswers);
       }
       
-      // Przywracanie indeksu pytania
-      const savedQuestionIndex = localStorage.getItem(LOCAL_STORAGE_QUESTION_INDEX_KEY);
-      if (savedQuestionIndex) {
-        const parsedIndex = parseInt(savedQuestionIndex);
-        if (!isNaN(parsedIndex)) {
-          setCurrentQuestionIndex(parsedIndex);
-          console.log('Przywrócono indeks pytania z localStorage:', parsedIndex);
-          
-          // Pokaż powiadomienie o przywróceniu sesji
-          if (Object.keys(JSON.parse(savedAnswers || '{}')).length > 0) {
-            setTimeout(() => {
-              toast.info('Przywrócono Twoją poprzednią sesję ankiety', {
-                description: 'Możesz kontynuować od miejsca, w którym przerwałeś/aś',
-                duration: 5000,
-              });
-            }, 1000);
+      // Przywracanie indeksu pytania tylko jeśli konfiguracja była zakończona
+      if (configCompleted) {
+        const savedQuestionIndex = localStorage.getItem(LOCAL_STORAGE_QUESTION_INDEX_KEY);
+        if (savedQuestionIndex) {
+          const parsedIndex = parseInt(savedQuestionIndex);
+          if (!isNaN(parsedIndex)) {
+            setCurrentQuestionIndex(parsedIndex);
+            console.log('Przywrócono indeks pytania z localStorage:', parsedIndex);
+            
+            // Pokaż powiadomienie o przywróceniu sesji
+            if (Object.keys(JSON.parse(savedAnswers || '{}')).length > 0) {
+              setTimeout(() => {
+                toast.info('Przywrócono Twoją poprzednią sesję ankiety', {
+                  description: 'Możesz kontynuować od miejsca, w którym przerwałeś/aś',
+                  duration: 5000,
+                });
+              }, 1000);
+            }
           }
         }
       }
@@ -94,16 +105,39 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       localStorage.removeItem(LOCAL_STORAGE_KEY);
       localStorage.removeItem(LOCAL_STORAGE_QUESTION_INDEX_KEY);
       localStorage.removeItem(LOCAL_STORAGE_CONFIG_KEY);
+      localStorage.removeItem(LOCAL_STORAGE_CONFIG_COMPLETED_KEY);
     }
   }, [partnerToken]);
 
   // Zapisuj konfigurację ankiety do localStorage przy jej zmianie
   useEffect(() => {
-    if (!partnerToken && surveyConfig.isConfigComplete) {
+    if (!partnerToken) {
       localStorage.setItem(LOCAL_STORAGE_CONFIG_KEY, JSON.stringify(surveyConfig));
+      
+      // Zapisz również informację o tym, czy konfiguracja została zakończona
+      if (surveyConfig.isConfigComplete) {
+        localStorage.setItem(LOCAL_STORAGE_CONFIG_COMPLETED_KEY, 'true');
+      }
+      
       console.log('Zapisano konfigurację ankiety do localStorage:', surveyConfig);
     }
   }, [surveyConfig, partnerToken]);
+
+  // Zapisuj odpowiedzi do localStorage przy ich zmianie
+  useEffect(() => {
+    if (!partnerToken && Object.keys(answers).length > 0) {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(answers));
+      console.log('Zapisano odpowiedzi do localStorage:', answers);
+    }
+  }, [answers, partnerToken]);
+
+  // Zapisuj indeks pytania do localStorage przy jego zmianie
+  useEffect(() => {
+    if (!partnerToken && surveyConfig.isConfigComplete) {
+      localStorage.setItem(LOCAL_STORAGE_QUESTION_INDEX_KEY, currentQuestionIndex.toString());
+      console.log('Zapisano indeks pytania do localStorage:', currentQuestionIndex);
+    }
+  }, [currentQuestionIndex, partnerToken, surveyConfig.isConfigComplete]);
 
   const totalQuestions = filteredQuestions.length;
   const isFirstQuestion = currentQuestionIndex === 0;
@@ -263,6 +297,7 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     localStorage.removeItem(LOCAL_STORAGE_KEY);
     localStorage.removeItem(LOCAL_STORAGE_QUESTION_INDEX_KEY);
     localStorage.removeItem(LOCAL_STORAGE_CONFIG_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_CONFIG_COMPLETED_KEY);
   }, [partnerToken]);
 
   const setUserGender = useCallback((gender: Gender) => {
@@ -280,6 +315,8 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const completeConfig = useCallback(() => {    
     setSurveyConfig(prev => ({ ...prev, isConfigComplete: true }));
     setCurrentQuestionIndex(0);
+    // Zapisujemy informację, że konfiguracja została zakończona
+    localStorage.setItem(LOCAL_STORAGE_CONFIG_COMPLETED_KEY, 'true');
   }, []);
 
   const completeInstructions = useCallback(() => {

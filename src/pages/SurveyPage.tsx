@@ -40,7 +40,8 @@ const SurveyPage: React.FC = () => {
     resetSurvey,
     answers,
     isLastQuestion,
-    currentQuestionIndex
+    currentQuestionIndex,
+    surveyConfig
   } = useSurvey();
   
   const [isPartnerSurvey, setIsPartnerSurvey] = useState<boolean>(!!partnerToken);
@@ -51,9 +52,20 @@ const SurveyPage: React.FC = () => {
   const [waitingForQuestions, setWaitingForQuestions] = useState<boolean>(false);
   
   // Reset survey on component mount, but only for standard survey (not partner survey)
+  // and only if there's no saved session in localStorage
   useEffect(() => {
     if (!isPartnerSurvey) {
-      resetSurvey();
+      const savedConfig = localStorage.getItem('survey_config_autosave');
+      const savedAnswers = localStorage.getItem('survey_answers_autosave');
+      const configCompleted = localStorage.getItem('survey_config_completed');
+      
+      // Resetujemy ankietę tylko gdy nie ma zapisanej sesji lub gdy konfiguracja nie została zakończona
+      if (!savedConfig && !savedAnswers) {
+        console.log('Brak zapisanej sesji, resetowanie ankiety...');
+        resetSurvey();
+      } else {
+        console.log('Znaleziono zapisaną sesję, przywracanie...');
+      }
     }
   }, [resetSurvey, isPartnerSurvey]);
   
