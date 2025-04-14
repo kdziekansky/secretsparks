@@ -1,8 +1,6 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Loader2, ArrowRightCircle, CheckCircle2, FileText, Check, Star } from 'lucide-react';
-
 interface OrderSummaryStepProps {
   userData: {
     userName: string;
@@ -17,7 +15,6 @@ interface OrderSummaryStepProps {
   regularPrice: number;
   currency: string;
 }
-
 const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
   userData,
   onPrevStep,
@@ -27,8 +24,7 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
   regularPrice,
   currency
 }) => {
-  return (
-    <div className="space-y-5 animate-fade-in">
+  return <div className="space-y-5 animate-fade-in">
       <div className="mb-6">
         <h1 className="text-3xl sm:text-4xl font-bold mb-3 text-white flex items-center">
           Podsumowanie <span className="text-red-500 ml-2">❤️</span>
@@ -93,8 +89,8 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
         </div>
         
         <div className="flex items-start gap-3">
-          <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-          <p className="text-gray-300 text-sm">Płatność jest zabezpieczona szyfrowaniem SSL</p>
+          
+          
         </div>
       </div>
       
@@ -102,65 +98,13 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
       <div className="space-y-4 mb-6">
         <h3 className="text-lg font-medium text-white">Co mówią inni:</h3>
         
-        <div className="bg-[#111] p-4 rounded-lg">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white text-xs">KM</div>
-            <div>
-              <p className="text-white text-sm font-medium">Karolina i Michał</p>
-              <div className="flex items-center">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                ))}
-              </div>
-            </div>
-          </div>
-          <p className="text-gray-300 text-sm italic">"To było zaskakujące doświadczenie. Dowiedzieliśmy się o sobie rzeczy, o które nigdy byśmy się nie zapytali. Polecamy!"</p>
-        </div>
         
-        <div className="bg-[#111] p-4 rounded-lg">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white text-xs">AP</div>
-            <div>
-              <p className="text-white text-sm font-medium">Anna i Piotr</p>
-              <div className="flex items-center">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                ))}
-              </div>
-            </div>
-          </div>
-          <p className="text-gray-300 text-sm italic">"Świetne urozmaicenie, bez skrępowania wnieśliśmy nowości do sypialni. Większość nowości mamy już zaplanowane"</p>
-        </div>
         
-        <div className="bg-[#111] p-4 rounded-lg">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white text-xs">ZT</div>
-            <div>
-              <p className="text-white text-sm font-medium">Zosia i Tomek</p>
-              <div className="flex items-center">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                ))}
-              </div>
-            </div>
-          </div>
-          <p className="text-gray-300 text-sm italic">"Najlepsza decyzja w naszym związku! Przestaliśmy zgadywać swoje pragnienia i po prostu zaczęliśmy je realizować."</p>
-        </div>
         
-        <div className="bg-[#111] p-4 rounded-lg">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white text-xs">BK</div>
-            <div>
-              <p className="text-white text-sm font-medium">Beata i Kacper</p>
-              <div className="flex items-center">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                ))}
-              </div>
-            </div>
-          </div>
-          <p className="text-gray-300 text-sm italic">"Ankieta Secret Sparks to najlepszy afrodyzjak, jaki kiedykolwiek próbowaliśmy. Gorąco polecamy każdej parze!"</p>
-        </div>
+        
+        
+        
+        
         
         <div className="bg-[#111] p-4 rounded-lg">
           <div className="flex items-center gap-2 mb-2">
@@ -168,9 +112,7 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
             <div>
               <p className="text-white text-sm font-medium">Monika i Stefan</p>
               <div className="flex items-center">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                ))}
+                {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />)}
               </div>
             </div>
           </div>
@@ -183,9 +125,7 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
             <div>
               <p className="text-white text-sm font-medium">Joanna i Tomasz</p>
               <div className="flex items-center">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                ))}
+                {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />)}
               </div>
             </div>
           </div>
@@ -211,8 +151,6 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
           <span className="text-primary font-medium text-sm mt-1">tylko {productPrice} {currency}</span>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default OrderSummaryStep;
