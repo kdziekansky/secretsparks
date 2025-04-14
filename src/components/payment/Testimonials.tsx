@@ -1,7 +1,5 @@
-
 import React from 'react';
 import { Star, StarHalf } from 'lucide-react';
-
 const Testimonials: React.FC = () => {
   const renderStars = (fullStars: number, hasHalfStar: boolean = false) => {
     return [...Array(5)].map((_, i) => {
@@ -14,7 +12,6 @@ const Testimonials: React.FC = () => {
       return <Star key={i} className="w-4 h-4 text-gray-300" />;
     });
   };
-
   return <div className="mt-8 space-y-4">
     <h3 className="text-lg font-medium text-white">Co mówią inni:</h3>
     
@@ -54,9 +51,8 @@ const Testimonials: React.FC = () => {
           </div>
         </div>
       </div>
-      <p className="text-gray-300 text-sm italic">"Narzędzie, które pomogło nam otworzyć się na siebie i lepiej zrozumieć nawzajem. Teraz nasza komunikacja jest jeszcze lepsza."</p>
+      <p className="text-gray-300 text-sm italic">&quot;Kupiłem to na naszą 3 rocznicę. Okazało się, że mamy podobne fantazje, tylko po prostu o nich nie rozmawialiśmy. Oboje jesteśmy zadowoleni&quot;</p>
     </div>
   </div>;
 };
-
 export default Testimonials;
