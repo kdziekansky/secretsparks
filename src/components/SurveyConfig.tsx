@@ -6,7 +6,7 @@ import { User, UserCircle, Smile, Zap, SmilePlus, X } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import type { Gender } from '@/types/survey';
+import type { Gender, GameLevel } from '@/types/survey';
 
 const SurveyConfig: React.FC = () => {
   const { 

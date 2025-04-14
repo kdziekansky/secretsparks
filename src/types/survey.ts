@@ -1,5 +1,6 @@
+
 export type Gender = 'male' | 'female' | null;
-export type GameLevel = 'discover' | 'fun' | 'challenge' | null;
+export type GameLevel = 'discover' | 'fun' | 'challenge' | 'explore' | 'exceed' | null;
 
 export interface Question {
   id: string;
