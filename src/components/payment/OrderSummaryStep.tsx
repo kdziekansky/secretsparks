@@ -144,11 +144,11 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                 Przetwarzanie...
               </> : <>
-                <span>Odkryj wasze pragnienia</span>
+                <span>Poznaj raport</span>
                 <ArrowRightCircle className="h-5 w-5" />
               </>}
           </Button>
-          <span className="text-primary font-medium text-sm mt-1">tylko {productPrice} {currency}</span>
+          
         </div>
       </div>
     </div>;
