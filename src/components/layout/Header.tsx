@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { X, Menu } from 'lucide-react';
@@ -53,7 +52,7 @@ const Header = () => {
         </div>
         
         <div className="hidden md:block">
-          <Link to="/payment">
+          <Link to="/survey">
             <Button className="btn-primary text-sm">
               Zamów raport
             </Button>
@@ -83,7 +82,7 @@ const Header = () => {
             <Link to="/regulamin" className="nav-link-mobile" onClick={() => setIsMenuOpen(false)}>
               Regulamin
             </Link>
-            <Link to="/payment" onClick={() => setIsMenuOpen(false)}>
+            <Link to="/survey" onClick={() => setIsMenuOpen(false)}>
               <Button className="w-full rounded-full bg-primary hover:bg-primary/80 mt-2 text-sm">
                 Zamów raport
               </Button>
