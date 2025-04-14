@@ -6,7 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Link } from 'react-router-dom';
 import { PartnerFormData } from './types';
-import { Loader2, ArrowRightCircle } from 'lucide-react';
+import { Loader2, ArrowRightCircle, Star } from 'lucide-react';
 
 interface Step2FormProps {
   data: PartnerFormData;
@@ -44,6 +44,41 @@ const Step2Form: React.FC<Step2FormProps> = ({
         </Label>
       </div>
       
+      {/* Opinie klientów */}
+      <div className="space-y-4 mt-4">
+        <h3 className="text-lg font-medium text-white">Co mówią inni:</h3>
+        
+        <div className="bg-[#111] p-4 rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white text-xs">MK</div>
+            <div>
+              <p className="text-white text-sm font-medium">Marek i Kasia</p>
+              <div className="flex items-center">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                ))}
+              </div>
+            </div>
+          </div>
+          <p className="text-gray-300 text-sm italic">"Dzięki ankiecie odkryliśmy swoje ukryte fantazje. To zupełnie odmieniło nasze życie intymne!"</p>
+        </div>
+        
+        <div className="bg-[#111] p-4 rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white text-xs">DM</div>
+            <div>
+              <p className="text-white text-sm font-medium">Daniel i Magda</p>
+              <div className="flex items-center">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                ))}
+              </div>
+            </div>
+          </div>
+          <p className="text-gray-300 text-sm italic">"Po 7 latach związku myśleliśmy, że już nic nas nie zaskoczy... Ta ankieta pokazała nam, jak bardzo się myliliśmy!"</p>
+        </div>
+      </div>
+      
       <div className="grid grid-cols-2 gap-4">
         <Button onClick={onPrevStep} variant="outline" className="bg-transparent border border-gray-700 text-white hover:bg-gray-800">
           Wstecz
@@ -55,7 +90,7 @@ const Step2Form: React.FC<Step2FormProps> = ({
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                 Przetwarzanie...
               </> : <>
-                <span>Odkryj wasze pragnienia</span>
+                <span>Przejdź do podsumowania</span>
                 <ArrowRightCircle className="h-5 w-5" />
               </>}
           </Button>
