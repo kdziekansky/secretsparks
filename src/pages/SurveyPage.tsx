@@ -9,9 +9,10 @@ import QuestionCard from '@/components/QuestionCard';
 import SurveyConfig from '@/components/SurveyConfig';
 import PartnerWelcome from '@/components/PartnerWelcome';
 import SurveyInstruction from '@/components/SurveyInstruction';
-import { Loader2, AlertTriangle, Clock } from 'lucide-react';
+import { Loader2, AlertTriangle, Clock, Settings } from 'lucide-react';
 import { toast, Toaster } from 'sonner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import { GameLevel } from '@/types/survey';
 
 interface OrderDetails {
@@ -244,6 +245,11 @@ const SurveyPage: React.FC = () => {
     }
   }, [isPartnerSurvey, waitingForQuestions, filteredQuestions]);
   
+  // NOWA FUNKCJA: Przejście do konfiguracji ankiety
+  const handleReturnToConfig = () => {
+    resetSurvey();
+    toast.success('Ankieta została zresetowana. Skonfiguruj ją ponownie.');
+  };
   
   if (isLoadingOrder) {
     return (
@@ -302,20 +308,22 @@ const SurveyPage: React.FC = () => {
     );
   }
   
-  // NOWE: Dodatkowe sprawdzenie, czy mamy pytania po zakończeniu konfiguracji
-  if (!isInConfigurationMode && !showInstructions && filteredQuestions.length === 0) {
+  // ZMODYFIKOWANE: Jeśli mamy pustą listę pytań, ale konfiguracja jest oznaczona jako zakończona,
+  // to znaczy że mamy problem z danymi konfiguracji
+  if (!isInConfigurationMode && !showInstructions && filteredQuestions.length === 0 && surveyConfig.isConfigComplete) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
         <Toaster position="top-center" />
         <div className="glass-panel w-full max-w-md p-6 text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
-          <h2 className="text-xl font-medium mb-2">Ładowanie pytań</h2>
+          <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
+          <h2 className="text-xl font-medium mb-2">Problem z konfiguracją</h2>
           <p className="mb-6">
-            Przygotowywanie zestawu pytań dla Twojej konfiguracji. To może potrwać chwilę...
+            Wystąpił problem z konfiguracją ankiety. Nie można utworzyć zestawu pytań dla bieżącej konfiguracji.
           </p>
-          <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-            <div className="h-full bg-primary animate-pulse" style={{ width: '100%' }}></div>
-          </div>
+          <Button onClick={handleReturnToConfig} className="flex items-center gap-2">
+            <Settings className="w-4 h-4" />
+            <span>Skonfiguruj ankietę ponownie</span>
+          </Button>
         </div>
       </div>
     );
