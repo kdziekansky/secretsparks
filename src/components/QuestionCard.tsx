@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -104,12 +105,6 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     }, 300);
   };
 
-  // Funkcja do obsługi ścieżek obrazów - uproszczona, aby brać dokładnie to co jest w pliku
-  const getImageUrl = (url: string) => {
-    if (!url) return '';
-    return url; // Zwracamy dokładnie taką ścieżkę jaką dostajemy
-  };
-  
   const handleImageLoad = () => {
     setImageLoaded(true);
     setImageError(false);
@@ -141,9 +136,6 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     ? (isPartnerSurvey ? 'Zakończ ankietę' : 'Przejdź do płatności') 
     : 'Zapisz odpowiedź';
   
-  // Pobierz finalny URL obrazka do wyświetlenia
-  const finalImageUrl = currentQuestion.illustration ? getImageUrl(currentQuestion.illustration) : '';
-  
   return (
     <div className={`glass-panel w-full max-w-4xl transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100 animate-slide-up'}`}>
       <div className={`flex flex-col ${!isMobile ? 'md:flex-row' : ''}`}>
@@ -164,10 +156,10 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
               )}
               
               {/* Try to display SVG using object tag if it's an SVG */}
-              {finalImageUrl.toLowerCase().endsWith('.svg') ? (
+              {currentQuestion.illustration.toLowerCase().endsWith('.svg') ? (
                 <>
                   <object 
-                    data={finalImageUrl} 
+                    data={currentQuestion.illustration} 
                     type="image/svg+xml"
                     className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                     onLoad={handleImageLoad}
@@ -198,7 +190,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
                 /* Normal image for non-SVG */
                 <>
                   <img 
-                    src={finalImageUrl} 
+                    src={currentQuestion.illustration} 
                     alt={currentQuestion.text} 
                     className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                     onLoad={handleImageLoad}
@@ -292,7 +284,6 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
                 <span>Wstecz</span>
               </button>
               
-              {/* Zmodyfikowany przycisk z nowym wyglądem - bardziej widoczny, czerwony */}
               <Button
                 onClick={handleNext}
                 disabled={!hasAnswer}
