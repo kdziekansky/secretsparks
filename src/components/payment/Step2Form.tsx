@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -5,9 +6,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Link } from 'react-router-dom';
 import { PartnerFormData } from './types';
-import PromotionBadge from './PromotionBadge';
-import Testimonials from './Testimonials';
 import { CheckCircle2, Loader2, ArrowRightCircle } from 'lucide-react';
+
 interface Step2FormProps {
   data: PartnerFormData;
   onChange: (field: keyof PartnerFormData, value: any) => void;
@@ -15,20 +15,15 @@ interface Step2FormProps {
   onSubmit: (e: React.FormEvent) => void;
   isValid: boolean;
   isProcessing: boolean;
-  productPrice: number;
-  regularPrice: number;
-  currency: string;
 }
+
 const Step2Form: React.FC<Step2FormProps> = ({
   data,
   onChange,
   onPrevStep,
   onSubmit,
   isValid,
-  isProcessing,
-  productPrice,
-  regularPrice,
-  currency
+  isProcessing
 }) => {
   return <div className="space-y-5 animate-fade-in">
       <div className="mb-6">
@@ -36,17 +31,13 @@ const Step2Form: React.FC<Step2FormProps> = ({
           Dane partnera <span className="text-red-500 ml-2">❤️</span>
         </h1>
         <p className="text-gray-300 mb-3">Czas zaprosić swoją partnerkę/-ra. Nawet on/ona nie pozna Twoich odpowiedzi. Otrzymacie spersonalizowany raport</p>
-        
       </div>
-      
-      <PromotionBadge regularPrice={regularPrice} currentPrice={productPrice} currency={currency} />
 
       <div className="mb-6 p-4 border border-green-600/30 bg-green-600/10 rounded-lg">
         <div className="flex items-start gap-3">
           <CheckCircle2 className="h-6 w-6 text-green-500 flex-shrink-0 mt-1" />
           <div>
             <h3 className="font-medium text-green-400 text-lg mb-1">100% satysfakcji lub zwrot pieniędzy</h3>
-            
           </div>
         </div>
       </div>
@@ -72,7 +63,7 @@ const Step2Form: React.FC<Step2FormProps> = ({
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
               Przetwarzanie...
             </> : <>
-              <span>Zapłać {productPrice} {currency}</span>
+              <span>Przejdź do podsumowania</span>
               <ArrowRightCircle className="h-5 w-5" />
             </>}
         </Button>
@@ -81,8 +72,6 @@ const Step2Form: React.FC<Step2FormProps> = ({
       <p className="text-center text-sm text-gray-500 mt-2">
         Płatność jest zabezpieczona szyfrowaniem SSL
       </p>
-      
-      <Testimonials />
     </div>;
 };
 export default Step2Form;
