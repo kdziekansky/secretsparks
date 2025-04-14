@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { usePaymentForm } from '@/hooks/usePaymentForm';
@@ -29,25 +30,35 @@ const PaymentPage: React.FC = () => {
   const renderRightColumn = () => {
     if (formStep === 3) {
       return <div className="space-y-6">
-          <div className="border border-[#333] p-5 space-y-4 bg-transparent rounded-none">
+          <div className="p-5 space-y-4 bg-transparent">
             <div className="flex items-center gap-2 mb-4">
               <CheckCircle2 className="h-6 w-6 text-primary" />
               <h2 className="text-xl font-medium text-white">Co zawiera raport:</h2>
             </div>
             
-            <ul className="list-disc pl-5 text-gray-300 space-y-2">
-              <li>Wspólne fascynacje</li>
-              <li>Strefy odkrywania</li>
-              <li>Inspiracje i scenariusze</li>
-              <li>Mapa komfortu</li>
-              <li>Przewodnik rozmowy</li>
-            </ul>
-            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <ul className="list-disc pl-5 text-gray-300 space-y-2">
+                  <li>Wspólne fascynacje</li>
+                  <li>Gotowe scenariusze</li>
+                  <li>Konkretne wskazówki</li>
+                  <li>Mapa komfortu</li>
+                </ul>
+              </div>
+              
+              <div className="space-y-2">
+                <ul className="list-disc pl-5 text-gray-300 space-y-2">
+                  <li>Przewodnik rozmowy</li>
+                  <li>Plan gry wstępnej</li>
+                  <li>Pomysł na wieczór</li>
+                  <li>Waszą zgodność</li>
+                </ul>
+              </div>
+            </div>
             
           </div>
           
           <div>
-            
             <Testimonials />
           </div>
         </div>;
