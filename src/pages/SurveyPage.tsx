@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSurvey } from '@/contexts/SurveyContext';
@@ -272,7 +271,11 @@ const SurveyPage: React.FC = () => {
       {/* Pasek postępu pokażemy tylko podczas pytań, nie podczas konfiguracji czy instrukcji */}
       {!isInConfigurationMode && !showInstructions && (
         <div className={`w-full ${isMobile ? 'max-w-sm' : 'max-w-xl'} mb-6 md:mb-8`}>
-          <ProgressBar progress={progress} />
+          <ProgressBar 
+            progress={progress} 
+            currentQuestion={currentQuestionIndex + 1} 
+            totalQuestions={filteredQuestions.length} 
+          />
         </div>
       )}
       
