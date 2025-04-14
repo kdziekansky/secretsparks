@@ -1,3 +1,4 @@
+
 import { useMemo } from 'react';
 import { Question, SurveyConfig } from '@/types/survey';
 
@@ -137,6 +138,7 @@ const getRandomizedQuestions = (questions: Question[], config: SurveyConfig, max
   return result.slice(0, maxQuestions);
 };
 
+// ZMODYFIKOWANA FUNKCJA: Dodany parametr savedQuestionIds
 export const useQuestionSelection = (
   questions: Question[],
   config: SurveyConfig,
@@ -144,15 +146,9 @@ export const useQuestionSelection = (
   isPartnerSurvey: boolean = false
 ) => {
   return useMemo(() => {
-    // WAŻNE: Dla ankiety partnera z istniejącymi ID pytań, używamy DOKŁADNIE tej samej sekwencji
-    if (isPartnerSurvey) {
-      // Nawet jeśli nie mamy jeszcze ID pytań, zwracamy pustą tablicę zamiast losować
-      if (selectedQuestionIds.length === 0) {
-        console.log('Partner survey: Waiting for question sequence data');
-        return [];
-      }
-      
-      console.log('Partner survey: Using pre-defined question sequence:', selectedQuestionIds);
+    // Sprawdzamy czy mamy zapisane ID pytań
+    if (selectedQuestionIds && selectedQuestionIds.length > 0) {
+      console.log('Używam zapisanych ID pytań:', selectedQuestionIds.length);
       
       // Create a map of all questions by ID for quick lookup
       const questionMap = new Map(questions.map(q => [q.id, q]));
@@ -162,29 +158,32 @@ export const useQuestionSelection = (
         .map(id => {
           const question = questionMap.get(id);
           if (!question) {
-            console.warn(`Question with ID ${id} not found in questions database`);
+            console.warn(`Pytanie z ID ${id} nie znaleziono w bazie pytań`);
             return null;
           }
           return question;
         })
         .filter((q): q is Question => q !== null);
       
-      console.log(`Successfully mapped ${mappedQuestions.length} partner questions out of ${selectedQuestionIds.length} IDs`);
+      console.log(`Pomyślnie zmapowano ${mappedQuestions.length} pytań z ${selectedQuestionIds.length} ID`);
       
-      if (mappedQuestions.length !== selectedQuestionIds.length) {
-        console.error('Some questions could not be mapped. This could cause inconsistencies between user and partner surveys.');
-      }
-      
-      // IMPORTANT: Return the mapped questions without any further filtering or processing
+      // WAŻNE: Zwracamy dokładnie te same pytania, w tej samej kolejności
       return mappedQuestions;
+    }
+    
+    // Jeśli to ankieta partnera, ale nie mamy jeszcze ID pytań
+    if (isPartnerSurvey && selectedQuestionIds.length === 0) {
+      console.log('Ankieta partnera: Oczekiwanie na dane sekwencji pytań');
+      return [];
     }
     
     // Don't generate questions if configuration is not complete
     if (!config.isConfigComplete) return [];
     
-    // For regular user survey, generate randomized questions
+    // For regular user survey without saved question IDs, generate randomized questions
+    console.log('Generuję nowy losowy zestaw pytań dla użytkownika');
     const randomizedQuestions = getRandomizedQuestions(questions, config, 20);
-    console.log(`Generated ${randomizedQuestions.length} randomized questions for user`);
+    console.log(`Wygenerowano ${randomizedQuestions.length} losowych pytań dla użytkownika`);
     return randomizedQuestions;
   }, [questions, config, selectedQuestionIds, isPartnerSurvey]);
 };

@@ -60,6 +60,7 @@ const SurveyPage: React.FC = () => {
       isInConfigurationMode,
       showInstructions,
       answers: Object.keys(answers).length,
+      pytania: filteredQuestions.length // NOWE: logujemy liczbę pytań
     });
   }, []);
   
@@ -77,12 +78,15 @@ const SurveyPage: React.FC = () => {
       // Sprawdzenie, czy mamy zapisaną sesję
       const savedConfig = localStorage.getItem('survey_config_autosave');
       const savedAnswers = localStorage.getItem('survey_answers_autosave');
+      const savedQuestionIds = localStorage.getItem('survey_question_ids_autosave'); // NOWE: Sprawdzamy też zapisane ID pytań
       const configCompleted = localStorage.getItem('survey_config_completed');
       
       console.log('Sprawdzanie zapisanego stanu:', { 
         savedConfig: !!savedConfig, 
-        savedAnswers: !!savedAnswers, 
-        configCompleted 
+        savedAnswers: !!savedAnswers,
+        savedQuestionIds: !!savedQuestionIds, // NOWE: Logujemy czy mamy zapisane ID pytań
+        configCompleted,
+        filteredQuestions: filteredQuestions.length // NOWE: Logujemy liczbę pytań
       });
       
       // Resetujemy ankietę tylko gdy nie ma zapisanej sesji lub gdy konfiguracja nie została zakończona
@@ -91,11 +95,16 @@ const SurveyPage: React.FC = () => {
         resetSurvey();
       } else {
         console.log('Znaleziono zapisaną sesję, przywracanie...');
+        
+        // NOWE: Dodatkowe sprawdzenie czy mamy pytania
+        if (filteredQuestions.length === 0 && savedQuestionIds) {
+          console.log('Mamy zapisane ID pytań, ale brak pytań w kontekście. Odświeżenie powinno pomóc.');
+        }
       }
     } catch (e) {
       console.error('Błąd podczas sprawdzania/resetowania sesji:', e);
     }
-  }, [resetSurvey, partnerToken]);
+  }, [resetSurvey, partnerToken, filteredQuestions.length]);
   
   // Dodaj ostrzeżenie przed opuszczeniem strony, jeśli użytkownik nie zakończył ankiety
   // i nie jest na stronie konfiguracji ani instrukcji
@@ -287,6 +296,25 @@ const SurveyPage: React.FC = () => {
           </p>
           <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
             <div className="h-full bg-amber-500 animate-pulse" style={{ width: '100%' }}></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  // NOWE: Dodatkowe sprawdzenie, czy mamy pytania po zakończeniu konfiguracji
+  if (!isInConfigurationMode && !showInstructions && filteredQuestions.length === 0) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <Toaster position="top-center" />
+        <div className="glass-panel w-full max-w-md p-6 text-center">
+          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
+          <h2 className="text-xl font-medium mb-2">Ładowanie pytań</h2>
+          <p className="mb-6">
+            Przygotowywanie zestawu pytań dla Twojej konfiguracji. To może potrwać chwilę...
+          </p>
+          <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div className="h-full bg-primary animate-pulse" style={{ width: '100%' }}></div>
           </div>
         </div>
       </div>

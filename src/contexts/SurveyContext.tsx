@@ -45,6 +45,17 @@ export const SurveyProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }
   });
   
+  // NOWE: Stan przechowujący identyfikatory zapamiętanych pytań
+  const [savedQuestionIds, setSavedQuestionIds] = useState<string[]>(() => {
+    try {
+      const savedIds = localStorage.getItem('survey_question_ids_autosave');
+      return savedIds ? JSON.parse(savedIds) : [];
+    } catch (e) {
+      console.error('Błąd podczas odczytu identyfikatorów pytań z localStorage:', e);
+      return [];
+    }
+  });
+  
   const [isInConfigurationMode, setIsInConfigurationMode] = useState<boolean>(() => {
     if (surveyConfig.isConfigComplete) {
       return false;
@@ -87,9 +98,32 @@ export const SurveyProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   const filteredQuestions = useQuestionSelection(
     questions,
     surveyConfig,
-    selectedQuestionIds,
+    // Używamy zapisanych ID pytań, jeśli istnieją i konfiguracja jest ukończona
+    surveyConfig.isConfigComplete && savedQuestionIds.length > 0 ? savedQuestionIds : selectedQuestionIds,
     isPartnerSurvey
   );
+  
+  // NOWE: Zapisujemy identyfikatory pytań po ich wygenerowaniu
+  useEffect(() => {
+    if (filteredQuestions.length > 0 && surveyConfig.isConfigComplete && !isPartnerSurvey) {
+      const newQuestionIds = filteredQuestions.map(q => q.id);
+      
+      // Porównanie aktualnych ID z zapisanymi
+      const currentIds = JSON.stringify(newQuestionIds);
+      const savedIds = JSON.stringify(savedQuestionIds);
+      
+      // Zapisujemy tylko jeśli są różne lub nie ma zapisanych
+      if (savedIds !== currentIds && savedQuestionIds.length === 0) {
+        console.log('Zapisywanie zestawu pytań do localStorage:', newQuestionIds);
+        try {
+          localStorage.setItem('survey_question_ids_autosave', JSON.stringify(newQuestionIds));
+          setSavedQuestionIds(newQuestionIds);
+        } catch (e) {
+          console.error('Błąd podczas zapisywania zestawu pytań do localStorage:', e);
+        }
+      }
+    }
+  }, [filteredQuestions, surveyConfig.isConfigComplete, isPartnerSurvey]);
   
   // Pobieranie pytań partnera z bazy danych jeśli to ankieta partnera
   useEffect(() => {
@@ -216,12 +250,14 @@ export const SurveyProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     setAnswers({});
     setCurrentQuestionIndex(0);
     setIsInConfigurationMode(true);
+    setSavedQuestionIds([]); // NOWE: Resetujemy też zapisane identyfikatory pytań
     
     // Czyszczenie localStorage
     try {
       localStorage.removeItem('survey_config_autosave');
       localStorage.removeItem('survey_answers_autosave');
       localStorage.removeItem('survey_config_completed');
+      localStorage.removeItem('survey_question_ids_autosave'); // NOWE: Usuwamy też zapisane identyfikatory pytań
       console.log('Ankieta zresetowana, localStorage wyczyszczone');
     } catch (e) {
       console.error('Błąd podczas czyszczenia localStorage:', e);
