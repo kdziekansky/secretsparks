@@ -122,9 +122,9 @@ const ReportSection = () => {
           <p className="text-lg mb-8 max-w-2xl">
             Wypełnij ankietę i otrzymaj szczegółowy raport, który pomoże Wam lepiej się zrozumieć i zbliżyć do siebie.
           </p>
-          <Link to="/survey" className="w-full max-w-sm">
+          <Link to="/payment" className="w-full max-w-sm">
             <Button className="btn-primary btn-large w-full text-lg py-6">
-              Wypełnij ankietę
+              Odkryj raport
             </Button>
           </Link>
         </div>
