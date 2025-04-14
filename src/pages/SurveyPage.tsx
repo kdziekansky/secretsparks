@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSurvey } from '@/contexts/SurveyContext';
@@ -41,7 +42,8 @@ const SurveyPage: React.FC = () => {
     answers,
     isLastQuestion,
     currentQuestionIndex,
-    surveyConfig
+    surveyConfig,
+    setIsInConfigurationMode
   } = useSurvey();
   
   const [isPartnerSurvey, setIsPartnerSurvey] = useState<boolean>(!!partnerToken);
@@ -61,7 +63,7 @@ const SurveyPage: React.FC = () => {
       showInstructions,
       answers: Object.keys(answers).length,
       pytania: filteredQuestions.length,
-      currentQuestionIndex // NOWE: Dodajemy informację o bieżącym pytaniu
+      currentQuestionIndex
     });
   }, []);
   
@@ -80,14 +82,14 @@ const SurveyPage: React.FC = () => {
       const savedConfig = localStorage.getItem('survey_config_autosave');
       const savedAnswers = localStorage.getItem('survey_answers_autosave');
       const savedQuestionIds = localStorage.getItem('survey_question_ids_autosave'); 
-      const savedIndex = localStorage.getItem('survey_current_question_index'); // NOWE: Sprawdzamy zapisany indeks pytania
+      const savedIndex = localStorage.getItem('survey_current_question_index');
       const configCompleted = localStorage.getItem('survey_config_completed');
       
       console.log('Sprawdzanie zapisanego stanu:', { 
         savedConfig: !!savedConfig, 
         savedAnswers: !!savedAnswers,
         savedQuestionIds: !!savedQuestionIds,
-        savedIndex: savedIndex ? parseInt(savedIndex, 10) : 0, // NOWE: Logujemy zapisany indeks pytania
+        savedIndex: savedIndex ? parseInt(savedIndex, 10) : 0,
         configCompleted,
         filteredQuestions: filteredQuestions.length
       });
@@ -99,7 +101,7 @@ const SurveyPage: React.FC = () => {
       } else {
         console.log('Znaleziono zapisaną sesję, przywracanie...');
         
-        // NOWE: Dodatkowe sprawdzenie czy mamy pytania
+        // Dodatkowe sprawdzenie czy mamy pytania
         if (filteredQuestions.length === 0 && savedQuestionIds) {
           console.log('Mamy zapisane ID pytań, ale brak pytań w kontekście. Odświeżenie powinno pomóc.');
         }
@@ -134,6 +136,20 @@ const SurveyPage: React.FC = () => {
       };
     }
   }, [isPartnerSurvey, isInConfigurationMode, showInstructions, answers, isLastQuestion]);
+  
+  useEffect(() => {
+    // Sprawdzenie czy konfiguracja jest kompletna, ale nie ma pytań
+    // W takim przypadku, automatycznie wymuszamy powrót do konfiguracji
+    if (!isInConfigurationMode && !showInstructions && filteredQuestions.length === 0 && surveyConfig.isConfigComplete) {
+      console.log('Konfiguracja oznaczona jako kompletna, ale nie znaleziono pytań. Wymuszanie powrotu do konfiguracji.');
+      
+      // Krótkie opóźnienie przed pokazaniem komunikatu
+      setTimeout(() => {
+        toast.error('Nie znaleziono pasujących pytań dla wybranej konfiguracji.');
+        setIsInConfigurationMode(true);
+      }, 500);
+    }
+  }, [filteredQuestions.length, surveyConfig.isConfigComplete, isInConfigurationMode, showInstructions, setIsInConfigurationMode]);
   
   useEffect(() => {
     // Fetch order details if this is a partner survey
@@ -311,16 +327,16 @@ const SurveyPage: React.FC = () => {
   }
   
   // ZMODYFIKOWANE: Jeśli mamy pustą listę pytań, ale konfiguracja jest oznaczona jako zakończona,
-  // to znaczy że mamy problem z danymi konfiguracji
+  // pokazujemy komunikat i przycisk do powrotu do konfiguracji
   if (!isInConfigurationMode && !showInstructions && filteredQuestions.length === 0 && surveyConfig.isConfigComplete) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
         <Toaster position="top-center" />
         <div className="glass-panel w-full max-w-md p-6 text-center">
           <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
-          <h2 className="text-xl font-medium mb-2">Problem z konfiguracją</h2>
+          <h2 className="text-xl font-medium mb-2">Brak pytań dla wybranej konfiguracji</h2>
           <p className="mb-6">
-            Wystąpił problem z konfiguracją ankiety. Nie można utworzyć zestawu pytań dla bieżącej konfiguracji.
+            Nie znaleziono pasujących pytań dla wybranej konfiguracji. Proszę zmodyfikować parametry ankiety.
           </p>
           <Button onClick={handleReturnToConfig} className="flex items-center gap-2">
             <Settings className="w-4 h-4" />

@@ -32,7 +32,7 @@ export const SurveyProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }
   });
   
-  // ZMODYFIKOWANE: Zapamiętujemy pozycję ostatniego pytania
+  // Zapamiętujemy pozycję ostatniego pytania
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(() => {
     try {
       const savedIndex = localStorage.getItem('survey_current_question_index');
@@ -54,7 +54,7 @@ export const SurveyProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }
   });
   
-  // NOWE: Stan przechowujący identyfikatory zapamiętanych pytań
+  // Stan przechowujący identyfikatory zapamiętanych pytań
   const [savedQuestionIds, setSavedQuestionIds] = useState<string[]>(() => {
     try {
       const savedIds = localStorage.getItem('survey_question_ids_autosave');
@@ -103,6 +103,17 @@ export const SurveyProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   const [isPartnerSurvey, setIsPartnerSurvey] = useState<boolean>(false);
   const [selectedQuestionIds, setSelectedQuestionIds] = useState<string[]>([]);
   
+  // ZMODYFIKOWANE: Dodajemy sprawdzenie kompletności konfiguracji
+  // Konfiguracja jest kompletna tylko gdy wszystkie pola są ustawione
+  useEffect(() => {
+    if (surveyConfig.isConfigComplete && 
+        (!surveyConfig.userGender || !surveyConfig.partnerGender || !surveyConfig.gameLevel)) {
+      console.log('Wykryto niekompletną konfigurację oznaczoną jako kompletna, wymuszanie powrotu do konfiguracji');
+      setIsInConfigurationMode(true);
+      toast.error('Konfiguracja jest niekompletna. Uzupełnij wszystkie pola.');
+    }
+  }, [surveyConfig]);
+  
   // Użycie hooka do wyboru pytań na podstawie konfiguracji
   const filteredQuestions = useQuestionSelection(
     questions,
@@ -112,7 +123,7 @@ export const SurveyProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     isPartnerSurvey
   );
   
-  // NOWE: Zapisujemy identyfikatory pytań po ich wygenerowaniu
+  // Zapisujemy identyfikatory pytań po ich wygenerowaniu
   useEffect(() => {
     if (filteredQuestions.length > 0 && surveyConfig.isConfigComplete && !isPartnerSurvey) {
       const newQuestionIds = filteredQuestions.map(q => q.id);
@@ -134,7 +145,7 @@ export const SurveyProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }
   }, [filteredQuestions, surveyConfig.isConfigComplete, isPartnerSurvey]);
   
-  // NOWE: Zapisujemy currentQuestionIndex do localStorage
+  // Zapisujemy currentQuestionIndex do localStorage
   useEffect(() => {
     try {
       localStorage.setItem('survey_current_question_index', currentQuestionIndex.toString());
@@ -143,6 +154,14 @@ export const SurveyProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       console.error('Błąd podczas zapisywania indeksu bieżącego pytania do localStorage:', e);
     }
   }, [currentQuestionIndex]);
+  
+  // ZMODYFIKOWANE: Dodajemy efekt monitorujący brak pytań
+  useEffect(() => {
+    if (surveyConfig.isConfigComplete && !isInConfigurationMode && filteredQuestions.length === 0 && !isPartnerSurvey) {
+      console.log('Wykryto brak pytań po zakończonej konfiguracji. Wymuszanie powrotu do konfiguracji.');
+      setIsInConfigurationMode(true);
+    }
+  }, [filteredQuestions, surveyConfig.isConfigComplete, isInConfigurationMode, isPartnerSurvey]);
   
   // Pobieranie pytań partnera z bazy danych jeśli to ankieta partnera
   useEffect(() => {
@@ -404,6 +423,12 @@ export const SurveyProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   
   // Zakończenie etapu konfiguracji
   const completeConfig = () => {
+    // ZMODYFIKOWANE: Dodajemy sprawdzenie kompletności konfiguracji
+    if (!surveyConfig.userGender || !surveyConfig.partnerGender || !surveyConfig.gameLevel) {
+      toast.error('Konfiguracja jest niekompletna. Uzupełnij wszystkie pola.');
+      return;
+    }
+    
     setSurveyConfig(prev => {
       const newConfig = { ...prev, isConfigComplete: true };
       try {
@@ -462,6 +487,7 @@ export const SurveyProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     setGameLevel,
     completeConfig,
     isInConfigurationMode,
+    setIsInConfigurationMode, // DODANE: eksportujemy metodę do zmiany trybu konfiguracji
     showInstructions,
     completeInstructions,
     isPartnerSurvey,

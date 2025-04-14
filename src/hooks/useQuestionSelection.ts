@@ -1,3 +1,4 @@
+
 import { useMemo } from 'react';
 import { Question, SurveyConfig } from '@/types/survey';
 
@@ -5,10 +6,14 @@ const getRandomizedQuestions = (questions: Question[], config: SurveyConfig, max
   // Sprawdzamy, czy konfiguracja jest kompletna (ma wszystkie pola ustawione)
   const isConfigComplete = config.userGender && config.partnerGender && config.gameLevel;
   
-  // Jeśli konfiguracja nie jest kompletna, ale ankieta jest oznaczona jako skonfigurowana,
-  // musimy użyć bardziej liberalnych zasad filtrowania
   console.log('Filtrowanie pytań dla konfiguracji:', config);
   console.log('Czy konfiguracja jest kompletna:', isConfigComplete);
+  
+  // Jeżeli konfiguracja nie jest kompletna, zwracamy pustą tablicę
+  if (!isConfigComplete) {
+    console.log('Konfiguracja jest niekompletna. Zwracamy pustą listę pytań.');
+    return [];
+  }
   
   const filteredByConfig = questions.filter(question => {
     // Jeśli pytanie nie ma konfiguracji, jest uniwersalne
@@ -22,28 +27,26 @@ const getRandomizedQuestions = (questions: Question[], config: SurveyConfig, max
     // Szczegółowe logowanie dla debugowania
     let isPassing = true;
     
-    // Sprawdzamy płeć użytkownika tylko jeśli oba warunki są spełnione:
-    // 1. Pytanie ma określone wymaganie co do płci
-    // 2. Konfiguracja ma określoną płeć
+    // Sprawdzamy płeć użytkownika
     if (userGender && config.userGender && userGender !== config.userGender) {
       console.log(`Pytanie ${question.id} odrzucone: userGender ${userGender} ≠ ${config.userGender}`);
       isPassing = false;
     }
     
-    // To samo dla płci partnera
+    // Sprawdzamy płeć partnera
     if (partnerGender && config.partnerGender && partnerGender !== config.partnerGender) {
       console.log(`Pytanie ${question.id} odrzucone: partnerGender ${partnerGender} ≠ ${config.partnerGender}`);
       isPassing = false;
     }
     
-    // Dla poziomu gry zawsze sprawdzamy, ponieważ to pole jest wymagane
+    // Sprawdzamy poziom gry
     if (gameLevel && config.gameLevel && !gameLevel.includes(config.gameLevel as any)) {
       console.log(`Pytanie ${question.id} odrzucone: poziom gry ${gameLevel} nie zawiera ${config.gameLevel}`);
       isPassing = false;
     }
     
     if (isPassing) {
-      console.log(`Pytanie ${question.id} zaakceptowane dla konfiguracji ${config.userGender || 'any'}-${config.partnerGender || 'any'} (${config.gameLevel || 'any'})`);
+      console.log(`Pytanie ${question.id} zaakceptowane dla konfiguracji ${config.userGender}-${config.partnerGender} (${config.gameLevel})`);
     }
     
     return isPassing;
@@ -51,12 +54,11 @@ const getRandomizedQuestions = (questions: Question[], config: SurveyConfig, max
 
   console.log(`Po filtrowaniu zostało ${filteredByConfig.length} pytań z ${questions.length}`);
 
-  // Jeśli nie mamy żadnych pytań po filtracji, spróbujmy bardziej liberalne podejście
+  // Jeśli nie mamy żadnych pytań po filtracji, zwracamy pustą tablicę
+  // i pozwolimy, aby system wymusił powrót do konfiguracji
   if (filteredByConfig.length === 0) {
-    console.log('Brak pytań po filtracji. Stosowanie bardziej liberalnych kryteriów...');
-    
-    // Filtrujemy tylko według poziomu gry, ignorując płci
-    return getQuestionsIgnoringGender(questions, config, maxQuestions);
+    console.log('Brak pytań po filtracji. Zwracamy pustą listę pytań.');
+    return [];
   }
 
   // Reszta funkcji bez zmian - grupowanie pytań według pairGroup
@@ -153,57 +155,7 @@ const getRandomizedQuestions = (questions: Question[], config: SurveyConfig, max
   return result.slice(0, maxQuestions);
 };
 
-// NOWA FUNKCJA: Pobiera pytania ignorując płeć, filtrując tylko według poziomu gry
-const getQuestionsIgnoringGender = (questions: Question[], config: SurveyConfig, maxQuestions: number) => {
-  console.log('Filtrowanie pytań tylko według poziomu gry:', config.gameLevel);
-  
-  const filteredByGameLevel = questions.filter(question => {
-    // Jeśli pytanie nie ma konfiguracji forConfig, jest uniwersalne
-    if (!question.forConfig) {
-      console.log(`Pytanie ${question.id} jest uniwersalne (brak forConfig)`);
-      return true;
-    }
-    
-    // Jeśli pytanie nie ma wymagań co do poziomu gry, akceptujemy je
-    if (!question.forConfig.gameLevel) {
-      console.log(`Pytanie ${question.id} akceptowane (brak wymagań co do poziomu gry)`);
-      return true;
-    }
-    
-    // Sprawdzamy tylko poziom gry
-    const isValidGameLevel = !config.gameLevel || 
-                           !question.forConfig.gameLevel || 
-                           question.forConfig.gameLevel.includes(config.gameLevel as any);
-    
-    if (!isValidGameLevel) {
-      console.log(`Pytanie ${question.id} odrzucone: poziom gry ${question.forConfig.gameLevel} nie zawiera ${config.gameLevel}`);
-    } else {
-      console.log(`Pytanie ${question.id} zaakceptowane dla poziomu gry ${config.gameLevel}`);
-    }
-    
-    return isValidGameLevel;
-  });
-  
-  console.log(`Po liberalnym filtrowaniu zostało ${filteredByGameLevel.length} pytań z ${questions.length}`);
-  
-  // Wybierz losowo pytania (maksymalnie maxQuestions)
-  if (filteredByGameLevel.length > 0) {
-    const randomQuestions = filteredByGameLevel
-      .sort(() => 0.5 - Math.random())
-      .slice(0, maxQuestions);
-    
-    console.log(`Wybrano losowo ${randomQuestions.length} pytań ignorując kryteria płci`);
-    return randomQuestions;
-  }
-  
-  // Jeśli nadal nie mamy pytań, zwróćmy losowe pytania bez filtrowania
-  console.log('Brak pytań po liberalnym filtrowaniu. Wybieramy kompletnie losowe pytania.');
-  return questions
-    .sort(() => 0.5 - Math.random())
-    .slice(0, maxQuestions);
-};
-
-// ZMODYFIKOWANA FUNKCJA: Dodany parametr savedQuestionIds
+// ZMODYFIKOWANA FUNKCJA: Usunięte funkcje liberalnego filtrowania
 export const useQuestionSelection = (
   questions: Question[],
   config: SurveyConfig,
@@ -242,14 +194,24 @@ export const useQuestionSelection = (
       return [];
     }
     
-    // Don't generate questions if configuration is not complete
-    // Usuwamy ten warunek, aby generować pytania nawet przy niekompletnej konfiguracji
-    // if (!config.isConfigComplete) return [];
+    // Wymagamy kompletnej konfiguracji, aby wygenerować pytania
+    if (!config.isConfigComplete || !config.userGender || !config.partnerGender) {
+      console.log('Konfiguracja jest niekompletna. Nie generujemy pytań.');
+      return [];
+    }
     
     // For regular user survey without saved question IDs, generate randomized questions
     console.log('Generuję nowy losowy zestaw pytań dla użytkownika');
     const randomizedQuestions = getRandomizedQuestions(questions, config, 20);
     console.log(`Wygenerowano ${randomizedQuestions.length} losowych pytań dla użytkownika`);
+    
+    // Jeśli mimo pełnej konfiguracji nie udało się wybrać żadnych pytań, 
+    // zwracamy pustą tablicę, aby wymusić powrót do konfiguracji
+    if (randomizedQuestions.length === 0) {
+      console.log('Nie znaleziono odpowiednich pytań dla tej konfiguracji.');
+      return [];
+    }
+    
     return randomizedQuestions;
   }, [questions, config, selectedQuestionIds, isPartnerSurvey]);
 };
