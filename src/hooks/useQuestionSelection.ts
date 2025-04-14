@@ -1,4 +1,3 @@
-
 import { useMemo } from 'react';
 import { Question, SurveyConfig } from '@/types/survey';
 
@@ -25,7 +24,7 @@ const getRandomizedQuestions = (questions: Question[], config: SurveyConfig, max
     
     // Sprawdzamy płeć użytkownika tylko jeśli oba warunki są spełnione:
     // 1. Pytanie ma określone wymaganie co do płci
-    // 2. Konfiguracja ma określoną płeć lub wymagamy kompletnej konfiguracji
+    // 2. Konfiguracja ma określoną płeć
     if (userGender && config.userGender && userGender !== config.userGender) {
       console.log(`Pytanie ${question.id} odrzucone: userGender ${userGender} ≠ ${config.userGender}`);
       isPassing = false;
@@ -44,7 +43,7 @@ const getRandomizedQuestions = (questions: Question[], config: SurveyConfig, max
     }
     
     if (isPassing) {
-      console.log(`Pytanie ${question.id} zaakceptowane dla konfiguracji ${config.userGender || 'any'}-${config.partnerGender || 'any'} (${config.gameLevel})`);
+      console.log(`Pytanie ${question.id} zaakceptowane dla konfiguracji ${config.userGender || 'any'}-${config.partnerGender || 'any'} (${config.gameLevel || 'any'})`);
     }
     
     return isPassing;

@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { questions as questionsData } from './questions-data';
 import { Question, SurveyConfig, SurveyContextType, Gender, GameLevel } from '@/types/survey';
@@ -33,7 +32,17 @@ export const SurveyProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }
   });
   
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
+  // ZMODYFIKOWANE: Zapamiętujemy pozycję ostatniego pytania
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(() => {
+    try {
+      const savedIndex = localStorage.getItem('survey_current_question_index');
+      return savedIndex ? parseInt(savedIndex, 10) : 0;
+    } catch (e) {
+      console.error('Błąd podczas odczytu indeksu pytania z localStorage:', e);
+      return 0;
+    }
+  });
+
   const [answers, setAnswers] = useState<Record<string, number>>(() => {
     // Próba załadowania zapisanych odpowiedzi z localStorage
     try {
@@ -124,6 +133,16 @@ export const SurveyProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       }
     }
   }, [filteredQuestions, surveyConfig.isConfigComplete, isPartnerSurvey]);
+  
+  // NOWE: Zapisujemy currentQuestionIndex do localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('survey_current_question_index', currentQuestionIndex.toString());
+      console.log(`Zapisano indeks bieżącego pytania (${currentQuestionIndex}) do localStorage`);
+    } catch (e) {
+      console.error('Błąd podczas zapisywania indeksu bieżącego pytania do localStorage:', e);
+    }
+  }, [currentQuestionIndex]);
   
   // Pobieranie pytań partnera z bazy danych jeśli to ankieta partnera
   useEffect(() => {
@@ -250,14 +269,15 @@ export const SurveyProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     setAnswers({});
     setCurrentQuestionIndex(0);
     setIsInConfigurationMode(true);
-    setSavedQuestionIds([]); // NOWE: Resetujemy też zapisane identyfikatory pytań
+    setSavedQuestionIds([]);
     
     // Czyszczenie localStorage
     try {
       localStorage.removeItem('survey_config_autosave');
       localStorage.removeItem('survey_answers_autosave');
       localStorage.removeItem('survey_config_completed');
-      localStorage.removeItem('survey_question_ids_autosave'); // NOWE: Usuwamy też zapisane identyfikatory pytań
+      localStorage.removeItem('survey_question_ids_autosave');
+      localStorage.removeItem('survey_current_question_index'); // NOWE: Usuwamy też zapisany indeks pytania
       console.log('Ankieta zresetowana, localStorage wyczyszczone');
     } catch (e) {
       console.error('Błąd podczas czyszczenia localStorage:', e);

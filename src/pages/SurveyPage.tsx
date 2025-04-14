@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSurvey } from '@/contexts/SurveyContext';
@@ -61,7 +60,8 @@ const SurveyPage: React.FC = () => {
       isInConfigurationMode,
       showInstructions,
       answers: Object.keys(answers).length,
-      pytania: filteredQuestions.length // NOWE: logujemy liczbę pytań
+      pytania: filteredQuestions.length,
+      currentQuestionIndex // NOWE: Dodajemy informację o bieżącym pytaniu
     });
   }, []);
   
@@ -79,15 +79,17 @@ const SurveyPage: React.FC = () => {
       // Sprawdzenie, czy mamy zapisaną sesję
       const savedConfig = localStorage.getItem('survey_config_autosave');
       const savedAnswers = localStorage.getItem('survey_answers_autosave');
-      const savedQuestionIds = localStorage.getItem('survey_question_ids_autosave'); // NOWE: Sprawdzamy też zapisane ID pytań
+      const savedQuestionIds = localStorage.getItem('survey_question_ids_autosave'); 
+      const savedIndex = localStorage.getItem('survey_current_question_index'); // NOWE: Sprawdzamy zapisany indeks pytania
       const configCompleted = localStorage.getItem('survey_config_completed');
       
       console.log('Sprawdzanie zapisanego stanu:', { 
         savedConfig: !!savedConfig, 
         savedAnswers: !!savedAnswers,
-        savedQuestionIds: !!savedQuestionIds, // NOWE: Logujemy czy mamy zapisane ID pytań
+        savedQuestionIds: !!savedQuestionIds,
+        savedIndex: savedIndex ? parseInt(savedIndex, 10) : 0, // NOWE: Logujemy zapisany indeks pytania
         configCompleted,
-        filteredQuestions: filteredQuestions.length // NOWE: Logujemy liczbę pytań
+        filteredQuestions: filteredQuestions.length
       });
       
       // Resetujemy ankietę tylko gdy nie ma zapisanej sesji lub gdy konfiguracja nie została zakończona
