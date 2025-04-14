@@ -6,6 +6,7 @@ import { ArrowRightCircle } from 'lucide-react';
 import { UserFormData } from './types';
 import BenefitsSection from './BenefitsSection';
 import { Shield, CheckCircle2 } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Step1FormProps {
   data: UserFormData;
@@ -26,6 +27,8 @@ const Step1Form: React.FC<Step1FormProps> = ({
   regularPrice,
   currency
 }) => {
+  const isMobile = useIsMobile();
+  
   return (
     <div className="space-y-5 animate-fade-in">
       <div className="mb-6">
@@ -65,17 +68,19 @@ const Step1Form: React.FC<Step1FormProps> = ({
       <BenefitsSection />
       
       <div className="grid grid-cols-2 gap-4 mt-8">
-        <div className="flex items-start gap-2 bg-[#111] p-3 rounded-md">
-          <div className="bg-primary/20 p-2 rounded-full flex-shrink-0">
-            <Shield className="h-5 w-5 text-primary" />
+        {!isMobile && (
+          <div className="flex items-start gap-2 bg-[#111] p-3 rounded-md">
+            <div className="bg-primary/20 p-2 rounded-full flex-shrink-0">
+              <Shield className="h-5 w-5 text-primary" />
+            </div>
+            <div className="text-sm text-gray-300">
+              <p className="font-medium text-white">Bezpieczna płatność</p>
+              <p>SSL & 3D Secure</p>
+            </div>
           </div>
-          <div className="text-sm text-gray-300">
-            <p className="font-medium text-white">Bezpieczna płatność</p>
-            <p>SSL & 3D Secure</p>
-          </div>
-        </div>
+        )}
         
-        <div className="flex items-start gap-2 bg-[#111] p-3 rounded-md">
+        <div className={`flex items-start gap-2 bg-[#111] p-3 rounded-md ${isMobile ? 'col-span-2' : ''}`}>
           <div className="bg-primary/20 p-2 rounded-full flex-shrink-0">
             <CheckCircle2 className="h-5 w-5 text-primary" />
           </div>

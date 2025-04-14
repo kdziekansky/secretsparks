@@ -6,6 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Link } from 'react-router-dom';
 import { PartnerFormData } from './types';
 import { Loader2, ArrowRightCircle, Star } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
+
 interface Step2FormProps {
   data: PartnerFormData;
   onChange: (field: keyof PartnerFormData, value: any) => void;
@@ -14,6 +16,7 @@ interface Step2FormProps {
   isValid: boolean;
   isProcessing: boolean;
 }
+
 const Step2Form: React.FC<Step2FormProps> = ({
   data,
   onChange,
@@ -22,6 +25,8 @@ const Step2Form: React.FC<Step2FormProps> = ({
   isValid,
   isProcessing
 }) => {
+  const isMobile = useIsMobile();
+  
   return <div className="space-y-5 animate-fade-in">
       <div className="mb-6">
         <h1 className="text-3xl sm:text-4xl font-bold mb-3 text-white flex items-center">
@@ -36,7 +41,7 @@ const Step2Form: React.FC<Step2FormProps> = ({
       
       {/* Opinie klientów */}
       <div className="space-y-4 mt-4">
-        <h3 className="text-lg font-medium text-white">Co mówią inni:</h3>
+        <h3 className="text-lg font-medium text-white text-left">Co mówią inni:</h3>
         
         <div className="bg-[#111] p-4 rounded-lg">
           <div className="flex items-center gap-2 mb-2">
@@ -80,11 +85,12 @@ const Step2Form: React.FC<Step2FormProps> = ({
               <Loader2 className="h-5 w-5 animate-spin" />
               Przetwarzanie...
             </> : <>
-              <span>Przejdź do podsumowania</span>
+              <span>{isMobile ? "Podsumowanie" : "Przejdź do podsumowania"}</span>
               <ArrowRightCircle className="h-5 w-5" />
             </>}
         </Button>
       </div>
     </div>;
 };
+
 export default Step2Form;

@@ -34,32 +34,34 @@ const PaymentPage: React.FC = () => {
   const renderRightColumn = () => {
     if (formStep === 3) {
       return <div className="space-y-4 px-0 md:px-4">
-        <div className="p-4 space-y-3 bg-transparent">
-          <div className="flex items-center gap-2 mb-2">
-            <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
-            <h2 className="text-lg font-medium text-white">Wnieście swoją relację na nowy poziom</h2>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <ul className="list-disc pl-5 text-gray-300 space-y-1.5 text-sm">
-                <li>Wspólne fascynacje</li>
-                <li>Gotowe scenariusze</li>
-                <li>Konkretne wskazówki</li>
-                <li>Mapa komfortu</li>
-              </ul>
+        {!isMobile && (
+          <div className="p-4 space-y-3 bg-transparent">
+            <div className="flex items-center gap-2 mb-2">
+              <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
+              <h2 className="text-lg font-medium text-white">Wnieście swoją relację na nowy poziom</h2>
             </div>
             
-            <div>
-              <ul className="list-disc pl-5 text-gray-300 space-y-1.5 text-sm">
-                <li>Przewodnik rozmowy</li>
-                <li>Plan gry wstępnej</li>
-                <li>Pomysł na wieczór</li>
-                <li>Waszą zgodność</li>
-              </ul>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <ul className="list-disc pl-5 text-gray-300 space-y-1.5 text-sm">
+                  <li>Wspólne fascynacje</li>
+                  <li>Gotowe scenariusze</li>
+                  <li>Konkretne wskazówki</li>
+                  <li>Mapa komfortu</li>
+                </ul>
+              </div>
+              
+              <div>
+                <ul className="list-disc pl-5 text-gray-300 space-y-1.5 text-sm">
+                  <li>Przewodnik rozmowy</li>
+                  <li>Plan gry wstępnej</li>
+                  <li>Pomysł na wieczór</li>
+                  <li>Waszą zgodność</li>
+                </ul>
+              </div>
             </div>
           </div>
-        </div>
+        )}
         
         <div>
           <Testimonials />

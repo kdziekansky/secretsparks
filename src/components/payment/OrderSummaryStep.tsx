@@ -118,7 +118,7 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
         
         <Button 
           type="submit" 
-          disabled={isProcessing} 
+          disabled={isProcessing || !termsAccepted} 
           onClick={handleSubmit} 
           className="bg-primary hover:bg-primary/90 text-white flex items-center justify-center gap-1 sm:gap-2 w-full text-xs sm:text-sm py-2.5 h-auto"
         >
