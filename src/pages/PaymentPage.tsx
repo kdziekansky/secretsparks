@@ -33,6 +33,7 @@ const PaymentPage: React.FC = () => {
 
   const renderRightColumn = () => {
     if (formStep === 3) {
+      // Ukryj testimoniale na urządzeniach mobilnych
       return <div className="space-y-4 px-0 md:px-4">
         {!isMobile && (
           <div className="p-4 space-y-3 bg-transparent">
@@ -63,9 +64,12 @@ const PaymentPage: React.FC = () => {
           </div>
         )}
         
-        <div>
-          <Testimonials />
-        </div>
+        {/* Ukryj testimoniale na urządzeniach mobilnych */}
+        {!isMobile && (
+          <div>
+            <Testimonials />
+          </div>
+        )}
       </div>;
     }
     return <EmailPreview partnerName={formData.partnerName} partnerEmail={formData.partnerEmail} userName={formData.userName} />;
