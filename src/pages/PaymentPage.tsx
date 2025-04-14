@@ -275,8 +275,8 @@ const PaymentPage: React.FC = () => {
                     <CheckCircle2 className="h-5 w-5 text-primary" />
                   </div>
                   <div className="text-sm text-gray-300">
-                    <p className="font-medium text-white">Setki par</p>
-                    <p>już skorzystało</p>
+                    <p className="font-medium text-white">Setki zadowolonych par</p>
+                    <p>już poznało treść raportu</p>
                   </div>
                 </div>
               </div>
