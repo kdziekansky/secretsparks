@@ -3,18 +3,15 @@ import React from 'react';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import { Separator } from '@/components/ui/separator';
-import { useTranslation } from 'react-i18next';
 
 const ContactPage = () => {
-  const { t } = useTranslation();
-  
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#05050a] to-[#121217]">
       <Header />
       
       <div className="flex-grow container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto space-y-8">
-          <h1 className="text-4xl font-bold tracking-tight text-center">{t('footer.links.contact')}</h1>
+          <h1 className="text-4xl font-bold tracking-tight text-center">Kontakt</h1>
           <Separator className="my-8" />
           
           <div className="space-y-8">

@@ -2,11 +2,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 
 const Footer = () => {
-  const { t } = useTranslation();
-  
   return (
     <footer className="py-16 border-t border-border/40" style={{ backgroundColor: "#08080C" }}>
       <div className="section-container">
@@ -27,20 +24,20 @@ const Footer = () => {
           <div className="text-left border-r border-border/10 pr-8">
             <h3 className="text-sm font-semibold uppercase text-muted-foreground mb-6">Nasza misja</h3>
             <p className="text-2xl font-serif mb-6">
-              {t('footer.mission')}
+              Naszym celem jest zwiększenie Waszej satysfakcji
             </p>
           </div>
           
           <div className="text-left">
-            <h3 className="text-sm font-semibold uppercase text-muted-foreground mb-6">{t('footer.newsletter.title')}</h3>
+            <h3 className="text-sm font-semibold uppercase text-muted-foreground mb-6">Zapisz się</h3>
             <p className="text-muted-foreground mb-6">
-              {t('footer.newsletter.description')}
+              Zapisz się, otrzymuj porady za darmo oraz dowiedz się o naszych promocjach jako pierwszy.
             </p>
             
             <div className="flex">
               <input 
                 type="email" 
-                placeholder={t('footer.newsletter.placeholder')}
+                placeholder="Wpisz swój e-mail" 
                 className="rounded-l-full border border-border px-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-card"
               />
               <button className="rounded-r-full bg-primary text-primary-foreground px-5 py-3 hover:bg-primary/80">
@@ -52,17 +49,17 @@ const Footer = () => {
         
         <div className="mt-12 pt-8 border-t border-border/40 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-sm text-muted-foreground">
-            {t('footer.copyright')}
+            © 2025 Secret Sparks. Wszelkie prawa zastrzeżone.
           </div>
           <div className="flex gap-6">
             <Link to="/polityka-prywatnosci" className="text-sm text-muted-foreground hover:text-primary">
-              {t('footer.links.privacy')}
+              Polityka prywatności
             </Link>
             <Link to="/regulamin" className="text-sm text-muted-foreground hover:text-primary">
-              {t('footer.links.terms')}
+              Warunki korzystania
             </Link>
             <Link to="/kontakt" className="text-sm text-muted-foreground hover:text-primary">
-              {t('footer.links.contact')}
+              Kontakt
             </Link>
           </div>
         </div>
