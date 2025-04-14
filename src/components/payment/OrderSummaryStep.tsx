@@ -82,11 +82,11 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
         </div>
       </div>
 
-      <div className="mb-6 p-4 border border-green-600/30 bg-green-600/10 rounded-lg">
-        <div className="flex items-start gap-3">
-          <CheckCircle2 className="h-6 w-6 text-green-500 flex-shrink-0 mt-1" />
+      <div className="mb-4 p-3 border border-green-600/20 bg-green-600/10 rounded-lg">
+        <div className="flex items-start gap-2">
+          <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0 mt-1" />
           <div>
-            <h3 className="font-medium text-green-400 text-lg mb-1">100% satysfakcji lub zwrot pieniędzy</h3>
+            <h3 className="font-medium text-green-400 text-base mb-1">100% satysfakcji lub zwrot pieniędzy</h3>
           </div>
         </div>
       </div>
