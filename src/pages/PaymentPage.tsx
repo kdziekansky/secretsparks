@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { usePaymentForm } from '@/hooks/usePaymentForm';
@@ -14,11 +13,9 @@ import Testimonials from '@/components/payment/Testimonials';
 const PRODUCT_PRICE = 29;
 const REGULAR_PRICE = 39; // Dodana regularna cena dla promocji
 const CURRENCY = 'zł';
-
 const PaymentPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get('orderId');
-
   const {
     formData,
     formStep,
@@ -29,12 +26,10 @@ const PaymentPage: React.FC = () => {
     handlePrevStep,
     handleSubmit
   } = usePaymentForm(orderId);
-
   const renderRightColumn = () => {
     if (formStep === 3) {
-      return (
-        <div className="space-y-6">
-          <div className="bg-[#111] border border-[#333] rounded-md p-5 space-y-4">
+      return <div className="space-y-6">
+          <div className="border border-[#333] rounded-md p-5 space-y-4 bg-transparent">
             <div className="flex items-center gap-2 mb-4">
               <CheckCircle2 className="h-6 w-6 text-primary" />
               <h2 className="text-xl font-medium text-white">Co zawiera raport:</h2>
@@ -48,31 +43,18 @@ const PaymentPage: React.FC = () => {
               <li>Przewodnik rozmowy</li>
             </ul>
             
-            <div className="pt-4 border-t border-[#333] mt-4">
-              <div className="flex justify-between items-center">
-                <p className="text-white font-medium">Wartość raportu:</p>
-                <p className="text-xl font-bold text-primary">{PRODUCT_PRICE} {CURRENCY}</p>
-              </div>
-            </div>
+            
           </div>
           
           <div>
-            <h3 className="text-lg font-medium text-white mb-4">Co mówią inni:</h3>
+            
             <Testimonials />
           </div>
-        </div>
-      );
+        </div>;
     }
-    
-    return <EmailPreview
-      partnerName={formData.partnerName}
-      partnerEmail={formData.partnerEmail}
-      userName={formData.userName}
-    />;
+    return <EmailPreview partnerName={formData.partnerName} partnerEmail={formData.partnerEmail} userName={formData.userName} />;
   };
-
-  return (
-    <div className="min-h-screen bg-[#05050a] flex flex-col items-center justify-start">
+  return <div className="min-h-screen bg-[#05050a] flex flex-col items-center justify-start">
       <div className="container mx-auto py-12 px-4 w-full max-w-7xl">
         {/* Logo */}
         <div className="flex justify-center mb-8">
@@ -87,53 +69,24 @@ const PaymentPage: React.FC = () => {
             {/* Form Section */}
             <div className="w-full lg:w-1/2">
               <form onSubmit={handleSubmit} className="space-y-5">
-                {formStep === 1 && (
-                  <Step1Form 
-                    data={{
-                      userName: formData.userName,
-                      userEmail: formData.userEmail
-                    }}
-                    onChange={handleUserFormChange}
-                    onSubmit={handleSubmit}
-                    isValid={formValid}
-                    productPrice={PRODUCT_PRICE}
-                    regularPrice={REGULAR_PRICE}
-                    currency={CURRENCY}
-                  />
-                )}
+                {formStep === 1 && <Step1Form data={{
+                userName: formData.userName,
+                userEmail: formData.userEmail
+              }} onChange={handleUserFormChange} onSubmit={handleSubmit} isValid={formValid} productPrice={PRODUCT_PRICE} regularPrice={REGULAR_PRICE} currency={CURRENCY} />}
 
-                {formStep === 2 && (
-                  <Step2Form 
-                    data={{
-                      partnerName: formData.partnerName,
-                      partnerEmail: formData.partnerEmail,
-                      giftWrap: formData.giftWrap,
-                      ageConfirmed: formData.ageConfirmed
-                    }}
-                    onChange={handlePartnerFormChange}
-                    onPrevStep={handlePrevStep}
-                    onSubmit={handleSubmit}
-                    isValid={formValid}
-                    isProcessing={isProcessing}
-                  />
-                )}
+                {formStep === 2 && <Step2Form data={{
+                partnerName: formData.partnerName,
+                partnerEmail: formData.partnerEmail,
+                giftWrap: formData.giftWrap,
+                ageConfirmed: formData.ageConfirmed
+              }} onChange={handlePartnerFormChange} onPrevStep={handlePrevStep} onSubmit={handleSubmit} isValid={formValid} isProcessing={isProcessing} />}
                 
-                {formStep === 3 && (
-                  <OrderSummaryStep 
-                    userData={{
-                      userName: formData.userName,
-                      userEmail: formData.userEmail,
-                      partnerName: formData.partnerName,
-                      partnerEmail: formData.partnerEmail
-                    }}
-                    onPrevStep={handlePrevStep}
-                    onSubmit={handleSubmit}
-                    isProcessing={isProcessing}
-                    productPrice={PRODUCT_PRICE}
-                    regularPrice={REGULAR_PRICE}
-                    currency={CURRENCY}
-                  />
-                )}
+                {formStep === 3 && <OrderSummaryStep userData={{
+                userName: formData.userName,
+                userEmail: formData.userEmail,
+                partnerName: formData.partnerName,
+                partnerEmail: formData.partnerEmail
+              }} onPrevStep={handlePrevStep} onSubmit={handleSubmit} isProcessing={isProcessing} productPrice={PRODUCT_PRICE} regularPrice={REGULAR_PRICE} currency={CURRENCY} />}
               </form>
             </div>
             
@@ -144,8 +97,6 @@ const PaymentPage: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default PaymentPage;

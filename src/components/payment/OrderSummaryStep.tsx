@@ -1,11 +1,9 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Loader2, ArrowRightCircle, CheckCircle2, FileText, Shield } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Link } from 'react-router-dom';
-
 interface OrderSummaryStepProps {
   userData: {
     userName: string;
@@ -20,7 +18,6 @@ interface OrderSummaryStepProps {
   regularPrice: number;
   currency: string;
 }
-
 const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
   userData,
   onPrevStep,
@@ -31,7 +28,6 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
   currency
 }) => {
   const [termsAccepted, setTermsAccepted] = useState(false);
-  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!termsAccepted) {
@@ -40,9 +36,7 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
     }
     onSubmit(e);
   };
-  
-  return (
-    <div className="space-y-5 animate-fade-in">
+  return <div className="space-y-5 animate-fade-in">
       <div className="mb-6">
         <h1 className="text-3xl sm:text-4xl font-bold mb-3 text-white flex items-center">
           Podsumowanie <span className="text-red-500 ml-2">❤️</span>
@@ -99,12 +93,7 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
       
       {/* Checkbox do akceptacji regulaminu */}
       <div className="flex items-center gap-3 pt-3 mb-4">
-        <Checkbox 
-          id="ageConfirmation" 
-          checked={termsAccepted} 
-          onCheckedChange={checked => setTermsAccepted(!!checked)} 
-          className="h-4 w-4 border-white/40" 
-        />
+        <Checkbox id="ageConfirmation" checked={termsAccepted} onCheckedChange={checked => setTermsAccepted(!!checked)} className="h-4 w-4 border-white/40" />
         <Label htmlFor="ageConfirmation" className="text-gray-300 text-sm cursor-pointer">
           Grając, akceptujesz przyjazny <Link to="/regulamin" className="text-primary hover:underline">Regulamin</Link> i <Link to="/polityka-prywatnosci" className="text-primary hover:underline">Politykę Prywatności</Link>, która gwarantuje bezpieczeństwo Waszych danych. Usuwamy je po 7 dniach.
         </Label>
@@ -116,29 +105,18 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
         </Button>
         
         <div className="flex flex-col items-end">
-          <Button 
-            type="submit" 
-            disabled={isProcessing} 
-            onClick={handleSubmit} 
-            className="bg-primary hover:bg-primary/90 text-white flex items-center justify-center gap-2 w-full"
-          >
-            {isProcessing ? (
-              <>
+          <Button type="submit" disabled={isProcessing} onClick={handleSubmit} className="bg-primary hover:bg-primary/90 text-white flex items-center justify-center gap-2 w-full">
+            {isProcessing ? <>
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                 Przetwarzanie...
-              </>
-            ) : (
-              <>
-                <span>Odkryj wasze pragnienia</span>
+              </> : <>
+                <span>Odkryj raport</span>
                 <ArrowRightCircle className="h-5 w-5" />
-              </>
-            )}
+              </>}
           </Button>
-          <p className="text-right text-gray-400 text-xs mt-1">Za jedyne {productPrice} {currency}</p>
+          
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default OrderSummaryStep;
