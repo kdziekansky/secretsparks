@@ -72,9 +72,6 @@ const PaymentPage: React.FC = () => {
                     onSubmit={handleSubmit}
                     isValid={formValid}
                     isProcessing={isProcessing}
-                    productPrice={PRODUCT_PRICE}
-                    regularPrice={REGULAR_PRICE}
-                    currency={CURRENCY}
                   />
                 )}
                 

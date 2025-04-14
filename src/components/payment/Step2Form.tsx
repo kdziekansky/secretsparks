@@ -6,7 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Link } from 'react-router-dom';
 import { PartnerFormData } from './types';
-import { CheckCircle2, Loader2, ArrowRightCircle } from 'lucide-react';
+import { Loader2, ArrowRightCircle } from 'lucide-react';
 
 interface Step2FormProps {
   data: PartnerFormData;
@@ -33,15 +33,6 @@ const Step2Form: React.FC<Step2FormProps> = ({
         <p className="text-gray-300 mb-3">Czas zaprosić swoją partnerkę/-ra. Nawet on/ona nie pozna Twoich odpowiedzi. Otrzymacie spersonalizowany raport</p>
       </div>
 
-      <div className="mb-6 p-4 border border-green-600/30 bg-green-600/10 rounded-lg">
-        <div className="flex items-start gap-3">
-          <CheckCircle2 className="h-6 w-6 text-green-500 flex-shrink-0 mt-1" />
-          <div>
-            <h3 className="font-medium text-green-400 text-lg mb-1">100% satysfakcji lub zwrot pieniędzy</h3>
-          </div>
-        </div>
-      </div>
-
       <Input placeholder="Imię Twojej partnerki/partnera" value={data.partnerName} onChange={e => onChange('partnerName', e.target.value)} className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500" autoFocus />
       
       <Input placeholder="E-mail partnerki/partnera (tam wyślemy zaproszenie)" type="email" value={data.partnerEmail} onChange={e => onChange('partnerEmail', e.target.value)} className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500" />
@@ -58,20 +49,20 @@ const Step2Form: React.FC<Step2FormProps> = ({
           Wstecz
         </Button>
         
-        <Button type="submit" disabled={isProcessing || !isValid} onClick={onSubmit} className="bg-primary hover:bg-primary/90 text-white flex items-center justify-center gap-2">
-          {isProcessing ? <>
-              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              Przetwarzanie...
-            </> : <>
-              <span>Przejdź do podsumowania</span>
-              <ArrowRightCircle className="h-5 w-5" />
-            </>}
-        </Button>
+        <div className="flex flex-col items-end">
+          <Button type="submit" disabled={isProcessing || !isValid} onClick={onSubmit} className="bg-primary hover:bg-primary/90 text-white flex items-center justify-center gap-2 w-full">
+            {isProcessing ? <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Przetwarzanie...
+              </> : <>
+                <span>Odkryj wasze pragnienia</span>
+                <ArrowRightCircle className="h-5 w-5" />
+              </>}
+          </Button>
+          <span className="text-primary font-medium text-sm mt-1">tylko 29 zł</span>
+        </div>
       </div>
-      
-      <p className="text-center text-sm text-gray-500 mt-2">
-        Płatność jest zabezpieczona szyfrowaniem SSL
-      </p>
     </div>;
 };
+
 export default Step2Form;

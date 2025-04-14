@@ -1,9 +1,12 @@
+
 import React from 'react';
+
 interface PromotionBadgeProps {
   regularPrice: number;
   currentPrice: number;
   currency: string;
 }
+
 const PromotionBadge: React.FC<PromotionBadgeProps> = ({
   regularPrice,
   currentPrice,
@@ -11,6 +14,7 @@ const PromotionBadge: React.FC<PromotionBadgeProps> = ({
 }) => {
   // Oblicz procent zniżki
   const discount = Math.round((regularPrice - currentPrice) / regularPrice * 100);
-  return;
+  return null;
 };
+
 export default PromotionBadge;

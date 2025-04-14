@@ -1,8 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Loader2, ArrowRightCircle, CheckCircle2, FileText, Check } from 'lucide-react';
-import PromotionBadge from './PromotionBadge';
+import { Loader2, ArrowRightCircle, CheckCircle2, FileText, Check, Star } from 'lucide-react';
 
 interface OrderSummaryStepProps {
   userData: {
@@ -38,8 +37,6 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
           Sprawdź poprawność danych przed przejściem do płatności
         </p>
       </div>
-      
-      <PromotionBadge regularPrice={regularPrice} currentPrice={productPrice} currency={currency} />
 
       <div className="bg-[#111] border border-[#333] rounded-md p-5 space-y-4">
         <div className="flex items-center gap-2 mb-4">
@@ -94,6 +91,76 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
           <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
           <p className="text-gray-300 text-sm">Twój partner/ka otrzyma link do ankiety na podany adres email</p>
         </div>
+        
+        <div className="flex items-start gap-3">
+          <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+          <p className="text-gray-300 text-sm">Płatność jest zabezpieczona szyfrowaniem SSL</p>
+        </div>
+      </div>
+      
+      {/* Testimonials */}
+      <div className="space-y-4 mb-6">
+        <h3 className="text-lg font-medium text-white">Co mówią inni:</h3>
+        
+        <div className="bg-[#111] p-4 rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white text-xs">KM</div>
+            <div>
+              <p className="text-white text-sm font-medium">Karolina i Michał</p>
+              <div className="flex items-center">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                ))}
+              </div>
+            </div>
+          </div>
+          <p className="text-gray-300 text-sm italic">"To było zaskakujące doświadczenie. Dowiedzieliśmy się o sobie rzeczy, o które nigdy byśmy się nie zapytali. Polecamy!"</p>
+        </div>
+        
+        <div className="bg-[#111] p-4 rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white text-xs">AP</div>
+            <div>
+              <p className="text-white text-sm font-medium">Anna i Piotr</p>
+              <div className="flex items-center">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                ))}
+              </div>
+            </div>
+          </div>
+          <p className="text-gray-300 text-sm italic">"Świetne urozmaicenie, bez skrępowania wnieśliśmy nowości do sypialni. Większość nowości mamy już zaplanowane"</p>
+        </div>
+        
+        <div className="bg-[#111] p-4 rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white text-xs">MS</div>
+            <div>
+              <p className="text-white text-sm font-medium">Monika i Stefan</p>
+              <div className="flex items-center">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                ))}
+              </div>
+            </div>
+          </div>
+          <p className="text-gray-300 text-sm italic">"Nigdy nie myślałam, że może być tak ciekawie! Dowiedziałam się wielu rzeczy o moim partnerze, które zmieniły nasze życie intymne na lepsze."</p>
+        </div>
+        
+        <div className="bg-[#111] p-4 rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white text-xs">JT</div>
+            <div>
+              <p className="text-white text-sm font-medium">Joanna i Tomasz</p>
+              <div className="flex items-center">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                ))}
+              </div>
+            </div>
+          </div>
+          <p className="text-gray-300 text-sm italic">"Ankieta pomogła nam przełamać barierę wstydu i zacząć rozmawiać o naszych pragnieniach. Polecam każdej parze, która chce wnieść świeżość do związku."</p>
+        </div>
       </div>
       
       <div className="grid grid-cols-2 gap-4">
@@ -101,20 +168,19 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
           Wstecz
         </Button>
         
-        <Button type="submit" disabled={isProcessing} onClick={onSubmit} className="bg-primary hover:bg-primary/90 text-white flex items-center justify-center gap-2">
-          {isProcessing ? <>
-              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              Przetwarzanie...
-            </> : <>
-              <span>Zapłać {productPrice} {currency}</span>
-              <ArrowRightCircle className="h-5 w-5" />
-            </>}
-        </Button>
+        <div className="flex flex-col items-end">
+          <Button type="submit" disabled={isProcessing} onClick={onSubmit} className="bg-primary hover:bg-primary/90 text-white flex items-center justify-center gap-2 w-full">
+            {isProcessing ? <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Przetwarzanie...
+              </> : <>
+                <span>Odkryj wasze pragnienia</span>
+                <ArrowRightCircle className="h-5 w-5" />
+              </>}
+          </Button>
+          <span className="text-primary font-medium text-sm mt-1">tylko {productPrice} {currency}</span>
+        </div>
       </div>
-      
-      <p className="text-center text-sm text-gray-500 mt-2">
-        Płatność jest zabezpieczona szyfrowaniem SSL
-      </p>
     </div>
   );
 };
