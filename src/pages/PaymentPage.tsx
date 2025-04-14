@@ -13,7 +13,6 @@ import { Gift, Info, Loader2, Shield, CheckCircle2, ArrowRightCircle } from 'luc
 // Fixed product price at 29 zł, gift wrapping is free
 const PRODUCT_PRICE = 29;
 const CURRENCY = 'zł';
-
 const PaymentPage: React.FC = () => {
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
@@ -26,41 +25,43 @@ const PaymentPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get('orderId');
+  const {
+    answers,
+    surveyConfig,
+    filteredQuestions,
+    saveAnswer
+  } = useSurvey();
 
-  const { answers, surveyConfig, filteredQuestions, saveAnswer } = useSurvey();
-  
   // Save survey responses before initiating payment
   const saveResponses = async (orderId: string) => {
     try {
       console.log('Saving user survey responses for order:', orderId);
-      
       if (Object.keys(answers).length === 0) {
         console.warn('No answers to save! Skipping survey response saving.');
         return true;
       }
-      
+
       // Set default values for survey config if they're missing
       const safeConfig = {
         userGender: surveyConfig.userGender || 'unknown',
         partnerGender: surveyConfig.partnerGender || 'unknown',
         gameLevel: surveyConfig.gameLevel || 'discover'
       };
-      
+
       // Save question sequence to orders table
       const questionSequence = filteredQuestions.map(q => q.id);
       console.log('Saving question sequence to orders table:', questionSequence);
-      
-      const { error: sequenceError } = await supabase
-        .from('orders')
-        .update({ user_question_sequence: questionSequence })
-        .eq('id', orderId);
-        
+      const {
+        error: sequenceError
+      } = await supabase.from('orders').update({
+        user_question_sequence: questionSequence
+      }).eq('id', orderId);
       if (sequenceError) {
         console.error('Error saving question sequence:', sequenceError);
       } else {
         console.log('Question sequence saved successfully');
       }
-      
+
       // Prepare responses to save
       const responsesToSave = Object.entries(answers).map(([questionId, answer]) => ({
         order_id: orderId,
@@ -71,13 +72,12 @@ const PaymentPage: React.FC = () => {
         partner_gender: safeConfig.partnerGender,
         game_level: safeConfig.gameLevel
       }));
-      
+
       // Try saving responses
       console.log('Attempting to save responses using INSERT');
-      const { error } = await supabase
-        .from('survey_responses')
-        .insert(responsesToSave);
-        
+      const {
+        error
+      } = await supabase.from('survey_responses').insert(responsesToSave);
       if (error) {
         console.error('Error saving survey responses:', error);
         return false;
@@ -90,73 +90,65 @@ const PaymentPage: React.FC = () => {
       return false;
     }
   };
-  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate required fields
     if (!userName || !userEmail || !partnerName || !partnerEmail) {
       toast.error('Wypełnij wszystkie wymagane pola');
       return;
     }
-    
     if (!ageConfirmed) {
       toast.error('Musisz potwierdzić, że akceptujesz regulamin');
       return;
     }
-    
     setIsProcessing(true);
-    
     try {
       console.log('Creating order in database');
-      
+
       // Sanitize data
       const sanitizedUserName = userName.trim().substring(0, 100);
       const sanitizedUserEmail = userEmail.trim().toLowerCase().substring(0, 150);
       const sanitizedPartnerName = partnerName.trim().substring(0, 100);
       const sanitizedPartnerEmail = partnerEmail.trim().toLowerCase().substring(0, 150);
-      
+
       // Set default survey config values
       const safeConfig = {
         userGender: surveyConfig.userGender || 'male',
         partnerGender: surveyConfig.partnerGender || 'female',
         gameLevel: surveyConfig.gameLevel || 'discover'
       };
-      
+
       // Create order in database
-      const { data: orderData, error: orderError } = await supabase
-        .from('orders')
-        .insert({
-          user_name: sanitizedUserName,
-          user_email: sanitizedUserEmail,
-          partner_name: sanitizedPartnerName,
-          partner_email: sanitizedPartnerEmail,
-          gift_wrap: giftWrap,
-          price: PRODUCT_PRICE,
-          user_gender: safeConfig.userGender,
-          partner_gender: safeConfig.partnerGender,
-          game_level: safeConfig.gameLevel
-        })
-        .select()
-        .single();
-      
+      const {
+        data: orderData,
+        error: orderError
+      } = await supabase.from('orders').insert({
+        user_name: sanitizedUserName,
+        user_email: sanitizedUserEmail,
+        partner_name: sanitizedPartnerName,
+        partner_email: sanitizedPartnerEmail,
+        gift_wrap: giftWrap,
+        price: PRODUCT_PRICE,
+        user_gender: safeConfig.userGender,
+        partner_gender: safeConfig.partnerGender,
+        game_level: safeConfig.gameLevel
+      }).select().single();
       if (orderError) {
         console.error('Order creation error:', orderError);
         throw new Error('Nie udało się utworzyć zamówienia: ' + orderError.message);
       }
-      
       console.log('Order created:', orderData);
-      
+
       // Save survey responses
       const responsesSaved = await saveResponses(orderData.id);
-      
       if (!responsesSaved && Object.keys(answers).length > 0) {
         console.error('Failed to save survey responses');
         toast.error('Wystąpił błąd podczas zapisywania odpowiedzi z ankiety.');
         setIsProcessing(false);
         return;
       }
-      
+
       // Proceed to create payment
       try {
         const paymentData = {
@@ -169,18 +161,13 @@ const PaymentPage: React.FC = () => {
           gift_wrap: giftWrap,
           order_id: orderData.id
         };
-
         console.log('Preparing payment data');
-        
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://bqbgrjpxufblrgcoxpfk.supabase.co';
         const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxYmdyanB4dWZibHJnY294cGZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE1Mzk4NzUsImV4cCI6MjA1NzExNTg3NX0.kSryhe5Z4BILp_ss5LpSxanGSvx4HZzZtVzYia4bgik";
-        
         const requestPayload = {
           data: paymentData
         };
-        
         console.log('Sending request to create-payment endpoint');
-        
         const response = await fetch(`${supabaseUrl}/functions/v1/create-payment`, {
           method: 'POST',
           headers: {
@@ -190,11 +177,10 @@ const PaymentPage: React.FC = () => {
           },
           body: JSON.stringify(requestPayload)
         });
-        
+
         // Check response
         const responseText = await response.text();
         console.log('Response received');
-        
         let data;
         try {
           data = JSON.parse(responseText);
@@ -202,33 +188,27 @@ const PaymentPage: React.FC = () => {
           console.error('Error parsing JSON:', jsonError);
           throw new Error(`Nieprawidłowy format odpowiedzi: ${responseText.substring(0, 200)}...`);
         }
-        
         if (!data) {
           throw new Error('Brak danych w odpowiedzi');
         }
-        
         if (data.error) {
           throw new Error(data.error);
         }
-        
         if (!data.url) {
           throw new Error('Brak URL do płatności w odpowiedzi: ' + JSON.stringify(data));
         }
-        
+
         // Update order with payment session ID
         if (data.sessionId) {
-          await supabase
-            .from('orders')
-            .update({ payment_id: data.sessionId })
-            .eq('id', orderData.id);
-            
+          await supabase.from('orders').update({
+            payment_id: data.sessionId
+          }).eq('id', orderData.id);
           console.log('Updated order with payment session ID');
         }
-        
+
         // Redirect to Stripe
         console.log('Redirecting to payment URL');
         window.location.href = data.url;
-        
       } catch (paymentError: any) {
         console.error('Payment creation error:', paymentError);
         toast.error(`Błąd płatności: ${paymentError.message || 'Nieznany błąd'}`);
@@ -240,9 +220,7 @@ const PaymentPage: React.FC = () => {
       setIsProcessing(false);
     }
   };
-
-  return (
-    <div className="min-h-screen bg-[#05050a] flex flex-col items-center justify-start">
+  return <div className="min-h-screen bg-[#05050a] flex flex-col items-center justify-start">
       <div className="container mx-auto py-12 px-4 w-full max-w-7xl">
         {/* Logo */}
         <div className="flex justify-center mb-12">
@@ -304,80 +282,33 @@ const PaymentPage: React.FC = () => {
               </div>
               
               <form onSubmit={handleSubmit} className="space-y-5">
-                <Input 
-                  placeholder="Twoje imię"
-                  value={userName}
-                  onChange={(e) => setUserName(e.target.value)}
-                  className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500"
-                />
+                <Input placeholder="Twoje imię" value={userName} onChange={e => setUserName(e.target.value)} className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500" />
                 
-                <Input 
-                  placeholder="Twój e-mail (tam wyślemy raport)"
-                  type="email"
-                  value={userEmail}
-                  onChange={(e) => setUserEmail(e.target.value)}
-                  className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500"
-                />
+                <Input placeholder="Twój e-mail (tam wyślemy raport)" type="email" value={userEmail} onChange={e => setUserEmail(e.target.value)} className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500" />
                 
-                <Input 
-                  placeholder="Imię Twojej partnerki/partnera"
-                  value={partnerName}
-                  onChange={(e) => setPartnerName(e.target.value)}
-                  className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500"
-                />
+                <Input placeholder="Imię Twojej partnerki/partnera" value={partnerName} onChange={e => setPartnerName(e.target.value)} className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500" />
                 
-                <Input 
-                  placeholder="E-mail partnerki/partnera (tam wyślemy zaproszenie)"
-                  type="email"
-                  value={partnerEmail}
-                  onChange={(e) => setPartnerEmail(e.target.value)}
-                  className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500"
-                />
+                <Input placeholder="E-mail partnerki/partnera (tam wyślemy zaproszenie)" type="email" value={partnerEmail} onChange={e => setPartnerEmail(e.target.value)} className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500" />
                 
                 {/* Gift option */}
-                <div className="flex items-center bg-[#111] border border-[#333] rounded-md p-4 gap-3">
-                  <Checkbox 
-                    id="giftWrap" 
-                    checked={giftWrap}
-                    onCheckedChange={(checked) => setGiftWrap(!!checked)}
-                    className="h-4 w-4 border-white/40"
-                  />
-                  <Gift className="h-5 w-5 text-yellow-500" />
-                  <Label htmlFor="giftWrap" className="text-white cursor-pointer flex-grow">
-                    Zapakuj na prezent (bezpłatnie)
-                  </Label>
-                  <Info className="h-4 w-4 text-gray-400 cursor-help" />
-                </div>
+                
                 
                 {/* Terms and Conditions */}
                 <div className="flex items-center gap-3 pt-3">
-                  <Checkbox 
-                    id="ageConfirmation" 
-                    checked={ageConfirmed}
-                    onCheckedChange={(checked) => setAgeConfirmed(!!checked)}
-                    className="h-4 w-4 border-white/40"
-                  />
+                  <Checkbox id="ageConfirmation" checked={ageConfirmed} onCheckedChange={checked => setAgeConfirmed(!!checked)} className="h-4 w-4 border-white/40" />
                   <Label htmlFor="ageConfirmation" className="text-gray-300 text-sm cursor-pointer">
                     Grając, akceptujesz przyjazny <Link to="/regulamin" className="text-primary hover:underline">Regulamin</Link> i <Link to="/polityka-prywatnosci" className="text-primary hover:underline">Politykę Prywatności</Link>, która gwarantuje bezpieczeństwo Waszych danych. Usuwamy je po 7 dniach.
                   </Label>
                 </div>
                 
-                <Button 
-                  type="submit"
-                  disabled={isProcessing}
-                  className="w-full bg-primary hover:bg-primary/90 text-white py-6 rounded-full text-lg mt-6 flex items-center justify-center gap-2"
-                >
-                  {isProcessing ? (
-                    <>
+                <Button type="submit" disabled={isProcessing} className="w-full bg-primary hover:bg-primary/90 text-white py-6 rounded-full text-lg mt-6 flex items-center justify-center gap-2">
+                  {isProcessing ? <>
                       <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                       Przetwarzanie...
-                    </>
-                  ) : (
-                    <>
+                    </> : <>
                       <span>Zapłać {PRODUCT_PRICE} {CURRENCY}</span>
                       <ArrowRightCircle className="h-5 w-5" />
-                    </>
-                  )}
+                    </>}
                 </Button>
                 
                 <p className="text-center text-sm text-gray-500 mt-2">
@@ -436,8 +367,6 @@ const PaymentPage: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default PaymentPage;
