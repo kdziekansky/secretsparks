@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSurvey } from '@/contexts/SurveyContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -9,10 +8,11 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Link } from 'react-router-dom';
-import { Gift, Info, Loader2, Shield, CheckCircle2, ArrowRightCircle } from 'lucide-react';
+import { Gift, Info, Loader2, Shield, CheckCircle2, ArrowRightCircle, Clock } from 'lucide-react';
 
 // Fixed product price at 29 zł, gift wrapping is free
 const PRODUCT_PRICE = 29;
+const REGULAR_PRICE = 39; // Dodana regularna cena dla promocji
 const CURRENCY = 'zł';
 const PaymentPage: React.FC = () => {
   const [userName, setUserName] = useState('');
@@ -22,7 +22,10 @@ const PaymentPage: React.FC = () => {
   const [giftWrap, setGiftWrap] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [ageConfirmed, setAgeConfirmed] = useState(false);
-  // Removed sendNow state as it's no longer needed
+  // Dodajemy stan do przełączania między krokami formularza
+  const [formStep, setFormStep] = useState(1);
+  const [formValid, setFormValid] = useState(false);
+  
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get('orderId');
@@ -32,6 +35,15 @@ const PaymentPage: React.FC = () => {
     filteredQuestions,
     saveAnswer
   } = useSurvey();
+
+  // Walidacja pól formularza
+  useEffect(() => {
+    if (formStep === 1) {
+      setFormValid(!!userName && !!userEmail && userEmail.includes('@'));
+    } else if (formStep === 2) {
+      setFormValid(!!partnerName && !!partnerEmail && partnerEmail.includes('@') && ageConfirmed);
+    }
+  }, [userName, userEmail, partnerName, partnerEmail, ageConfirmed, formStep]);
 
   // Save survey responses before initiating payment
   const saveResponses = async (orderId: string) => {
@@ -91,10 +103,28 @@ const PaymentPage: React.FC = () => {
       return false;
     }
   };
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Jeśli nie jesteśmy w ostatnim kroku, przejdź do następnego
+    if (formStep < 2) {
+      if (formValid) {
+        setFormStep(formStep + 1);
+        return;
+      } else {
+        if (!userName) {
+          toast.error('Podaj swoje imię');
+        } else if (!userEmail) {
+          toast.error('Podaj swój email');
+        } else if (!userEmail.includes('@')) {
+          toast.error('Podaj poprawny adres email');
+        }
+        return;
+      }
+    }
 
-    // Validate required fields
+    // Walidacja dla ostatniego kroku
     if (!userName || !userEmail || !partnerName || !partnerEmail) {
       toast.error('Wypełnij wszystkie wymagane pola');
       return;
@@ -103,6 +133,7 @@ const PaymentPage: React.FC = () => {
       toast.error('Musisz potwierdzić, że akceptujesz regulamin');
       return;
     }
+    
     setIsProcessing(true);
     try {
       console.log('Creating order in database');
@@ -222,7 +253,7 @@ const PaymentPage: React.FC = () => {
     }
   };
   
-  // Dodajemy wizualny komponent kroków płatności
+  // Komponent kroków płatności
   const PaymentSteps = () => {
     return (
       <div className="mb-8 pt-6">
@@ -239,124 +270,289 @@ const PaymentPage: React.FC = () => {
           </div>
           
           <div className="flex flex-col items-center">
-            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold mb-1">
+            <div className={`w-10 h-10 rounded-full ${formStep >= 1 ? 'bg-primary' : 'bg-gray-700'} flex items-center justify-center text-white font-bold mb-1`}>
               2
             </div>
-            <span className="text-xs text-gray-400">Szczegóły</span>
+            <span className="text-xs text-gray-400">Twoje dane</span>
           </div>
           
           <div className="flex-1 h-1 mx-2 bg-gray-700">
-            <div className="h-full bg-primary" style={{width: '0%'}}></div>
+            <div className="h-full bg-primary" style={{width: formStep >= 2 ? '100%' : '0%'}}></div>
           </div>
           
           <div className="flex flex-col items-center">
-            <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-white font-bold mb-1">
+            <div className={`w-10 h-10 rounded-full ${formStep >= 2 ? 'bg-primary' : 'bg-gray-700'} flex items-center justify-center text-white font-bold mb-1`}>
               3
             </div>
-            <span className="text-xs text-gray-400">Płatność</span>
+            <span className="text-xs text-gray-400">{formStep >= 2 ? 'Partner' : 'Płatność'}</span>
           </div>
         </div>
       </div>
     );
   };
   
-  return <div className="min-h-screen bg-[#05050a] flex flex-col items-center justify-start">
+  // Nowy komponent z korzyściami
+  const BenefitsSection = () => {
+    return (
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-white mb-4">Co otrzymasz?</h2>
+        <div className="space-y-3">
+          {[
+            'Personalizowany raport dopasowany do Waszych preferencji',
+            'Odkrycie wspólnych pragnień i fantazji w 10 minut',
+            'Wzmocnienie bliskości i zrozumienia partnera',
+            '100% dyskrecji - tylko Wy zobaczycie wyniki'
+          ].map((benefit, index) => (
+            <div key={index} className="flex items-center gap-3">
+              <div className="h-5 w-5 text-primary">
+                <CheckCircle2 className="h-5 w-5" />
+              </div>
+              <p className="text-gray-200">{benefit}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+  
+  // Element promocji z ograniczonym czasem
+  const PromotionBadge = () => {
+    return (
+      <div className="bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/20 rounded-lg p-3 mb-6 flex items-center gap-3">
+        <Clock className="h-5 w-5 text-primary animate-pulse" />
+        <div>
+          <p className="text-primary font-medium">Oferta ograniczona czasowo</p>
+          <p className="text-sm text-gray-300">Tylko dziś: <span className="line-through text-gray-400">{REGULAR_PRICE} {CURRENCY}</span> <span className="font-bold text-white">{PRODUCT_PRICE} {CURRENCY}</span></p>
+        </div>
+      </div>
+    );
+  };
+
+  // Komponent opinii użytkowników
+  const Testimonials = () => {
+    return (
+      <div className="mt-8 space-y-4">
+        <h3 className="text-lg font-medium text-white">Co mówią inni:</h3>
+        
+        <div className="bg-[#111] p-4 rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white text-xs">KM</div>
+            <div>
+              <p className="text-white text-sm font-medium">Karolina i Michał</p>
+              <div className="flex items-center">
+                {[...Array(5)].map((_, i) => (
+                  <svg key={i} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-yellow-500">
+                    <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
+                  </svg>
+                ))}
+              </div>
+            </div>
+          </div>
+          <p className="text-gray-300 text-sm italic">"To było zaskakujące doświadczenie. Dowiedzieliśmy się o sobie rzeczy, o które nigdy byśmy się nie zapytali. Polecamy!"</p>
+        </div>
+        
+        <div className="bg-[#111] p-4 rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white text-xs">AP</div>
+            <div>
+              <p className="text-white text-sm font-medium">Anna i Piotr</p>
+              <div className="flex items-center">
+                {[...Array(5)].map((_, i) => (
+                  <svg key={i} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-yellow-500">
+                    <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
+                  </svg>
+                ))}
+              </div>
+            </div>
+          </div>
+          <p className="text-gray-300 text-sm italic">"Raport pomógł nam rozpocząć rozmowy, na które wcześniej nie mieliśmy odwagi. Teraz czujemy się bardziej zrozumiani."</p>
+        </div>
+      </div>
+    );
+  };
+  
+  // Krok 1: Dane użytkownika
+  const Step1Form = () => (
+    <div className="space-y-5 animate-fade-in">
+      <div className="mb-6">
+        <h1 className="text-3xl sm:text-4xl font-bold mb-3 text-white flex items-center">
+          Twoje dane <span className="text-red-500 ml-2">❤️</span>
+        </h1>
+        <p className="text-gray-300 mb-4">
+          Najpierw potrzebujemy Twoich danych, aby wysłać Ci raport po zakończeniu.
+        </p>
+      </div>
+
+      {/* Sekcja promocji */}
+      <PromotionBadge />
+      
+      <Input 
+        placeholder="Twoje imię" 
+        value={userName} 
+        onChange={e => setUserName(e.target.value)} 
+        className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500" 
+        autoFocus
+      />
+      
+      <Input 
+        placeholder="Twój e-mail (tam wyślemy raport)" 
+        type="email" 
+        value={userEmail} 
+        onChange={e => setUserEmail(e.target.value)} 
+        className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500" 
+      />
+      
+      <Button 
+        onClick={handleSubmit} 
+        disabled={!formValid} 
+        className={`w-full py-6 rounded-full text-lg mt-6 flex items-center justify-center gap-2 ${formValid ? 'bg-primary hover:bg-primary/90' : 'bg-gray-700'}`}
+      >
+        Kontynuuj
+        <ArrowRightCircle className="h-5 w-5" />
+      </Button>
+      
+      {/* Sekcja z korzyściami */}
+      <BenefitsSection />
+      
+      {/* Trust indicators */}
+      <div className="grid grid-cols-2 gap-4 mt-8">
+        <div className="flex items-center gap-2 bg-[#111] p-3 rounded-md">
+          <div className="bg-primary/20 p-2 rounded-full">
+            <Shield className="h-5 w-5 text-primary" />
+          </div>
+          <div className="text-sm text-gray-300">
+            <p className="font-medium text-white">Bezpieczna płatność</p>
+            <p>SSL & 3D Secure</p>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-2 bg-[#111] p-3 rounded-md">
+          <div className="bg-primary/20 p-2 rounded-full">
+            <CheckCircle2 className="h-5 w-5 text-primary" />
+          </div>
+          <div className="text-sm text-gray-300">
+            <p className="font-medium text-white">Ponad 500 par</p>
+            <p>odkryło swoje pragnienia</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+  
+  // Krok 2: Dane partnera
+  const Step2Form = () => (
+    <div className="space-y-5 animate-fade-in">
+      <div className="mb-6">
+        <h1 className="text-3xl sm:text-4xl font-bold mb-3 text-white flex items-center">
+          Dane partnera <span className="text-red-500 ml-2">❤️</span>
+        </h1>
+        <p className="text-gray-300 mb-3">
+          Czas zaprosić swoją partnerkę/-ra. Nie poznacie swoich odpowiedzi, ale odkryjecie siebie na nowo.
+        </p>
+        <p className="text-gray-400 text-sm flex items-center">
+          <span className="mr-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></span>
+          Wszystkie dane są bezpieczne. Zostaną usunięte po 7 dniach
+        </p>
+      </div>
+      
+      {/* Element promocji z ograniczonym czasem */}
+      <PromotionBadge />
+
+      {/* Nowy element - gwarancja satysfakcji */}
+      <div className="mb-6 p-4 border border-green-600/30 bg-green-600/10 rounded-lg">
+        <div className="flex items-start gap-3">
+          <CheckCircle2 className="h-6 w-6 text-green-500 flex-shrink-0 mt-1" />
+          <div>
+            <h3 className="font-medium text-green-400 text-lg mb-1">100% Gwarancja Satysfakcji</h3>
+            <p className="text-gray-300 text-sm">
+              Jeśli raport nie spełni Twoich oczekiwań, zwrócimy Ci pieniądze w ciągu 14 dni. 
+              Bez zbędnych pytań. To my podejmujemy całe ryzyko.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <Input 
+        placeholder="Imię Twojej partnerki/partnera" 
+        value={partnerName} 
+        onChange={e => setPartnerName(e.target.value)} 
+        className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500" 
+        autoFocus
+      />
+      
+      <Input 
+        placeholder="E-mail partnerki/partnera (tam wyślemy zaproszenie)" 
+        type="email" 
+        value={partnerEmail} 
+        onChange={e => setPartnerEmail(e.target.value)} 
+        className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500" 
+      />
+
+      {/* Terms and Conditions */}
+      <div className="flex items-center gap-3 pt-3">
+        <Checkbox 
+          id="ageConfirmation" 
+          checked={ageConfirmed} 
+          onCheckedChange={checked => setAgeConfirmed(!!checked)} 
+          className="h-4 w-4 border-white/40" 
+        />
+        <Label htmlFor="ageConfirmation" className="text-gray-300 text-sm cursor-pointer">
+          Grając, akceptujesz przyjazny <Link to="/regulamin" className="text-primary hover:underline">Regulamin</Link> i <Link to="/polityka-prywatnosci" className="text-primary hover:underline">Politykę Prywatności</Link>, która gwarantuje bezpieczeństwo Waszych danych. Usuwamy je po 7 dniach.
+        </Label>
+      </div>
+      
+      <div className="grid grid-cols-2 gap-4">
+        <Button 
+          onClick={() => setFormStep(1)} 
+          variant="outline" 
+          className="bg-transparent border border-gray-700 text-white hover:bg-gray-800"
+        >
+          Wstecz
+        </Button>
+        
+        <Button 
+          type="submit" 
+          disabled={isProcessing || !formValid} 
+          onClick={handleSubmit}
+          className="bg-primary hover:bg-primary/90 text-white flex items-center justify-center gap-2"
+        >
+          {isProcessing ? <>
+              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              Przetwarzanie...
+            </> : <>
+              <span>Zapłać {PRODUCT_PRICE} {CURRENCY}</span>
+              <ArrowRightCircle className="h-5 w-5" />
+            </>}
+        </Button>
+      </div>
+      
+      <p className="text-center text-sm text-gray-500 mt-2">
+        Płatność jest zabezpieczona szyfrowaniem SSL
+      </p>
+      
+      {/* Opinie użytkowników */}
+      <Testimonials />
+    </div>
+  );
+  
+  return (
+    <div className="min-h-screen bg-[#05050a] flex flex-col items-center justify-start">
       <div className="container mx-auto py-12 px-4 w-full max-w-7xl">
         {/* Logo */}
-        <div className="flex justify-center mb-12">
-          <img src="/lovable-uploads/0537e49e-f4b0-49a8-bedb-41f3876d6f50.png" alt="Secret Sparks Logo" className="h-36" />
+        <div className="flex justify-center mb-8">
+          <img src="/lovable-uploads/0537e49e-f4b0-49a8-bedb-41f3876d6f50.png" alt="Secret Sparks Logo" className="h-28" />
         </div>
         
         <div className="mx-auto max-w-6xl px-4">
-          {/* Dodajemy komponent kroków */}
+          {/* Komponent kroków */}
           <PaymentSteps />
           
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Form Section */}
             <div className="w-full lg:w-1/2">
-              <div className="mb-6">
-                <h1 className="text-3xl sm:text-4xl font-bold mb-3 text-white flex items-center">
-                  To ostatni krok <span className="text-red-500 ml-2">❤️</span>
-                </h1>
-                <p className="text-gray-300 mb-3">
-                  Czas zaprosić swoją partnerkę/-ra. Nie poznacie swoich odpowiedzi, ale odkryjecie siebie na nowo.
-                </p>
-                <p className="text-gray-400 text-sm flex items-center">
-                  <span className="mr-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></span>
-                  Wszystkie dane są bezpieczne. Zostaną usunięte po 7 dniach
-                </p>
-              </div>
-
-              {/* Nowy element - gwarancja satysfakcji */}
-              <div className="mb-6 p-4 border border-green-600/30 bg-green-600/10 rounded-lg">
-                <div className="flex items-start gap-3">
-                  <CheckCircle2 className="h-6 w-6 text-green-500 flex-shrink-0 mt-1" />
-                  <div>
-                    <h3 className="font-medium text-green-400 text-lg mb-1">100% Gwarancja Satysfakcji</h3>
-                    <p className="text-gray-300 text-sm">
-                      Jeśli raport nie spełni Twoich oczekiwań, zwrócimy Ci pieniądze w ciągu 14 dni. 
-                      Bez zbędnych pytań. To my podejmujemy całe ryzyko.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Trust indicators */}
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="flex items-center gap-2 bg-[#111] p-3 rounded-md">
-                  <div className="bg-primary/20 p-2 rounded-full">
-                    <Shield className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="text-sm text-gray-300">
-                    <p className="font-medium text-white">Bezpieczna płatność</p>
-                    <p>SSL & 3D Secure</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-2 bg-[#111] p-3 rounded-md">
-                  <div className="bg-primary/20 p-2 rounded-full">
-                    <CheckCircle2 className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="text-sm text-gray-300">
-                    <p className="font-medium text-white">Setki zadowolonych par</p>
-                    <p>już poznało treść raportu</p>
-                  </div>
-                </div>
-              </div>
-              
               <form onSubmit={handleSubmit} className="space-y-5">
-                <Input placeholder="Twoje imię" value={userName} onChange={e => setUserName(e.target.value)} className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500" />
-                
-                <Input placeholder="Twój e-mail (tam wyślemy raport)" type="email" value={userEmail} onChange={e => setUserEmail(e.target.value)} className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500" />
-                
-                <Input placeholder="Imię Twojej partnerki/partnera" value={partnerName} onChange={e => setPartnerName(e.target.value)} className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500" />
-                
-                <Input placeholder="E-mail partnerki/partnera (tam wyślemy zaproszenie)" type="email" value={partnerEmail} onChange={e => setPartnerEmail(e.target.value)} className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500" />
-                
-                {/* Gift option */}
-                
-                
-                {/* Terms and Conditions */}
-                <div className="flex items-center gap-3 pt-3">
-                  <Checkbox id="ageConfirmation" checked={ageConfirmed} onCheckedChange={checked => setAgeConfirmed(!!checked)} className="h-4 w-4 border-white/40" />
-                  <Label htmlFor="ageConfirmation" className="text-gray-300 text-sm cursor-pointer">
-                    Grając, akceptujesz przyjazny <Link to="/regulamin" className="text-primary hover:underline">Regulamin</Link> i <Link to="/polityka-prywatnosci" className="text-primary hover:underline">Politykę Prywatności</Link>, która gwarantuje bezpieczeństwo Waszych danych. Usuwamy je po 7 dniach.
-                  </Label>
-                </div>
-                
-                <Button type="submit" disabled={isProcessing} className="w-full bg-primary hover:bg-primary/90 text-white py-6 rounded-full text-lg mt-6 flex items-center justify-center gap-2">
-                  {isProcessing ? <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      Przetwarzanie...
-                    </> : <>
-                      <span>Zapłać {PRODUCT_PRICE} {CURRENCY}</span>
-                      <ArrowRightCircle className="h-5 w-5" />
-                    </>}
-                </Button>
-                
-                <p className="text-center text-sm text-gray-500 mt-2">
-                  Płatność jest zabezpieczona szyfrowaniem SSL
-                </p>
+                {formStep === 1 && <Step1Form />}
+                {formStep === 2 && <Step2Form />}
               </form>
             </div>
             
@@ -410,6 +606,8 @@ const PaymentPage: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default PaymentPage;
