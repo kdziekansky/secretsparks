@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 import RatingScale from './RatingScale';
 import { useSurvey } from '@/contexts/SurveyContext';
-import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, Image as ImageIcon, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, Image as ImageIcon, AlertTriangle, RefreshCcw } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from './ui/button';
 
@@ -27,7 +27,8 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     isLastQuestion,
     saveAnswer,
     getOrderId,
-    currentQuestionIndex
+    currentQuestionIndex,
+    resetSurvey
   } = useSurvey();
   
   const [isAnimating, setIsAnimating] = useState(false);
@@ -103,6 +104,13 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
       setShowFullDescription(false);
       setIsAnimating(false);
     }, 300);
+  };
+  
+  const handleReset = () => {
+    if (window.confirm("Czy na pewno chcesz zacząć ankietę od nowa? Wszystkie Twoje odpowiedzi zostaną utracone.")) {
+      resetSurvey();
+      toast.success("Ankieta została zresetowana");
+    }
   };
 
   const handleImageLoad = () => {
@@ -226,13 +234,26 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
         
         {/* Right side - Question and rating */}
         <div className={`${isMobile ? 'w-full' : 'md:w-3/5'} p-4 sm:p-6 md:p-8 flex flex-col`}>
-          <div className="mb-4 sm:mb-6">
-            <h2 className="text-lg sm:text-xl md:text-2xl font-medium mb-1 sm:mb-2">
-              Co o tym myślisz?
-            </h2>
-            <h3 className="text-base sm:text-lg md:text-xl font-bold text-primary">
-              {currentQuestion.text}
-            </h3>
+          <div className="flex justify-between items-start mb-4 sm:mb-6">
+            <div>
+              <h2 className="text-lg sm:text-xl md:text-2xl font-medium mb-1 sm:mb-2">
+                Co o tym myślisz?
+              </h2>
+              <h3 className="text-base sm:text-lg md:text-xl font-bold text-primary">
+                {currentQuestion.text}
+              </h3>
+            </div>
+            
+            {/* Przycisk "Od nowa" */}
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleReset}
+              className="h-auto py-1 px-2 text-xs text-muted-foreground hover:text-destructive"
+            >
+              <RefreshCcw className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+              {isMobile ? "" : "Od nowa"}
+            </Button>
           </div>
           
           {currentQuestion.description && (
