@@ -1,6 +1,4 @@
-
 import React from 'react';
-
 const Testimonials: React.FC = () => {
   return <div className="mt-8 space-y-4">
       <h3 className="text-lg font-medium text-white">Co mówią inni:</h3>
@@ -17,7 +15,7 @@ const Testimonials: React.FC = () => {
             </div>
           </div>
         </div>
-        <p className="text-gray-300 text-sm italic">"To było zaskakujące doświadczenie. Dowiedzieliśmy się o sobie rzeczy, o które nigdy byśmy się nie zapytali. Polecamy!"</p>
+        <p className="text-gray-300 text-sm italic">&quot;Ankieta mogłaby mieć mniej &quot;wyraźne&quot; zdjęcia, ale sam raport oceniam barfdzo pozytywnie. Zaskoczyło mnie, ile rzeczy było dla nas obu OK.&quot;</p>
       </div>
       
       <div className="bg-[#111] p-4 rounded-lg">
@@ -51,5 +49,4 @@ const Testimonials: React.FC = () => {
       </div>
     </div>;
 };
-
 export default Testimonials;
