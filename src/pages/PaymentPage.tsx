@@ -29,7 +29,7 @@ const PaymentPage: React.FC = () => {
   const renderRightColumn = () => {
     if (formStep === 3) {
       return <div className="space-y-6">
-          <div className="border border-[#333] rounded-md p-5 space-y-4 bg-transparent">
+          <div className="border border-[#333] p-5 space-y-4 bg-transparent rounded-none">
             <div className="flex items-center gap-2 mb-4">
               <CheckCircle2 className="h-6 w-6 text-primary" />
               <h2 className="text-xl font-medium text-white">Co zawiera raport:</h2>
