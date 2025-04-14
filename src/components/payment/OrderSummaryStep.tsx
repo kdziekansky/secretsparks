@@ -1,11 +1,9 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Loader2, ArrowRightCircle, CheckCircle2, FileText, Check, Star } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Link } from 'react-router-dom';
-
 interface OrderSummaryStepProps {
   userData: {
     userName: string;
@@ -20,7 +18,6 @@ interface OrderSummaryStepProps {
   regularPrice: number;
   currency: string;
 }
-
 const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
   userData,
   onPrevStep,
@@ -31,7 +28,6 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
   currency
 }) => {
   const [termsAccepted, setTermsAccepted] = useState(false);
-  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!termsAccepted) {
@@ -40,7 +36,6 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
     }
     onSubmit(e);
   };
-
   return <div className="space-y-5 animate-fade-in">
       <div className="mb-6">
         <h1 className="text-3xl sm:text-4xl font-bold mb-3 text-white flex items-center">
@@ -96,29 +91,24 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
         </div>
         
         <div className="flex items-start gap-3">
-          <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-          <p className="text-gray-300 text-sm">Email z raportem zostanie wysłany na Twój adres</p>
+          
+          
         </div>
         
         <div className="flex items-start gap-3">
-          <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-          <p className="text-gray-300 text-sm">Twój partner/ka otrzyma link do ankiety na podany adres email</p>
+          
+          
         </div>
         
         <div className="flex items-start gap-3">
-          <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-          <p className="text-gray-300 text-sm">Gwarantujemy bezpieczeństwo Waszych danych. Usuwamy je po 7 dniach.</p>
+          
+          
         </div>
       </div>
       
       {/* Checkbox do akceptacji regulaminu */}
       <div className="flex items-center gap-3 pt-3 mb-4">
-        <Checkbox 
-          id="ageConfirmation" 
-          checked={termsAccepted} 
-          onCheckedChange={(checked) => setTermsAccepted(!!checked)} 
-          className="h-4 w-4 border-white/40" 
-        />
+        <Checkbox id="ageConfirmation" checked={termsAccepted} onCheckedChange={checked => setTermsAccepted(!!checked)} className="h-4 w-4 border-white/40" />
         <Label htmlFor="ageConfirmation" className="text-gray-300 text-sm cursor-pointer">
           Grając, akceptujesz przyjazny <Link to="/regulamin" className="text-primary hover:underline">Regulamin</Link> i <Link to="/polityka-prywatnosci" className="text-primary hover:underline">Politykę Prywatności</Link>, która gwarantuje bezpieczeństwo Waszych danych. Usuwamy je po 7 dniach.
         </Label>
@@ -126,61 +116,17 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
       
       {/* Testimonials */}
       <div className="space-y-4 mb-6">
-        <h3 className="text-lg font-medium text-white">Co mówią inni:</h3>
+        
         
         {/* Pierwsza nowa opinia */}
-        <div className="bg-[#111] p-4 rounded-lg">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white text-xs">ZT</div>
-            <div>
-              <p className="text-white text-sm font-medium">Zosia i Tomek</p>
-              <div className="flex items-center">
-                {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />)}
-              </div>
-            </div>
-          </div>
-          <p className="text-gray-300 text-sm italic">"To było dokładnie to, czego potrzebowaliśmy po 5 latach małżeństwa. Odkryliśmy siebie na nowo i nauczyliśmy się nowych sposobów wyrażania naszych pragnień."</p>
-        </div>
+        
         
         {/* Druga nowa opinia */}
-        <div className="bg-[#111] p-4 rounded-lg">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white text-xs">BK</div>
-            <div>
-              <p className="text-white text-sm font-medium">Beata i Kacper</p>
-              <div className="flex items-center">
-                {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />)}
-              </div>
-            </div>
-          </div>
-          <p className="text-gray-300 text-sm italic">"Myśleliśmy, że znamy swoje potrzeby, ale ankieta Secret Sparks otworzyła przed nami zupełnie nowy wymiar bliskości. Warto było zainwestować!"</p>
-        </div>
         
-        <div className="bg-[#111] p-4 rounded-lg">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white text-xs">MS</div>
-            <div>
-              <p className="text-white text-sm font-medium">Monika i Stefan</p>
-              <div className="flex items-center">
-                {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />)}
-              </div>
-            </div>
-          </div>
-          <p className="text-gray-300 text-sm italic">"Nigdy nie myślałam, że może być tak ciekawie! Dowiedziałam się wielu rzeczy o moim partnerze, które zmieniły nasze życie intymne na lepsze."</p>
-        </div>
         
-        <div className="bg-[#111] p-4 rounded-lg">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white text-xs">JT</div>
-            <div>
-              <p className="text-white text-sm font-medium">Joanna i Tomasz</p>
-              <div className="flex items-center">
-                {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />)}
-              </div>
-            </div>
-          </div>
-          <p className="text-gray-300 text-sm italic">"Ankieta pomogła nam przełamać barierę wstydu i zacząć rozmawiać o naszych pragnieniach. Polecam każdej parze, która chce wnieść świeżość do związku."</p>
-        </div>
+        
+        
+        
       </div>
       
       <div className="grid grid-cols-2 gap-4">
@@ -203,5 +149,4 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
       </div>
     </div>;
 };
-
 export default OrderSummaryStep;
