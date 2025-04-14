@@ -37,7 +37,10 @@ const SurveyPage: React.FC = () => {
     setGameLevel,
     setOrderId,
     filteredQuestions,
-    resetSurvey
+    resetSurvey,
+    answers,
+    isLastQuestion,
+    currentQuestionIndex
   } = useSurvey();
   
   const [isPartnerSurvey, setIsPartnerSurvey] = useState<boolean>(!!partnerToken);
@@ -53,6 +56,32 @@ const SurveyPage: React.FC = () => {
       resetSurvey();
     }
   }, [resetSurvey, isPartnerSurvey]);
+  
+  // Dodaj ostrzeżenie przed opuszczeniem strony, jeśli użytkownik nie zakończył ankiety
+  // i nie jest na stronie konfiguracji ani instrukcji
+  useEffect(() => {
+    if (isPartnerSurvey || isInConfigurationMode || showInstructions) return;
+    
+    // Jeśli użytkownik rozpoczął ankietę (ma jakieś odpowiedzi), ale nie dotarł do ostatniego pytania
+    const hasStartedSurvey = Object.keys(answers).length > 0;
+    
+    if (hasStartedSurvey && !isLastQuestion) {
+      // Funkcja ostrzegająca przed opuszczeniem strony
+      const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+        // Twój postęp jest automatycznie zapisywany, ale dodajemy standardowe
+        // ostrzeżenie przeglądarki przed opuszczeniem strony
+        const message = 'Czy na pewno chcesz opuścić stronę? Twój postęp został zapisany, ale musisz wrócić do tej strony, aby kontynuować ankietę.';
+        e.returnValue = message;
+        return message;
+      };
+      
+      window.addEventListener('beforeunload', handleBeforeUnload);
+      
+      return () => {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+      };
+    }
+  }, [isPartnerSurvey, isInConfigurationMode, showInstructions, answers, isLastQuestion]);
   
   useEffect(() => {
     // Fetch order details if this is a partner survey

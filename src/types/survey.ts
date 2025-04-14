@@ -25,6 +25,7 @@ export interface Question {
 
 export interface SurveyContextType {
   currentQuestionIndex: number;
+  setCurrentQuestionIndex: (index: number) => void;
   answers: Record<string, number>;
   questions: Question[];
   surveyConfig: SurveyConfig;

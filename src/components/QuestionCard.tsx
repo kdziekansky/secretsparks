@@ -12,6 +12,9 @@ interface QuestionCardProps {
   isPartnerSurvey?: boolean;
 }
 
+const LOCAL_STORAGE_KEY = 'survey_answers_autosave';
+const LOCAL_STORAGE_QUESTION_INDEX_KEY = 'survey_question_index_autosave';
+
 const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -27,7 +30,10 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     isFirstQuestion,
     isLastQuestion,
     saveAnswer,
-    getOrderId
+    getOrderId,
+    setCurrentQuestionIndex,
+    currentQuestionIndex,
+    isPartnerSurvey: contextIsPartnerSurvey
   } = useSurvey();
   
   const [isAnimating, setIsAnimating] = useState(false);
@@ -42,6 +48,15 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ isPartnerSurvey = false }) 
     setImageError(false);
     setImageBlurred(true);
   }, [currentQuestion?.id]);
+  
+  // Autozapis odpowiedzi do localStorage 
+  useEffect(() => {
+    if (!isPartnerSurvey && Object.keys(answers).length > 0) {
+      console.log('Automatyczne zapisywanie odpowiedzi do localStorage:', answers);
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(answers));
+      localStorage.setItem(LOCAL_STORAGE_QUESTION_INDEX_KEY, currentQuestionIndex.toString());
+    }
+  }, [answers, isPartnerSurvey, currentQuestionIndex]);
   
   // Directly check for undefined, not null
   const hasAnswer = currentQuestion && 

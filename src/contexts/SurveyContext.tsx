@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { questionsDatabase } from './questions-data';
@@ -15,6 +15,11 @@ import type {
 } from '@/types/survey';
 
 const SurveyContext = createContext<SurveyContextType | undefined>(undefined);
+
+// Stałe dla localStorage
+const LOCAL_STORAGE_KEY = 'survey_answers_autosave';
+const LOCAL_STORAGE_QUESTION_INDEX_KEY = 'survey_question_index_autosave';
+const LOCAL_STORAGE_CONFIG_KEY = 'survey_config_autosave';
 
 export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [searchParams] = useSearchParams();
@@ -41,6 +46,64 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     selectedQuestionIds,
     !!partnerToken
   );
+
+  // Przywracanie zapisanych danych z localStorage przy pierwszym renderowaniu
+  useEffect(() => {
+    // Nie przywracaj danych dla ankiety partnera
+    if (partnerToken) return;
+    
+    try {
+      // Przywracanie konfiguracji ankiety
+      const savedConfig = localStorage.getItem(LOCAL_STORAGE_CONFIG_KEY);
+      if (savedConfig) {
+        const parsedConfig = JSON.parse(savedConfig) as SurveyConfig;
+        setSurveyConfig(parsedConfig);
+        console.log('Przywrócono konfigurację ankiety z localStorage:', parsedConfig);
+      }
+      
+      // Przywracanie odpowiedzi
+      const savedAnswers = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (savedAnswers) {
+        const parsedAnswers = JSON.parse(savedAnswers) as Record<string, number>;
+        setAnswers(parsedAnswers);
+        console.log('Przywrócono odpowiedzi z localStorage:', parsedAnswers);
+      }
+      
+      // Przywracanie indeksu pytania
+      const savedQuestionIndex = localStorage.getItem(LOCAL_STORAGE_QUESTION_INDEX_KEY);
+      if (savedQuestionIndex) {
+        const parsedIndex = parseInt(savedQuestionIndex);
+        if (!isNaN(parsedIndex)) {
+          setCurrentQuestionIndex(parsedIndex);
+          console.log('Przywrócono indeks pytania z localStorage:', parsedIndex);
+          
+          // Pokaż powiadomienie o przywróceniu sesji
+          if (Object.keys(JSON.parse(savedAnswers || '{}')).length > 0) {
+            setTimeout(() => {
+              toast.info('Przywrócono Twoją poprzednią sesję ankiety', {
+                description: 'Możesz kontynuować od miejsca, w którym przerwałeś/aś',
+                duration: 5000,
+              });
+            }, 1000);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Błąd podczas przywracania danych z localStorage:', error);
+      // W razie błędu, wyczyść localStorage
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+      localStorage.removeItem(LOCAL_STORAGE_QUESTION_INDEX_KEY);
+      localStorage.removeItem(LOCAL_STORAGE_CONFIG_KEY);
+    }
+  }, [partnerToken]);
+
+  // Zapisuj konfigurację ankiety do localStorage przy jej zmianie
+  useEffect(() => {
+    if (!partnerToken && surveyConfig.isConfigComplete) {
+      localStorage.setItem(LOCAL_STORAGE_CONFIG_KEY, JSON.stringify(surveyConfig));
+      console.log('Zapisano konfigurację ankiety do localStorage:', surveyConfig);
+    }
+  }, [surveyConfig, partnerToken]);
 
   const totalQuestions = filteredQuestions.length;
   const isFirstQuestion = currentQuestionIndex === 0;
@@ -195,6 +258,11 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       gameLevel: null,
       isConfigComplete: false
     });
+    
+    // Wyczyść localStorage przy resetowaniu ankiety
+    localStorage.removeItem(LOCAL_STORAGE_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_QUESTION_INDEX_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_CONFIG_KEY);
   }, [partnerToken]);
 
   const setUserGender = useCallback((gender: Gender) => {
@@ -220,6 +288,7 @@ export const SurveyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const value = {
     currentQuestionIndex,
+    setCurrentQuestionIndex,
     answers,
     questions,
     surveyConfig,
