@@ -1,7 +1,7 @@
+
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Link } from 'react-router-dom';
 import { PartnerFormData } from './types';
@@ -33,13 +33,6 @@ const Step2Form: React.FC<Step2FormProps> = ({
       <Input placeholder="Imię Twojej partnerki/partnera" value={data.partnerName} onChange={e => onChange('partnerName', e.target.value)} className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500" autoFocus />
       
       <Input placeholder="E-mail partnerki/partnera (tam wyślemy zaproszenie)" type="email" value={data.partnerEmail} onChange={e => onChange('partnerEmail', e.target.value)} className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500" />
-
-      <div className="flex items-center gap-3 pt-3">
-        <Checkbox id="ageConfirmation" checked={data.ageConfirmed} onCheckedChange={checked => onChange('ageConfirmed', !!checked)} className="h-4 w-4 border-white/40" />
-        <Label htmlFor="ageConfirmation" className="text-gray-300 text-sm cursor-pointer">
-          Grając, akceptujesz przyjazny <Link to="/regulamin" className="text-primary hover:underline">Regulamin</Link> i <Link to="/polityka-prywatnosci" className="text-primary hover:underline">Politykę Prywatności</Link>, która gwarantuje bezpieczeństwo Waszych danych. Usuwamy je po 7 dniach.
-        </Label>
-      </div>
       
       {/* Opinie klientów */}
       <div className="space-y-4 mt-4">

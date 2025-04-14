@@ -23,12 +23,12 @@ export const usePaymentForm = (orderId: string | null) => {
     if (formStep === 1) {
       setFormValid(!!userName && !!userEmail && userEmail.includes('@'));
     } else if (formStep === 2) {
-      setFormValid(!!partnerName && !!partnerEmail && partnerEmail.includes('@') && ageConfirmed);
+      setFormValid(!!partnerName && !!partnerEmail && partnerEmail.includes('@'));
     } else if (formStep === 3) {
       // Krok podsumowania - zawsze ważny, jeśli poprzednie kroki były poprawne
       setFormValid(true);
     }
-  }, [userName, userEmail, partnerName, partnerEmail, ageConfirmed, formStep]);
+  }, [userName, userEmail, partnerName, partnerEmail, formStep]);
 
   // Save survey responses before initiating payment
   const saveResponses = async (orderId: string) => {
@@ -106,8 +106,6 @@ export const usePaymentForm = (orderId: string | null) => {
           toast.error('Podaj email partnera/ki');
         } else if (!partnerEmail.includes('@') && formStep === 2) {
           toast.error('Podaj poprawny adres email partnera/ki');
-        } else if (!ageConfirmed && formStep === 2) {
-          toast.error('Musisz potwierdzić, że akceptujesz regulamin');
         }
       }
     }
@@ -150,10 +148,6 @@ export const usePaymentForm = (orderId: string | null) => {
     // Validation for last step
     if (!userName || !userEmail || !partnerName || !partnerEmail) {
       toast.error('Wypełnij wszystkie wymagane pola');
-      return;
-    }
-    if (!ageConfirmed) {
-      toast.error('Musisz potwierdzić, że akceptujesz regulamin');
       return;
     }
     
