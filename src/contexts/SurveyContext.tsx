@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Questions } from './questions-data';
+import { questions } from './questions-data';
 import { Question, SurveyConfig, SurveyContextType, Gender, GameLevel } from '@/types/survey';
 import { useQuestionSelection } from '@/hooks/useQuestionSelection';
 import { supabase } from '@/integrations/supabase/client';
@@ -53,7 +53,7 @@ export const SurveyProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     return savedOrderId || null;
   });
   
-  const [questions, setQuestions] = useState<Question[]>(Questions);
+  const [questions, setQuestions] = useState<Question[]>(questions);
   const [isPartnerSurvey, setIsPartnerSurvey] = useState<boolean>(false);
   const [selectedQuestionIds, setSelectedQuestionIds] = useState<string[]>([]);
   
