@@ -112,26 +112,24 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
       </div>
       
       <div className="grid grid-cols-2 gap-3 sm:gap-4">
-        <Button onClick={onPrevStep} variant="outline" className="bg-transparent border border-gray-700 text-white hover:bg-gray-800 text-xs sm:text-sm py-2 h-auto">
+        <Button onClick={onPrevStep} variant="outline" className="bg-transparent border border-gray-700 text-white hover:bg-gray-800 text-xs sm:text-sm py-2.5 h-auto flex items-center justify-center">
           Wstecz
         </Button>
         
-        <div className="flex flex-col items-end">
-          <Button 
-            type="submit" 
-            disabled={isProcessing} 
-            onClick={handleSubmit} 
-            className="bg-primary hover:bg-primary/90 text-white flex items-center justify-center gap-1 sm:gap-2 w-full text-xs sm:text-sm py-2 h-auto"
-          >
-            {isProcessing ? <>
-                <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
-                <span>Przetwarzanie...</span>
-              </> : <>
-                <span>Odkryj raport</span>
-                <ArrowRightCircle className="h-4 w-4 sm:h-5 sm:w-5" />
-              </>}
-          </Button>
-        </div>
+        <Button 
+          type="submit" 
+          disabled={isProcessing} 
+          onClick={handleSubmit} 
+          className="bg-primary hover:bg-primary/90 text-white flex items-center justify-center gap-1 sm:gap-2 w-full text-xs sm:text-sm py-2.5 h-auto"
+        >
+          {isProcessing ? <>
+              <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
+              <span>Przetwarzanie...</span>
+            </> : <>
+              <span>Odkryj raport</span>
+              <ArrowRightCircle className="h-4 w-4 sm:h-5 sm:w-5" />
+            </>}
+        </Button>
       </div>
     </div>;
 };

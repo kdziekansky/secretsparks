@@ -65,8 +65,8 @@ const Step1Form: React.FC<Step1FormProps> = ({
       <BenefitsSection />
       
       <div className="grid grid-cols-2 gap-4 mt-8">
-        <div className="flex items-center gap-2 bg-[#111] p-3 rounded-md">
-          <div className="bg-primary/20 p-2 rounded-full">
+        <div className="flex items-start gap-2 bg-[#111] p-3 rounded-md">
+          <div className="bg-primary/20 p-2 rounded-full flex-shrink-0">
             <Shield className="h-5 w-5 text-primary" />
           </div>
           <div className="text-sm text-gray-300">
@@ -75,8 +75,8 @@ const Step1Form: React.FC<Step1FormProps> = ({
           </div>
         </div>
         
-        <div className="flex items-center gap-2 bg-[#111] p-3 rounded-md">
-          <div className="bg-primary/20 p-2 rounded-full">
+        <div className="flex items-start gap-2 bg-[#111] p-3 rounded-md">
+          <div className="bg-primary/20 p-2 rounded-full flex-shrink-0">
             <CheckCircle2 className="h-5 w-5 text-primary" />
           </div>
           <div className="text-sm text-gray-300">
