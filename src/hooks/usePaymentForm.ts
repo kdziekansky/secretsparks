@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
@@ -25,6 +24,9 @@ export const usePaymentForm = (orderId: string | null) => {
       setFormValid(!!userName && !!userEmail && userEmail.includes('@'));
     } else if (formStep === 2) {
       setFormValid(!!partnerName && !!partnerEmail && partnerEmail.includes('@') && ageConfirmed);
+    } else if (formStep === 3) {
+      // Krok podsumowania - zawsze ważny, jeśli poprzednie kroki były poprawne
+      setFormValid(true);
     }
   }, [userName, userEmail, partnerName, partnerEmail, ageConfirmed, formStep]);
 
@@ -88,16 +90,24 @@ export const usePaymentForm = (orderId: string | null) => {
   };
 
   const handleNextStep = () => {
-    if (formStep < 2) {
+    if (formStep < 3) {
       if (formValid) {
         setFormStep(formStep + 1);
       } else {
-        if (!userName) {
+        if (!userName && formStep === 1) {
           toast.error('Podaj swoje imię');
-        } else if (!userEmail) {
+        } else if (!userEmail && formStep === 1) {
           toast.error('Podaj swój email');
-        } else if (!userEmail.includes('@')) {
+        } else if (!userEmail.includes('@') && formStep === 1) {
           toast.error('Podaj poprawny adres email');
+        } else if (!partnerName && formStep === 2) {
+          toast.error('Podaj imię partnera/ki');
+        } else if (!partnerEmail && formStep === 2) {
+          toast.error('Podaj email partnera/ki');
+        } else if (!partnerEmail.includes('@') && formStep === 2) {
+          toast.error('Podaj poprawny adres email partnera/ki');
+        } else if (!ageConfirmed && formStep === 2) {
+          toast.error('Musisz potwierdzić, że akceptujesz regulamin');
         }
       }
     }
@@ -125,7 +135,14 @@ export const usePaymentForm = (orderId: string | null) => {
     e.preventDefault();
     
     // If not on the last step, proceed to next step
-    if (formStep < 2) {
+    if (formStep < 3) {
+      handleNextStep();
+      return;
+    }
+    
+    // Jeśli jesteśmy na kroku podsumowania (3), ale nie chcemy jeszcze płacić
+    if (formStep === 3) {
+      // Po prostu przejdź do kroku płatności (4)
       handleNextStep();
       return;
     }

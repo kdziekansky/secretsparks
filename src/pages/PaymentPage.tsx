@@ -5,6 +5,7 @@ import { usePaymentForm } from '@/hooks/usePaymentForm';
 import PaymentSteps from '@/components/payment/PaymentSteps';
 import Step1Form from '@/components/payment/Step1Form';
 import Step2Form from '@/components/payment/Step2Form';
+import OrderSummaryStep from '@/components/payment/OrderSummaryStep';
 import EmailPreview from '@/components/payment/EmailPreview';
 
 // Fixed product price at 29 zł, gift wrapping is free
@@ -70,6 +71,23 @@ const PaymentPage: React.FC = () => {
                     onPrevStep={handlePrevStep}
                     onSubmit={handleSubmit}
                     isValid={formValid}
+                    isProcessing={isProcessing}
+                    productPrice={PRODUCT_PRICE}
+                    regularPrice={REGULAR_PRICE}
+                    currency={CURRENCY}
+                  />
+                )}
+                
+                {formStep === 3 && (
+                  <OrderSummaryStep 
+                    userData={{
+                      userName: formData.userName,
+                      userEmail: formData.userEmail,
+                      partnerName: formData.partnerName,
+                      partnerEmail: formData.partnerEmail
+                    }}
+                    onPrevStep={handlePrevStep}
+                    onSubmit={handleSubmit}
                     isProcessing={isProcessing}
                     productPrice={PRODUCT_PRICE}
                     regularPrice={REGULAR_PRICE}

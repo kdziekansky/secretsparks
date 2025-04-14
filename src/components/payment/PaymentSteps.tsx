@@ -21,10 +21,10 @@ const PaymentSteps: React.FC<PaymentStepsProps> = ({ currentStep }) => {
         </div>
         
         <div className="flex flex-col items-center">
-          <div className={`w-10 h-10 rounded-full ${currentStep >= 1 ? 'bg-primary' : 'bg-gray-700'} flex items-center justify-center text-white font-bold mb-1`}>
+          <div className={`w-10 h-10 rounded-full ${currentStep >= 2 ? 'bg-primary' : 'bg-gray-700'} flex items-center justify-center text-white font-bold mb-1`}>
             2
           </div>
-          <span className="text-xs text-gray-400">Twoje dane</span>
+          <span className="text-xs text-gray-400">Dane</span>
         </div>
         
         <div className="flex-1 h-1 mx-2 bg-gray-700">
@@ -32,10 +32,21 @@ const PaymentSteps: React.FC<PaymentStepsProps> = ({ currentStep }) => {
         </div>
         
         <div className="flex flex-col items-center">
-          <div className={`w-10 h-10 rounded-full ${currentStep >= 2 ? 'bg-primary' : 'bg-gray-700'} flex items-center justify-center text-white font-bold mb-1`}>
+          <div className={`w-10 h-10 rounded-full ${currentStep >= 3 ? 'bg-primary' : 'bg-gray-700'} flex items-center justify-center text-white font-bold mb-1`}>
             3
           </div>
-          <span className="text-xs text-gray-400">{currentStep >= 2 ? 'Partner' : 'Płatność'}</span>
+          <span className="text-xs text-gray-400">Partner</span>
+        </div>
+        
+        <div className="flex-1 h-1 mx-2 bg-gray-700">
+          <div className="h-full bg-primary" style={{width: currentStep >= 3 ? '100%' : '0%'}}></div>
+        </div>
+        
+        <div className="flex flex-col items-center">
+          <div className={`w-10 h-10 rounded-full ${currentStep >= 4 ? 'bg-primary' : 'bg-gray-700'} flex items-center justify-center text-white font-bold mb-1`}>
+            4
+          </div>
+          <span className="text-xs text-gray-400">Podsumowanie</span>
         </div>
       </div>
     </div>
