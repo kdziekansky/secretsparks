@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSurvey } from '@/contexts/SurveyContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -8,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Link } from 'react-router-dom';
-import { Gift, Info, Loader2 } from 'lucide-react';
+import { Gift, Info, Loader2, Shield, CheckCircle2, ArrowRightCircle } from 'lucide-react';
 
 // Fixed product price at 29 zł, gift wrapping is free
 const PRODUCT_PRICE = 29;
@@ -265,6 +266,43 @@ const PaymentPage: React.FC = () => {
                   Wszystkie dane są bezpieczne
                 </p>
               </div>
+
+              {/* Nowy element - gwarancja satysfakcji */}
+              <div className="mb-6 p-4 border border-green-600/30 bg-green-600/10 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="h-6 w-6 text-green-500 flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-medium text-green-400 text-lg mb-1">100% Gwarancja Satysfakcji</h3>
+                    <p className="text-gray-300 text-sm">
+                      Jeśli raport nie spełni Twoich oczekiwań, zwrócimy Ci pieniądze w ciągu 14 dni. 
+                      Bez zbędnych pytań. To my podejmujemy całe ryzyko.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Trust indicators */}
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="flex items-center gap-2 bg-[#111] p-3 rounded-md">
+                  <div className="bg-primary/20 p-2 rounded-full">
+                    <Shield className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="text-sm text-gray-300">
+                    <p className="font-medium text-white">Bezpieczna płatność</p>
+                    <p>SSL & 3D Secure</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-2 bg-[#111] p-3 rounded-md">
+                  <div className="bg-primary/20 p-2 rounded-full">
+                    <CheckCircle2 className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="text-sm text-gray-300">
+                    <p className="font-medium text-white">Setki par</p>
+                    <p>już skorzystało</p>
+                  </div>
+                </div>
+              </div>
               
               <form onSubmit={handleSubmit} className="space-y-5">
                 <Input 
@@ -297,8 +335,6 @@ const PaymentPage: React.FC = () => {
                   className="bg-[#111] border-[#333] rounded-md p-4 h-12 text-white placeholder-gray-500"
                 />
                 
-
-                
                 {/* Gift option */}
                 <div className="flex items-center bg-[#111] border border-[#333] rounded-md p-4 gap-3">
                   <Checkbox 
@@ -330,7 +366,7 @@ const PaymentPage: React.FC = () => {
                 <Button 
                   type="submit"
                   disabled={isProcessing}
-                  className="w-full bg-primary hover:bg-primary/90 text-white py-6 rounded-full text-lg mt-6"
+                  className="w-full bg-primary hover:bg-primary/90 text-white py-6 rounded-full text-lg mt-6 flex items-center justify-center gap-2"
                 >
                   {isProcessing ? (
                     <>
@@ -338,7 +374,10 @@ const PaymentPage: React.FC = () => {
                       Przetwarzanie...
                     </>
                   ) : (
-                    <>Zapłać {PRODUCT_PRICE} {CURRENCY}</>
+                    <>
+                      <span>Zapłać {PRODUCT_PRICE} {CURRENCY}</span>
+                      <ArrowRightCircle className="h-5 w-5" />
+                    </>
                   )}
                 </Button>
                 
