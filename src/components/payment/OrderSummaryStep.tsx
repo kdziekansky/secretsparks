@@ -41,7 +41,6 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
       return;
     }
     
-    // Bezpośrednio wywołujemy funkcję przekazaną z PaymentPage
     console.log('Wywołuję funkcję płatności - onSubmit');
     onSubmit(e);
   };

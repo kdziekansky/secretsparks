@@ -5,6 +5,12 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useSurvey } from '@/contexts/SurveyContext';
 
+// Funkcja pomocnicza do walidacji adresu e-mail
+const isValidEmail = (email: string): boolean => {
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  return emailRegex.test(email);
+};
+
 export const usePaymentForm = (orderId: string | null) => {
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
@@ -22,9 +28,9 @@ export const usePaymentForm = (orderId: string | null) => {
   // Walidacja pól formularza
   useEffect(() => {
     if (formStep === 1) {
-      setFormValid(!!userName && !!userEmail && userEmail.includes('@'));
+      setFormValid(!!userName && !!userEmail && isValidEmail(userEmail));
     } else if (formStep === 2) {
-      setFormValid(!!partnerName && !!partnerEmail && partnerEmail.includes('@'));
+      setFormValid(!!partnerName && !!partnerEmail && isValidEmail(partnerEmail));
     } else if (formStep === 3) {
       // Krok podsumowania - zawsze ważny, jeśli poprzednie kroki były poprawne
       setFormValid(true);
@@ -99,14 +105,14 @@ export const usePaymentForm = (orderId: string | null) => {
           toast.error('Podaj swoje imię');
         } else if (!userEmail && formStep === 1) {
           toast.error('Podaj swój email');
-        } else if (!userEmail.includes('@') && formStep === 1) {
-          toast.error('Podaj poprawny adres email');
+        } else if (!isValidEmail(userEmail) && formStep === 1) {
+          toast.error('Podaj poprawny adres email (np. nazwa@domena.pl)');
         } else if (!partnerName && formStep === 2) {
           toast.error('Podaj imię partnera/ki');
         } else if (!partnerEmail && formStep === 2) {
           toast.error('Podaj email partnera/ki');
-        } else if (!partnerEmail.includes('@') && formStep === 2) {
-          toast.error('Podaj poprawny adres email partnera/ki');
+        } else if (!isValidEmail(partnerEmail) && formStep === 2) {
+          toast.error('Podaj poprawny adres email partnera/ki (np. nazwa@domena.pl)');
         }
       }
     }
@@ -151,9 +157,20 @@ export const usePaymentForm = (orderId: string | null) => {
 
   // Nowa funkcja do obsługi płatności
   const processPayment = async () => {
-    // Validation for payment step
+    // Dodatkowa walidacja przed wysłaniem do API
     if (!userName || !userEmail || !partnerName || !partnerEmail) {
       toast.error('Wypełnij wszystkie wymagane pola');
+      return;
+    }
+    
+    // Dodatkowa walidacja formatu adresów email
+    if (!isValidEmail(userEmail)) {
+      toast.error('Podaj poprawny adres email (np. nazwa@domena.pl)');
+      return;
+    }
+    
+    if (!isValidEmail(partnerEmail)) {
+      toast.error('Podaj poprawny adres email partnera/ki (np. nazwa@domena.pl)');
       return;
     }
     
@@ -192,7 +209,13 @@ export const usePaymentForm = (orderId: string | null) => {
       
       if (orderError) {
         console.error('Order creation error:', orderError);
-        throw new Error('Nie udało się utworzyć zamówienia: ' + orderError.message);
+        if (orderError.message.includes('email_format_check')) {
+          toast.error('Wprowadź poprawne adresy email (np. nazwa@domena.pl)');
+        } else {
+          toast.error('Nie udało się utworzyć zamówienia: ' + orderError.message);
+        }
+        setIsProcessing(false);
+        return;
       }
       console.log('Order created:', orderData);
 
