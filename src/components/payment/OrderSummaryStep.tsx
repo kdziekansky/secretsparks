@@ -34,16 +34,20 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
   const [termsAccepted, setTermsAccepted] = useState(false);
   const isMobile = useIsMobile();
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmitPayment = (e: React.FormEvent) => {
     e.preventDefault();
     if (!termsAccepted) {
       alert('Proszę zaakceptować regulamin i politykę prywatności');
       return;
     }
+    
+    // Bezpośrednio wywołujemy funkcję przekazaną z PaymentPage
+    console.log('Wywołuję funkcję płatności - onSubmit');
     onSubmit(e);
   };
   
-  return <div className="space-y-5 animate-fade-in">
+  return (
+    <div className="space-y-5 animate-fade-in">
       <div className="mb-4 sm:mb-6">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 text-white flex items-center">
           Podsumowanie <span className="text-red-500 ml-2">❤️</span>
@@ -101,12 +105,12 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
       {/* Checkbox do akceptacji regulaminu */}
       <div className="flex items-start gap-2 pt-2 mb-4">
         <Checkbox 
-          id="ageConfirmation" 
+          id="termsAcceptance" 
           checked={termsAccepted} 
           onCheckedChange={checked => setTermsAccepted(!!checked)} 
           className="h-4 w-4 border-white/40 mt-1" 
         />
-        <Label htmlFor="ageConfirmation" className="text-gray-300 text-xs sm:text-sm cursor-pointer">
+        <Label htmlFor="termsAcceptance" className="text-gray-300 text-xs sm:text-sm cursor-pointer">
           Grając, akceptujesz przyjazny <Link to="/regulamin" className="text-primary hover:underline">Regulamin</Link> i <Link to="/polityka-prywatnosci" className="text-primary hover:underline">Politykę Prywatności</Link>, która gwarantuje bezpieczeństwo Waszych danych. Usuwamy je po 7 dniach.
         </Label>
       </div>
@@ -119,7 +123,7 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
         <Button 
           type="submit" 
           disabled={isProcessing || !termsAccepted} 
-          onClick={handleSubmit} 
+          onClick={handleSubmitPayment} 
           className="bg-primary hover:bg-primary/90 text-white flex items-center justify-center gap-1 sm:gap-2 w-full text-xs sm:text-sm py-2.5 h-auto"
         >
           {isProcessing ? <>
@@ -131,7 +135,8 @@ const OrderSummaryStep: React.FC<OrderSummaryStepProps> = ({
             </>}
         </Button>
       </div>
-    </div>;
+    </div>
+  );
 };
 
 export default OrderSummaryStep;

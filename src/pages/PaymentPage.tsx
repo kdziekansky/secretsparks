@@ -31,6 +31,13 @@ const PaymentPage: React.FC = () => {
     handleSubmit
   } = usePaymentForm(orderId);
 
+  console.log('PaymentPage render - formStep:', formStep);
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    console.log('PaymentPage - handleFormSubmit wywołane');
+    handleSubmit(e);
+  };
+
   const renderRightColumn = () => {
     if (formStep === 3) {
       // Ukryj testimoniale na urządzeniach mobilnych
@@ -86,25 +93,25 @@ const PaymentPage: React.FC = () => {
         
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           <div className="w-full lg:w-1/2 order-2 lg:order-1">
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleFormSubmit} className="space-y-5">
               {formStep === 1 && <Step1Form data={{
                 userName: formData.userName,
                 userEmail: formData.userEmail
-              }} onChange={handleUserFormChange} onSubmit={handleSubmit} isValid={formValid} productPrice={PRODUCT_PRICE} regularPrice={REGULAR_PRICE} currency={CURRENCY} />}
+              }} onChange={handleUserFormChange} onSubmit={handleFormSubmit} isValid={formValid} productPrice={PRODUCT_PRICE} regularPrice={REGULAR_PRICE} currency={CURRENCY} />}
 
               {formStep === 2 && <Step2Form data={{
                 partnerName: formData.partnerName,
                 partnerEmail: formData.partnerEmail,
                 giftWrap: formData.giftWrap,
                 ageConfirmed: formData.ageConfirmed
-              }} onChange={handlePartnerFormChange} onPrevStep={handlePrevStep} onSubmit={handleSubmit} isValid={formValid} isProcessing={isProcessing} />}
+              }} onChange={handlePartnerFormChange} onPrevStep={handlePrevStep} onSubmit={handleFormSubmit} isValid={formValid} isProcessing={isProcessing} />}
                 
               {formStep === 3 && <OrderSummaryStep userData={{
                 userName: formData.userName,
                 userEmail: formData.userEmail,
                 partnerName: formData.partnerName,
                 partnerEmail: formData.partnerEmail
-              }} onPrevStep={handlePrevStep} onSubmit={handleSubmit} isProcessing={isProcessing} productPrice={PRODUCT_PRICE} regularPrice={REGULAR_PRICE} currency={CURRENCY} />}
+              }} onPrevStep={handlePrevStep} onSubmit={handleFormSubmit} isProcessing={isProcessing} productPrice={PRODUCT_PRICE} regularPrice={REGULAR_PRICE} currency={CURRENCY} />}
             </form>
           </div>
           

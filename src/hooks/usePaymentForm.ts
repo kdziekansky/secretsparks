@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
@@ -131,21 +132,26 @@ export const usePaymentForm = (orderId: string | null) => {
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(`handleSubmit called at formStep ${formStep}`);
     
     // If not on the last step, proceed to next step
     if (formStep < 3) {
+      console.log('Proceeding to next step');
       handleNextStep();
       return;
     }
     
-    // Jeśli jesteśmy na kroku podsumowania (3), ale nie chcemy jeszcze płacić
+    // Jesteśmy na kroku podsumowania (3) - rozpocznij płatność
     if (formStep === 3) {
-      // Po prostu przejdź do kroku płatności (4)
-      handleNextStep();
+      console.log('Starting payment process...');
+      await processPayment();
       return;
     }
+  };
 
-    // Validation for last step
+  // Nowa funkcja do obsługi płatności
+  const processPayment = async () => {
+    // Validation for payment step
     if (!userName || !userEmail || !partnerName || !partnerEmail) {
       toast.error('Wypełnij wszystkie wymagane pola');
       return;
@@ -213,8 +219,8 @@ export const usePaymentForm = (orderId: string | null) => {
         };
         
         console.log('Preparing payment data');
-        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://bqbgrjpxufblrgcoxpfk.supabase.co';
-        const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxYmdyanB4dWZibHJnY294cGZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE1Mzk4NzUsImV4cCI6MjA1NzExNTg3NX0.kSryhe5Z4BILp_ss5LpSxanGSvx4HZzZtVzYia4bgik";
+        const supabaseUrl = 'https://bqbgrjpxufblrgcoxpfk.supabase.co';
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxYmdyanB4dWZibHJnY294cGZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE1Mzk4NzUsImV4cCI6MjA1NzExNTg3NX0.kSryhe5Z4BILp_ss5LpSxanGSvx4HZzZtVzYia4bgik";
         
         const requestPayload = {
           data: paymentData
@@ -233,7 +239,7 @@ export const usePaymentForm = (orderId: string | null) => {
 
         // Check response
         const responseText = await response.text();
-        console.log('Response received');
+        console.log('Response received:', responseText);
         let data;
         try {
           data = JSON.parse(responseText);
@@ -260,7 +266,7 @@ export const usePaymentForm = (orderId: string | null) => {
         }
 
         // Redirect to Stripe
-        console.log('Redirecting to payment URL');
+        console.log('Redirecting to payment URL:', data.url);
         window.location.href = data.url;
       } catch (paymentError: any) {
         console.error('Payment creation error:', paymentError);
