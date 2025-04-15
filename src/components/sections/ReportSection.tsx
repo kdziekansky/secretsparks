@@ -1,12 +1,9 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Check, Users, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
 const ReportSection = () => {
-  return (
-    <section className="py-16 bg-[#0B0B0E]">
+  return <section className="py-16 bg-[#0B0B0E]">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl md:text-5xl font-bold mb-16 text-left">Nasz raport</h2>
         
@@ -123,14 +120,10 @@ const ReportSection = () => {
             Wypełnij ankietę i otrzymaj szczegółowy raport, który pomoże Wam lepiej się zrozumieć i zbliżyć do siebie.
           </p>
           <Link to="/survey" className="w-full max-w-sm">
-            <Button className="btn-primary btn-large w-full text-lg py-6">
-              Odkryj raport
-            </Button>
+            <Button className="btn-primary btn-large w-full text-lg py-6">Odbierz swój raport</Button>
           </Link>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default ReportSection;
